@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
+    <string name="loading">正在加载中...</string>
+    <string name="network_no_connection">网络连接异常</string>
+    <string name="network_anomaly_text">网络异常</string>
+    <string name="refresh_btn_text">刷新看看</string>
+</resources>

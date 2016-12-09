@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ActivityTransitions" parent="@android:style/Animation">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:activityOpenExitAnimation">@anim/fade_back</item>
+        <item name="android:activityCloseEnterAnimation">@anim/fade_forward</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
+    <style name="Theme.Dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@drawable/base_dialog_background</item>
+    </style>
+
+    <style name="Style_BaseDialog_Button">
+        <item name="android:layout_width">0px</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_size_dialog_button</item>
+        <item name="android:textColor">@color/dialog_button_text_color</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingTop">@dimen/distance_dialog_button_text</item>
+        <item name="android:paddingBottom">@dimen/distance_dialog_button_text</item>
+
+    </style>
+    <style name="Style_App_Bar_Menu_Text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:minWidth">72dp</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textSize">@dimen/textsize_14sp</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:textColor">@color/app_bar_menu_text_color</item>
+    </style>
+    <style name="Style_Base_ListView">
+        <item name="android:cacheColorHint">@android:color/transparent</item>
+        <item name="android:fadingEdge">none</item>
+        <item name="android:fadingEdgeLength">0dp</item>
+        <item name="android:fadeEnabled">false</item>
+        <item name="android:overScrollMode">never</item>
+    </style>
+    <style name="Style_BaseDialog_TitleLayout">
+        <item name="android:minHeight">@dimen/dialog_title_panel_minHeight</item>
+    </style>
+    <style name="Style_BaseDialog_ButtonLayout">
+    </style>
+    <style name="SwipeBackLayout">
+        <item name="edge_size">50dp</item>
+        <item name="shadow_left">@drawable/shadow_left</item>
+        <item name="shadow_right">@drawable/shadow_right</item>
+        <item name="shadow_bottom">@drawable/shadow_bottom</item>
+    </style>
+</resources>

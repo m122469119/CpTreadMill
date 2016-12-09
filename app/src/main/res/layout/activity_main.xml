@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context="com.liking.treadmill.activity.MainActivity">
+
+    <com.aaron.android.framework.library.imageloader.HImageView xmlns:android="http://schemas.android.com/apk/res/android"
+                                                                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                                                                android:id="@+id/left_ad_imageView"
+                                                                android:layout_width="@dimen/run_ad_image_size"
+                                                                android:layout_height="match_parent"
+                                                                fresco:actualImageScaleType="centerCrop"
+                                                                fresco:fadeDuration="300"
+                                                                fresco:failureImageScaleType="centerInside"
+                                                                fresco:placeholderImage="@color/list_item_selected"
+                                                                fresco:placeholderImageScaleType="fitCenter"
+                                                                fresco:progressBarAutoRotateInterval="1000"
+                                                                fresco:progressBarImageScaleType="centerInside"
+                                                                fresco:retryImageScaleType="centerCrop"
+        />
+
+    <RelativeLayout
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/run_bg">
+    </RelativeLayout>
+
+    <com.aaron.android.framework.library.imageloader.HImageView xmlns:android="http://schemas.android.com/apk/res/android"
+                                                                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                                                                android:id="@+id/right_ad_imageView"
+                                                                android:layout_width="@dimen/run_ad_image_size"
+                                                                android:layout_height="match_parent"
+                                                                fresco:actualImageScaleType="centerCrop"
+                                                                fresco:fadeDuration="300"
+                                                                fresco:failureImageScaleType="centerInside"
+                                                                fresco:placeholderImage="@color/list_item_selected"
+                                                                fresco:placeholderImageScaleType="fitCenter"
+                                                                fresco:progressBarAutoRotateInterval="1000"
+                                                                fresco:progressBarImageScaleType="centerInside"
+                                                                fresco:retryImageScaleType="centerCrop"
+        />
+</LinearLayout>

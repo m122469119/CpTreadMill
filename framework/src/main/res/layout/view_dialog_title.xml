@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/layout_base_dialog_title_panel"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/transparent"
+              android:minHeight="@dimen/dialog_title_panel_minHeight"
+              android:orientation="vertical">
+
+
+    <RelativeLayout android:id="@+id/layout_base_dialog_title_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/base_dialog_title_layout_background"
+                    android:gravity="center"
+                    android:minHeight="@dimen/dialog_title_panel_minHeight"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="@dimen/dialog_title_padding_top_bottom"
+                    android:paddingBottom="@dimen/dialog_title_padding_top_bottom"
+        >
+        <ImageView
+            android:id="@+id/imageview_dialog_title_icon"
+            android:layout_width="@dimen/image_size_dialog_title_icon"
+            android:layout_height="@dimen/image_size_dialog_title_icon"
+            android:layout_marginRight="8dp"
+            android:scaleType="fitXY"
+            />
+        <TextView
+            android:id="@+id/textview_dialog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/imageview_dialog_title_icon"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/default_dialog_title_color"
+            android:textSize="@dimen/textsize_14sp"
+            />
+    </RelativeLayout>
+    <View
+        android:id="@+id/dialog_title_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#edeff3"
+        />
+    <!-- If the client uses a customTitle, it will be added here. -->
+
+</LinearLayout>

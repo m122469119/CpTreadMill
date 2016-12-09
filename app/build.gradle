@@ -1,0 +1,93 @@
+apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
+android {
+
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    defaultConfig {
+        applicationId "com.liking.treadmill"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles 'proguard-rules.pro'
+        }
+    }
+    signingConfigs {
+        myConfig {
+            storeFile file("haochushi")
+            storePassword "haochushi007"
+            keyAlias "haochushi"
+            keyPassword "haochushi"
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            java.srcDirs = ['src/main/java']
+            aidl.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['src/main/assets']
+            jniLibs.srcDirs = ['libs']
+        }
+        debug {
+//            Manifest.srcFile 'src/debug/AndroidManifest.xml'
+        }
+        androidTest.setRoot('src/androidTest')
+    }
+
+    buildTypes {
+        def STRING = "String"
+        def BOOLEAN = "boolean"
+        def TEST_MODE = "TEST_MODE"
+        def APP_FLAG = "APP_FLAG"
+        def HTTP_HOST = "HTTP_HOST"
+        def TRUE = "true"
+        def FALSE = "false"
+        def appFlag = "\"LikingThreadMill\""
+        release {
+            buildConfigField BOOLEAN, TEST_MODE, FALSE
+            buildConfigField STRING, APP_FLAG, appFlag
+            buildConfigField STRING, HTTP_HOST, "\"http://room.likingfit.com/\""
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.myConfig
+            proguardFiles 'proguard-rules.pro'
+        }
+        debug {
+            buildConfigField BOOLEAN, TEST_MODE, TRUE
+            buildConfigField STRING, APP_FLAG, appFlag
+            buildConfigField STRING, HTTP_HOST, "\"http://testroom.likingfit.com/\""
+            applicationIdSuffix ".test"
+//            versionNameSuffix ""
+            signingConfig signingConfigs.myConfig
+            proguardFiles 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = rootProject.ext.sourceCompatibility
+        targetCompatibility = rootProject.ext.targetCompatibility
+    }
+
+    lintOptions {
+        abortOnError rootProject.ext.abortOnError
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testCompile 'junit:junit:4.12'
+    compile project(':framework')
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+}

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.AppBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:theme="@style/AppTheme.AppBarOverlay"
+    >
+    <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
+                                       android:layout_width="match_parent"
+                                       android:layout_height="wrap_content"
+                                       android:contentInsetLeft="0dp"
+                                       android:contentInsetStart="0dp"
+                                       android:fitsSystemWindows="true"
+                                       android:minHeight="?attr/actionBarSize"
+                                       app:contentInsetLeft="0dp"
+                                       app:contentInsetStart="0dp"
+        >
+        <RelativeLayout android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+            <ImageView android:id="@+id/imageview_toolbar_left_icon"
+                       android:layout_width="?attr/actionBarSize"
+                       android:layout_height="?attr/actionBarSize"
+                       android:layout_alignParentLeft="true"
+                       android:background="@drawable/selector_toolbar_home_icon_bg"
+                       android:scaleType="centerInside"
+                       android:src="@drawable/back"
+                />
+            <TextView
+                android:id="@+id/textview_toolbar_left"
+                style="@style/Style_App_Bar_Menu_Text"
+                android:layout_alignParentLeft="true"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="16dp"
+                />
+            <TextView
+                android:id="@+id/textview_toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@color/app_bar_text_color"
+                android:textSize="@dimen/textsize_16sp"
+                />
+            <TextView
+                android:id="@+id/textview_toolbar_right"
+                style="@style/Style_App_Bar_Menu_Text"
+                android:layout_alignParentRight="true"
+                android:gravity="right|center_vertical"
+                android:paddingRight="16dp"/>
+            <ImageView android:id="@+id/imageview_toolbar_right_icon"
+                       android:layout_width="?attr/actionBarSize"
+                       android:layout_height="?attr/actionBarSize"
+                       android:layout_alignParentRight="true"
+                       android:background="@drawable/selector_toolbar_home_icon_bg"
+                       android:scaleType="centerInside"
+                       android:src="@drawable/back"
+                       android:visibility="gone"
+                />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+</android.support.design.widget.AppBarLayout>

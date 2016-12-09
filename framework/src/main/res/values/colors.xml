@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="app_content_background">#edeff6</color>
+    <color name="list_item_selected">#87CEFA</color>
+
+    <color name="toolbar_home_icon_select">#30000000</color>
+    <color name="app_bar_text_color">#23ec7d</color>
+    <color name="app_bar_text_select_color">#676767</color>
+    <color name="stateview_text_color">#6A6F75</color>
+    <color name="stateview_button_select">#34C86C</color>
+    <color name="bg_gray_button_text">#4A3C01</color>
+
+    <!--Base Color-->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+    <!-- base dialog-->
+    <color name="dialog_buttons_background_color">#34c86c</color>
+    <color name="default_dialog_title_color">#596167</color>
+    <color name="default_dialog_message_text_color">#000000</color>
+    <color name="default_dialog_title_background_color">#34c86c</color>
+    <color name="default_dialog_middle_line">#23b05b</color>
+    <color name="default_swipe_refresh_color">#34c86c</color>
+</resources>
