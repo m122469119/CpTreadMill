@@ -4,10 +4,14 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
@@ -20,12 +24,14 @@ import com.liking.treadmill.test.IBackService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends LikingTreadmillBaseActivity {
+public class RunActivity extends LikingTreadmillBaseActivity {
     public MessageBackReceiver mMessageBackReceiver = new MessageBackReceiver();
     @BindView(R.id.left_ad_imageView)
     HImageView mLeftAdImageView;
     @BindView(R.id.right_ad_imageView)
     HImageView mRightAdImageView;
+    @BindView(R.id.dashboard_imageView)
+    ImageView mDashboardImageView;
     private LocalBroadcastManager localBroadcastManager;
     private IntentFilter mIntentFilter;
     //标记是否已经进行了服务绑定与全局消息注册
@@ -51,11 +57,15 @@ public class MainActivity extends LikingTreadmillBaseActivity {
             iBackService = null;
         }
     };
+    private TextView mGradeInfoTextView;
+    private TextView mSpeedInfoTextView;
+    private TextView mHotInfoTextView;
+    private TextView mHeartRateInfoTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_run);
         ButterKnife.bind(this);
         initViews();
     }
@@ -63,6 +73,52 @@ public class MainActivity extends LikingTreadmillBaseActivity {
     private void initViews() {
         initToolBarViews();
         initAdViews();
+        initDashboardImageView();
+        initRunInfoViews();
+    }
+
+    private void initRunInfoViews() {
+        View gradeCell = findViewById(R.id.cell_grade);
+        View speedCell = findViewById(R.id.cell_speed);
+        View hotCell = findViewById(R.id.cell_hot);
+        View heartRateCell = findViewById(R.id.cell_heart_rate);
+        setupRunInfoCell(gradeCell, "坡度");
+        setupRunInfoCell(speedCell, "速度(KM/H)");
+        setupRunInfoCell(hotCell, "消耗热量(KCAL)");
+        setupRunInfoCell(heartRateCell, "心率(BPM)");
+        mGradeInfoTextView.setText("5.5");
+        mSpeedInfoTextView.setText("6");
+        mHotInfoTextView.setText("3464");
+        mHeartRateInfoTextView.setText("100");
+    }
+
+    private void setupRunInfoCell(View cellView, String title) {
+        TextView titleTextView = (TextView) cellView.findViewById(R.id.info_title_textView);
+        Typeface typeFace = Typeface.createFromAsset(this.getAssets(), "fonts/Impact.ttf");
+        titleTextView.setText(title);
+        TextView contentTextView = (TextView) cellView.findViewById(R.id.info_content_textView);
+        contentTextView.setTypeface(typeFace);
+        switch (cellView.getId()) {
+            case R.id.cell_grade:
+                mGradeInfoTextView = contentTextView;
+                break;
+            case R.id.cell_speed:
+                mSpeedInfoTextView = contentTextView;
+                break;
+            case R.id.cell_hot:
+                mHotInfoTextView = contentTextView;
+                break;
+            case R.id.cell_heart_rate:
+                mHeartRateInfoTextView = contentTextView;
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void initDashboardImageView() {
+        AnimationDrawable animationDrawable = (AnimationDrawable) mDashboardImageView.getBackground();
+        animationDrawable.start();
     }
 
     private void initToolBarViews() {
