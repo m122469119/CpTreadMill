@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.aaron.android.framework.R;
 import com.aaron.android.framework.base.eventbus.BaseMessage;
 import com.umeng.analytics.MobclickAgent;
 
@@ -78,6 +79,10 @@ public class BaseActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(containerViewId, fragment);
         fragmentTransaction.commit();
+    }
+
+    protected void launchFragment(Fragment fragment) {
+        launchFragment(R.id.appbar_container_id, fragment);
     }
     @Override
     protected void onDestroy() {

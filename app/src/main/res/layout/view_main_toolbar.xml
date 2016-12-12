@@ -14,19 +14,19 @@
         android:contentInsetLeft="0dp"
         android:contentInsetStart="0dp"
         android:fitsSystemWindows="true"
-        android:minHeight="?attr/actionBarSize"
+        android:minHeight="@dimen/toolbar_height"
         app:contentInsetLeft="0dp"
         app:contentInsetStart="0dp"
         >
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="@dimen/toolbar_height">
 
             <ImageView
                 android:id="@+id/icon_imageView"
-                android:layout_width="105dp"
-                android:layout_height="13dp"
+                android:layout_width="132dp"
+                android:layout_height="17dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/spacing_24dp"

@@ -21,8 +21,13 @@ import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
 import com.liking.treadmill.test.IBackService;
 
+import java.util.concurrent.TimeUnit;
+
+import androidex.serialport.SerialPortUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Observable;
+import rx.functions.Action1;
 
 public class RunActivity extends LikingTreadmillBaseActivity {
     public MessageBackReceiver mMessageBackReceiver = new MessageBackReceiver();
@@ -68,6 +73,14 @@ public class RunActivity extends LikingTreadmillBaseActivity {
         setContentView(R.layout.activity_run);
         ButterKnife.bind(this);
         initViews();
+        SerialPortUtil serialPortUtil = new SerialPortUtil();
+        serialPortUtil.onCreate();
+        serialPortUtil.setOnDataReceiveListener(new SerialPortUtil.OnDataReceiveListener() {
+            @Override
+            public void onDataReceive(byte[] buffer, int size) {
+                LogUtils.d(TAG, "receive msg: " + new String(buffer, 0, size));
+            }
+        });
     }
 
     private void initViews() {
@@ -75,6 +88,12 @@ public class RunActivity extends LikingTreadmillBaseActivity {
         initAdViews();
         initDashboardImageView();
         initRunInfoViews();
+        Observable.interval(1, TimeUnit.SECONDS).subscribe(new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+                launchFragment(new SettingFragment());
+            }
+        });
     }
 
     private void initRunInfoViews() {

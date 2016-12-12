@@ -31,8 +31,8 @@
 
         <FrameLayout
             android:id="@+id/layout_dashboard"
-            android:layout_width="385dp"
-            android:layout_height="385dp"
+            android:layout_width="507dp"
+            android:layout_height="507dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp">
 
@@ -54,7 +54,8 @@
             android:layout_marginTop="120dp"
             android:layout_toRightOf="@id/layout_dashboard"
             android:text="快走"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -63,7 +64,8 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
             android:text="慢跑"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -71,38 +73,42 @@
             android:layout_marginTop="120dp"
             android:layout_toLeftOf="@+id/layout_dashboard"
             android:text="不要命跑"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="190dp"
+            android:layout_height="270dp"
             android:layout_alignParentBottom="true"
-            android:background="#07ffffff"
+            android:background="#50000000"
             android:orientation="horizontal">
 
             <include
-                layout="@layout/run_info_cell"
-                android:layout_height="match_parent"
-                android:layout_width="0px"
                 android:id="@+id/cell_grade"
-                android:layout_weight="1"/>
-            <include
                 layout="@layout/run_info_cell"
-                android:layout_height="match_parent"
                 android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <include
                 android:id="@+id/cell_speed"
-                android:layout_weight="1"/>
-            <include
                 layout="@layout/run_info_cell"
-                android:layout_height="match_parent"
                 android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <include
                 android:id="@+id/cell_hot"
-                android:layout_weight="1"/>
-            <include
                 layout="@layout/run_info_cell"
-                android:layout_height="match_parent"
                 android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <include
                 android:id="@+id/cell_heart_rate"
+                layout="@layout/run_info_cell"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
                 android:layout_weight="1"/>
         </LinearLayout>
     </RelativeLayout>

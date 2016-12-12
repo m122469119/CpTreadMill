@@ -38,6 +38,7 @@ public class AppBarActivity extends SwipeBackActivity {
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
         super.setContentView(mRootView);
+        mContentView.setId(R.id.appbar_container_id);
     }
 
     @Override
