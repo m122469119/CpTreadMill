@@ -10,7 +10,7 @@ import com.aaron.android.framework.base.ui.BaseFragment;
 
 /**
  * Created on 16/12/12.
- *
+ *  绑定场馆
  * @author aaron.huang
  * @version 1.0.0
  */
