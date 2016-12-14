@@ -41,7 +41,7 @@ public class SerialPort {
 /*				Process su = Runtime.getRuntime().exec("/system/bin/su");
                 String strCmd666 = "chmod 666 " + device.getAbsolutePath() + "\n" + "exit\n";
 				su.getOutputStream().write(strCmd666.getBytes());
-				
+
 				if ((su.waitFor() != 0) || !device.canRead() || !device.canWrite())
 				{
 					throw new SecurityException();
@@ -51,7 +51,7 @@ public class SerialPort {
 /*				Process su = Runtime.getRuntime().exec("/system/bin/su");
                 String strCmd777 = "chmod 777 " + device.getAbsolutePath() + "\n" + "exit\n";
 				su.getOutputStream().write(strCmd666.getBytes());
-				
+
 				if ((su.waitFor() != 0) || !device.canRead() || !device.canWrite())
 				{
 					throw new SecurityException();
@@ -61,7 +61,7 @@ public class SerialPort {
 /*				Process xbinsu = Runtime.getRuntime().exec("/system/xbin/su");
                 String strCmd666 = "chmod 666 " + device.getAbsolutePath() + "\n" + "exit\n";
 				xbinsu.getOutputStream().write(strCmd666.getBytes());
-				
+
 				if ((xbinsu.waitFor() != 0) || !device.canRead() || !device.canWrite())
 				{
 					throw new SecurityException();

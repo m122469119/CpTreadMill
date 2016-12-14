@@ -9,6 +9,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -73,14 +74,41 @@ public class RunActivity extends LikingTreadmillBaseActivity {
         setContentView(R.layout.activity_run);
         ButterKnife.bind(this);
         initViews();
-        SerialPortUtil serialPortUtil = new SerialPortUtil();
-        serialPortUtil.onCreate();
+        SerialPortUtil serialPortUtil = SerialPortUtil.getInstance();
         serialPortUtil.setOnDataReceiveListener(new SerialPortUtil.OnDataReceiveListener() {
             @Override
             public void onDataReceive(byte[] buffer, int size) {
-                LogUtils.d(TAG, "receive msg: " + new String(buffer, 0, size));
+                LogUtils.d(TAG, "receive msg: " + bytesToHexString(buffer));
+                if (buffer[2] == 0x00) {
+                    LogUtils.d("aaron", "stop");
+                } else if (buffer[2] == 0x01){
+                    LogUtils.d("aaron", "start");
+                }
             }
         });
+    }
+
+    public static String bytesToHexString(byte[] src)
+    {
+        StringBuilder stringBuilder = new StringBuilder("");
+        if (src == null || src.length<= 0){
+            return null;
+        }
+        for(int i = 0;i < src.length;i++){
+            int v = src[i] & 0xFF;
+            String hv = Integer.toHexString(v);
+            if(hv.length() < 2){
+                stringBuilder.append(0);
+            }
+            stringBuilder.append(hv);
+        }
+        return stringBuilder.toString();
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return super.onKeyDown(keyCode, event);
     }
 
     private void initViews() {
@@ -91,7 +119,7 @@ public class RunActivity extends LikingTreadmillBaseActivity {
         Observable.interval(1, TimeUnit.SECONDS).subscribe(new Action1<Long>() {
             @Override
             public void call(Long aLong) {
-                launchFragment(new SettingFragment());
+//                launchFragment(new SettingFragment());
             }
         });
     }

@@ -102,7 +102,6 @@ public class SocketService extends Service {
     public void onCreate() {
         super.onCreate();
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
-        new InitSocketThread().start();
         mSendHandlerThread = new HandlerThread("tcpSendThread");
         mSendHandlerThread.start();
         mHandler = new Handler(mSendHandlerThread.getLooper()) {
@@ -114,7 +113,7 @@ public class SocketService extends Service {
                         boolean isSuccess = sendMsg(SocketHelper.HEART_BEAT_STRING);//就发送一个HEART_BEAT_STRING过去 如果发送失败，就重新初始化一个socket
                         LogUtils.d(TAG, "send heart beat success: " + isSuccess);
                         if (!isSuccess) {
-                           reConnectSocket();
+                            reConnectSocket();
                         }
                     }
                     sendHeartMessageDelayed();
@@ -126,6 +125,7 @@ public class SocketService extends Service {
                 }
             }
         };
+        new InitSocketThread().start();
     }
 
     private void reConnectSocket() {
