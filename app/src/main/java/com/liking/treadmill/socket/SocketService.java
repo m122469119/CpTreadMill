@@ -91,6 +91,11 @@ public class SocketService extends Service {
             sendUpStreamMessage(SocketHelper.CONFIRM_STRING);
         }
 
+        @Override
+        public void reportDevices() throws RemoteException {
+            LogUtils.d(SocketService.TAG, "设备信息" + SocketHelper.reportDevicesString());
+            sendUpStreamMessage(SocketHelper.reportDevicesString());
+        }
     };
 
     @Override
@@ -101,6 +106,7 @@ public class SocketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        LogUtils.d(TAG,"socketService  onCreate()");
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         mSendHandlerThread = new HandlerThread("tcpSendThread");
         mSendHandlerThread.start();
@@ -169,6 +175,7 @@ public class SocketService extends Service {
 //            if (Preference.isLogin()) {
 //                    mIBackService.init();
 //            }
+            LogUtils.d(TAG,"initSocket");
             sendHeartMessageDelayed();//初始化成功后，就准备发送心跳包
         } catch (Exception e) {
             LogUtils.d(TAG, "server socket is disconnect.....");
@@ -234,11 +241,11 @@ public class SocketService extends Service {
 //                            LogUtils.d(TAG, message);
                             LogUtils.d(TAG, "read socket : " + socket.hashCode());
 
-                                //收到服务器过来的消息，就通过Broadcast发送出去
-                                if (message.equals(SocketHelper.HEART_BEAT_PONG_STRING)) {//处理心跳回复
-                                    Intent intent = new Intent(HEART_BEAT_ACTION);
-                                    mLocalBroadcastManager.sendBroadcast(intent);
-                                } else {
+                            //收到服务器过来的消息，就通过Broadcast发送出去
+                            if (message.equals(SocketHelper.HEART_BEAT_PONG_STRING)) {//处理心跳回复
+                                Intent intent = new Intent(HEART_BEAT_ACTION);
+                                mLocalBroadcastManager.sendBroadcast(intent);
+                            } else {
                                 //其他消息回复
                                 Intent intent = new Intent(MESSAGE_ACTION);
                                 intent.putExtra("message", message);

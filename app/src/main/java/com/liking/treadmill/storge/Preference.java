@@ -19,6 +19,7 @@ public class Preference extends AbsPreference {
     public static final String APP_UPDATE = "appUpdate";
     public static final String SCREEN_SAVE = "screenSaver";
     public static final String DOWNLOAD_APP_FILE = "downloadAppFile";
+    public static final String QCODE_URL = "qcode_url";
 
     /**
      * 清空SharedPreferences
@@ -105,5 +106,25 @@ public class Preference extends AbsPreference {
      */
     public static boolean setToken(String token) {
         return setObject(TOKEN, token);
+    }
+
+    /**
+     * 保存二维码url
+     *
+     * @param qcode_url url
+     * @return
+     */
+    public static boolean setQcodeUrl(String qcode_url) {
+        return setObject(QCODE_URL, qcode_url);
+    }
+
+    /**
+     * 获取二维码url
+     *
+     * @return
+     */
+    public static String getQCodeUrl() {
+        String qCodeUrl = (String) getObject(QCODE_URL, "");
+        return qCodeUrl;
     }
 }

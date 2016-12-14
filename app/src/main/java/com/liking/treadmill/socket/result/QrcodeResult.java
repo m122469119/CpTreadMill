@@ -28,7 +28,7 @@ public class QrcodeResult extends BaseSocketResult {
     }
 
     public static class QrcodeData {
-        @SerializedName("code_url")
+        @SerializedName("qcode_url")
         private String mCodeUrl;
 
         public String getCodeUrl() {

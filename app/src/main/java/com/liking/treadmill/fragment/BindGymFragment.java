@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aaron.android.framework.base.ui.BaseFragment;
+import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
 import com.liking.treadmill.R;
+import com.liking.treadmill.storge.Preference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,6 +32,12 @@ public class BindGymFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bind_gym, container, false);
         ButterKnife.bind(this, view);
+        initData();
         return view;
+    }
+
+    private void initData() {
+        String url = Preference.getQCodeUrl();
+        HImageLoaderSingleton.getInstance().loadImage(mQrcodeImageView,url);
     }
 }

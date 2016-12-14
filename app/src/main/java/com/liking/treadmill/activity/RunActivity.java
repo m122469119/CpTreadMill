@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.KeyEvent;
 import android.view.View;
@@ -55,6 +56,13 @@ public class RunActivity extends LikingTreadmillBaseActivity {
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             iBackService = IBackService.Stub.asInterface(iBinder);
             LogUtils.d(SocketService.TAG, "service is connected");
+            try {
+                LogUtils.d(SocketService.TAG, "上报设备信息start");
+                iBackService.reportDevices();
+                iBackService.login();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -81,23 +89,22 @@ public class RunActivity extends LikingTreadmillBaseActivity {
                 LogUtils.d(TAG, "receive msg: " + bytesToHexString(buffer));
                 if (buffer[2] == 0x00) {
                     LogUtils.d("aaron", "stop");
-                } else if (buffer[2] == 0x01){
+                } else if (buffer[2] == 0x01) {
                     LogUtils.d("aaron", "start");
                 }
             }
         });
     }
 
-    public static String bytesToHexString(byte[] src)
-    {
+    public static String bytesToHexString(byte[] src) {
         StringBuilder stringBuilder = new StringBuilder("");
-        if (src == null || src.length<= 0){
+        if (src == null || src.length <= 0) {
             return null;
         }
-        for(int i = 0;i < src.length;i++){
+        for (int i = 0; i < src.length; i++) {
             int v = src[i] & 0xFF;
             String hv = Integer.toHexString(v);
-            if(hv.length() < 2){
+            if (hv.length() < 2) {
                 stringBuilder.append(0);
             }
             stringBuilder.append(hv);
@@ -116,10 +123,10 @@ public class RunActivity extends LikingTreadmillBaseActivity {
         initAdViews();
         initDashboardImageView();
         initRunInfoViews();
-        Observable.interval(1, TimeUnit.SECONDS).subscribe(new Action1<Long>() {
+        Observable.interval(3, TimeUnit.SECONDS).subscribe(new Action1<Long>() {
             @Override
             public void call(Long aLong) {
-                launchFragment(new SettingFragment());
+              //  launchFragment(new SettingFragment());
             }
         });
     }
