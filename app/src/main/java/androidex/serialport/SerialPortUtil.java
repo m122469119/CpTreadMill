@@ -21,7 +21,6 @@ public class SerialPortUtil {
     private static SerialPortUtil portUtil;
     private OnDataReceiveListener onDataReceiveListener = null;
     private boolean isStop = false;
-    private byte[] mBuffer = new byte[40];
 
     public interface OnDataReceiveListener {
         void onDataReceive(byte[] buffer, int size);
@@ -104,42 +103,22 @@ public class SerialPortUtil {
 
     private class ReadThread extends Thread {
 
-        private int mCount = 0;
-
         @Override
         public void run() {
             super.run();
-            while (!isStop && !isInterrupted()) {
+            while (true) {
                 int size;
                 try {
-                    if (mInputStream == null) {
-                        return;
-                    }
-                    byte[] buffer = new byte[512];
+                    byte[] buffer = new byte[25];
+                    if (mInputStream == null) return;
                     size = mInputStream.read(buffer);
+
                     if (size > 0) {
-//                        LogUtils.d("aaron", "length is:" + size + ",data is:" + bytesToHexString(buffer));
-                        mBuffer[mCount] = buffer[0];
-                        if (mCount < mBuffer.length - 1) {
-                            mCount++;
-                        } else {
-                            for (int i = 0; i < mBuffer.length; i++) {
-                                if (i < mBuffer.length - 1) {
-                                    mBuffer[i] = mBuffer[i + 1];
-                                }
-                            }
-                        }
-//                        LogUtils.d("aaron", "length is:" + size + ",data is:" + bytesToHexString(mBuffer));
-                        if (null != onDataReceiveListener) {
-                            byte[] recevie = new byte[25];
-                            for (int i = 16; i < mBuffer.length; i++) {
-                                recevie[i - 16] = mBuffer[i];
-                            }
-                            onDataReceiveListener.onDataReceive(recevie, recevie.length);
+                        if (onDataReceiveListener != null) {
+                            onDataReceiveListener.onDataReceive(buffer, size);
                         }
                     }
-                    sleep(300);
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                     return;
                 }

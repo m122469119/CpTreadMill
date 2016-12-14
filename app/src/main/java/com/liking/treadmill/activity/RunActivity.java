@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 import rx.Observable;
 import rx.functions.Action1;
 
-public class RunActivity extends LikingTreadmillBaseActivity {
+public class RunActivity extends SerialPortActivity {
     public MessageBackReceiver mMessageBackReceiver = new MessageBackReceiver();
     @BindView(R.id.left_ad_imageView)
     HImageView mLeftAdImageView;
@@ -94,6 +94,16 @@ public class RunActivity extends LikingTreadmillBaseActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onDataReceive(byte[] buffer, int size) {
+        LogUtils.d(TAG, "size: " +  size  + " receive msg: " + bytesToHexString(buffer));
+//                if (buffer[2] == 0x00) {
+//                    LogUtils.d("aaron", "stop");
+//                } else if (buffer[2] == 0x01){
+//                    LogUtils.d("aaron", "start");
+//                }
     }
 
     public static String bytesToHexString(byte[] src) {

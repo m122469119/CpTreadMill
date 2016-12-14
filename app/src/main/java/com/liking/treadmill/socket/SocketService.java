@@ -178,7 +178,7 @@ public class SocketService extends Service {
             LogUtils.d(TAG,"initSocket");
             sendHeartMessageDelayed();//初始化成功后，就准备发送心跳包
         } catch (Exception e) {
-            LogUtils.d(TAG, "server socket is disconnect.....");
+            LogUtils.d(TAG, "server socket is disconnect....." + e.getMessage());
             sendReConnectMesasage(RECONNECT_DELAY);
         }
     }
