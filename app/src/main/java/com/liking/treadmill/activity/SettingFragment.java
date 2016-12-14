@@ -51,9 +51,9 @@ public class SettingFragment extends BaseFragment {
 
     private List<TabFragmentPagerAdapter.FragmentBinder> getMainFragmentList() {
         List<TabFragmentPagerAdapter.FragmentBinder> fragmentBinders = new ArrayList<>();
+        fragmentBinders.add(buildBindGymSettingFragmentBinder());
         fragmentBinders.add(buildNetworkSettingFragmentBinder());
         fragmentBinders.add(buildTreadmillSetupSettingFragmentBinder());
-        fragmentBinders.add(buildBindGymSettingFragmentBinder());
         return fragmentBinders;
     }
 

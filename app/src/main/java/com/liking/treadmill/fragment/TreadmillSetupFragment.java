@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
  * @version 1.0.0
  */
 
-public class TreadmillSetupFragment extends BaseFragment implements View.OnClickListener{
+public class TreadmillSetupFragment extends BaseFragment implements View.OnClickListener {
 
     @BindView(R.id.treadmill_rfid_TextView)
     TextView mTreadmillRfidTextView;
@@ -38,13 +38,15 @@ public class TreadmillSetupFragment extends BaseFragment implements View.OnClick
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_treadmill_setup, container, false);
         ButterKnife.bind(this, view);
-       // initData();
+        initData();
         return view;
     }
 
-    private void initData(){
-        Spanned text = Html.fromHtml("在" + "<font color=#25ff8c><b>RFID</b></font>" + "区域刷卡并识别有效访问后，才能启动跑步机");
+    private void initData() {
+        Spanned text = Html.fromHtml("在 " + "\"" + "<font color=#25ff8c><b>RFID</b></font>" + "\"" + " 区域刷卡并识别有效访问后，才能启动跑步机");
         mTreadmillRfidTextView.setText(text);
+        Spanned visitorText = Html.fromHtml("允许所有用户通过" + "<font color=#25ff8c><b>PROG</b></font>" + "+" + "<font color=#25ff8c><b>QUICK START</b></font>" + "的组合按键启动锻炼，锻炼5分钟后将自动停止");
+        mTreadmillSetupVisitorTextView.setText(visitorText);
     }
 
     @Override

@@ -3,157 +3,166 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@drawable/setting_background"
-              android:gravity="center"
-              android:orientation="vertical">
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginLeft="300dp"
-        android:layout_marginTop="100dp"
-        android:text="STEP 2"
-        android:textColor="@color/white"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginLeft="300dp"
-        android:layout_marginTop="20dp"
-        android:text="跑步机启动设置"
-        android:textColor="@color/white"
-        android:textSize="28sp"
-        android:textStyle="bold"/>
+              android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginLeft="300dp"
-        android:layout_marginTop="@dimen/spacing_24dp"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginTop="100dp"
+            android:text="@string/step_2"
+            android:textColor="@color/white"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginTop="24dp"
+            android:text="@string/run_start_setting"
+            android:textColor="@color/white"
+            android:textSize="28sp"
+            android:textStyle="bold"/>
 
         <LinearLayout
-            android:layout_width="240dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="80dp"
+            android:orientation="horizontal">
 
-            <ImageView
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/icon_bracelet"/>
+                android:layout_marginRight="50dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/treadmill_rfid_TextView"
+                <ImageView
+                    android:layout_width="460dp"
+                    android:layout_height="240dp"
+                    android:background="@mipmap/icon_bracelet"/>
+
+                <TextView
+                    android:id="@+id/treadmill_rfid_TextView"
+                    android:layout_width="460dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:lineSpacingMultiplier="1.5"
+                    android:textColor="@color/c7c7c8"
+                    android:textSize="22sp"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="在'FID' 区域刷卡并识别有效访问后，才能启动跑步机"
-                android:textColor="@color/c7c7c8"
-                android:textSize="@dimen/textsize_18sp"/>
+                android:layout_marginLeft="50dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/treadmill_setup_visitor_ImageView"
+                    android:layout_width="460dp"
+                    android:layout_height="240dp"
+                    android:background="@mipmap/icon_visitor_no_checked"/>
+
+                <TextView
+                    android:id="@+id/treadmill_setup_visitor_TextView"
+                    android:layout_width="460dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:lineSpacingMultiplier="1.5"
+                    android:textColor="@color/c7c7c8"
+                    android:textSize="22sp"/>
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="240dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/treadmill_setup_visitor_ImageView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@mipmap/icon_visitor_no_checked"/>
+            android:layout_marginTop="80dp"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/treadmill_setup_visitor_TextView"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:text="允许所有用户通过PROG+QUICK START的组合按键启动锻炼，锻炼5分钟后将自动停止"
-                android:textColor="@color/c7c7c8"
-                android:textSize="@dimen/textsize_18sp"/>
+                android:text="点击"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                android:textStyle="bold"/>
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/spacing_20dp"
+                android:background="@mipmap/icon_up"/>
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/spacing_20dp"
+                android:background="@mipmap/icon_down"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="点击MODE键两次确认选择，点击MODE键单次取消选择"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                android:textStyle="bold"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="请按"
+                android:textColor="@color/white"
+                android:textSize="32sp"
+                android:textStyle="bold"/>
+
+            <ImageView
+                android:layout_width="@dimen/spacing_20dp"
+                android:layout_height="@dimen/spacing_20dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:background="@mipmap/icon_next"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="进入下一步"
+                android:textColor="@color/white"
+                android:textSize="32sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginLeft="300dp"
-        android:layout_marginTop="40dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="点击"
-            android:textColor="@color/white"
-            android:textSize="22sp"
-            android:textStyle="bold"/>
-
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="@dimen/spacing_20dp"
-            android:background="@mipmap/icon_up"/>
-
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="@dimen/spacing_20dp"
-            android:background="@mipmap/icon_down"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="点击MODE键两次确认选择，点击MODE键单次取消选择"
-            android:textColor="@color/white"
-            android:textSize="22sp"
-            android:textStyle="bold"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="40dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="请按"
-            android:textColor="@color/white"
-            android:textSize="32sp"
-            android:textStyle="bold"/>
-
-
-        <ImageView
-            android:layout_width="@dimen/spacing_20dp"
-            android:layout_height="@dimen/spacing_20dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            android:background="@mipmap/icon_next"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="进入下一步"
-            android:textColor="@color/white"
-            android:textSize="32sp"
-            android:textStyle="bold"/>
-    </LinearLayout>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"/>
 </LinearLayout>

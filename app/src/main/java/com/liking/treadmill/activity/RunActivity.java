@@ -119,7 +119,7 @@ public class RunActivity extends LikingTreadmillBaseActivity {
         Observable.interval(1, TimeUnit.SECONDS).subscribe(new Action1<Long>() {
             @Override
             public void call(Long aLong) {
-//                launchFragment(new SettingFragment());
+                launchFragment(new SettingFragment());
             }
         });
     }
