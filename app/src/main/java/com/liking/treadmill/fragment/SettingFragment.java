@@ -1,4 +1,4 @@
-package com.liking.treadmill.activity;
+package com.liking.treadmill.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,12 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.adapter.TabFragmentPagerAdapter;
-import com.aaron.android.framework.base.ui.BaseFragment;
 import com.liking.treadmill.R;
-import com.liking.treadmill.fragment.BindGymFragment;
-import com.liking.treadmill.fragment.NetworkSettingFragment;
-import com.liking.treadmill.fragment.TreadmillSetupFragment;
+import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +25,15 @@ import butterknife.ButterKnife;
  * @version 1.0.0
  */
 
-public class SettingFragment extends BaseFragment {
+public class SettingFragment extends SerialPortFragment {
     private static final int INDEX_BIND_GYM = 0;
     private static final int INDEX_SETUP = 1;
     private static final int INDEX_NETWORK = 2;
     @BindView(R.id.setting_viewPager)
     ViewPager mSettingViewPager;
+
+    public SettingFragment() {
+    }
 
     @Nullable
     @Override
@@ -41,6 +42,35 @@ public class SettingFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         initViewPager();
         return view;
+    }
+
+    @Override
+    public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
+        super.onTreadKeyDown(keyCode, event);
+        if (keyCode.equals(LikingTreadKeyEvent.KEY_RETURN)) {
+            getActivity().getSupportFragmentManager().popBackStack();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LogUtils.d(TAG, "------onResume()");
+    }
+
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LogUtils.d(TAG, "------onPause()");
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LogUtils.d(TAG, "------onStop()");
     }
 
     private void initViewPager() {
