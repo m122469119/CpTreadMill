@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/run_bg"
+              android:gravity="center"
+              android:orientation="vertical">
+    <!--<FrameLayout-->
+        <!--android:id="@+id/update_layout"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+        <!--<com.liking.treadmill.widget.ColorfulRingProgressView-->
+            <!--android:id="@+id/update_colorfulring_progress"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--app:bgColor="#2A2B2C"-->
+            <!--app:fgColorEnd="#2CFE8A"-->
+            <!--app:fgColorStart="#22DCEB"-->
+            <!--app:percent="90"-->
+            <!--app:startAngle="0"-->
+            <!--app:strokeWidth="@dimen/colorfulringprogress_strokewidth"/>-->
+        <!--<TextView-->
+            <!--android:id="@+id/tvPercent"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:text="75"-->
+            <!--android:textColor="#000"-->
+            <!--android:textSize="34sp"/>-->
+    <!--</FrameLayout>-->
+</LinearLayout>
