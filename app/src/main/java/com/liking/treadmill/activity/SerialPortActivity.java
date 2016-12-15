@@ -18,24 +18,36 @@ package com.liking.treadmill.activity;
 
 import android.os.Bundle;
 
+import com.aaron.android.codelibrary.utils.LogUtils;
+import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
+
 import androidex.serialport.SerialPortUtil;
 
 
-public abstract class SerialPortActivity extends LikingTreadmillBaseActivity implements SerialPortUtil.OnDataReceiveListener {
-
-	private SerialPortUtil mSerialPortUtil;
+public abstract class SerialPortActivity extends LikingTreadmillBaseActivity implements SerialPortUtil.SerialPortCallback {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mSerialPortUtil = SerialPortUtil.getInstance();
-		mSerialPortUtil.onCreate();
-		mSerialPortUtil.setOnDataReceiveListener(this);
 	}
 
 	@Override
-	protected void onDestroy() {
-		mSerialPortUtil.closeSerialPort();
-		super.onDestroy();
+	protected void onResume() {
+		super.onResume();
+		LogUtils.d("SerialPortActivity", "------onResume()");
+		SerialPortUtil.getInstance().setSerialPortCallback(this);
+	}
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+		LogUtils.d("SerialPortActivity", "------onPause()");
+        SerialPortUtil.getInstance().setSerialPortCallback(null);
+    }
+
+
+	@Override
+	public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
+
 	}
 }

@@ -72,11 +72,12 @@ public class BaseActivity extends AppCompatActivity {
         }
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(containerViewId, fragment);
+        fragmentTransaction.replace(containerViewId, fragment);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
-    protected void launchFragment(Fragment fragment) {
+    public void launchFragment(Fragment fragment) {
         launchFragment(R.id.appbar_container_id, fragment);
     }
     @Override
