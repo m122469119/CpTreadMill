@@ -21,17 +21,21 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <service
             android:name=".socket.SocketService"/>
         <service android:name=".service.ApkDownloadService"/>
-
+        <!--更新界面-->
         <activity
             android:name=".activity.UpdateActivity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"/>
+        <!--待机页面-->
         <activity
             android:name=".activity.AwaitActionActivity"
             android:screenOrientation="landscape"/>
+        <!--网络服务-->
+        <service android:name=".service.NetworkStateService"/>
     </application>
 
 </manifest>

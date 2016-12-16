@@ -11,6 +11,7 @@ import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
 import com.liking.treadmill.R;
 import com.liking.treadmill.storge.Preference;
+import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,7 +24,7 @@ import butterknife.ButterKnife;
  * @version 1.0.0
  */
 
-public class BindGymFragment extends BaseFragment {
+public class BindGymFragment extends SerialPortFragment {
     @BindView(R.id.qrcode_imageView)
     HImageView mQrcodeImageView;
 
@@ -39,5 +40,11 @@ public class BindGymFragment extends BaseFragment {
     private void initData() {
         String url = Preference.getQCodeUrl();
         HImageLoaderSingleton.getInstance().loadImage(mQrcodeImageView,url);
+    }
+
+    @Override
+    public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
+        super.onTreadKeyDown(keyCode, event);
+
     }
 }
