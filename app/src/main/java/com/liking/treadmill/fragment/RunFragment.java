@@ -26,6 +26,7 @@ import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.utils.RunTimeUtil;
 
 import java.util.Date;
+import com.liking.treadmill.treadcontroller.SerialPortUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -78,6 +79,10 @@ public class RunFragment extends SerialPortFragment {
     private TextView mSpeedInfoTextView;
     private TextView mHotInfoTextView;
     private TextView mHeartRateInfoTextView;
+    private String mCurrentGrade = "";
+    private String mCurrentSpeed = "";
+    private String mHotInfo = "";
+    private String mHeartRate = "";
 
     private TextView mDistanceTextView;//距离
     private TextView mUseTimeTextView; //用时
@@ -210,6 +215,27 @@ public class RunFragment extends SerialPortFragment {
     private void destroyPauseCountTime() {
         if (mPauseCountdownTime != null) {
             mPauseCountdownTime.cancel();
+        }
+    }
+
+    @Override
+    public void handleTreadData(SerialPortUtil.TreadData treadData) {
+        super.handleTreadData(treadData);
+        if (!mCurrentGrade.equals(treadData.getCurrentGrade())) {
+            mCurrentGrade = treadData.getCurrentGrade();
+            mGradeInfoTextView.setText(mCurrentGrade);
+        }
+        if (!mCurrentSpeed.equals(treadData.getCurrentSpeed())) {
+            mCurrentSpeed = treadData.getCurrentSpeed();
+            mSpeedInfoTextView.setText(mCurrentSpeed);
+        }
+        if (!mHeartRate.equals(treadData.getHeartRate())) {
+            mHeartRate = treadData.getHeartRate();
+            mHeartRateInfoTextView.setText(mHeartRate);
+        }
+        if (!mHotInfo.equals(treadData.getHeartRate())) {
+            mHotInfo = treadData.getKCAL();
+            mHotInfoTextView.setText(mHotInfo);
         }
     }
 

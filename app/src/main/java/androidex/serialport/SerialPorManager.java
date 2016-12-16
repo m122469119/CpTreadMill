@@ -31,8 +31,7 @@ public class SerialPorManager {
     public interface SerialPortCallback {
         void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event);
 
-        void fanState(String fanState);
-
+        void handleTreadData(SerialPortUtil.TreadData treadData);
     }
 
     public void setSerialPortCallback(
@@ -124,9 +123,14 @@ public class SerialPorManager {
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                mSerialPortCallback.onTreadKeyDown(
-                                        SerialPortUtil.getKeyCodeFromSerialPort(serialPortData), new LikingTreadKeyEvent());
-                                mSerialPortCallback.fanState(SerialPortUtil.getFanState(serialPortData));
+                                if (mSerialPortCallback != null) {
+                                    mSerialPortCallback.onTreadKeyDown(
+                                            SerialPortUtil.getKeyCodeFromSerialPort(serialPortData), new LikingTreadKeyEvent());
+                                    SerialPortUtil.TreadData treadData = SerialPortUtil.getTreadData(serialPortData);
+                                    if (treadData != null) {
+                                        mSerialPortCallback.handleTreadData(treadData);
+                                    }
+                                }
                             }
                         });
 

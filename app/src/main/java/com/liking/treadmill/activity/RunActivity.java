@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
-import android.widget.Toast;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.liking.treadmill.fragment.AwaitActionFragment;

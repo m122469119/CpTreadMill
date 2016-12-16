@@ -3,6 +3,7 @@ package com.liking.treadmill.fragment;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.ui.BaseFragment;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
+import com.liking.treadmill.treadcontroller.SerialPortUtil;
 
 import androidex.serialport.SerialPorManager;
 
@@ -17,14 +18,23 @@ public abstract class SerialPortFragment extends BaseFragment implements SerialP
     @Override
     public void onResume() {
         super.onResume();
-        LogUtils.d("SerialPortFragment", "------onResume()");
-        SerialPorManager.getInstance().setSerialPortCallback(this);
+        LogUtils.d(TAG, "------onResume()");
+        if (!isInViewPager()) {
+            SerialPorManager.getInstance().setSerialPortCallback(this);
+        }
+    }
+
+    public boolean isInViewPager() {
+        return false;
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        LogUtils.d("SerialPortFragment", "------setUserVisibleHint():" + isVisibleToUser);
+        LogUtils.d(TAG, "------setUserVisibleHint():" + isVisibleToUser);
+        if (!isInViewPager()) {
+            return;
+        }
         if (isVisibleToUser) {
             SerialPorManager.getInstance().setSerialPortCallback(this);
         } else {
@@ -35,24 +45,30 @@ public abstract class SerialPortFragment extends BaseFragment implements SerialP
     @Override
     public void onPause() {
         super.onPause();
-        LogUtils.d("SerialPortFragment", "------onPause()");
-        SerialPorManager.getInstance().setSerialPortCallback(null);
+        LogUtils.d(TAG, "------onPause()");
+        if (!isInViewPager()) {
+            SerialPorManager.getInstance().setSerialPortCallback(null);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        LogUtils.d("SerialPortFragment", "------onStop()");
-        SerialPorManager.getInstance().setSerialPortCallback(null);
+        LogUtils.d(TAG, "------onStop()");
+        if (!isInViewPager()) {
+            SerialPorManager.getInstance().setSerialPortCallback(null);
+        }
     }
 
     @Override
     public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
-
+        if (keyCode.equals(LikingTreadKeyEvent.KEY_RETURN)) {
+//            getActivity().getSupportFragmentManager().popBackStack();
+        }
     }
 
     @Override
-    public void fanState(String fanState) {
-        
+    public void handleTreadData(SerialPortUtil.TreadData treadData) {
+
     }
 }

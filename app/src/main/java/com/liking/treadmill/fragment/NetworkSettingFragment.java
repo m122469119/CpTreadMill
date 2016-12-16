@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.message.SettingNextMessage;
@@ -43,8 +44,20 @@ public class NetworkSettingFragment extends SerialPortFragment {
     }
 
     @Override
+    public boolean isInViewPager() {
+        return true;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        LogUtils.d(TAG, "------setUserVisibleHint():" + isVisibleToUser);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        LogUtils.d(TAG, "------onResume()");
         setNetWorkState();
     }
 

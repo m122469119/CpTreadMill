@@ -1,6 +1,5 @@
 package com.liking.treadmill.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -10,10 +9,10 @@ import android.view.ViewGroup;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.adapter.TabFragmentPagerAdapter;
+import com.aaron.android.framework.base.ui.BaseFragment;
 import com.liking.treadmill.R;
 import com.liking.treadmill.message.SettingNextMessage;
 import com.liking.treadmill.storge.Preference;
-import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,7 @@ import butterknife.ButterKnife;
  * @version 1.0.0
  */
 
-public class SettingFragment extends SerialPortFragment {
+public class SettingFragment extends BaseFragment {
     private static final int INDEX_BIND_GYM = 0;
     private static final int INDEX_SETUP = 1;
     private static final int INDEX_NETWORK = 2;
@@ -44,15 +43,9 @@ public class SettingFragment extends SerialPortFragment {
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
         ButterKnife.bind(this, view);
         initViewPager();
+//        Intent intent =  new Intent(Settings.ACTION_APPLICATION_SETTINGS);
+//        startActivity(intent);
         return view;
-    }
-
-    @Override
-    public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
-        super.onTreadKeyDown(keyCode, event);
-        if (keyCode.equals(LikingTreadKeyEvent.KEY_RETURN)) {
-            getActivity().getSupportFragmentManager().popBackStack();
-        }
     }
 
     @Override

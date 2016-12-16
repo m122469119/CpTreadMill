@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
-import com.aaron.android.framework.base.ui.BaseFragment;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
 import com.liking.treadmill.R;
@@ -38,10 +37,27 @@ public class BindGymFragment extends SerialPortFragment {
         return view;
     }
 
+    @Override
+    public boolean isInViewPager() {
+        return true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LogUtils.d(TAG, "------onResume()");
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        LogUtils.d(TAG, "------setUserVisibleHint():" + isVisibleToUser);
+    }
+
     private void initData() {
         String url = Preference.getQCodeUrl();
-        LogUtils.d(TAG,url);
-        HImageLoaderSingleton.getInstance().loadImage(mQrcodeImageView,url);
+        LogUtils.d(TAG, url);
+        HImageLoaderSingleton.getInstance().loadImage(mQrcodeImageView, url);
     }
 
     @Override

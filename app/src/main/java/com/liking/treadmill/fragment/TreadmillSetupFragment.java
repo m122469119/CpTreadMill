@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.aaron.android.framework.base.ui.BaseFragment;
+import com.aaron.android.codelibrary.utils.LogUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.message.SettingNextMessage;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
@@ -46,6 +46,18 @@ public class TreadmillSetupFragment extends SerialPortFragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        LogUtils.d(TAG, "------onResume()");
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        LogUtils.d(TAG, "------setUserVisibleHint():" + isVisibleToUser);
+    }
+
     private void initData() {
         Spanned text = Html.fromHtml("在 " + "\"" + "<font color=#25ff8c><b>RFID</b></font>" + "\"" + " 区域刷卡并识别有效访问后，才能启动跑步机");
         mTreadmillRfidTextView.setText(text);
@@ -54,6 +66,10 @@ public class TreadmillSetupFragment extends SerialPortFragment {
     }
 
     @Override
+    public boolean isInViewPager() {
+        return true;
+    }
+
     public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode.equals(LikingTreadKeyEvent.KEY_NEXT)) {//下一步
