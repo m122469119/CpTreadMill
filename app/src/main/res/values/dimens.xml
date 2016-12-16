@@ -6,4 +6,5 @@
     <dimen name="run_ad_image_size">350dp</dimen>
     <dimen name="toolbar_height">100dp</dimen>
     <dimen name="colorfulringprogress_strokewidth">12dp</dimen>
+    <dimen name="textsize_30sp">30sp</dimen>
 </resources>

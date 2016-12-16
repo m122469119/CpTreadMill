@@ -7,6 +7,8 @@ import com.aaron.android.framework.utils.DisplayUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.liking.treadmill.R;
+import com.liking.treadmill.fragment.UpdateFragment;
 
 /**
  * 说明:
@@ -16,20 +18,11 @@ import butterknife.ButterKnife;
 
 public class UpdateActivity extends LikingTreadmillBaseActivity{
 
-//    @BindView(R.id.update_layout)
-//    FrameLayout mUpdateLayout;
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.layout_update);
-//        ButterKnife.bind(this);
-//        initView();
-//    }
-//
-//    public void initView() {
-//        int height = DisplayUtils.getHeightPixels();
-//        int mProgressHeight = height / 2;
-//        mUpdateLayout.getLayoutParams().width = mProgressHeight;
-//        mUpdateLayout.getLayoutParams().height = mProgressHeight;
-//    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_update);
+        launchFragment(new UpdateFragment());
+    }
+
 }
