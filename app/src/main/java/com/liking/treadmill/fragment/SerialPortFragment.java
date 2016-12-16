@@ -4,7 +4,7 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.ui.BaseFragment;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
-import androidex.serialport.SerialPortUtil;
+import androidex.serialport.SerialPorManager;
 
 /**
  * Created on 16/12/15.
@@ -13,12 +13,12 @@ import androidex.serialport.SerialPortUtil;
  * @version 1.0.0
  */
 
-public abstract class SerialPortFragment extends BaseFragment implements SerialPortUtil.SerialPortCallback {
+public abstract class SerialPortFragment extends BaseFragment implements SerialPorManager.SerialPortCallback {
     @Override
     public void onResume() {
         super.onResume();
         LogUtils.d("SerialPortFragment", "------onResume()");
-        SerialPortUtil.getInstance().setSerialPortCallback(this);
+        SerialPorManager.getInstance().setSerialPortCallback(this);
     }
 
     @Override
@@ -26,9 +26,9 @@ public abstract class SerialPortFragment extends BaseFragment implements SerialP
         super.setUserVisibleHint(isVisibleToUser);
         LogUtils.d("SerialPortFragment", "------setUserVisibleHint():" + isVisibleToUser);
         if (isVisibleToUser) {
-            SerialPortUtil.getInstance().setSerialPortCallback(this);
+            SerialPorManager.getInstance().setSerialPortCallback(this);
         } else {
-            SerialPortUtil.getInstance().setSerialPortCallback(null);
+            SerialPorManager.getInstance().setSerialPortCallback(null);
         }
     }
 
@@ -36,18 +36,23 @@ public abstract class SerialPortFragment extends BaseFragment implements SerialP
     public void onPause() {
         super.onPause();
         LogUtils.d("SerialPortFragment", "------onPause()");
-        SerialPortUtil.getInstance().setSerialPortCallback(null);
+        SerialPorManager.getInstance().setSerialPortCallback(null);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         LogUtils.d("SerialPortFragment", "------onStop()");
-        SerialPortUtil.getInstance().setSerialPortCallback(null);
+        SerialPorManager.getInstance().setSerialPortCallback(null);
     }
 
     @Override
     public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
 
+    }
+
+    @Override
+    public void fanState(String fanState) {
+        
     }
 }

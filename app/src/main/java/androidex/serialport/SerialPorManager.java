@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
-import com.liking.treadmill.treadcontroller.SerialPortReceiveUtil;
+import com.liking.treadmill.treadcontroller.SerialPortUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,20 +16,23 @@ import java.io.OutputStream;
  *
  * @author Jerome
  */
-public class SerialPortUtil {
-    private String TAG = SerialPortUtil.class.getSimpleName();
+public class SerialPorManager {
+    private String TAG = SerialPorManager.class.getSimpleName();
     private SerialPort mSerialPort;
     private OutputStream mOutputStream;
     private InputStream mInputStream;
     private ReadThread mReadThread;
     private final static String DEVICE = "/dev/ttyS3";
     private final static int BAUDRATE = 57600;
-    private static SerialPortUtil portUtil;
+    private static SerialPorManager portUtil;
     private SerialPortCallback mSerialPortCallback = null;
     private boolean isStop = false;
 
     public interface SerialPortCallback {
         void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event);
+
+        void fanState(String fanState);
+
     }
 
     public void setSerialPortCallback(
@@ -37,9 +40,9 @@ public class SerialPortUtil {
         mSerialPortCallback = dataReceiveListener;
     }
 
-    public static SerialPortUtil getInstance() {
+    public static SerialPorManager getInstance() {
         if (null == portUtil) {
-            portUtil = new SerialPortUtil();
+            portUtil = new SerialPorManager();
             portUtil.onCreate();
         }
         return portUtil;
@@ -122,7 +125,8 @@ public class SerialPortUtil {
                             @Override
                             public void run() {
                                 mSerialPortCallback.onTreadKeyDown(
-                                        SerialPortReceiveUtil.getKeyCodeFromSerialPort(serialPortData), new LikingTreadKeyEvent());
+                                        SerialPortUtil.getKeyCodeFromSerialPort(serialPortData), new LikingTreadKeyEvent());
+                                mSerialPortCallback.fanState(SerialPortUtil.getFanState(serialPortData));
                             }
                         });
 

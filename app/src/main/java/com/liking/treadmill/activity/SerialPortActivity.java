@@ -21,10 +21,10 @@ import android.os.Bundle;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
-import androidex.serialport.SerialPortUtil;
+import androidex.serialport.SerialPorManager;
 
 
-public abstract class SerialPortActivity extends LikingTreadmillBaseActivity implements SerialPortUtil.SerialPortCallback {
+public abstract class SerialPortActivity extends LikingTreadmillBaseActivity implements SerialPorManager.SerialPortCallback {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +35,14 @@ public abstract class SerialPortActivity extends LikingTreadmillBaseActivity imp
 	protected void onResume() {
 		super.onResume();
 		LogUtils.d("SerialPortActivity", "------onResume()");
-		SerialPortUtil.getInstance().setSerialPortCallback(this);
+		SerialPorManager.getInstance().setSerialPortCallback(this);
 	}
 
     @Override
     protected void onPause() {
         super.onPause();
 		LogUtils.d("SerialPortActivity", "------onPause()");
-        SerialPortUtil.getInstance().setSerialPortCallback(null);
+        SerialPorManager.getInstance().setSerialPortCallback(null);
     }
 
 
