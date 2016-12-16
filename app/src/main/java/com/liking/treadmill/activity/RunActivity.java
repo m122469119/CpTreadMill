@@ -11,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.liking.treadmill.fragment.RunFragment;
+import com.liking.treadmill.fragment.SettingFragment;
 import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
 import com.liking.treadmill.test.IBackService;
@@ -49,7 +50,7 @@ public class RunActivity extends LikingTreadmillBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        launchFragment(new RunFragment());
+        launchFragment(new SettingFragment());
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.adapter.TabFragmentPagerAdapter;
 import com.liking.treadmill.R;
+import com.liking.treadmill.message.SettingNextMessage;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
 import java.util.ArrayList;
@@ -59,7 +60,6 @@ public class SettingFragment extends SerialPortFragment {
     }
 
 
-
     @Override
     public void onPause() {
         super.onPause();
@@ -77,6 +77,7 @@ public class SettingFragment extends SerialPortFragment {
         TabFragmentPagerAdapter tabFragmentPagerAdapter = new TabFragmentPagerAdapter(getActivity(), getChildFragmentManager(), getMainFragmentList());
         mSettingViewPager.setAdapter(tabFragmentPagerAdapter);
         mSettingViewPager.setOffscreenPageLimit(1);
+        mSettingViewPager.setCurrentItem(0);
     }
 
     private List<TabFragmentPagerAdapter.FragmentBinder> getMainFragmentList() {
@@ -103,5 +104,15 @@ public class SettingFragment extends SerialPortFragment {
         return new TabFragmentPagerAdapter.FragmentBinder(INDEX_NETWORK,
                 getString(R.string.tab_network), 0,
                 NetworkSettingFragment.instantiate(getActivity(), NetworkSettingFragment.class.getName()));
+    }
+
+    @Override
+    protected boolean isEventTarget() {
+        return true;
+    }
+
+    public void onEvent(SettingNextMessage message) {
+        int nextFragment = message.getNext();
+        mSettingViewPager.setCurrentItem(nextFragment);
     }
 }

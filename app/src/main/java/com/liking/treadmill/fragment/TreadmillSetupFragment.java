@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.aaron.android.framework.base.ui.BaseFragment;
 import com.liking.treadmill.R;
+import com.liking.treadmill.message.SettingNextMessage;
+import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,7 +26,7 @@ import butterknife.ButterKnife;
  * @version 1.0.0
  */
 
-public class TreadmillSetupFragment extends BaseFragment implements View.OnClickListener {
+public class TreadmillSetupFragment extends SerialPortFragment implements View.OnClickListener {
 
     @BindView(R.id.treadmill_rfid_TextView)
     TextView mTreadmillRfidTextView;
@@ -52,5 +54,13 @@ public class TreadmillSetupFragment extends BaseFragment implements View.OnClick
     @Override
     public void onClick(View v) {
 
+    }
+
+    @Override
+    public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
+        super.onTreadKeyDown(keyCode, event);
+        if (keyCode.equals(LikingTreadKeyEvent.KEY_NEXT)) {
+            postEvent(new SettingNextMessage(2));
+        }
     }
 }
