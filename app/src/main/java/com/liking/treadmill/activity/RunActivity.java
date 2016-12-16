@@ -50,7 +50,7 @@ public class RunActivity extends LikingTreadmillBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        launchFragment(new SettingFragment());
+        launchFragment(new RunFragment());
     }
 
     @Override

@@ -21,9 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <service
             android:name=".socket.SocketService"/>
         <service android:name=".service.ApkDownloadService"/>
+        <!--网络服务-->
+        <service android:name=".service.NetworkStateService"/>
     </application>
 
 </manifest>

@@ -26,7 +26,7 @@ import butterknife.ButterKnife;
  * @version 1.0.0
  */
 
-public class TreadmillSetupFragment extends SerialPortFragment implements View.OnClickListener {
+public class TreadmillSetupFragment extends SerialPortFragment {
 
     @BindView(R.id.treadmill_rfid_TextView)
     TextView mTreadmillRfidTextView;
@@ -52,15 +52,14 @@ public class TreadmillSetupFragment extends SerialPortFragment implements View.O
     }
 
     @Override
-    public void onClick(View v) {
-
-    }
-
-    @Override
     public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
-        if (keyCode.equals(LikingTreadKeyEvent.KEY_NEXT)) {
+        if (keyCode.equals(LikingTreadKeyEvent.KEY_NEXT)) {//下一步
             postEvent(new SettingNextMessage(2));
+        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_GRADE_PLUS)) {//选中访客模式
+            mTreadmillSetupVisitorImageView.setBackgroundResource(R.mipmap.icon_visitor_checked);
+        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_GRADE_REDUCE)) {//取消访客模式
+            mTreadmillSetupVisitorImageView.setBackgroundResource(R.mipmap.icon_visitor_no_checked);
         }
     }
 }

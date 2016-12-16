@@ -6,11 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.message.SettingNextMessage;
+import com.liking.treadmill.message.WifiMessage;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
 import butterknife.BindView;
@@ -28,6 +30,9 @@ public class NetworkSettingFragment extends SerialPortFragment {
     ImageView mNetworkImageView;
     @BindView(R.id.network_connect_state)
     TextView mNetworkConnectState;
+    @BindView(R.id.layout_next)
+    LinearLayout mLayoutNext;
+    private boolean isNetwork;
 
     @Nullable
     @Override
@@ -45,21 +50,44 @@ public class NetworkSettingFragment extends SerialPortFragment {
 
     private void setNetWorkState() {
         if (EnvironmentUtils.Network.isNetWorkAvailable()) {
-            mNetworkImageView.setBackgroundResource(R.drawable.icon_connect_success);
-            mNetworkConnectState.setText("网络已连接");
+            setHaveWifiView();
         } else {
-            mNetworkImageView.setBackgroundResource(R.drawable.icon_connect_fail);
-            mNetworkConnectState.setText("网络未连接，请检查网络");
+            setNoWifiView();
         }
+    }
+
+    private void setHaveWifiView() {
+        mNetworkImageView.setBackgroundResource(R.drawable.icon_connect_success);
+        mNetworkConnectState.setText("网络已连接");
+        mLayoutNext.setVisibility(View.VISIBLE);
+        isNetwork = true;
+    }
+
+    private void setNoWifiView() {
+        mNetworkImageView.setBackgroundResource(R.drawable.icon_connect_fail);
+        mNetworkConnectState.setText("网络未连接，请检查网络");
+        mLayoutNext.setVisibility(View.GONE);
+        isNetwork = false;
     }
 
     @Override
     public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
-        if (keyCode.equals(LikingTreadKeyEvent.KEY_NEXT)) {
-            postEvent(new SettingNextMessage(1));
+        if (keyCode.equals(LikingTreadKeyEvent.KEY_NEXT)) {//下一步
+            if (isNetwork) {
+                postEvent(new SettingNextMessage(1));
+            }
         }
     }
 
+    @Override
+    protected boolean isEventTarget() {
+        return true;
+    }
 
+    public void onEvent(WifiMessage message) {
+        if (message != null && message.isHaveWifi()) {
+            setHaveWifiView();
+        }
+    }
 }
