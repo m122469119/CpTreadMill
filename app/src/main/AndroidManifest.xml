@@ -24,6 +24,14 @@
         <service
             android:name=".socket.SocketService"/>
         <service android:name=".service.ApkDownloadService"/>
+
+        <activity
+            android:name=".activity.UpdateActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".activity.AwaitActionActivity"
+            android:screenOrientation="landscape"/>
     </application>
 
 </manifest>
