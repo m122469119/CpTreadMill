@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.ui.BaseFragment;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
@@ -39,6 +40,7 @@ public class BindGymFragment extends SerialPortFragment {
 
     private void initData() {
         String url = Preference.getQCodeUrl();
+        LogUtils.d(TAG,url);
         HImageLoaderSingleton.getInstance().loadImage(mQrcodeImageView,url);
     }
 

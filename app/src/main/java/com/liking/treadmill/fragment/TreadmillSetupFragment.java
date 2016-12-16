@@ -35,6 +35,8 @@ public class TreadmillSetupFragment extends SerialPortFragment {
     @BindView(R.id.treadmill_setup_visitor_TextView)
     TextView mTreadmillSetupVisitorTextView;
 
+    private boolean isSelectModel = false;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,10 +58,12 @@ public class TreadmillSetupFragment extends SerialPortFragment {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode.equals(LikingTreadKeyEvent.KEY_NEXT)) {//下一步
             postEvent(new SettingNextMessage(2));
-        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_GRADE_PLUS)) {//选中访客模式
-            mTreadmillSetupVisitorImageView.setBackgroundResource(R.mipmap.icon_visitor_checked);
-        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_GRADE_REDUCE)) {//取消访客模式
-            mTreadmillSetupVisitorImageView.setBackgroundResource(R.mipmap.icon_visitor_no_checked);
+        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_MODE)) {//选中访客模式
+            if (!isSelectModel) {
+                mTreadmillSetupVisitorImageView.setBackgroundResource(R.mipmap.icon_visitor_checked);
+            } else {
+                mTreadmillSetupVisitorImageView.setBackgroundResource(R.mipmap.icon_visitor_no_checked);
+            }
         }
     }
 }

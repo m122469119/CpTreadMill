@@ -57,6 +57,16 @@
                     android:background="@mipmap/icon_bracelet"/>
 
                 <TextView
+                    android:layout_width="460dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:text="手环刷卡（默认选定，不可取消）"
+                    android:textColor="@color/c7c7c8"
+                    android:textSize="@dimen/textsize_16sp"
+                    />
+
+                <TextView
                     android:id="@+id/treadmill_rfid_TextView"
                     android:layout_width="460dp"
                     android:layout_height="wrap_content"
@@ -80,6 +90,16 @@
                     android:background="@mipmap/icon_visitor_no_checked"/>
 
                 <TextView
+                    android:layout_width="460dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:text="访客启动（可选）"
+                    android:textColor="@color/c7c7c8"
+                    android:textSize="@dimen/textsize_16sp"
+                    />
+
+                <TextView
                     android:id="@+id/treadmill_setup_visitor_TextView"
                     android:layout_width="460dp"
                     android:layout_height="wrap_content"
@@ -90,50 +110,23 @@
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="点击"
-                android:textColor="@color/white"
-                android:textSize="28sp"
-                android:textStyle="bold"/>
-
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/spacing_20dp"
-                android:background="@mipmap/icon_up"/>
-
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/spacing_20dp"
-                android:background="@mipmap/icon_down"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="点击MODE键两次确认选择，点击MODE键单次取消选择"
-                android:textColor="@color/white"
-                android:textSize="28sp"
-                android:textStyle="bold"/>
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="120dp"
             android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:gravity="center"
+                android:text="点击 MODE 选定或取消【访客启动】，"
+                android:textColor="@color/white"
+                android:textSize="32sp"
+                android:textStyle="bold"/>
 
             <TextView
                 android:layout_width="wrap_content"

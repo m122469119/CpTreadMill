@@ -1,6 +1,7 @@
 package com.liking.treadmill.socket;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.SecurityUtils;
@@ -22,7 +23,7 @@ import com.liking.treadmill.storge.Preference;
 public class SocketHelper {
 
     private static final String TYPE_HEART_BEAT = "replay";
-    private static final String TYPE_QRCODE_SHOW = "treadmill";
+    private static final String TYPE_QRCODE_SHOW = "qcode";
     private static final String TYPE_CHECK_CONFIRM = "check_confim";
     private static final String TYPE_VEDIO_PLAY_WARN = "vedio_play_warn";
     private static final String TYPE_VEDIO_PLAY = "vedio_begin_play";
@@ -47,7 +48,13 @@ public class SocketHelper {
         if (TYPE_QRCODE_SHOW.equals(type)) {//二维码展示消息
             QrcodeResult qrcodeResult = gson.fromJson(jsonText, QrcodeResult.class);
             String codeUrl = qrcodeResult.getQrcodeData().getCodeUrl();
-            Preference.setQcodeUrl(codeUrl);
+            LogUtils.d("codeUrl === ", codeUrl);
+            boolean codeUrlIsSucces = Preference.setQcodeUrl(codeUrl);
+            if (codeUrlIsSucces) {
+                LogUtils.d("aaron", "true");
+            }else{
+                LogUtils.d("aaron", "false");
+            }
 //        } else if (TYPE_CHECK_CONFIRM.equals(type)) {//验证消息
 //
 //        } else if (TYPE_VEDIO_PLAY_WARN.equals(type)) {//视频播放前提醒消息
