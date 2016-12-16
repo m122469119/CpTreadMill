@@ -18,6 +18,7 @@ public class ColorfulRingProgressView extends View {
 
     private float mPercent = 75;
     private float mStrokeWidth;
+
     private int mBgColor = 0xffe1e1e1;
     private float mStartAngle = 0;
     private int mFgColorStart = 0xffffe400;
@@ -72,7 +73,6 @@ public class ColorfulRingProgressView extends View {
         mPaint.setShader(null);
         mPaint.setColor(mBgColor);
         canvas.drawArc(mOval, 0, 360, false, mPaint);
-
         mPaint.setShader(mShader);
         canvas.drawArc(mOval, mStartAngle, mPercent * 3.6f, false, mPaint);
     }
@@ -80,9 +80,7 @@ public class ColorfulRingProgressView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-
         updateOval();
-
         mShader = new LinearGradient(mOval.left, mOval.top,
                 mOval.left, mOval.bottom, mFgColorStart, mFgColorEnd, Shader.TileMode.MIRROR);
     }
@@ -127,12 +125,23 @@ public class ColorfulRingProgressView extends View {
         requestLayout();
     }
 
+    public void setProgressColor(int bgColor, int fgColorStart, int fgColorEnd) {
+        this.mBgColor = bgColor;
+        this.mFgColorStart = fgColorStart;
+        this.mFgColorEnd = fgColorEnd;
+        updateOval();
+        mShader = new LinearGradient(mOval.left, mOval.top,
+                mOval.left, mOval.bottom, mFgColorStart, mFgColorEnd, Shader.TileMode.MIRROR);
+        refreshTheLayout();
+    }
+
     public int getFgColorStart() {
         return mFgColorStart;
     }
 
     public void setFgColorStart(int mFgColorStart) {
         this.mFgColorStart = mFgColorStart;
+        updateOval();
         mShader = new LinearGradient(mOval.left, mOval.top,
                 mOval.left, mOval.bottom, mFgColorStart, mFgColorEnd, Shader.TileMode.MIRROR);
         refreshTheLayout();
@@ -144,6 +153,7 @@ public class ColorfulRingProgressView extends View {
 
     public void setFgColorEnd(int mFgColorEnd) {
         this.mFgColorEnd = mFgColorEnd;
+        updateOval();
         mShader = new LinearGradient(mOval.left, mOval.top,
                 mOval.left, mOval.bottom, mFgColorStart, mFgColorEnd, Shader.TileMode.MIRROR);
         refreshTheLayout();

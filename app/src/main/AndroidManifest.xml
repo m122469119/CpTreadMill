@@ -23,6 +23,7 @@
         </activity>
         <service
             android:name=".socket.SocketService"/>
+        <service android:name=".service.ApkDownloadService"/>
     </application>
 
 </manifest>

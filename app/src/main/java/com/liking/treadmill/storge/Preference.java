@@ -21,6 +21,9 @@ public class Preference extends AbsPreference {
     public static final String DOWNLOAD_APP_FILE = "downloadAppFile";
     public static final String QCODE_URL = "qcode_url";
 
+
+    public static final String APP_SERVER_VERSION = "setserverversion";//服务器版本
+    public static final String APP_SERVER_VERSION_URL = "setserverversionurl";//服务器版本地址
     /**
      * 清空SharedPreferences
      */
@@ -126,5 +129,29 @@ public class Preference extends AbsPreference {
     public static String getQCodeUrl() {
         String qCodeUrl = (String) getObject(QCODE_URL, "");
         return qCodeUrl;
+    }
+
+    public static boolean setServerVersion(String sversion) {
+        return setObject(APP_SERVER_VERSION, sversion);
+    }
+
+    public static String getServerVersion() {
+        return (String) getObject(APP_SERVER_VERSION,"");
+    }
+
+    public static boolean getDownloadAppFile() {
+        return (boolean) getObject(DOWNLOAD_APP_FILE,false);
+    }
+
+    public static boolean setDownloadAppFile(boolean isDownload) {
+        return setObject(DOWNLOAD_APP_FILE, isDownload);
+    }
+
+    public static boolean setServerVersionUrl(String sversionurl) {
+        return setObject(APP_SERVER_VERSION_URL, sversionurl);
+    }
+
+    public static String getServerVersionUrl() {
+        return (String) getObject(APP_SERVER_VERSION_URL,"");
     }
 }

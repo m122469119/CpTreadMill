@@ -1,6 +1,7 @@
 package com.liking.treadmill.activity;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.widget.FrameLayout;
 
 import com.aaron.android.framework.utils.DisplayUtils;
@@ -25,4 +26,11 @@ public class UpdateActivity extends LikingTreadmillBaseActivity{
         launchFragment(new UpdateFragment());
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }
