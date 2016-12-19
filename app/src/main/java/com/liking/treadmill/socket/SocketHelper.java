@@ -10,7 +10,7 @@ import com.aaron.android.framework.base.BaseApplication;
 import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
-import com.liking.treadmill.activity.AwaitActionActivity;
+import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.socket.result.ApkUpdateResult;
 import com.liking.treadmill.socket.result.BaseSocketResult;
@@ -83,9 +83,9 @@ public class SocketHelper {
             BindUserResult.BindUserData bindUserData = bindUserResult.getData();
             if (bindUserData != null) {
                 if (bindUserData.getErrCode() == 0) {
+                    Preference.setStartingUp(false);
                     Preference.setBindUserGymId(bindUserData.getGymId());
-                    Intent intent = new Intent(context, AwaitActionActivity.class);
-                    context.startActivity(intent);
+                    EventBus.getDefault().post(new GymBindSuccessMessage());
                 }
             }
         } else if (TYPE_MEMBER_LIST.equals(type)) {//当前用户所在场馆的所有会员id

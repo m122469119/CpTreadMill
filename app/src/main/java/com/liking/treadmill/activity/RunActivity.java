@@ -11,9 +11,11 @@ import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.liking.treadmill.fragment.AwaitActionFragment;
 import com.liking.treadmill.fragment.SettingFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
 import com.liking.treadmill.fragment.WelcomeFragment;
+import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.message.UpdateCompleteMessage;
 import com.liking.treadmill.socket.MessageBackReceiver;
@@ -109,6 +111,14 @@ public class RunActivity extends LikingTreadmillBaseActivity {
     @Override
     protected boolean isEventTarget() {
         return true;
+    }
+
+    /**
+     * 绑定成功
+     * @param message
+     */
+    public void onEvent(GymBindSuccessMessage message) {
+        launchFragment(new AwaitActionFragment());
     }
 
     /**

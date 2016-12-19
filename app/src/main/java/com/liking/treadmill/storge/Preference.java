@@ -143,6 +143,11 @@ public class Preference extends AbsPreference {
         return qCodeUrl;
     }
 
+    /**
+     * 服务器版本号
+     * @param sversion
+     * @return
+     */
     public static boolean setServerVersion(String sversion) {
         return setObject(APP_SERVER_VERSION, sversion);
     }
@@ -151,6 +156,10 @@ public class Preference extends AbsPreference {
         return (String) getObject(APP_SERVER_VERSION, "");
     }
 
+    /**
+     * 是否下载apk
+     * @return
+     */
     public static boolean getDownloadAppFile() {
         return (boolean) getObject(DOWNLOAD_APP_FILE, false);
     }
@@ -159,6 +168,10 @@ public class Preference extends AbsPreference {
         return setObject(DOWNLOAD_APP_FILE, isDownload);
     }
 
+    /**
+     * 服务器版本apk下载地址
+     * @return
+     */
     public static boolean setServerVersionUrl(String sversionurl) {
         return setObject(APP_SERVER_VERSION_URL, sversionurl);
     }
@@ -167,6 +180,11 @@ public class Preference extends AbsPreference {
         return (String) getObject(APP_SERVER_VERSION_URL, "");
     }
 
+    /**
+     * 是否第一次开机
+     * @param isStartUp
+     * @return
+     */
     public static boolean setStartingUp(boolean isStartUp) {
         return setObject(IS_FIRST_STARTING_UP, isStartUp);
     }
