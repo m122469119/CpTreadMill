@@ -50,6 +50,7 @@ public class SerialPortUtil {
         private float mKCAL; //卡路里
         private int mTreadmillState;
         private int mCardIsValid;
+        private int runTime = 0;
 
         public int isCardIsValid() {
             return mCardIsValid;
@@ -226,6 +227,22 @@ public class SerialPortUtil {
         }
 
         /**
+         * 获取跑步时间
+         * @return
+         */
+        public int getRunTime() {
+            return runTime;
+        }
+
+        /**
+         * 设置跑步时间
+         * @param runTime
+         */
+        public void setRunTime(int runTime) {
+            this.runTime += runTime;
+        }
+
+        /**
          * 清空上次跑步数据
          */
         public void reset() {
@@ -233,7 +250,10 @@ public class SerialPortUtil {
             mCurrentGrade = 0;
             mDistance = 0;
             mKCAL = 0; //卡路里
+            runTime = 0;
         }
+
+
     }
 
     private static boolean checkSerialPortData(byte[] serialPortData) {

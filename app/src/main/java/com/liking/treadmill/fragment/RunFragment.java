@@ -97,7 +97,6 @@ public class RunFragment extends SerialPortFragment {
     private PauseCountdownTime mPauseCountdownTime;//60s 倒计时类
     private boolean isPause;//是否暂停
     private long currentDateSecond;//当前时间
-    private int runTime = 0;//计时跑步时间 单位s
 
     @Nullable
     @Override
@@ -145,6 +144,7 @@ public class RunFragment extends SerialPortFragment {
             mLayoutRun.setVisibility(View.GONE);
             mFinishLayout.setVisibility(View.GONE);
             mStartLayout.setVisibility(View.GONE);
+            SerialPortUtil.stopTreadMill();//暂停命令
             isPause = true;
             startPauseCountTime();
         } else if (keyCode == LikingTreadKeyEvent.KEY_STOP) {//结束
@@ -157,16 +157,17 @@ public class RunFragment extends SerialPortFragment {
             //运动结束跳转到完成界面
             destroyPauseCountTime();
             statisticsRunData();
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS) {
+            SerialPortUtil.getTreadInstance().reset();//情况数据
+        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS) {//速度加
             mSpeed += 10;
             SerialPortUtil.setSpeedInRunning(mSpeed);
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE) {
+        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE) {//速度减
             mSpeed -= 10;
             SerialPortUtil.setSpeedInRunning(mSpeed);
-        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {
+        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {//坡度+
             mGrade++;
             SerialPortUtil.setGradeInRunning(mGrade);
-        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE) {
+        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE) {//坡度减
             mGrade--;
             SerialPortUtil.setGradeInRunning(mGrade);
         }
@@ -179,7 +180,7 @@ public class RunFragment extends SerialPortFragment {
 
     private void statisticsRunData() {
         //用时
-        String userTime = RunTimeUtil.secToTime(runTime);
+        String userTime = RunTimeUtil.secToTime(SerialPortUtil.getTreadInstance().getRunTime());
         mUseTimeTextView.setText(userTime);
     }
 
@@ -204,7 +205,7 @@ public class RunFragment extends SerialPortFragment {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                runTime += 1;
+                SerialPortUtil.getTreadInstance().setRunTime(1);
             }
         }
     }
@@ -409,6 +410,15 @@ public class RunFragment extends SerialPortFragment {
         @Override
         public void onFinish() {
             //倒计时结束，运动结束跳转到完成界面
+            SerialPortUtil.stopTreadMill();
+            mPauseLayout.setVisibility(View.GONE);
+            mLayoutRun.setVisibility(View.GONE);
+            mFinishLayout.setVisibility(View.VISIBLE);
+            mStartLayout.setVisibility(View.GONE);
+            isPause = true;
+            //运动结束跳转到完成界面
+            statisticsRunData();
+            SerialPortUtil.getTreadInstance().reset();//情况数据
         }
     }
 }
