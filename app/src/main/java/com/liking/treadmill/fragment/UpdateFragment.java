@@ -16,6 +16,7 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.utils.DisplayUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
+import com.liking.treadmill.message.UpdateCompleteMessage;
 import com.liking.treadmill.mvp.presenter.AppUpdatePresenter;
 import com.liking.treadmill.mvp.view.AppUpdateView;
 import com.liking.treadmill.storge.Preference;
@@ -108,6 +109,7 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
                     updateHint.setText(ResourceUtils.getString(R.string.update_none));
                     updateProgress.setVisibility(View.GONE);
                     mProgressView.setPercent(100);
+                    exitUpdateView();
                 }
             }
 
@@ -161,7 +163,6 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
     public void updateDownloadCompleteView() {
         updateHint.setText(ResourceUtils.getString(R.string.update_download_install));
         updateProgress.setVisibility(View.GONE);
-        exitUpdateView();
     }
 
     @Override
@@ -173,11 +174,10 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
 
     @Override
     public void exitUpdateView() {
-//        this.getActivity().finish();
         apkUpdateHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-
+                postEvent(new UpdateCompleteMessage());
             }
         }, DELAYED_TIME_EXIT);
     }

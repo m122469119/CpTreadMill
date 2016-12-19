@@ -1,5 +1,6 @@
 package com.liking.treadmill.fragment;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -11,6 +12,7 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.adapter.TabFragmentPagerAdapter;
 import com.liking.treadmill.R;
 import com.liking.treadmill.message.SettingNextMessage;
+import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
 import java.util.ArrayList;
@@ -74,10 +76,29 @@ public class SettingFragment extends SerialPortFragment {
     }
 
     private void initViewPager() {
-        TabFragmentPagerAdapter tabFragmentPagerAdapter = new TabFragmentPagerAdapter(getActivity(), getChildFragmentManager(), getMainFragmentList());
+        final TabFragmentPagerAdapter tabFragmentPagerAdapter = new TabFragmentPagerAdapter(getActivity(), getChildFragmentManager(), getMainFragmentList());
         mSettingViewPager.setAdapter(tabFragmentPagerAdapter);
         mSettingViewPager.setOffscreenPageLimit(1);
         mSettingViewPager.setCurrentItem(0);
+        mSettingViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                android.support.v4.app.Fragment fragment = tabFragmentPagerAdapter.getItem(position);
+                if(fragment instanceof BindGymFragment) {
+                    Preference.setStartingUp(false);
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private List<TabFragmentPagerAdapter.FragmentBinder> getMainFragmentList() {

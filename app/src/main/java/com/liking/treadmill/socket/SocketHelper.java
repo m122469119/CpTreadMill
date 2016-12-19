@@ -11,10 +11,12 @@ import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
 import com.liking.treadmill.message.UpdateAppMessage;
+import com.liking.treadmill.message.UpdateCompleteMessage;
 import com.liking.treadmill.socket.result.ApkUpdateResult;
 import com.liking.treadmill.socket.result.BaseSocketResult;
 import com.liking.treadmill.socket.result.QrcodeResult;
 import com.liking.treadmill.storge.Preference;
+import com.liking.treadmill.utils.ApkUpdateUtils;
 
 import de.greenrobot.event.EventBus;
 
@@ -84,7 +86,9 @@ public class SocketHelper {
                 }
             }
             LogUtils.d(SocketService.TAG, "send updateMessage");
-            EventBus.getDefault().post(new UpdateAppMessage());
+            if(ApkUpdateUtils.isApkUpdate()) {
+                EventBus.getDefault().post(new UpdateAppMessage());
+            }
         }
     }
 

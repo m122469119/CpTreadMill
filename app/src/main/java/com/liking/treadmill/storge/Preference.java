@@ -20,6 +20,7 @@ public class Preference extends AbsPreference {
     public static final String SCREEN_SAVE = "screenSaver";
     public static final String DOWNLOAD_APP_FILE = "downloadAppFile";
     public static final String QCODE_URL = "qcode_url";
+    public static final String IS_FIRST_STARTING_UP = "isFirstStartingUp";
 
 
     public static final String APP_SERVER_VERSION = "setserverversion";//服务器版本
@@ -153,5 +154,13 @@ public class Preference extends AbsPreference {
 
     public static String getServerVersionUrl() {
         return (String) getObject(APP_SERVER_VERSION_URL,"");
+    }
+
+    public static boolean setStartingUp(boolean isStartUp) {
+        return setObject(IS_FIRST_STARTING_UP, isStartUp);
+    }
+
+    public static boolean getIsStartingUp() {
+        return (boolean) getObject(IS_FIRST_STARTING_UP,true);
     }
 }
