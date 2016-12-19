@@ -24,9 +24,11 @@
         />
 
     <RelativeLayout
+        android:id="@+id/layout_run"
         android:layout_width="0px"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:visibility="visible"
         android:background="@drawable/run_bg">
 
         <FrameLayout
@@ -112,6 +114,22 @@
                 android:layout_weight="1"/>
         </LinearLayout>
     </RelativeLayout>
+
+    <include
+        android:id="@+id/layout_pause"
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:visibility="gone"
+        layout="@layout/layout_pause"/>
+
+    <include
+        android:id="@+id/layout_finish"
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:visibility="gone"
+        layout="@layout/layout_finish"/>
 
     <com.aaron.android.framework.library.imageloader.HImageView xmlns:android="http://schemas.android.com/apk/res/android"
                                                                 xmlns:fresco="http://schemas.android.com/apk/res-auto"
