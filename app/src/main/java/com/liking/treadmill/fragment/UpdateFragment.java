@@ -26,7 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- *
+ * 说明:APK更新
  * @author chenlei
  */
 
@@ -46,7 +46,7 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
 
     private static final long DELAYED_TIME_EXIT = 2000;
 
-    private static final long DELAYED_TIME_ANIMATION= 1500;
+    private static final long DELAYED_TIME_ANIMATION= 2500;
 
     private Handler apkUpdateHandler = new Handler();
 
@@ -75,13 +75,8 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
         if(mAppUpdatePresenter == null) {
             mAppUpdatePresenter = new AppUpdatePresenter(getActivity(),this);
         }
-        if(mAppUpdatePresenter.checkTreadMillState()){//检查跑步机使用状态
-            exitUpdateView();
-        }
-        if(mAppUpdatePresenter.checkAppVersion()){
-            //转圈效果
-            startProgressAnimation();
-        }
+        //转圈效果
+        startProgressAnimation();
     }
 
     private void startProgressAnimation() {
@@ -94,21 +89,26 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
         anim.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                updateHint.setText("正在检查更新");
+                updateHint.setText(ResourceUtils.getString(R.string.update_check_version));
                 updateProgress.setVisibility(View.GONE);
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                updateHint.setText("正在安装更新");
-                updateProgress.setVisibility(View.VISIBLE);
+                mProgressView.setPercent(0);
                 mProgressView.setProgressColor(ResourceUtils.getColor(R.color.colorfulringprogress_bgcolor),
                         ResourceUtils.getColor(R.color.colorfulringprogress_fgcolorstart),
                         ResourceUtils.getColor(R.color.colorfulringprogress_fgcolorend));
-                mProgressView.setPercent(0);
-                Preference.setServerVersion("1.0.1");
-                Preference.setServerVersionUrl("http://down.360safe.com/360PermRoot/PermRoot.apk");
-                mAppUpdatePresenter.startDownloadApk();
+                if(mAppUpdatePresenter.checkAppVersion()){
+                    updateHint.setText(ResourceUtils.getString(R.string.update_install));
+                    updateProgress.setVisibility(View.VISIBLE);
+                    mAppUpdatePresenter.startDownloadApk();
+                } else {
+                    //已经是最新版本
+                    updateHint.setText(ResourceUtils.getString(R.string.update_none));
+                    updateProgress.setVisibility(View.GONE);
+                    mProgressView.setPercent(100);
+                }
             }
 
             @Override
@@ -121,7 +121,7 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
 
             }
         });
-        anim.setDuration(2500);
+        anim.setDuration(DELAYED_TIME_ANIMATION);
         anim.start();
     }
 
@@ -151,7 +151,7 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
 
     @Override
     public void updateProgressView(float percent) {
-        updateHint.setText("正在安装更新");
+        updateHint.setText(ResourceUtils.getString(R.string.update_install));
         updateProgress.setVisibility(View.VISIBLE);
         updateProgress.setText(percent + "%");
         mProgressView.setPercent(percent);
@@ -159,25 +159,27 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
 
     @Override
     public void updateDownloadCompleteView() {
-        updateHint.setText("已完成下载,更新中...");
+        updateHint.setText(ResourceUtils.getString(R.string.update_download_install));
         updateProgress.setVisibility(View.GONE);
+        exitUpdateView();
     }
 
     @Override
     public void updateFailView() {
-        updateHint.setText("更新失败!");
+        updateHint.setText(ResourceUtils.getString(R.string.update_fail));
         updateProgress.setVisibility(View.GONE);
-        apkUpdateHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                exitUpdateView();
-            }
-        }, DELAYED_TIME_EXIT);
+        exitUpdateView();
     }
 
     @Override
     public void exitUpdateView() {
-        this.getActivity().finish();
+//        this.getActivity().finish();
+        apkUpdateHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }, DELAYED_TIME_EXIT);
     }
 
     @Override

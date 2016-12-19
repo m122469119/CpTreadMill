@@ -8,12 +8,19 @@ import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.liking.treadmill.storge.Preference;
 
 /**
- * 说明:
+ * 说明:APK更新工具类
  * Author: chenlei
  * Time: 下午3:45
  */
 
 public class ApkUpdateUtils {
+
+    /**
+     * 检测跑步机状态,使用中退出更新 true使用中, false 待机
+     */
+    public boolean checkTreadMillState() {
+        return false;
+    }
 
     /**
      * 是否需要更新
@@ -26,7 +33,7 @@ public class ApkUpdateUtils {
     }
 
     /**
-     * 开始下载
+     * 开启下载
      */
     public static boolean startDownloadApk(Context context, ApkDownloaderManager.ApkDownloadListener listener) {
         if (EnvironmentUtils.Network.isNetWorkAvailable()) {//升级

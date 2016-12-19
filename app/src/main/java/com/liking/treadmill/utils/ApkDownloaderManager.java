@@ -34,10 +34,6 @@ public class ApkDownloaderManager {
         }
     }
 
-    public void setDownloadListener(ApkDownloadListener downloadListener) {
-        mDownloadListener = downloadListener;
-    }
-
     private void startDownloadApk(String downloadUrl, String downloadPath) {
         Intent intent = new Intent(mContext, ApkDownloadService.class);
         intent.putExtra(ApkDownloadService.EXTRA_DOWNLOAD_URL, downloadUrl);
@@ -55,18 +51,28 @@ public class ApkDownloaderManager {
             if (mDownloadListener != null) {
                 if (action.equals(ApkDownloadService.ACTION_DOWNLOADING)) {
                     int progress = intent.getIntExtra(ApkDownloadService.EXTRA_PROGRESS, 0);
-                    mDownloadListener.onDownloading(progress);
+                    if(mDownloadListener != null) {
+                        mDownloadListener.onDownloading(progress);
+                    }
                 } else if (action.equals(ApkDownloadService.ACTION_START_DOWNLOAD)) {
-//                    mDownloadApkProgressBar.setMax(intent.getIntExtra(FileDownloadService.EXTRA_APK_LENGTH, 0));
-                    mDownloadListener.onStartDownload(intent.getIntExtra(ApkDownloadService.EXTRA_APK_LENGTH, 0));
+                    if(mDownloadListener != null) {
+                        mDownloadListener.onStartDownload(intent.getIntExtra(ApkDownloadService.EXTRA_APK_LENGTH, 0));
+                    }
                 } else if (action.equals(ApkDownloadService.ACTION_DOWNLOAD_COMPLETE)) {
-                    mDownloadListener.onDownloadComplete();
+                    if(mDownloadListener != null) {
+                        mDownloadListener.onDownloadComplete();
+                    }
                     unregisterDownloadNewApkBroadcast();
+                    //自动安装后重启
                     if(!ApkController.install(intent.getStringExtra(ApkDownloadService.EXTRA_INSTALL_APK_PATH), mContext)){
-                        mDownloadListener.ononDownloadFail();
+                        if(mDownloadListener != null) {
+                            mDownloadListener.ononDownloadFail();
+                        }
                     }
                 } else if(action.equals(ApkDownloadService.ACTION_DOWNLOAD_FAIL)) {
-                    mDownloadListener.ononDownloadFail();
+                    if(mDownloadListener != null) {
+                        mDownloadListener.ononDownloadFail();
+                    }
                     unregisterDownloadNewApkBroadcast();
                 }
             }

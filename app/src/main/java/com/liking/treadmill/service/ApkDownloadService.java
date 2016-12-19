@@ -134,18 +134,17 @@ public class ApkDownloadService extends Service {
                         intent.putExtra(EXTRA_PROGRESS, totalLength);
                         sendBroadcast(intent);
                     }
-                    Preference.setDownloadAppFile(false);
                     FileUtils.rename(mTempFilePath, mFilePath);
                     intent = new Intent(ACTION_DOWNLOAD_COMPLETE);
                     intent.putExtra(EXTRA_INSTALL_APK_PATH, mFilePath);
                     sendBroadcast(intent);
                 }
             } catch (Exception e) {
-                Preference.setDownloadAppFile(false);
                 intent = new Intent(ACTION_DOWNLOAD_FAIL);
                 sendBroadcast(intent);
                 e.printStackTrace();
             } finally {
+                Preference.setDownloadAppFile(false);
                 try {
                     if (httpURLConnection != null) {
                         httpURLConnection.disconnect();

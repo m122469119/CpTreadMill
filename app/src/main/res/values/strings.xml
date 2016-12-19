@@ -6,4 +6,9 @@
     <string name="step_2">STEP 2</string>
     <string name="run_start_setting">跑步机启动设置</string>
     <string name="run_await_action">刷手环开启跑步机</string>
+    <string name="update_check_version">正在检查更新</string>
+    <string name="update_install">正在安装更新</string>
+    <string name="update_download_install">已完成下载,更新中...</string>
+    <string name="update_fail">更新失败</string>
+    <string name="update_none">已经是最新版本</string>
 </resources>

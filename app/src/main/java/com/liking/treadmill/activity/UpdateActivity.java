@@ -12,7 +12,7 @@ import com.liking.treadmill.R;
 import com.liking.treadmill.fragment.UpdateFragment;
 
 /**
- * 说明:
+ * 说明: APK更新
  * Author: chenlei
  * Time: 下午5:51
  */

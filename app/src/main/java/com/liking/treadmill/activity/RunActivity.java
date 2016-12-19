@@ -12,9 +12,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.liking.treadmill.fragment.RunFragment;
 import com.liking.treadmill.fragment.SettingFragment;
+import com.liking.treadmill.fragment.UpdateFragment;
+import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
 import com.liking.treadmill.test.IBackService;
+import com.liking.treadmill.utils.ApkUpdateUtils;
 
 public class RunActivity extends LikingTreadmillBaseActivity {
     public MessageBackReceiver mMessageBackReceiver = new MessageBackReceiver();
@@ -82,4 +85,15 @@ public class RunActivity extends LikingTreadmillBaseActivity {
         mIntentFilter.addAction(SocketService.MESSAGE_ACTION);
     }
 
+    /**
+     * 更新
+     * @param message
+     */
+    public void onEvent(UpdateAppMessage message) {
+        LogUtils.d(SocketService.TAG, RunActivity.class.getSimpleName() + "get updateMessage");
+        launchFragment(new UpdateFragment());
+//        if (updateApp) {
+//            DownLoadAppUtil.updateApp(this);
+//        }
+    }
 }

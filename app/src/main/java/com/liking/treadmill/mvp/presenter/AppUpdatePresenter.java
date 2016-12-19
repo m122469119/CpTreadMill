@@ -9,7 +9,7 @@ import com.liking.treadmill.utils.ApkUpdateUtils;
 import com.liking.treadmill.utils.ApkDownloaderManager;
 
 /**
- * 说明:
+ * 说明:更新
  * Author: chenlei
  * Time: 上午11:59
  */
@@ -23,18 +23,11 @@ public class AppUpdatePresenter extends BasePresenter<AppUpdateView> {
     }
 
     /**
-     * 检测跑步机状态,使用中退出更新 true使用中, false 待机
-     */
-    public boolean checkTreadMillState() {
-        return false;
-    }
-
-    /**
      * 检查更新是否需要更新,
      * @return
      */
     public boolean checkAppVersion() {
-        return true;//ApkUpdateUtils.isApkUpdate();
+        return ApkUpdateUtils.isApkUpdate();
     }
 
     /**
@@ -47,6 +40,10 @@ public class AppUpdatePresenter extends BasePresenter<AppUpdateView> {
             }
         }
     }
+
+    /**
+     * 下载监听
+     */
 
     private ApkDownloaderManager.ApkDownloadListener mApkDownloadListener = new ApkDownloaderManager.ApkDownloadListener() {
         @Override
@@ -62,7 +59,6 @@ public class AppUpdatePresenter extends BasePresenter<AppUpdateView> {
         public void onDownloading(int progress) {
             if(mView != null) {
                 int percent = progress * 100 / apkSize;
-
                 mView.updateProgressView(percent);
             }
         }

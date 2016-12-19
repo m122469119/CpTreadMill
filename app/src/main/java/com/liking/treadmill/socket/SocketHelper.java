@@ -5,13 +5,18 @@ import android.util.Log;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.SecurityUtils;
+import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.base.BaseApplication;
 import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
+import com.liking.treadmill.message.UpdateAppMessage;
+import com.liking.treadmill.socket.result.ApkUpdateResult;
 import com.liking.treadmill.socket.result.BaseSocketResult;
 import com.liking.treadmill.socket.result.QrcodeResult;
 import com.liking.treadmill.storge.Preference;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created on 16/11/16.
@@ -29,7 +34,7 @@ public class SocketHelper {
     private static final String TYPE_VEDIO_PLAY = "vedio_begin_play";
     private static final String TYPE_ENTER_WARN = "enter_warn";
     private static final String TYPE_SETCONFIG = "setconfig";
-    private static final String UPDATE_NOTIFY = "update_notify";
+    private static final String TYPE_UPDATE_NOTIFY = "update";
     private static final String TYPE_DEVICES = "treadmill";
     private static final String mTcpVersion = "v1.0";
 
@@ -65,8 +70,21 @@ public class SocketHelper {
 //
 //        } else if (TYPE_SETCONFIG.equals(type)) {//配置数据推送
 //
-//        } else if (UPDATE_NOTIFY.equals(type)) {//系统升级通知
+//        } else if (UPDATE_NOTIFY.equals(type)) {
 //
+        } else if(TYPE_UPDATE_NOTIFY.equals(type)) { //系统升级通知
+            ApkUpdateResult updateResult = gson.fromJson(jsonText, ApkUpdateResult.class);
+            ApkUpdateResult.ApkUpdateData updateData = updateResult.getApkUpdateData();
+            if(updateData != null) {
+                if(!StringUtils.isEmpty(updateData.getVersion())) {
+                    Preference.setServerVersion(updateData.getVersion());
+                }
+                if(!StringUtils.isEmpty(updateData.getUrl())) {
+                    Preference.setServerVersionUrl(updateData.getUrl());
+                }
+            }
+            LogUtils.d(SocketService.TAG, "send updateMessage");
+            EventBus.getDefault().post(new UpdateAppMessage());
         }
     }
 
