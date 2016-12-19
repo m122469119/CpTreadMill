@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
@@ -22,6 +23,9 @@ import com.aaron.android.framework.utils.PopupUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.RunActivity;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
+import com.liking.treadmill.utils.RunTimeUtil;
+
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -68,8 +72,18 @@ public class RunFragment extends SerialPortFragment {
     private TextView mHotInfoTextView;
     private TextView mHeartRateInfoTextView;
 
-    private Typeface mTypeFace;
+    private TextView mDistanceTextView;//距离
+    private TextView mUseTimeTextView; //用时
+    private TextView mAverageGradientTextView; //平均坡度
+    private TextView mAvergageSpeedTextView;   //平均速度
+    private TextView mConsumeKcalTextView;    //消耗热量
+    private TextView mAvergHraetRateTextView; //平均心率
+
+    private Typeface mTypeFace;//字体
     private PauseCountdownTime mPauseCountdownTime;//60s 倒计时类
+    private boolean isPause;//是否暂停
+    private long currentDateSecond;//当前时间
+    private int runTime = 0;//计时跑步时间 单位s
 
     @Nullable
     @Override
@@ -79,6 +93,9 @@ public class RunFragment extends SerialPortFragment {
         mTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Impact.ttf");
         mPauseCountdownTime = new PauseCountdownTime(60000, 1000);
         initPauseView();
+        mPauseLayout.setVisibility(View.GONE);
+        mLayoutRun.setVisibility(View.GONE);
+        mFinishLayout.setVisibility(View.VISIBLE);
         return mRootView;
     }
 
@@ -102,18 +119,67 @@ public class RunFragment extends SerialPortFragment {
         } else if (keyCode.equals(LikingTreadKeyEvent.KEY_RETURN)) {//返回
 //            getSupportFragmentManager().popBackStack();
             PopupUtils.showToast("Return");
+        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_START)) {//开始跑步
+            currentDateSecond = DateUtils.currentDataSeconds();
+            isPause = false;
+            startRunThread();
         } else if (keyCode.equals(LikingTreadKeyEvent.KEY_PAUSE)) {//暂停
             mPauseLayout.setVisibility(View.VISIBLE);
             mLayoutRun.setVisibility(View.GONE);
+            mFinishLayout.setVisibility(View.GONE);
+            isPause = true;
             startPauseCountTime();
         } else if (keyCode.equals(LikingTreadKeyEvent.KEY_START)) {//继续
             //继续回到上一次跑步界面
             mPauseLayout.setVisibility(View.GONE);
             mLayoutRun.setVisibility(View.VISIBLE);
+            mFinishLayout.setVisibility(View.GONE);
+            isPause = false;
             destroyPauseCountTime();
         } else if (keyCode.equals(LikingTreadKeyEvent.KEY_STOP)) {//结束
+            mPauseLayout.setVisibility(View.GONE);
+            mLayoutRun.setVisibility(View.GONE);
+            mFinishLayout.setVisibility(View.VISIBLE);
+            isPause = true;
             //运动结束跳转到完成界面
             destroyPauseCountTime();
+            statisticsRunData();
+        }
+    }
+
+
+    /***
+     * 跑步结束统计 距离 、用时、平均坡度、平均速度、消耗热量，平均心率
+     */
+    private void statisticsRunData() {
+        //用时
+        String userTime = RunTimeUtil.secToTime(runTime);
+        mUseTimeTextView.setText(userTime);
+    }
+
+
+    /**
+     * 开启跑步线程
+     */
+    private void startRunThread() {
+        RunThread runThread = new RunThread();
+        runThread.start();
+    }
+
+    /**
+     * 开启一个线程记录时间和距离等数据
+     */
+    private class RunThread extends Thread {
+        @Override
+        public void run() {
+            while (!isPause) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                runTime += 1;
+            }
         }
     }
 
@@ -168,6 +234,9 @@ public class RunFragment extends SerialPortFragment {
         initRunFinishViews();
     }
 
+    /***
+     * 初始化主界面
+     */
     private void initRunInfoViews() {
         View gradeCell = mRootView.findViewById(R.id.cell_grade);
         View speedCell = mRootView.findViewById(R.id.cell_speed);
@@ -207,6 +276,9 @@ public class RunFragment extends SerialPortFragment {
     }
 
 
+    /**
+     * 初始化结束跑步run
+     */
     private void initRunFinishViews() {
         View distanceView = mRootView.findViewById(R.id.layout_distance);
         View useTimeView = mRootView.findViewById(R.id.layout_user_time);
@@ -215,23 +287,50 @@ public class RunFragment extends SerialPortFragment {
         View consumeKcalView = mRootView.findViewById(R.id.layout_consume_kcal);
         View avergHraetRateView = mRootView.findViewById(R.id.layout_average_heart_rate);
 
-        setupRunFinishData(distanceView, "距离(KM)", "5.5", 24f, 32f);
-        setupRunFinishData(useTimeView, "用时", "02:33:33", 24f, 32f);
-        setupRunFinishData(averageGradientView, "平均坡度", "5.5", 20f, 24f);
-        setupRunFinishData(avergageSpeedView, "平均速度(KM/H)", "5.5", 20f, 24f);
-        setupRunFinishData(consumeKcalView, "消耗热烈(KCAL)", "5000", 20f, 24f);
-        setupRunFinishData(avergHraetRateView, "平均心率(BPM)", "100", 20f, 24f);
-        mRunTimeTextView.setText("2016-12-19 14:45");
+        setupRunFinishData(distanceView, "距离(KM)", 24f, 32f);
+        setupRunFinishData(useTimeView, "用时", 24f, 32f);
+        setupRunFinishData(averageGradientView, "平均坡度", 20f, 24f);
+        setupRunFinishData(avergageSpeedView, "平均速度(KM/H)", 20f, 24f);
+        setupRunFinishData(consumeKcalView, "消耗热量(KCAL)", 20f, 24f);
+        setupRunFinishData(avergHraetRateView, "平均心率(BPM)", 20f, 24f);
+        mRunTimeTextView.setText(DateUtils.formatDate("yyyy-MM-dd HH:mm", new Date()));
+
+        mDistanceTextView.setText("5.5");
+        mUseTimeTextView.setText("02:30:22");
+        mAverageGradientTextView.setText("5.5");
+        mAvergageSpeedTextView.setText("33");
+        mConsumeKcalTextView.setText("4555");
+        mAvergHraetRateTextView.setText("80");
     }
 
-    private void setupRunFinishData(View view, String title, String content, float titleSize, float contentSize) {
+    private void setupRunFinishData(View view, String title, float titleSize, float contentSize) {
         TextView titleTextView = (TextView) view.findViewById(R.id.info_title_textView);
         TextView contentTextView = (TextView) view.findViewById(R.id.info_content_textView);
         titleTextView.setText(title);
-        contentTextView.setText(content);
         contentTextView.setTypeface(mTypeFace);
         titleTextView.setTextSize(titleSize);
         contentTextView.setTextSize(contentSize);
+        switch (view.getId()) {
+            case R.id.layout_distance:
+                mDistanceTextView = contentTextView;
+                break;
+            case R.id.layout_user_time:
+                mUseTimeTextView = contentTextView;
+                break;
+            case R.id.layout_average_gradient:
+                mAverageGradientTextView = contentTextView;
+                break;
+            case R.id.layout_average_speed:
+                mAvergageSpeedTextView = contentTextView;
+                break;
+            case R.id.layout_consume_kcal:
+                mConsumeKcalTextView = contentTextView;
+                break;
+            case R.id.layout_average_heart_rate:
+                mAvergHraetRateTextView = contentTextView;
+                break;
+
+        }
     }
 
     private void initDashboardImageView() {
