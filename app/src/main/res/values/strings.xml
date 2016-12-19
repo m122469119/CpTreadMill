@@ -12,4 +12,5 @@
     <string name="update_fail">更新失败</string>
     <string name="update_none">已经是最新版本</string>
     <string name="run_welcom_hint">Hello,欢迎使用Liking Fit 智能跑步机</string>
+    <string name="this_run_finish">本次锻炼完成</string>
 </resources>

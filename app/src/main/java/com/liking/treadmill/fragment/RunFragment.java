@@ -3,13 +3,19 @@ package com.liking.treadmill.fragment;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
@@ -17,6 +23,9 @@ import com.aaron.android.framework.utils.PopupUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.RunActivity;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
+import com.liking.treadmill.utils.RunTimeUtil;
+
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,36 +38,166 @@ import butterknife.ButterKnife;
  */
 
 public class RunFragment extends SerialPortFragment {
-
-
     @BindView(R.id.left_ad_imageView)
     HImageView mLeftAdImageView;
     @BindView(R.id.dashboard_imageView)
     ImageView mDashboardImageView;
     @BindView(R.id.right_ad_imageView)
     HImageView mRightAdImageView;
+    @BindView(R.id.layout_run)
+    RelativeLayout mLayoutRun;
+
+    @BindView(R.id.count_down_TextView)
+    TextView mCountDownTextView;
+    @BindView(R.id.go_on_prompt_TextView)
+    TextView mGoOnPromptTextView;
+    @BindView(R.id.stop_prompt_TextView)
+    TextView mStopPromptTextView;
+    @BindView(R.id.go_on_right_prompt_TextView)
+    TextView mGoOnRightPromptTextView;
+    @BindView(R.id.go_on_left_prompt_TextView)
+    TextView mGoOnLeftPromptTextView;
+    @BindView(R.id.layout_pause)
+    LinearLayout mPauseLayout;
+
+    @BindView(R.id.layout_finish)
+    RelativeLayout mFinishLayout;
+    @BindView(R.id.run_time_TextView)
+    TextView mRunTimeTextView;
+
+
     private View mRootView;
     private TextView mGradeInfoTextView;
     private TextView mSpeedInfoTextView;
     private TextView mHotInfoTextView;
     private TextView mHeartRateInfoTextView;
 
+    private TextView mDistanceTextView;//距离
+    private TextView mUseTimeTextView; //用时
+    private TextView mAverageGradientTextView; //平均坡度
+    private TextView mAvergageSpeedTextView;   //平均速度
+    private TextView mConsumeKcalTextView;    //消耗热量
+    private TextView mAvergHraetRateTextView; //平均心率
+
+    private Typeface mTypeFace;//字体
+    private PauseCountdownTime mPauseCountdownTime;//60s 倒计时类
+    private boolean isPause;//是否暂停
+    private long currentDateSecond;//当前时间
+    private int runTime = 0;//计时跑步时间 单位s
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.activity_run, container, false);
         ButterKnife.bind(this, mRootView);
+        mTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Impact.ttf");
+        mPauseCountdownTime = new PauseCountdownTime(60000, 1000);
+        initPauseView();
+        mPauseLayout.setVisibility(View.GONE);
+        mLayoutRun.setVisibility(View.GONE);
+        mFinishLayout.setVisibility(View.VISIBLE);
         return mRootView;
     }
+
+    /**
+     * 设置暂停界面
+     */
+    private void initPauseView() {
+        mGoOnLeftPromptTextView.setText("点击 ");
+        mGoOnPromptTextView.setText("QUICK" + "\n" + "START");
+        mGoOnRightPromptTextView.setText(" 进入下一步");
+        Spanned visitorText = Html.fromHtml("点击 " + "<font color=#25ff8c><b>STOP</b></font>" + " 进入下一步");
+        mStopPromptTextView.setText(visitorText);
+    }
+
 
     @Override
     public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
-        if (keyCode.equals(LikingTreadKeyEvent.KEY_SET)) {
+        if (keyCode.equals(LikingTreadKeyEvent.KEY_SET)) {//参数设置
             ((RunActivity) getActivity()).launchFragment(SettingFragment.instantiate(getActivity(), SettingFragment.class.getName()));
-        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_RETURN)) {
+        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_RETURN)) {//返回
 //            getSupportFragmentManager().popBackStack();
             PopupUtils.showToast("Return");
+        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_START)) {//开始跑步
+            currentDateSecond = DateUtils.currentDataSeconds();
+            isPause = false;
+            startRunThread();
+        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_PAUSE)) {//暂停
+            mPauseLayout.setVisibility(View.VISIBLE);
+            mLayoutRun.setVisibility(View.GONE);
+            mFinishLayout.setVisibility(View.GONE);
+            isPause = true;
+            startPauseCountTime();
+        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_START)) {//继续
+            //继续回到上一次跑步界面
+            mPauseLayout.setVisibility(View.GONE);
+            mLayoutRun.setVisibility(View.VISIBLE);
+            mFinishLayout.setVisibility(View.GONE);
+            isPause = false;
+            destroyPauseCountTime();
+        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_STOP)) {//结束
+            mPauseLayout.setVisibility(View.GONE);
+            mLayoutRun.setVisibility(View.GONE);
+            mFinishLayout.setVisibility(View.VISIBLE);
+            isPause = true;
+            //运动结束跳转到完成界面
+            destroyPauseCountTime();
+            statisticsRunData();
+        }
+    }
+
+
+    /***
+     * 跑步结束统计 距离 、用时、平均坡度、平均速度、消耗热量，平均心率
+     */
+    private void statisticsRunData() {
+        //用时
+        String userTime = RunTimeUtil.secToTime(runTime);
+        mUseTimeTextView.setText(userTime);
+    }
+
+
+    /**
+     * 开启跑步线程
+     */
+    private void startRunThread() {
+        RunThread runThread = new RunThread();
+        runThread.start();
+    }
+
+    /**
+     * 开启一个线程记录时间和距离等数据
+     */
+    private class RunThread extends Thread {
+        @Override
+        public void run() {
+            while (!isPause) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                runTime += 1;
+            }
+        }
+    }
+
+    /**
+     * 开启倒计时
+     */
+    private void startPauseCountTime() {
+        if (mPauseCountdownTime != null) {
+            mPauseCountdownTime.start();
+        }
+    }
+
+    /**
+     * 销毁倒计时
+     */
+    private void destroyPauseCountTime() {
+        if (mPauseCountdownTime != null) {
+            mPauseCountdownTime.cancel();
         }
     }
 
@@ -82,12 +221,22 @@ public class RunFragment extends SerialPortFragment {
         LogUtils.d(TAG, "------onStop()");
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        destroyPauseCountTime();
+    }
+
     private void initViews() {
         initAdViews();
         initDashboardImageView();
         initRunInfoViews();
+        initRunFinishViews();
     }
 
+    /***
+     * 初始化主界面
+     */
     private void initRunInfoViews() {
         View gradeCell = mRootView.findViewById(R.id.cell_grade);
         View speedCell = mRootView.findViewById(R.id.cell_speed);
@@ -105,10 +254,9 @@ public class RunFragment extends SerialPortFragment {
 
     private void setupRunInfoCell(View cellView, String title) {
         TextView titleTextView = (TextView) cellView.findViewById(R.id.info_title_textView);
-        Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Impact.ttf");
         titleTextView.setText(title);
         TextView contentTextView = (TextView) cellView.findViewById(R.id.info_content_textView);
-        contentTextView.setTypeface(typeFace);
+        contentTextView.setTypeface(mTypeFace);
         switch (cellView.getId()) {
             case R.id.cell_grade:
                 mGradeInfoTextView = contentTextView;
@@ -127,6 +275,64 @@ public class RunFragment extends SerialPortFragment {
         }
     }
 
+
+    /**
+     * 初始化结束跑步run
+     */
+    private void initRunFinishViews() {
+        View distanceView = mRootView.findViewById(R.id.layout_distance);
+        View useTimeView = mRootView.findViewById(R.id.layout_user_time);
+        View averageGradientView = mRootView.findViewById(R.id.layout_average_gradient);
+        View avergageSpeedView = mRootView.findViewById(R.id.layout_average_speed);
+        View consumeKcalView = mRootView.findViewById(R.id.layout_consume_kcal);
+        View avergHraetRateView = mRootView.findViewById(R.id.layout_average_heart_rate);
+
+        setupRunFinishData(distanceView, "距离(KM)", 24f, 32f);
+        setupRunFinishData(useTimeView, "用时", 24f, 32f);
+        setupRunFinishData(averageGradientView, "平均坡度", 20f, 24f);
+        setupRunFinishData(avergageSpeedView, "平均速度(KM/H)", 20f, 24f);
+        setupRunFinishData(consumeKcalView, "消耗热量(KCAL)", 20f, 24f);
+        setupRunFinishData(avergHraetRateView, "平均心率(BPM)", 20f, 24f);
+        mRunTimeTextView.setText(DateUtils.formatDate("yyyy-MM-dd HH:mm", new Date()));
+
+        mDistanceTextView.setText("5.5");
+        mUseTimeTextView.setText("02:30:22");
+        mAverageGradientTextView.setText("5.5");
+        mAvergageSpeedTextView.setText("33");
+        mConsumeKcalTextView.setText("4555");
+        mAvergHraetRateTextView.setText("80");
+    }
+
+    private void setupRunFinishData(View view, String title, float titleSize, float contentSize) {
+        TextView titleTextView = (TextView) view.findViewById(R.id.info_title_textView);
+        TextView contentTextView = (TextView) view.findViewById(R.id.info_content_textView);
+        titleTextView.setText(title);
+        contentTextView.setTypeface(mTypeFace);
+        titleTextView.setTextSize(titleSize);
+        contentTextView.setTextSize(contentSize);
+        switch (view.getId()) {
+            case R.id.layout_distance:
+                mDistanceTextView = contentTextView;
+                break;
+            case R.id.layout_user_time:
+                mUseTimeTextView = contentTextView;
+                break;
+            case R.id.layout_average_gradient:
+                mAverageGradientTextView = contentTextView;
+                break;
+            case R.id.layout_average_speed:
+                mAvergageSpeedTextView = contentTextView;
+                break;
+            case R.id.layout_consume_kcal:
+                mConsumeKcalTextView = contentTextView;
+                break;
+            case R.id.layout_average_heart_rate:
+                mAvergHraetRateTextView = contentTextView;
+                break;
+
+        }
+    }
+
     private void initDashboardImageView() {
         AnimationDrawable animationDrawable = (AnimationDrawable) mDashboardImageView.getBackground();
         animationDrawable.start();
@@ -136,5 +342,25 @@ public class RunFragment extends SerialPortFragment {
     private void initAdViews() {
         HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.image_ad_run_left);
         HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, R.drawable.image_ad_run_right);
+    }
+
+    /**
+     * 60s倒计时
+     */
+    class PauseCountdownTime extends CountDownTimer {
+
+        public PauseCountdownTime(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            mCountDownTextView.setText(millisUntilFinished / 1000 + "s");
+        }
+
+        @Override
+        public void onFinish() {
+            //倒计时结束，运动结束跳转到完成界面
+        }
     }
 }
