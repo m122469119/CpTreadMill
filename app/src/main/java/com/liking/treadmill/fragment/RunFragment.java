@@ -65,6 +65,13 @@ public class RunFragment extends SerialPortFragment {
     @BindView(R.id.run_time_TextView)
     TextView mRunTimeTextView;
 
+    @BindView(R.id.layout_start)
+    LinearLayout mStartLayout;
+    @BindView(R.id.head_image)
+    HImageView mHeadHImageView;
+    @BindView(R.id.user_name_TextView)
+    TextView mUserNameTextView;
+
 
     private View mRootView;
     private TextView mGradeInfoTextView;
@@ -93,9 +100,6 @@ public class RunFragment extends SerialPortFragment {
         mTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Impact.ttf");
         mPauseCountdownTime = new PauseCountdownTime(60000, 1000);
         initPauseView();
-        mPauseLayout.setVisibility(View.GONE);
-        mLayoutRun.setVisibility(View.GONE);
-        mFinishLayout.setVisibility(View.VISIBLE);
         return mRootView;
     }
 
@@ -120,13 +124,19 @@ public class RunFragment extends SerialPortFragment {
 //            getSupportFragmentManager().popBackStack();
             PopupUtils.showToast("Return");
         } else if (keyCode.equals(LikingTreadKeyEvent.KEY_START)) {//开始跑步
+            mPauseLayout.setVisibility(View.GONE);
+            mLayoutRun.setVisibility(View.VISIBLE);
+            mFinishLayout.setVisibility(View.GONE);
+            mStartLayout.setVisibility(View.GONE);
             currentDateSecond = DateUtils.currentDataSeconds();
             isPause = false;
-            startRunThread();
+            startRunThread();//计时开始
+            destroyPauseCountTime();
         } else if (keyCode.equals(LikingTreadKeyEvent.KEY_PAUSE)) {//暂停
             mPauseLayout.setVisibility(View.VISIBLE);
             mLayoutRun.setVisibility(View.GONE);
             mFinishLayout.setVisibility(View.GONE);
+            mStartLayout.setVisibility(View.GONE);
             isPause = true;
             startPauseCountTime();
         } else if (keyCode.equals(LikingTreadKeyEvent.KEY_START)) {//继续
@@ -134,12 +144,14 @@ public class RunFragment extends SerialPortFragment {
             mPauseLayout.setVisibility(View.GONE);
             mLayoutRun.setVisibility(View.VISIBLE);
             mFinishLayout.setVisibility(View.GONE);
+            mStartLayout.setVisibility(View.GONE);
             isPause = false;
             destroyPauseCountTime();
         } else if (keyCode.equals(LikingTreadKeyEvent.KEY_STOP)) {//结束
             mPauseLayout.setVisibility(View.GONE);
             mLayoutRun.setVisibility(View.GONE);
             mFinishLayout.setVisibility(View.VISIBLE);
+            mStartLayout.setVisibility(View.GONE);
             isPause = true;
             //运动结束跳转到完成界面
             destroyPauseCountTime();

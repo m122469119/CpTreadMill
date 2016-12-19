@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/run_bg"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="100dp"
+        android:orientation="horizontal">
+
+        <com.aaron.android.framework.library.imageloader.HImageView
+            xmlns:fresco="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/head_image"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_gravity="center"
+            fresco:failureImage="@drawable/icon_head_default_image"
+            fresco:failureImageScaleType="centerCrop"
+            fresco:placeholderImage="@drawable/icon_head_default_image"
+            fresco:placeholderImageScaleType="centerCrop"
+            fresco:roundAsCircle="true"/>
+
+        <TextView
+            android:id="@+id/user_name_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/spacing_20dp"
+            android:text="雷达"
+            android:textColor="@color/white"
+            android:textSize="28sp"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="440dp"
+        android:layout_height="440dp"
+        android:layout_marginTop="80dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_start_back">
+
+        <ImageView
+            android:id="@+id/quick_start"
+            android:layout_width="260dp"
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/icon_quick_start"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/quick_start"
+            android:layout_centerHorizontal="true"
+            android:text="快速开始"
+            android:textColor="@color/c7c7c8"
+            android:textSize="28sp"/>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:gravity="center"
+        android:text="使用下方按钮进行选择"
+        android:textColor="@color/white"
+        android:textSize="32sp"/>
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/spacing_20dp"
+        android:background="@drawable/start_down_arrow"/>
+
+</LinearLayout>

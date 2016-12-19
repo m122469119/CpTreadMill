@@ -28,8 +28,8 @@
         android:layout_width="0px"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:visibility="visible"
-        android:background="@drawable/run_bg">
+        android:background="@drawable/run_bg"
+        android:visibility="visible">
 
         <FrameLayout
             android:id="@+id/layout_dashboard"
@@ -117,19 +117,27 @@
 
     <include
         android:id="@+id/layout_pause"
+        layout="@layout/layout_pause"
         android:layout_width="0px"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:visibility="gone"
-        layout="@layout/layout_pause"/>
+        android:visibility="gone"/>
 
     <include
         android:id="@+id/layout_finish"
+        layout="@layout/layout_finish"
         android:layout_width="0px"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:visibility="gone"
-        layout="@layout/layout_finish"/>
+        android:visibility="gone"/>
+
+    <include
+        android:id="@+id/layout_start"
+        layout="@layout/layout_start"
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:visibility="gone"/>
 
     <com.aaron.android.framework.library.imageloader.HImageView xmlns:android="http://schemas.android.com/apk/res/android"
                                                                 xmlns:fresco="http://schemas.android.com/apk/res-auto"
