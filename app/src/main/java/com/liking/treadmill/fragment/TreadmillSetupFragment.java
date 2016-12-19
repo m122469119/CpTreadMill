@@ -70,16 +70,18 @@ public class TreadmillSetupFragment extends SerialPortFragment {
         return true;
     }
 
-    public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
+    @Override
+    public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
-        if (keyCode.equals(LikingTreadKeyEvent.KEY_NEXT)) {//下一步
+        if (keyCode == LikingTreadKeyEvent.KEY_NEXT) {//下一步
             postEvent(new SettingNextMessage(2));
-        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_MODE)) {//选中访客模式
+        } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {//选中访客模式
             if (!isSelectModel) {
                 mTreadmillSetupVisitorImageView.setBackgroundResource(R.mipmap.icon_visitor_checked);
             } else {
                 mTreadmillSetupVisitorImageView.setBackgroundResource(R.mipmap.icon_visitor_no_checked);
             }
+            isSelectModel = !isSelectModel;
         }
     }
 }

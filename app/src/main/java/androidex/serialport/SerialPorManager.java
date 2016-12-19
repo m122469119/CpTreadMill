@@ -27,9 +27,10 @@ public class SerialPorManager {
     private static SerialPorManager portUtil;
     private SerialPortCallback mSerialPortCallback = null;
     private boolean isStop = false;
+    private final static int RESP_BYTE_LENGTH = 11;
 
     public interface SerialPortCallback {
-        void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event);
+        void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event);
 
         void handleTreadData(SerialPortUtil.TreadData treadData);
     }
@@ -64,47 +65,58 @@ public class SerialPorManager {
         }
     }
 
-    /**
-     * 发送指令到串口
-     *
-     * @param cmd
-     * @return
-     */
-    public boolean sendCmds(String cmd) {
-        boolean result = true;
-        byte[] mBuffer = (cmd + "\r\n").getBytes();
-//注意：我得项目中需要在每次发送后面加\r\n，大家根据项目项目做修改，也可以去掉，直接发送mBuffer  
-        try {
-            if (mOutputStream != null) {
-                mOutputStream.write(mBuffer);
-            } else {
-                result = false;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            result = false;
+    public void sendMessage(byte[] buffer) {
+        int index = 0;
+        if (buffer == null) {
+            return;
         }
-        return result;
+        if (buffer.length < RESP_BYTE_LENGTH) {
+            return;
+        }
+        byte[] message = new byte[RESP_BYTE_LENGTH + 5];
+        message[index++] = (byte) 0xAA;
+        message[index++] = (byte) 0x55;
+        message[index++] = buffer[0];
+        message[index++] = buffer[1];
+        message[index++] = buffer[2];
+        message[index++] = buffer[3];
+        message[index++] = buffer[4];
+        message[index++] = buffer[5];
+        message[index++] = buffer[6];
+        message[index++] = buffer[7];
+        message[index++] = buffer[8];
+        message[index++] = buffer[9];
+        message[index++] = buffer[10];
+        message[index++] = checkSum(2, 12, message);
+        message[index++] = (byte) 0xC3;
+        message[index++] = (byte) 0x3C;
+        if (mOutputStream != null) {
+            try {
+                mOutputStream.write(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public boolean sendBuffer(byte[] mBuffer) {
-        boolean result = true;
-        String tail = "\r\n";
-        byte[] tailBuffer = tail.getBytes();
-        byte[] mBufferTemp = new byte[mBuffer.length + tailBuffer.length];
-        System.arraycopy(mBuffer, 0, mBufferTemp, 0, mBuffer.length);
-        System.arraycopy(tailBuffer, 0, mBufferTemp, mBuffer.length, tailBuffer.length);
-        try {
-            if (mOutputStream != null) {
-                mOutputStream.write(mBufferTemp);
-            } else {
-                result = false;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            result = false;
+    public static byte checkSum(final int start, final int mEnd, byte[] bytes) {
+        int sum = 0;
+        if (bytes == null) return 0;
+        int length = bytes.length;
+        if (start < 0 || mEnd < 0 || start > mEnd || start >= length || mEnd >= length) {
+            return 0;
         }
-        return result;
+        for (int i = start; i <= mEnd; i++) {
+            sum += byteToInt(bytes[i]);
+        }
+        int n = (sum >> 0) & 0xFF;
+        byte b = (byte) n;
+        return b;
+    }
+
+    public static int byteToInt(byte b) {
+        //Java 总是把 byte 当做有符处理；我们可以通过将其和 0xFF 进行二进制与得到它的无符值
+        return b & 0xFF;
     }
 
     private class ReadThread extends Thread {

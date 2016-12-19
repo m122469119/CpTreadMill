@@ -1,6 +1,6 @@
 package com.liking.treadmill.treadcontroller;
 
-import com.aaron.android.codelibrary.utils.ConstantUtils;
+import androidex.serialport.SerialPorManager;
 
 /**
  * Created on 16/12/15.
@@ -10,9 +10,8 @@ import com.aaron.android.codelibrary.utils.ConstantUtils;
  */
 
 public class SerialPortUtil {
-    private final static String PROTOCOL_HEAD_1 = "aa";
-    private final static String PROTOCOL_HEAD_2 = "55";
-    private final static String RECIVIE_HEAD = "fa";
+    private final static int PROTOCOL_HEAD_1 = 0xAA;
+    private final static int PROTOCOL_HEAD_2 = 0x55;
     private final static int INDEX_KEY = 3;
     private final static int INDEX_SAFE_LOCK = 4;
     private final static int INDEX_OIL_PUMP = 5;
@@ -32,189 +31,225 @@ public class SerialPortUtil {
     private static TreadData sTreadData;
 
     public static class TreadData {
-        private String mSafeLock = "";
-        private String mOilPump = "";
-        private String mPowerState = "";
-        private String mCheck = "";
-        private String mCurrentSpeed = "";
-        private String mCurrentGrade = "";
-        private String mMaxGrade = "";
-        private String mErrorCode = "";
-        private String mHeartRate = "";
-        private String mPowerAd = "";
-        private String mCheckGradeCountDown = "";
-        private String mVersion = "";
-        private String mIcId = "";
-        private String mStepCount = "";
-        private String mFanState = "";
+        private int mSafeLock;
+        private int mOilPump;
+        private int mPowerState;
+        private int mCheck;
+        private int mCurrentSpeed;
+        private int mCurrentGrade;
+        private int mMaxGrade;
+        private int mErrorCode;
+        private int mHeartRate;
+        private int mPowerAd;
+        private int mCheckGradeCountDown;
+        private int mVersion;
+        private int mIcId;
+        private int mStepCount;
+        private int mFanState;
         private float mDistance;
         private float mKCAL; //卡路里
+        private int mTreadmillState;
+        private int mCardIsValid;
 
-        public String getSafeLock() {
-            return mSafeLock;
+        public int isCardIsValid() {
+            return mCardIsValid;
         }
 
-        public void setSafeLock(String safeLock) {
-            mSafeLock = safeLock;
+        public void setCardIsValid(int cardIsValid) {
+            mCardIsValid = cardIsValid;
         }
 
-        public String getOilPump() {
-            return mOilPump;
-        }
-
-        public void setOilPump(String oilPump) {
-            mOilPump = oilPump;
-        }
-
-        public String getPowerState() {
-            return mPowerState;
-        }
-
-        public void setPowerState(String powerState) {
-            mPowerState = powerState;
-        }
-
-        public String getCheck() {
-            return mCheck;
-        }
-
-        public void setCheck(String check) {
-            mCheck = check;
-        }
-
-        public String getCurrentSpeed() {
-            return mCurrentSpeed;
-        }
-
-        public void setCurrentSpeed(String currentSpeed) {
-            mCurrentSpeed = currentSpeed;
-        }
-
-        public String getCurrentGrade() {
-            return mCurrentGrade;
-        }
-
-        public void setCurrentGrade(String currentGrade) {
-            mCurrentGrade = currentGrade;
-        }
-
-        public String getMaxGrade() {
-            return mMaxGrade;
-        }
-
-        public void setMaxGrade(String maxGrade) {
-            mMaxGrade = maxGrade;
-        }
-
-        public String getErrorCode() {
-            return mErrorCode;
-        }
-
-        public void setErrorCode(String errorCode) {
-            mErrorCode = errorCode;
-        }
-
-        public String getHeartRate() {
-            return mHeartRate;
-        }
-
-        public void setHeartRate(String heartRate) {
-            mHeartRate = heartRate;
-        }
-
-        public String getPowerAd() {
-            return mPowerAd;
-        }
-
-        public void setPowerAd(String powerAd) {
-            mPowerAd = powerAd;
-        }
-
-        public String getCheckGradeCountDown() {
-            return mCheckGradeCountDown;
-        }
-
-        public void setCheckGradeCountDown(String checkGradeCountDown) {
-            mCheckGradeCountDown = checkGradeCountDown;
-        }
-
-        public String getVersion() {
-            return mVersion;
-        }
-
-        public void setVersion(String version) {
-            mVersion = version;
-        }
-
-        public String getIcId() {
-            return mIcId;
-        }
-
-        public void setIcId(String icId) {
-            mIcId = icId;
-        }
-
-        public String getStepCount() {
-            return mStepCount;
-        }
-
-        public void setStepCount(String stepCount) {
-            mStepCount = stepCount;
-        }
-
-        public String getFanState() {
+        public int getFanState() {
             return mFanState;
         }
 
-        public void setFanState(String fanState) {
+        public void setFanState(byte fanState) {
             mFanState = fanState;
         }
 
+        public int getSafeLock() {
+            return mSafeLock;
+        }
+
+        public void setSafeLock(byte safeLock) {
+            mSafeLock = safeLock;
+        }
+
+        public int getOilPump() {
+            return mOilPump;
+        }
+
+        public void setOilPump(byte oilPump) {
+            mOilPump = oilPump;
+        }
+
+        public int getPowerState() {
+            return mPowerState;
+        }
+
+        public void setPowerState(byte powerState) {
+            mPowerState = powerState;
+        }
+
+        public int getCheck() {
+            return mCheck;
+        }
+
+        public void setCheck(byte check) {
+            mCheck = check;
+        }
+
+        public int getCurrentSpeed() {
+            return mCurrentSpeed;
+        }
+
+        public void setCurrentSpeed(byte currentSpeed) {
+            mCurrentSpeed = currentSpeed;
+        }
+
+        public int getCurrentGrade() {
+            return mCurrentGrade;
+        }
+
+        public void setCurrentGrade(byte currentGrade) {
+            mCurrentGrade = currentGrade;
+        }
+
+        public int getMaxGrade() {
+            return mMaxGrade;
+        }
+
+        public void setMaxGrade(byte maxGrade) {
+            mMaxGrade = maxGrade;
+        }
+
+        public int getErrorCode() {
+            return mErrorCode;
+        }
+
+        public void setErrorCode(byte errorCode) {
+            mErrorCode = errorCode;
+        }
+
+        public int getHeartRate() {
+            return mHeartRate;
+        }
+
+        public void setHeartRate(byte heartRate) {
+            mHeartRate = heartRate;
+        }
+
+        public int getPowerAd() {
+            return mPowerAd;
+        }
+
+        public void setPowerAd(byte powerAd) {
+            mPowerAd = powerAd;
+        }
+
+        public int getCheckGradeCountDown() {
+            return mCheckGradeCountDown;
+        }
+
+        public void setCheckGradeCountDown(byte checkGradeCountDown) {
+            mCheckGradeCountDown = checkGradeCountDown;
+        }
+
+        public int getVersion() {
+            return mVersion;
+        }
+
+        public void setVersion(byte version) {
+            mVersion = version;
+        }
+
+        public int getIcId() {
+            return mIcId;
+        }
+
+        public void setIcId(byte icId) {
+            mIcId = icId;
+        }
+
+        public int getStepCount() {
+            return mStepCount;
+        }
+
+        public void setStepCount(byte stepCount) {
+            mStepCount = stepCount;
+        }
+
+        /**
+         * 单位时间内距离
+         *
+         * @return
+         */
         public float getDistance() {
-            mDistance = (float) (Float.parseFloat(mCurrentSpeed) / 36.0);
-            return mDistance;
+            return (float) (mCurrentSpeed / 36.0);
         }
 
-        public String getKCAL() {
-            mKCAL = mKCAL + (float) (0.0703 * (1 + Float.parseFloat(getCurrentGrade()) / 100) * getDistance());
-            return String.valueOf(mKCAL);
+        public void setTreadmillState(int treadmillState) {
+            mTreadmillState = treadmillState;
         }
 
+        public int getTreadmillState() {
+            return mTreadmillState;
+        }
+
+        /**
+         * 跑步机是否正在运行
+         * @return
+         */
+        public boolean isRunning() {
+            return mTreadmillState == BYTE_TREADMILL_RUNNING;
+        }
+
+        /**
+         * 总距离
+         *
+         * @return
+         */
+        public float getTotalDistance() {
+            mDistance += getDistance();
+            return getTotalDistance();
+        }
+
+        /**
+         * 消耗的总卡路里
+         *
+         * @return
+         */
+        public float getKCAL() {
+            mKCAL += +(float) (0.0703 * (1 + getCurrentGrade() / 100) * getDistance());
+            return mKCAL;
+        }
+
+        /**
+         * 清空上次跑步数据
+         */
         public void reset() {
-            mSafeLock = "";
-            mOilPump = "";
-            mPowerState = "";
-            mCheck = "";
-            mCurrentSpeed = "";
-            mCurrentGrade = "";
-            mMaxGrade = "";
-            mErrorCode = "";
-            mHeartRate = "";
-            mPowerAd = "";
-            mCheckGradeCountDown = "";
-            mVersion = "";
-            mIcId = "";
-            mStepCount = "";
-            mFanState = "";
+            mCurrentSpeed = 0;
+            mCurrentGrade = 0;
             mDistance = 0;
             mKCAL = 0; //卡路里
         }
     }
+
     private static boolean checkSerialPortData(byte[] serialPortData) {
         if (serialPortData == null) {
             return false;
         }
-        if (PROTOCOL_HEAD_1.equals(byteToHexString(serialPortData[0])) && PROTOCOL_HEAD_2.equals(byteToHexString(serialPortData[1]))) {
+        if (((byte) PROTOCOL_HEAD_1) == serialPortData[0] && ((byte) PROTOCOL_HEAD_2) == serialPortData[1]) {
             return true;
         }
         return false;
     }
 
-    public static String getKeyCodeFromSerialPort(byte[] serialPortData) {
+    public static byte getKeyCodeFromSerialPort(byte[] serialPortData) {
         if (!checkSerialPortData(serialPortData)) {
             return LikingTreadKeyEvent.KEY_NONE;
         }
-        return byteToHexString(serialPortData[INDEX_KEY]);
+        return serialPortData[INDEX_KEY];
     }
 
     public static TreadData getTreadData(byte[] serialPortData) {
@@ -227,10 +262,8 @@ public class SerialPortUtil {
         sTreadData.setSafeLock(getIndexData(serialPortData, INDEX_SAFE_LOCK));
         sTreadData.setCheck(getIndexData(serialPortData, INDEX_CHECK));
         sTreadData.setCheckGradeCountDown(getIndexData(serialPortData, INDEX_CHECK_GRADE_COUNT_DOWN));
-//        treadData.setCurrentGrade(getIndexData(serialPortData, INDEX_CURRENT_GRADE));
-        sTreadData.setCurrentGrade("5.5");
-//        treadData.setCurrentSpeed(getIndexData(serialPortData, INDEX_CURRENT_SPEED));
-        sTreadData.setCurrentSpeed("6");
+        sTreadData.setCurrentGrade(getIndexData(serialPortData, INDEX_CURRENT_GRADE));
+        sTreadData.setCurrentSpeed(getIndexData(serialPortData, INDEX_CURRENT_SPEED));
         sTreadData.setErrorCode(getIndexData(serialPortData, INDEX_ERROR_CODE));
         sTreadData.setFanState(getIndexData(serialPortData, INDEX_FAN_STATE));
         sTreadData.setHeartRate(getIndexData(serialPortData, INDEX_HEART_RATE));
@@ -242,27 +275,23 @@ public class SerialPortUtil {
         return sTreadData;
     }
 
-    private static String getIndexData(byte[] serialPortData, int index, String defaultStr) {
+    private static byte getIndexData(byte[] serialPortData, int index) {
         if (!checkSerialPortData(serialPortData)) {
-            return defaultStr;
+            return BYTE_NONE;
         }
-        return byteToHexString(serialPortData[index]);
+        return serialPortData[index];
     }
 
-    private static String getIndexData(byte[] serialPortData, int index) {
-        return getIndexData(serialPortData, index, ConstantUtils.BLANK_STRING);
-    }
-
-    public static String byteToHexString(byte b) {
-        StringBuilder hexString = new StringBuilder("");
-        int v = b & 0xFF;
-        String hv = Integer.toHexString(v);
-        if (hv.length() < 2) {
-            hexString.append(0);
-        }
-        hexString.append(hv);
-        return hexString.toString();
-    }
+//    public static String byteToHexString(byte b) {
+//        StringBuilder hexString = new StringBuilder("");
+//        int v = b & 0xFF;
+//        String hv = Integer.toHexString(v);
+//        if (hv.length() < 2) {
+//            hexString.append(0);
+//        }
+//        hexString.append(hv);
+//        return hexString.toString();
+//    }
 
     public final static class FanState {
         public final static String FAN_STATE_STOP = "00";
@@ -289,6 +318,7 @@ public class SerialPortUtil {
         public final static String NO_CHECK = "00";
         public final static String CHECKING = "01";
     }
+
 
     enum ErrorCode {
         NONE("00", "无故障"),
@@ -342,5 +372,81 @@ public class SerialPortUtil {
         }
     }
 
+
+    private final static int BYTE_NONE = 0x00;
+    private final static int BTYE_CONTROL = (byte) 0xE2;
+
+    private final static int BYTE_TREADMILL_STOP = 0x00;
+    private final static int BYTE_TREADMILL_START = 0x01;
+    private final static int BYTE_TREADMILL_RUNNING = 0x02;
+
+    private final static int DEFAULT_SPEED = 0x0A;
+    private final static int DEFAULT_GRADE = 0x01;
+
+    /**
+     * 设置速度,向串口发送数据
+     *
+     * @param speed
+     */
+    public static void setSpeedInRunning(int speed) {
+        if (speed > 0 && speed <= 200) {
+            byte[] bytes = getControlBuffer();
+            bytes[1] = (byte) speed;
+            bytes[6] = BYTE_TREADMILL_RUNNING;
+            SerialPorManager.getInstance().sendMessage(bytes);
+        }
+    }
+
+
+    /**
+     * 设置坡度,向串口发送数据
+     *
+     * @param grade
+     */
+    public static void setGradeInRunning(int grade) {
+        if (grade > 0 && grade <= 25) {
+            byte[] bytes = getControlBuffer();
+            bytes[2] = (byte) grade;
+            bytes[6] = BYTE_TREADMILL_RUNNING;
+            SerialPorManager.getInstance().sendMessage(bytes);
+        }
+    }
+
+    /**
+     * 启动跑步机
+     */
+    public static void startTreadMill() {
+        byte[] bytes = getControlBuffer();
+        bytes[1] =  DEFAULT_SPEED;
+        bytes[2] =  DEFAULT_GRADE;
+        bytes[6] = BYTE_TREADMILL_START;
+        SerialPorManager.getInstance().sendMessage(bytes);
+        sTreadData.setTreadmillState(BYTE_TREADMILL_RUNNING);
+    }
+
+    /**
+     * 暂停停止跑步机
+     */
+    public static void stopTreadMill() {
+        byte[] bytes = getControlBuffer();
+        bytes[6] = BYTE_TREADMILL_STOP;
+        sTreadData.setTreadmillState(BYTE_TREADMILL_STOP);
+    }
+
+    private static byte[] getControlBuffer() {
+        byte[] bytes = new byte[11];
+        bytes[0] = BTYE_CONTROL;
+        bytes[1] = (byte) sTreadData.getCurrentSpeed();
+        bytes[2] = (byte) sTreadData.getCurrentGrade();
+        bytes[3] = (byte) sTreadData.getCheck();
+        bytes[4] = (byte) sTreadData.getOilPump();
+        bytes[5] = BYTE_NONE;
+        bytes[6] = (byte) sTreadData.getTreadmillState();
+        bytes[7] = (byte) sTreadData.getIcId();
+        bytes[8] = (byte) sTreadData.isCardIsValid();
+        bytes[9] = (byte) sTreadData.getFanState();
+        bytes[10] = BYTE_NONE;
+        return bytes;
+    }
 
 }

@@ -11,7 +11,6 @@ import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
-import com.liking.treadmill.fragment.AwaitActionFragment;
 import com.liking.treadmill.fragment.SettingFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
 import com.liking.treadmill.fragment.WelcomeFragment;
@@ -19,7 +18,6 @@ import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.message.UpdateCompleteMessage;
 import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
-import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
 
 public class RunActivity extends LikingTreadmillBaseActivity {
@@ -64,7 +62,7 @@ public class RunActivity extends LikingTreadmillBaseActivity {
     }
 
     public void launchInit() {
-        if(Preference.getIsStartingUp()) {  //首次开机
+//        if(Preference.getIsStartingUp()) {  //首次开机
             launchFragment(new WelcomeFragment());
             mWelcomeHandler.postDelayed(new Runnable() {
                 @Override
@@ -74,9 +72,9 @@ public class RunActivity extends LikingTreadmillBaseActivity {
                     }
                 }
             },welcomeInterval);
-        } else {
-            launchFragment(new AwaitActionFragment());
-        }
+//        } else {
+//            launchFragment(new AwaitActionFragment());
+//        }
     }
 
     @Override
@@ -130,10 +128,10 @@ public class RunActivity extends LikingTreadmillBaseActivity {
     public void onEvent(UpdateCompleteMessage message) {
         LogUtils.d(SocketService.TAG, RunActivity.class.getSimpleName() + "Update Complete");
         isUpdate = false;
-        if(Preference.getIsStartingUp()) {
+//        if(Preference.getIsStartingUp()) {
             launchFragment(new SettingFragment());
-        } else {
-            launchFragment(new AwaitActionFragment());
-        }
+//        } else {
+//            launchFragment(new AwaitActionFragment());
+//        }
     }
 }

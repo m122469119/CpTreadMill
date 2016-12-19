@@ -58,12 +58,12 @@ public class PauseFragment extends SerialPortFragment {
 
 
     @Override
-    public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
+    public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
-        if (keyCode.equals(LikingTreadKeyEvent.KEY_START)) {//继续
+        if (keyCode == LikingTreadKeyEvent.KEY_START) {//继续
             //继续回到上一次跑步界面
 
-        } else if (keyCode.equals(LikingTreadKeyEvent.KEY_STOP)) {//结束
+        } else if (keyCode == LikingTreadKeyEvent.KEY_STOP) {//结束
             //运动结束跳转到完成界面
         }
     }

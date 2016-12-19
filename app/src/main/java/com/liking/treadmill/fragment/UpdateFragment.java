@@ -60,7 +60,7 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
     }
 
     @Override
-    public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
+    public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         //Tost:正在更新中,请稍后操作....
     }
 

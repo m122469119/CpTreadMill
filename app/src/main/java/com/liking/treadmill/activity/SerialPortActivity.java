@@ -47,7 +47,7 @@ public abstract class SerialPortActivity extends LikingTreadmillBaseActivity imp
 
 
 	@Override
-	public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
+	public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
 
 	}
 }

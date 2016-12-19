@@ -61,7 +61,7 @@ public class BindGymFragment extends SerialPortFragment {
     }
 
     @Override
-    public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
+    public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
 
     }

@@ -61,8 +61,8 @@ public abstract class SerialPortFragment extends BaseFragment implements SerialP
     }
 
     @Override
-    public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
-        if (keyCode.equals(LikingTreadKeyEvent.KEY_RETURN)) {
+    public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
+        if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
 //            getActivity().getSupportFragmentManager().popBackStack();
         }
     }

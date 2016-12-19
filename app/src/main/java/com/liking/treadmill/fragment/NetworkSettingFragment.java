@@ -84,9 +84,9 @@ public class NetworkSettingFragment extends SerialPortFragment {
     }
 
     @Override
-    public void onTreadKeyDown(String keyCode, LikingTreadKeyEvent event) {
+    public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
-        if (keyCode.equals(LikingTreadKeyEvent.KEY_NEXT)) {//下一步
+        if (keyCode == LikingTreadKeyEvent.KEY_NEXT) {//下一步
             if (isNetwork) {
                 postEvent(new SettingNextMessage(1));
             }
