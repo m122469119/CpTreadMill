@@ -2,7 +2,15 @@ package com.liking.treadmill.storge;
 
 import android.content.SharedPreferences;
 
+import com.aaron.android.codelibrary.utils.SecurityUtils;
+import com.aaron.android.framework.base.BaseApplication;
 import com.aaron.android.framework.library.storage.AbsPreference;
+import com.aaron.android.framework.utils.DeviceUtils;
+import com.google.gson.Gson;
+import com.liking.treadmill.socket.result.MemberListResult;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 说明:
@@ -25,6 +33,9 @@ public class Preference extends AbsPreference {
 
     public static final String APP_SERVER_VERSION = "setserverversion";//服务器版本
     public static final String APP_SERVER_VERSION_URL = "setserverversionurl";//服务器版本地址
+    public static final String USER_GYM_ID = "USER_GYM_ID";
+    public static final String MEMBER_ID_LIST = new Date().getTime() + SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "";
+
     /**
      * 清空SharedPreferences
      */
@@ -137,11 +148,11 @@ public class Preference extends AbsPreference {
     }
 
     public static String getServerVersion() {
-        return (String) getObject(APP_SERVER_VERSION,"");
+        return (String) getObject(APP_SERVER_VERSION, "");
     }
 
     public static boolean getDownloadAppFile() {
-        return (boolean) getObject(DOWNLOAD_APP_FILE,false);
+        return (boolean) getObject(DOWNLOAD_APP_FILE, false);
     }
 
     public static boolean setDownloadAppFile(boolean isDownload) {
@@ -153,7 +164,7 @@ public class Preference extends AbsPreference {
     }
 
     public static String getServerVersionUrl() {
-        return (String) getObject(APP_SERVER_VERSION_URL,"");
+        return (String) getObject(APP_SERVER_VERSION_URL, "");
     }
 
     public static boolean setStartingUp(boolean isStartUp) {
@@ -161,6 +172,49 @@ public class Preference extends AbsPreference {
     }
 
     public static boolean getIsStartingUp() {
-        return (boolean) getObject(IS_FIRST_STARTING_UP,true);
+        return (boolean) getObject(IS_FIRST_STARTING_UP, true);
+    }
+
+    /**
+     * 用户所在场馆的gymId
+     *
+     * @param gymId 场馆id
+     * @return
+     */
+    public static boolean setBindUserGymId(String gymId) {
+        return setObject(USER_GYM_ID, gymId);
+    }
+
+    /**
+     * 获取所在场馆的gymId
+     *
+     * @return gymId
+     */
+    public static String getBindUserGymId() {
+        return (String) getObject(USER_GYM_ID, "");
+    }
+
+    /**
+     * 保存当前场馆所有会员id
+     *
+     * @param memberList
+     * @return
+     */
+    public static boolean setMemberList(List<String> memberList) {
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(memberList);
+        return setObject(MEMBER_ID_LIST, jsonString);
+    }
+
+    /**
+     * 获取当前场馆所有会员id
+     *
+     * @return
+     */
+    public static List<String> getMemberList() {
+        String jsonString = (String) getObject(MEMBER_ID_LIST, "");
+        Gson gson = new Gson();
+        List<String> menberList = (List<String>) gson.fromJson(jsonString, MemberListResult.MemberData.class);
+        return menberList;
     }
 }

@@ -1,6 +1,7 @@
 package com.liking.treadmill.socket;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.SecurityUtils;
@@ -9,13 +10,18 @@ import com.aaron.android.framework.base.BaseApplication;
 import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
+import com.liking.treadmill.activity.AwaitActionActivity;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.socket.result.ApkUpdateResult;
 import com.liking.treadmill.socket.result.BaseSocketResult;
+import com.liking.treadmill.socket.result.BindUserResult;
+import com.liking.treadmill.socket.result.MemberListResult;
 import com.liking.treadmill.socket.result.QrcodeResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.ApkUpdateUtils;
+
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -28,15 +34,11 @@ import de.greenrobot.event.EventBus;
 
 public class SocketHelper {
 
-    private static final String TYPE_HEART_BEAT = "replay";
     private static final String TYPE_QRCODE_SHOW = "qcode";
-    private static final String TYPE_CHECK_CONFIRM = "check_confim";
-    private static final String TYPE_VEDIO_PLAY_WARN = "vedio_play_warn";
-    private static final String TYPE_VEDIO_PLAY = "vedio_begin_play";
-    private static final String TYPE_ENTER_WARN = "enter_warn";
-    private static final String TYPE_SETCONFIG = "setconfig";
     private static final String TYPE_UPDATE_NOTIFY = "update";
-    private static final String TYPE_DEVICES = "treadmill";
+    private static final String TYPE_BIND = "bind";
+    private static final String TYPE_MEMBER_LIST = "member_list";
+
     private static final String mTcpVersion = "v1.0";
 
     public static final String HEART_BEAT_STRING = "{\"type\":\"ping\",\"version\":\"" + mTcpVersion + "\",\"data\":{}, \"msg_id\":0}\\r\\n";//心跳包内容
@@ -61,18 +63,6 @@ public class SocketHelper {
             } else {
                 LogUtils.d("aaron", "false");
             }
-//        } else if (TYPE_CHECK_CONFIRM.equals(type)) {//验证消息
-//
-//        } else if (TYPE_VEDIO_PLAY_WARN.equals(type)) {//视频播放前提醒消息
-//
-//        } else if (TYPE_VEDIO_PLAY.equals(type)) {//视频播开始播放提醒
-//
-//        } else if (TYPE_ENTER_WARN.equals(type)) {//会员进入提醒
-//
-//        } else if (TYPE_SETCONFIG.equals(type)) {//配置数据推送
-//
-//        } else if (UPDATE_NOTIFY.equals(type)) {
-//
         } else if (TYPE_UPDATE_NOTIFY.equals(type)) { //系统升级通知
             ApkUpdateResult updateResult = gson.fromJson(jsonText, ApkUpdateResult.class);
             ApkUpdateResult.ApkUpdateData updateData = updateResult.getApkUpdateData();
@@ -87,6 +77,23 @@ public class SocketHelper {
             LogUtils.d(SocketService.TAG, "send updateMessage");
             if (ApkUpdateUtils.isApkUpdate() && !SerialPortUtil.getTreadInstance().isRunning()) {//需要更新并且跑步机没有运行
                 EventBus.getDefault().post(new UpdateAppMessage());
+            }
+        } else if (TYPE_BIND.equals(type)) {//绑定用户
+            BindUserResult bindUserResult = gson.fromJson(jsonText, BindUserResult.class);
+            BindUserResult.BindUserData bindUserData = bindUserResult.getData();
+            if (bindUserData != null) {
+                if (bindUserData.getErrCode() == 0) {
+                    Preference.setBindUserGymId(bindUserData.getGymId());
+                    Intent intent = new Intent(context, AwaitActionActivity.class);
+                    context.startActivity(intent);
+                }
+            }
+        } else if (TYPE_MEMBER_LIST.equals(type)) {//当前用户所在场馆的所有会员id
+            MemberListResult memberListResult = gson.fromJson(jsonText, MemberListResult.class);
+            MemberListResult.MemberData memberData = memberListResult.getData();
+            if (memberData != null) {
+                List<String> memberListId = memberData.getBraceletId();
+                Preference.setMemberList(memberListId);
             }
         }
     }

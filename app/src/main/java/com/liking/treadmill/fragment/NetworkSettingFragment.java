@@ -101,6 +101,8 @@ public class NetworkSettingFragment extends SerialPortFragment {
     public void onEvent(WifiMessage message) {
         if (message != null && message.isHaveWifi()) {
             setHaveWifiView();
+        }else {
+            setNoWifiView();
         }
     }
 }
