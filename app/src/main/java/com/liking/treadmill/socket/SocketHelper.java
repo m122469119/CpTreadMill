@@ -1,7 +1,6 @@
 package com.liking.treadmill.socket;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.SecurityUtils;
@@ -11,7 +10,6 @@ import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
 import com.liking.treadmill.message.UpdateAppMessage;
-import com.liking.treadmill.message.UpdateCompleteMessage;
 import com.liking.treadmill.socket.result.ApkUpdateResult;
 import com.liking.treadmill.socket.result.BaseSocketResult;
 import com.liking.treadmill.socket.result.QrcodeResult;
@@ -60,7 +58,7 @@ public class SocketHelper {
             boolean codeUrlIsSucces = Preference.setQcodeUrl(codeUrl);
             if (codeUrlIsSucces) {
                 LogUtils.d("aaron", "true");
-            }else{
+            } else {
                 LogUtils.d("aaron", "false");
             }
 //        } else if (TYPE_CHECK_CONFIRM.equals(type)) {//验证消息
@@ -75,19 +73,19 @@ public class SocketHelper {
 //
 //        } else if (UPDATE_NOTIFY.equals(type)) {
 //
-        } else if(TYPE_UPDATE_NOTIFY.equals(type)) { //系统升级通知
+        } else if (TYPE_UPDATE_NOTIFY.equals(type)) { //系统升级通知
             ApkUpdateResult updateResult = gson.fromJson(jsonText, ApkUpdateResult.class);
             ApkUpdateResult.ApkUpdateData updateData = updateResult.getApkUpdateData();
-            if(updateData != null) {
-                if(!StringUtils.isEmpty(updateData.getVersion())) {
+            if (updateData != null) {
+                if (!StringUtils.isEmpty(updateData.getVersion())) {
                     Preference.setServerVersion(updateData.getVersion());
                 }
-                if(!StringUtils.isEmpty(updateData.getUrl())) {
+                if (!StringUtils.isEmpty(updateData.getUrl())) {
                     Preference.setServerVersionUrl(updateData.getUrl());
                 }
             }
             LogUtils.d(SocketService.TAG, "send updateMessage");
-            if(ApkUpdateUtils.isApkUpdate() && !SerialPortUtil.getTreadInstance().isRunning()) {//需要更新并且跑步机没有运行
+            if (ApkUpdateUtils.isApkUpdate() && !SerialPortUtil.getTreadInstance().isRunning()) {//需要更新并且跑步机没有运行
                 EventBus.getDefault().post(new UpdateAppMessage());
             }
         }

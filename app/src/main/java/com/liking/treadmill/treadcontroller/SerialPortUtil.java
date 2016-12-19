@@ -198,6 +198,7 @@ public class SerialPortUtil {
 
         /**
          * 跑步机是否正在运行
+         *
          * @return
          */
         public boolean isRunning() {
@@ -252,9 +253,9 @@ public class SerialPortUtil {
         return serialPortData[INDEX_KEY];
     }
 
-    private static TreadData getTreadData(byte[] serialPortData) {
+    public static void updateTreadDataFromSerialPort(byte[] serialPortData) {
         if (!checkSerialPortData(serialPortData)) {
-            return null;
+            return;
         }
         getTreadInstance().setSafeLock(getIndexData(serialPortData, INDEX_SAFE_LOCK));
         getTreadInstance().setCheck(getIndexData(serialPortData, INDEX_CHECK));
@@ -269,7 +270,6 @@ public class SerialPortUtil {
         getTreadInstance().setPowerAd(getIndexData(serialPortData, INDEX_POWER_AD));
         getTreadInstance().setPowerState(getIndexData(serialPortData, INDEX_POWER));
         getTreadInstance().setVersion(getIndexData(serialPortData, INDEX_VERSION));
-        return sTreadData;
     }
 
     public static TreadData getTreadInstance() {
@@ -421,8 +421,8 @@ public class SerialPortUtil {
      */
     public static void startTreadMill() {
         byte[] bytes = getControlBuffer();
-        bytes[1] =  DEFAULT_SPEED;
-        bytes[2] =  DEFAULT_GRADE;
+        bytes[1] = DEFAULT_SPEED;
+        bytes[2] = DEFAULT_GRADE;
         bytes[6] = BYTE_TREADMILL_START;
         SerialPorManager.getInstance().sendMessage(bytes);
         sTreadData.setTreadmillState(BYTE_TREADMILL_RUNNING);
