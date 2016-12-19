@@ -252,26 +252,30 @@ public class SerialPortUtil {
         return serialPortData[INDEX_KEY];
     }
 
-    public static TreadData getTreadData(byte[] serialPortData) {
-        if (sTreadData == null) {
-            sTreadData = new TreadData();
-        }
+    private static TreadData getTreadData(byte[] serialPortData) {
         if (!checkSerialPortData(serialPortData)) {
             return null;
         }
-        sTreadData.setSafeLock(getIndexData(serialPortData, INDEX_SAFE_LOCK));
-        sTreadData.setCheck(getIndexData(serialPortData, INDEX_CHECK));
-        sTreadData.setCheckGradeCountDown(getIndexData(serialPortData, INDEX_CHECK_GRADE_COUNT_DOWN));
-        sTreadData.setCurrentGrade(getIndexData(serialPortData, INDEX_CURRENT_GRADE));
-        sTreadData.setCurrentSpeed(getIndexData(serialPortData, INDEX_CURRENT_SPEED));
-        sTreadData.setErrorCode(getIndexData(serialPortData, INDEX_ERROR_CODE));
-        sTreadData.setFanState(getIndexData(serialPortData, INDEX_FAN_STATE));
-        sTreadData.setHeartRate(getIndexData(serialPortData, INDEX_HEART_RATE));
-        sTreadData.setMaxGrade(getIndexData(serialPortData, INDEX_MAX_GRADE));
-        sTreadData.setOilPump(getIndexData(serialPortData, INDEX_OIL_PUMP));
-        sTreadData.setPowerAd(getIndexData(serialPortData, INDEX_POWER_AD));
-        sTreadData.setPowerState(getIndexData(serialPortData, INDEX_POWER));
-        sTreadData.setVersion(getIndexData(serialPortData, INDEX_VERSION));
+        getTreadInstance().setSafeLock(getIndexData(serialPortData, INDEX_SAFE_LOCK));
+        getTreadInstance().setCheck(getIndexData(serialPortData, INDEX_CHECK));
+        getTreadInstance().setCheckGradeCountDown(getIndexData(serialPortData, INDEX_CHECK_GRADE_COUNT_DOWN));
+        getTreadInstance().setCurrentGrade(getIndexData(serialPortData, INDEX_CURRENT_GRADE));
+        getTreadInstance().setCurrentSpeed(getIndexData(serialPortData, INDEX_CURRENT_SPEED));
+        getTreadInstance().setErrorCode(getIndexData(serialPortData, INDEX_ERROR_CODE));
+        getTreadInstance().setFanState(getIndexData(serialPortData, INDEX_FAN_STATE));
+        getTreadInstance().setHeartRate(getIndexData(serialPortData, INDEX_HEART_RATE));
+        getTreadInstance().setMaxGrade(getIndexData(serialPortData, INDEX_MAX_GRADE));
+        getTreadInstance().setOilPump(getIndexData(serialPortData, INDEX_OIL_PUMP));
+        getTreadInstance().setPowerAd(getIndexData(serialPortData, INDEX_POWER_AD));
+        getTreadInstance().setPowerState(getIndexData(serialPortData, INDEX_POWER));
+        getTreadInstance().setVersion(getIndexData(serialPortData, INDEX_VERSION));
+        return sTreadData;
+    }
+
+    public static TreadData getTreadInstance() {
+        if (sTreadData == null) {
+            sTreadData = new TreadData();
+        }
         return sTreadData;
     }
 

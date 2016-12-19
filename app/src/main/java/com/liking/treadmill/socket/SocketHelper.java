@@ -16,6 +16,7 @@ import com.liking.treadmill.socket.result.ApkUpdateResult;
 import com.liking.treadmill.socket.result.BaseSocketResult;
 import com.liking.treadmill.socket.result.QrcodeResult;
 import com.liking.treadmill.storge.Preference;
+import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.ApkUpdateUtils;
 
 import de.greenrobot.event.EventBus;
@@ -86,7 +87,7 @@ public class SocketHelper {
                 }
             }
             LogUtils.d(SocketService.TAG, "send updateMessage");
-            if(ApkUpdateUtils.isApkUpdate()) {
+            if(ApkUpdateUtils.isApkUpdate() && !SerialPortUtil.getTreadInstance().isRunning()) {//需要更新并且跑步机没有运行
                 EventBus.getDefault().post(new UpdateAppMessage());
             }
         }
