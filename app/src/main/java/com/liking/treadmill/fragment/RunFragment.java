@@ -128,17 +128,26 @@ public class RunFragment extends SerialPortFragment {
             ((HomeActivity) getActivity()).launchFragment(SettingFragment.instantiate(getActivity(), SettingFragment.class.getName()));
         } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {//返回
 //            getSupportFragmentManager().popBackStack();
-            PopupUtils.showToast("Return");
+            ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_START) {//开始跑步
-            SerialPortUtil.startTreadMill();
-            mPauseLayout.setVisibility(View.GONE);
-            mLayoutRun.setVisibility(View.VISIBLE);
-            mFinishLayout.setVisibility(View.GONE);
-            mStartLayout.setVisibility(View.GONE);
-            currentDateSecond = DateUtils.currentDataSeconds();
-            isPause = false;
-            startRunThread();//计时开始
-            destroyPauseCountTime();
+            if (mStartLayout.getVisibility() == View.VISIBLE) {//不做任何处理
+                SerialPortUtil.startTreadMill();
+            } else if (mLayoutRun.getVisibility() == View.VISIBLE) {//正在跑步界面
+                mPauseLayout.setVisibility(View.GONE);
+                mLayoutRun.setVisibility(View.VISIBLE);
+                mFinishLayout.setVisibility(View.GONE);
+                mStartLayout.setVisibility(View.GONE);
+                currentDateSecond = DateUtils.currentDataSeconds();
+                isPause = false;
+                startRunThread();//计时开始
+                destroyPauseCountTime();
+            } else if (mPauseLayout.getVisibility() == View.VISIBLE) {//暂停界面
+                mPauseLayout.setVisibility(View.GONE);
+                mLayoutRun.setVisibility(View.VISIBLE);
+                mFinishLayout.setVisibility(View.GONE);
+                mStartLayout.setVisibility(View.GONE);
+                isPause = true;
+            }
         } else if (keyCode == LikingTreadKeyEvent.KEY_PAUSE) {//暂停
             mPauseLayout.setVisibility(View.VISIBLE);
             mLayoutRun.setVisibility(View.GONE);
