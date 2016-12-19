@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.utils.PopupUtils;
 import com.liking.treadmill.R;
-import com.liking.treadmill.activity.RunActivity;
+import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
 import butterknife.ButterKnife;
@@ -35,7 +35,7 @@ public class AwaitActionFragment extends SerialPortFragment {
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_SET) {
-            ((RunActivity) getActivity()).launchFragment(SettingFragment.instantiate(getActivity(), SettingFragment.class.getName()));
+            ((HomeActivity) getActivity()).launchFragment(SettingFragment.instantiate(getActivity(), SettingFragment.class.getName()));
         } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
 //            getSupportFragmentManager().popBackStack();
             PopupUtils.showToast("Return");

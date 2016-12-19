@@ -43,8 +43,6 @@ public class SettingFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
         ButterKnife.bind(this, view);
         initViewPager();
-//        Intent intent =  new Intent(Settings.ACTION_APPLICATION_SETTINGS);
-//        startActivity(intent);
         return view;
     }
 
