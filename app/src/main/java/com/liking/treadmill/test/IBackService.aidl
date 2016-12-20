@@ -14,4 +14,5 @@ interface IBackService {
    void confirm();
    void reportDevices();
    void userLogin(String cardno);
+   void reportExerciseData();
 }

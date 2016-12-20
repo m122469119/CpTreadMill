@@ -13,7 +13,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.liking.treadmill.fragment.AwaitActionFragment;
 import com.liking.treadmill.fragment.RunFragment;
-import com.liking.treadmill.fragment.UpdateFragment;
 import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.message.UpdateCompleteMessage;
@@ -129,7 +128,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity {
     public void onEvent(UpdateAppMessage message) {
         LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "get updateMessage");
         isUpdate = true;
-        launchFragment(new UpdateFragment());
+//        launchFragment(new UpdateFragment());
     }
 
     /**

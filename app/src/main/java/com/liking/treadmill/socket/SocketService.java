@@ -103,6 +103,10 @@ public class SocketService extends Service {
             sendUpStreamMessage(SocketHelper.userloginString(cardno));
         }
 
+        public void reportExerciseData() throws RemoteException {
+            LogUtils.d(SocketService.TAG, "锻炼数据：" + SocketHelper.reportExerciseData());
+            sendUpStreamMessage(SocketHelper.reportExerciseData());
+        }
     };
 
     @Override

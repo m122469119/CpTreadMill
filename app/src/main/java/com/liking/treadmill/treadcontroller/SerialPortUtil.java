@@ -1,5 +1,7 @@
 package com.liking.treadmill.treadcontroller;
 
+import com.aaron.android.codelibrary.utils.LogUtils;
+
 import androidex.serialport.SerialPorManager;
 
 /**
@@ -27,7 +29,7 @@ public class SerialPortUtil {
     private final static int INDEX_POWER_AD = 14;
     private final static int INDEX_CHECK_GRADE_COUNT_DOWN = 15;
     private final static int INDEX_VERSION = 16;
-    private final static int INDEX_IC_ID_STEP_COUNT = 17;
+    //    private final static int INDEX_IC_ID_STEP_COUNT = 17;
     private final static int INDEX_FAN_STATE = 21;
     private static TreadData sTreadData;
 
@@ -106,7 +108,8 @@ public class SerialPortUtil {
         }
 
         public int getCurrentSpeed() {
-            return mCurrentSpeed;
+            LogUtils.d("data", "speed: " + (mCurrentSpeed & 0xFF));
+            return mCurrentSpeed & 0xFF;
         }
 
         public void setCurrentSpeed(byte currentSpeed) {
@@ -199,7 +202,11 @@ public class SerialPortUtil {
          * @return
          */
         public float getDistance() {
-            return (float) (mCurrentSpeed / 36.0);
+            return mDistance;
+        }
+
+        public void setDistance(float distance) {
+            mDistance = distance;
         }
 
         public void setTreadmillState(int treadmillState) {
@@ -220,27 +227,21 @@ public class SerialPortUtil {
         }
 
         /**
-         * 总距离
-         *
-         * @return
-         */
-        public float getTotalDistance() {
-            mDistance += getDistance();
-            return getTotalDistance();
-        }
-
-        /**
          * 消耗的总卡路里
          *
          * @return
          */
         public float getKCAL() {
-            mKCAL += +(float) (0.0703 * (1 + getCurrentGrade() / 100) * getDistance());
             return mKCAL;
+        }
+
+        public void setKCAL(float KCAL) {
+            mKCAL = KCAL;
         }
 
         /**
          * 获取跑步时间
+         *
          * @return
          */
         public int getRunTime() {
@@ -249,10 +250,11 @@ public class SerialPortUtil {
 
         /**
          * 设置跑步时间
+         *
          * @param runTime
          */
         public void setRunTime(int runTime) {
-            this.runTime += runTime;
+            this.runTime = runTime;
         }
 
         public String getCardNo() {
@@ -448,7 +450,7 @@ public class SerialPortUtil {
     public static void setSpeedInRunning(int speed) {
         if (speed > 0 && speed <= 200) {
             byte[] bytes = getControlBuffer();
-            bytes[1] = (byte) speed;
+            bytes[1] = (byte) (speed & 0xFF);
             bytes[6] = BYTE_TREADMILL_RUNNING;
             SerialPorManager.getInstance().sendMessage(bytes);
         }
@@ -477,6 +479,13 @@ public class SerialPortUtil {
         bytes[1] = DEFAULT_SPEED;
         bytes[2] = DEFAULT_GRADE;
         bytes[6] = BYTE_TREADMILL_START;
+        SerialPorManager.getInstance().sendMessage(bytes);
+        sTreadData.setTreadmillState(BYTE_TREADMILL_RUNNING);
+    }
+
+    public static void restartTreadMill() {
+        byte[] bytes = getControlBuffer();
+        bytes[6] = BYTE_TREADMILL_RUNNING;
         SerialPorManager.getInstance().sendMessage(bytes);
         sTreadData.setTreadmillState(BYTE_TREADMILL_RUNNING);
     }
