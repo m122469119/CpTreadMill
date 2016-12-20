@@ -244,7 +244,6 @@ public class RunFragment extends SerialPortFragment {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        SerialPortUtil.setCardNoUnValid();//设置无效卡
         statisticsRunData();
     }
 
@@ -277,6 +276,7 @@ public class RunFragment extends SerialPortFragment {
         mConsumeKcalTextView.setText(SerialPortUtil.getTreadInstance().getKCAL() + "");
         //平均心率
         mAvergHraetRateTextView.setText(SerialPortUtil.getTreadInstance().getHeartRate() + "");
+        SerialPortUtil.setCardNoUnValid();//设置无效卡
     }
 
 
