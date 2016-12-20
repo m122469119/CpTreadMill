@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
 import com.liking.treadmill.R;
@@ -26,7 +27,6 @@ import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.RunTimeUtil;
 
-import java.text.DecimalFormat;
 import java.util.Date;
 
 import butterknife.BindView;
@@ -48,6 +48,12 @@ public class RunFragment extends SerialPortFragment {
     HImageView mRightAdImageView;
     @BindView(R.id.layout_run)
     RelativeLayout mLayoutRun;
+    @BindView(R.id.current_distance_TextView)
+    TextView mCurrentDistanceTextView;
+    @BindView(R.id.current_user_time)
+    TextView mCurrentUserTime;
+    @BindView(R.id.run_speed_ImageView)
+    ImageView mRunSpeedImageView;
 
     @BindView(R.id.count_down_TextView)
     TextView mCountDownTextView;
@@ -80,8 +86,6 @@ public class RunFragment extends SerialPortFragment {
     private TextView mSpeedInfoTextView;
     private TextView mHotInfoTextView;
     private TextView mHeartRateInfoTextView;
-    private int mCurrentGrade = 0;
-    private int mCurrentSpeed = 0;
     private float mHotInfo = 0;
     private int mHeartRate = 0;
     private int mSpeed = 0;
@@ -163,21 +167,7 @@ public class RunFragment extends SerialPortFragment {
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_STOP) {//结束
             if (mLayoutRun.getVisibility() == View.VISIBLE || mPauseLayout.getVisibility() == View.VISIBLE) {
-                destroyPauseCountTime();
-                isPause = true;
-                SerialPortUtil.stopTreadMill();
-                mPauseLayout.setVisibility(View.GONE);
-                mLayoutRun.setVisibility(View.GONE);
-                mFinishLayout.setVisibility(View.VISIBLE);
-                mStartLayout.setVisibility(View.GONE);
-                //运动结束跳转到完成界面
-                try {
-                    //上传锻炼数据
-                    ((HomeActivity) getActivity()).iBackService.reportExerciseData();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                statisticsRunData();
+                finishExercise();
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS) {//速度加
             if (mLayoutRun.getVisibility() == View.VISIBLE) {
@@ -186,6 +176,7 @@ public class RunFragment extends SerialPortFragment {
                     mSpeed = speed + 10;
                 }
                 SerialPortUtil.setSpeedInRunning(mSpeed);
+                setSpeedBack(mSpeed);
             }
 
         } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE) {//速度减
@@ -195,6 +186,7 @@ public class RunFragment extends SerialPortFragment {
                     mSpeed = speed - 10;
                 }
                 SerialPortUtil.setSpeedInRunning(mSpeed);
+                setSpeedBack(mSpeed);
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {//坡度+
             if (mLayoutRun.getVisibility() == View.VISIBLE) {
@@ -215,6 +207,44 @@ public class RunFragment extends SerialPortFragment {
         }
     }
 
+    /**
+     * 根据速度改变圆圈的状态
+     *
+     * @param speed
+     */
+    private void setSpeedBack(int speed) {
+        float currentSpeed = (float) speed / 10f;
+        if (currentSpeed > 0f && currentSpeed <= 6f) {//快走
+            mRunSpeedImageView.setBackgroundResource(R.drawable.fast_11);
+        } else if (currentSpeed > 6f && currentSpeed < 8.5f) {//慢跑
+            mRunSpeedImageView.setBackgroundResource(R.drawable.slow_run);
+        } else if (currentSpeed > 8.5f) {//快跑
+            mRunSpeedImageView.setBackgroundResource(R.drawable.fast_run);
+        }
+        mSpeedInfoTextView.setText(StringUtils.getDecimalString(currentSpeed, 1));
+    }
+
+    /**
+     * 结束锻炼
+     */
+    private void finishExercise() {
+        destroyPauseCountTime();
+        isPause = true;
+        SerialPortUtil.stopTreadMill();
+        mPauseLayout.setVisibility(View.GONE);
+        mLayoutRun.setVisibility(View.GONE);
+        mFinishLayout.setVisibility(View.VISIBLE);
+        mStartLayout.setVisibility(View.GONE);
+        //运动结束跳转到完成界面
+        try {
+            //上传锻炼数据
+            ((HomeActivity) getActivity()).iBackService.reportExerciseData();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        statisticsRunData();
+    }
+
 
     /***
      * 跑步结束统计 距离 、用时、平均坡度、平均速度、消耗热量，平均心率
@@ -230,12 +260,15 @@ public class RunFragment extends SerialPortFragment {
         mDistanceTextView.setText(totalDistance + "");
         //平均坡度
         int currenGrade = SerialPortUtil.getTreadInstance().getCurrentGrade();
-        int averagerGrade = currenGrade / (SerialPortUtil.getTreadInstance().getRunTime() / 3600);
-        mAverageGradientTextView.setText(averagerGrade + "");
-
-        float avergageSpeed = totalDistance / (float) (SerialPortUtil.getTreadInstance().getRunTime() / 3600);
+        if (currenGrade > 0) {
+            int averagerGrade = currenGrade / (SerialPortUtil.getTreadInstance().getRunTime() / 3600);
+            mAverageGradientTextView.setText(averagerGrade + "");
+        }
         //平均速度
-        mAvergageSpeedTextView.setText(avergageSpeed + "");
+        if (totalDistance > 0) {
+            float avergageSpeed = totalDistance / (float) (SerialPortUtil.getTreadInstance().getRunTime() / 3600);
+            mAvergageSpeedTextView.setText(avergageSpeed + "");
+        }
         //消耗热量
         mConsumeKcalTextView.setText(SerialPortUtil.getTreadInstance().getKCAL() + "");
         //平均心率
@@ -268,6 +301,9 @@ public class RunFragment extends SerialPortFragment {
                     SerialPortUtil.getTreadInstance().setDistance((float) (SerialPortUtil.getTreadInstance().getCurrentSpeed() / 36.0));
                     SerialPortUtil.getTreadInstance().setKCAL(SerialPortUtil.getTreadInstance().getKCAL() +
                             (float) (0.0703 * (1 + SerialPortUtil.getTreadInstance().getCurrentSpeed() / 100) * SerialPortUtil.getTreadInstance().getDistance()));
+                    mCurrentDistanceTextView.setText(SerialPortUtil.getTreadInstance().getDistance() + "");
+                    String userTime = RunTimeUtil.secToTime(SerialPortUtil.getTreadInstance().getRunTime());
+                    mCurrentUserTime.setText(userTime);
                     LogUtils.d("dddd", "distance: " + SerialPortUtil.getTreadInstance().getDistance() + " kcal: " + SerialPortUtil.getTreadInstance().getKCAL());
                 }
             }
@@ -296,13 +332,9 @@ public class RunFragment extends SerialPortFragment {
     @Override
     public void handleTreadData(SerialPortUtil.TreadData treadData) {
         super.handleTreadData(treadData);
-        if (mCurrentGrade != treadData.getCurrentGrade()) {
-            mCurrentGrade = treadData.getCurrentGrade();
-            mGradeInfoTextView.setText(String.valueOf(mCurrentGrade));
-        }
-        if (mCurrentSpeed != treadData.getCurrentSpeed()) {
-            mCurrentSpeed = treadData.getCurrentSpeed();
-            mSpeedInfoTextView.setText(String.valueOf(mCurrentSpeed));
+        if (mGrade != treadData.getCurrentGrade()) {
+            mGrade = treadData.getCurrentGrade();
+            mGradeInfoTextView.setText(String.valueOf(mGrade));
         }
         if (mHeartRate != treadData.getHeartRate()) {
             mHeartRate = treadData.getHeartRate();
@@ -310,10 +342,9 @@ public class RunFragment extends SerialPortFragment {
         }
         if (mHotInfo != treadData.getKCAL()) {
             mHotInfo = treadData.getKCAL();
-            DecimalFormat df = new DecimalFormat("#.0");
-            System.out.println(df.format(mHotInfo));
-            mHotInfoTextView.setText(String.valueOf(df.format(mHotInfo)));
+            mHotInfoTextView.setText(StringUtils.getDecimalString(mHotInfo, 1));
         }
+        setSpeedBack(mSpeed);
     }
 
 
@@ -480,16 +511,7 @@ public class RunFragment extends SerialPortFragment {
 
         @Override
         public void onFinish() {
-            //倒计时结束，运动结束跳转到完成界面
-            SerialPortUtil.stopTreadMill();
-            mPauseLayout.setVisibility(View.GONE);
-            mLayoutRun.setVisibility(View.GONE);
-            mFinishLayout.setVisibility(View.VISIBLE);
-            mStartLayout.setVisibility(View.GONE);
-            isPause = true;
-            //运动结束跳转到完成界面
-            statisticsRunData();
-            SerialPortUtil.getTreadInstance().reset();//情况数据
+            finishExercise();
         }
     }
 }

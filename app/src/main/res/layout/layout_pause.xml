@@ -11,7 +11,7 @@
         android:layout_height="400dp"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
-        android:background="@drawable/icon_pause_time"
+        android:background="@drawable/bg_start_back"
         android:gravity="center"
         android:text="60s"
         android:textColor="@color/white"
