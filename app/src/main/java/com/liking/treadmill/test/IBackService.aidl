@@ -13,4 +13,5 @@ interface IBackService {
    void login();
    void confirm();
    void reportDevices();
+   void reportExerciseData();
 }

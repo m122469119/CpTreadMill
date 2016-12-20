@@ -15,12 +15,14 @@ import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.socket.result.ApkUpdateResult;
 import com.liking.treadmill.socket.result.BaseSocketResult;
 import com.liking.treadmill.socket.result.BindUserResult;
+import com.liking.treadmill.socket.result.ExerciseDataResult;
 import com.liking.treadmill.socket.result.MemberListResult;
 import com.liking.treadmill.socket.result.QrcodeResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.ApkUpdateUtils;
 
+import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -38,6 +40,7 @@ public class SocketHelper {
     private static final String TYPE_UPDATE_NOTIFY = "update";
     private static final String TYPE_BIND = "bind";
     private static final String TYPE_MEMBER_LIST = "member_list";
+    private static final String TYPE_EXERCISE_DATA = "data";
 
     private static final String mTcpVersion = "v1.0";
 
@@ -85,6 +88,7 @@ public class SocketHelper {
                 if (bindUserData.getErrCode() == 0) {
                     Preference.setStartingUp(false);
                     Preference.setBindUserGymId(bindUserData.getGymId());
+                    LogUtils.d(SocketService.TAG, " gmyId =" + Preference.getBindUserGymId());
                     EventBus.getDefault().post(new GymBindSuccessMessage());
                 }
             }
@@ -94,6 +98,12 @@ public class SocketHelper {
             if (memberData != null) {
                 List<String> memberListId = memberData.getBraceletId();
                 Preference.setMemberList(memberListId);
+            }
+        } else if (TYPE_EXERCISE_DATA.equals(type)) {//上传训练数据成功
+            ExerciseDataResult exerciseDataResult = gson.fromJson(jsonText, ExerciseDataResult.class);
+            int meessageId = exerciseDataResult.getMsgId();
+            if (meessageId > 0) {
+                SerialPortUtil.getTreadInstance().reset();//清空数据
             }
         }
     }
@@ -112,6 +122,17 @@ public class SocketHelper {
                 SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"," +
                 "\"gym_id\":\"0\",\"mac\":\"" + EnvironmentUtils.Network.wifiMac() + "\",\"app_version\":\"" + EnvironmentUtils.Config.getAppVersionName() + "\"," +
                 "\"total_distance\":\"0\",\"total_time\":\"0\",\"power_times\":\"0\"}}\\r\\n";
+    }
+
+    /**
+     * 上报跑步数据
+     *
+     * @return
+     */
+    public static String reportExerciseData() {
+        return "{\"type\":\"data\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"" + new Date().getTime() + "\",\"data\":{\"bracelet_id\":\"1233445\"" +
+                ",\"gym_id\":\"" + Preference.getBindUserGymId() + "\",\"device_id\":\"" + SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"" +
+                ",\"period\":\"" + SerialPortUtil.getTreadInstance().getRunTime() + "\",\"distance\":\"" + SerialPortUtil.getTreadInstance().getDistance() + "\",\"cal\":\"" + SerialPortUtil.getTreadInstance().getKCAL() + "\"}}\\r\\n";
     }
 
 }

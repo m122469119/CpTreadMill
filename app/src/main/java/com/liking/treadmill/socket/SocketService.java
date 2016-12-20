@@ -97,6 +97,12 @@ public class SocketService extends Service {
             LogUtils.d(SocketService.TAG, "设备信息" + SocketHelper.reportDevicesString());
             sendUpStreamMessage(SocketHelper.reportDevicesString());
         }
+
+        @Override
+        public void reportExerciseData() throws RemoteException {
+            LogUtils.d(SocketService.TAG, "锻炼数据：" + SocketHelper.reportExerciseData());
+            sendUpStreamMessage(SocketHelper.reportExerciseData());
+        }
     };
 
     @Override
