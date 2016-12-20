@@ -263,21 +263,21 @@ public class RunFragment extends SerialPortFragment {
         mUseTimeTextView.setText(userTime);
         float totalDistance = TreadData.getDistance();
         //总距离
-        mDistanceTextView.setText(totalDistance + "");
+        mDistanceTextView.setText(StringUtils.getDecimalString(totalDistance, 2));
         //平均坡度
         int currenGrade = SerialPortUtil.getTreadInstance().getCurrentGrade();
         float time = (float) SerialPortUtil.getTreadInstance().getRunTime() / 3600;
         if (currenGrade > 0) {
             float averagerGrade = currenGrade / time;
-            mAverageGradientTextView.setText(averagerGrade + "");
+            mAverageGradientTextView.setText(StringUtils.getDecimalString(averagerGrade, 2));
         }
         //平均速度
         if (totalDistance > 0) {
             float avergageSpeed = totalDistance / time;
-            mAvergageSpeedTextView.setText(avergageSpeed + "");
+            mAvergageSpeedTextView.setText(StringUtils.getDecimalString(avergageSpeed, 2));
         }
         //消耗热量
-        mConsumeKcalTextView.setText(SerialPortUtil.getTreadInstance().getKCAL() + "");
+        mConsumeKcalTextView.setText(StringUtils.getDecimalString(SerialPortUtil.getTreadInstance().getKCAL(), 2));
         //平均心率
         mAvergHraetRateTextView.setText(SerialPortUtil.getTreadInstance().getHeartRate() + "");
         CompleteCountdownTime completeCountdownTime = new CompleteCountdownTime(122 * 1000, 1000);
