@@ -262,13 +262,14 @@ public class RunFragment extends SerialPortFragment {
         mDistanceTextView.setText(totalDistance + "");
         //平均坡度
         int currenGrade = SerialPortUtil.getTreadInstance().getCurrentGrade();
+        float time = (float) SerialPortUtil.getTreadInstance().getRunTime() / 3600;
         if (currenGrade > 0) {
-            int averagerGrade = currenGrade / (SerialPortUtil.getTreadInstance().getRunTime() / 3600);
+            float averagerGrade = currenGrade / time;
             mAverageGradientTextView.setText(averagerGrade + "");
         }
         //平均速度
         if (totalDistance > 0) {
-            float avergageSpeed = totalDistance / (float) (SerialPortUtil.getTreadInstance().getRunTime() / 3600);
+            float avergageSpeed = totalDistance / time;
             mAvergageSpeedTextView.setText(avergageSpeed + "");
         }
         //消耗热量
