@@ -74,6 +74,7 @@ public class SocketService extends Service {
         @Override
         public void rebind() throws RemoteException {
             sendUpStreamMessage(SocketHelper.REBIND_STRING);
+            sendUpStreamMessage(SocketHelper.reportDevicesString());
         }
 
         @Override
