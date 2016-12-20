@@ -244,6 +244,7 @@ public class RunFragment extends SerialPortFragment {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        SerialPortUtil.setCardNoUnValid();//设置无效卡
         statisticsRunData();
     }
 
