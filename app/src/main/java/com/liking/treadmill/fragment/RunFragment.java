@@ -93,6 +93,8 @@ public class RunFragment extends SerialPortFragment {
     private int mSpeed = 0;
     private int mGrade = 0;
 
+    private int totalGrade ; //总坡度
+
     private TextView mDistanceTextView;//距离
     private TextView mUseTimeTextView; //用时
     private TextView mAverageGradientTextView; //平均坡度
@@ -264,11 +266,10 @@ public class RunFragment extends SerialPortFragment {
         float totalDistance = TreadData.getDistance();
         //总距离
         mDistanceTextView.setText(StringUtils.getDecimalString(totalDistance, 2));
-        //平均坡度
-        int currenGrade = SerialPortUtil.getTreadInstance().getCurrentGrade();
         float time = (float) SerialPortUtil.getTreadInstance().getRunTime() / 3600;
-        if (currenGrade > 0) {
-            float averagerGrade = currenGrade / time;
+        //平均坡度
+        if (totalGrade > 0) {
+            float averagerGrade = totalGrade / SerialPortUtil.getTreadInstance().getRunTime();
             mAverageGradientTextView.setText(StringUtils.getDecimalString(averagerGrade, 2));
         }
         //平均速度
@@ -333,6 +334,7 @@ public class RunFragment extends SerialPortFragment {
                     float distance = SerialPortUtil.getTreadInstance().getDistance() + (float) (SerialPortUtil.getTreadInstance().getCurrentSpeed() / 36000.0);
                     float kcal = SerialPortUtil.getTreadInstance().getKCAL() +
                             (float) (0.0703 * (1 + SerialPortUtil.getTreadInstance().getCurrentSpeed() / 100) * SerialPortUtil.getTreadInstance().getDistance());
+                    totalGrade =  totalGrade + SerialPortUtil.getTreadInstance().getCurrentGrade();
                     LogUtils.d("rrrr", "distance: " + distance + " KCAL: " + kcal);
                     SerialPortUtil.getTreadInstance().setDistance(distance);
                     SerialPortUtil.getTreadInstance().setKCAL(kcal);
