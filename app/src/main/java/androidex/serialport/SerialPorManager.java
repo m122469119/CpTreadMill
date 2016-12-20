@@ -65,7 +65,7 @@ public class SerialPorManager {
         }
     }
 
-    public void sendMessage(byte[] buffer) {
+    public synchronized void sendMessage(byte[] buffer) {
         int index = 0;
         if (buffer == null) {
             return;

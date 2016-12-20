@@ -4,6 +4,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.text.Html;
@@ -173,7 +175,7 @@ public class RunFragment extends SerialPortFragment {
             if (mLayoutRun.getVisibility() == View.VISIBLE) {
                 int speed = SerialPortUtil.getTreadInstance().getCurrentSpeed();
                 if (speed < 200) {
-                    mSpeed = speed + 10;
+                    mSpeed = speed + 1;
                 }
                 SerialPortUtil.setSpeedInRunning(mSpeed);
                 setSpeedBack(mSpeed);
@@ -183,7 +185,7 @@ public class RunFragment extends SerialPortFragment {
             if (mLayoutRun.getVisibility() == View.VISIBLE) {
                 int speed = SerialPortUtil.getTreadInstance().getCurrentSpeed();
                 if (speed > 0) {
-                    mSpeed = speed - 10;
+                    mSpeed = speed - 1;
                 }
                 SerialPortUtil.setSpeedInRunning(mSpeed);
                 setSpeedBack(mSpeed);
@@ -284,6 +286,19 @@ public class RunFragment extends SerialPortFragment {
         runThread.start();
     }
 
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 0) {
+                mCurrentDistanceTextView.setText(StringUtils.getDecimalString(SerialPortUtil.getTreadInstance().getDistance(), 2));
+                String userTime = RunTimeUtil.secToTime(SerialPortUtil.getTreadInstance().getRunTime());
+                mCurrentUserTime.setText(userTime);
+                LogUtils.d("dddd", "distance: " + SerialPortUtil.getTreadInstance().getDistance() + " kcal: " + SerialPortUtil.getTreadInstance().getKCAL());
+            }
+        }
+    };
+
     /**
      * 开启一个线程记录时间和距离等数据
      */
@@ -298,13 +313,13 @@ public class RunFragment extends SerialPortFragment {
                 }
                 if (!isPause) {
                     SerialPortUtil.getTreadInstance().setRunTime(SerialPortUtil.getTreadInstance().getRunTime() + 1);
-                    SerialPortUtil.getTreadInstance().setDistance((float) (SerialPortUtil.getTreadInstance().getCurrentSpeed() / 36.0));
-                    SerialPortUtil.getTreadInstance().setKCAL(SerialPortUtil.getTreadInstance().getKCAL() +
-                            (float) (0.0703 * (1 + SerialPortUtil.getTreadInstance().getCurrentSpeed() / 100) * SerialPortUtil.getTreadInstance().getDistance()));
-                    mCurrentDistanceTextView.setText(SerialPortUtil.getTreadInstance().getDistance() + "");
-                    String userTime = RunTimeUtil.secToTime(SerialPortUtil.getTreadInstance().getRunTime());
-                    mCurrentUserTime.setText(userTime);
-                    LogUtils.d("dddd", "distance: " + SerialPortUtil.getTreadInstance().getDistance() + " kcal: " + SerialPortUtil.getTreadInstance().getKCAL());
+                    float distance = SerialPortUtil.getTreadInstance().getDistance() + (float) (SerialPortUtil.getTreadInstance().getCurrentSpeed() / 36000.0);
+                    float kcal = SerialPortUtil.getTreadInstance().getKCAL() +
+                            (float) (0.0703 * (1 + SerialPortUtil.getTreadInstance().getCurrentSpeed() / 100) * SerialPortUtil.getTreadInstance().getDistance());
+                    LogUtils.d("rrrr", "distance: " + distance + " KCAL: " + kcal);
+                    SerialPortUtil.getTreadInstance().setDistance(distance);
+                    SerialPortUtil.getTreadInstance().setKCAL(kcal);
+                    mHandler.sendEmptyMessage(0);
                 }
             }
         }
@@ -339,6 +354,10 @@ public class RunFragment extends SerialPortFragment {
         if (mHeartRate != treadData.getHeartRate()) {
             mHeartRate = treadData.getHeartRate();
             mHeartRateInfoTextView.setText(String.valueOf(mHeartRate));
+        }
+        if (mSpeed != treadData.getCurrentSpeed()) {
+            mSpeed = treadData.getCurrentSpeed();
+            mSpeedInfoTextView.setText(StringUtils.getDecimalString((float) (mSpeed / 10.0), 2));
         }
         if (mHotInfo != treadData.getKCAL()) {
             mHotInfo = treadData.getKCAL();
@@ -397,7 +416,7 @@ public class RunFragment extends SerialPortFragment {
         mSpeedInfoTextView.setText("0");
         mHotInfoTextView.setText("0.0");
         mHeartRateInfoTextView.setText("0");
-        if(SerialPortUtil.getTreadInstance().getUserInfo() != null) {
+        if (SerialPortUtil.getTreadInstance().getUserInfo() != null) {
             mUserNameTextView.setText(SerialPortUtil.getTreadInstance().getUserInfo().mUserName);
             HImageLoaderSingleton.getInstance().loadImage(mHeadHImageView, SerialPortUtil.getTreadInstance().getUserInfo().mGender);
         }

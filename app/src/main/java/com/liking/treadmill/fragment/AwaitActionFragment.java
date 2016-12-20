@@ -1,6 +1,5 @@
 package com.liking.treadmill.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
@@ -10,11 +9,9 @@ import android.view.ViewGroup;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
-import com.aaron.android.framework.utils.PopupUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.message.LoginUserInfoMessage;
-import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.widget.IToast;

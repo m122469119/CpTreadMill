@@ -1,7 +1,6 @@
 package com.liking.treadmill.socket;
 
 import android.content.Context;
-import android.content.Intent;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.SecurityUtils;
@@ -27,7 +26,6 @@ import com.liking.treadmill.utils.ApkUpdateUtils;
 import java.util.Date;
 import java.util.List;
 
-import androidex.serialport.SerialPorManager;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -151,7 +149,7 @@ public class SocketHelper {
      * @return
      */
     public static String userloginString(String cardno) {
-        return "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":0,\"data\":{\"bracelet_id\":" + cardno + ",\"gym_id\":" + Preference.getBindUserGymId() + "}}";
+        return "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":0,\"data\":{\"bracelet_id\":" + cardno + ",\"gym_id\":" + Preference.getBindUserGymId() + "}}\\r\\n";
 
     }
         /**

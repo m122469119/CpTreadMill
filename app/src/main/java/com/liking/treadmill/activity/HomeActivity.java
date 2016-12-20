@@ -13,11 +13,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.liking.treadmill.fragment.AwaitActionFragment;
 import com.liking.treadmill.fragment.RunFragment;
+import com.liking.treadmill.fragment.SettingFragment;
 import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.message.UpdateCompleteMessage;
 import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
+import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
 
 public class HomeActivity extends LikingTreadmillBaseActivity {
@@ -41,7 +43,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity {
             LogUtils.d(SocketService.TAG, "service is connected");
             try {
                 LogUtils.d(SocketService.TAG, "上报设备信息start");
-               // iBackService.reportDevices();
+                // iBackService.reportDevices();
                 iBackService.login();
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -62,19 +64,19 @@ public class HomeActivity extends LikingTreadmillBaseActivity {
     }
 
     public void launchInit() {
-//        if(Preference.getIsStartingUp()) {  //首次开机
-        launchFragment(new RunFragment());
-//            mWelcomeHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if(!isUpdate) {
-//                        launchFragment(new SettingFragment());
-//                    }
-//                }
-//            },welcomeInterval);
-//        } else {
-//            launchFragment(new AwaitActionFragment());
-//        }
+        if (Preference.getIsStartingUp()) {  //首次开机
+            launchFragment(new SettingFragment());
+            mWelcomeHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (!isUpdate) {
+                        launchFragment(new SettingFragment());
+                    }
+                }
+            }, welcomeInterval);
+        } else {
+            launchFragment(new RunFragment());
+        }
     }
 
     @Override
@@ -139,10 +141,10 @@ public class HomeActivity extends LikingTreadmillBaseActivity {
     public void onEvent(UpdateCompleteMessage message) {
         LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "Update Complete");
         isUpdate = false;
-//        if(Preference.getIsStartingUp()) {
-        launchFragment(new RunFragment());
-//        } else {
-//            launchFragment(new AwaitActionFragment());
-//        }
+        if (Preference.getIsStartingUp()) {
+            launchFragment(new SettingFragment());
+        } else {
+            launchFragment(new AwaitActionFragment());
+        }
     }
 }
