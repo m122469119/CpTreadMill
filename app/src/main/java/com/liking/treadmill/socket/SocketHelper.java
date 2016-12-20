@@ -159,7 +159,7 @@ public class SocketHelper {
          */
 
     public static String reportExerciseData() {
-        return "{\"type\":\"data\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"" + new Date().getTime() + "\",\"data\":{\"bracelet_id\":\""+ SerialPortUtil.getTreadInstance().getCardNo() +"\"" +
+        return "{\"type\":\"data\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"" + SerialPortUtil.getTreadInstance().getCardNo() + new Date().getTime() + "\",\"data\":{\"bracelet_id\":\""+ SerialPortUtil.getTreadInstance().getCardNo() +"\"" +
                 ",\"gym_id\":\"" + Preference.getBindUserGymId() + "\",\"device_id\":\"" + SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"" +
                 ",\"period\":\"" + SerialPortUtil.getTreadInstance().getRunTime() + "\",\"distance\":\"" + SerialPortUtil.getTreadInstance().getDistance() + "\",\"cal\":\"" + SerialPortUtil.getTreadInstance().getKCAL() + "\"}}\\r\\n";
     }
