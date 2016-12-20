@@ -34,6 +34,8 @@ public class AwaitActionFragment extends SerialPortFragment {
 
     private  HomeActivity homeActivity = null;
 
+    private String cardNo = "";
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -45,29 +47,32 @@ public class AwaitActionFragment extends SerialPortFragment {
     @Override
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
-        if (keyCode == LikingTreadKeyEvent.KEY_CARD) {//刷卡跳转
-            String cardNo = SerialPortUtil.getTreadInstance().getCardNo();
-            LogUtils.e(TAG," onTreadKeyDown :" + LikingTreadKeyEvent.KEY_CARD + ";cardNo" + cardNo);
-            if(!StringUtils.isEmpty(cardNo)) {
-//                Bundle bundle = new Bundle();
-//                bundle.putString(KEY_CARDNO_VALUE, cardNo);
-                  homeActivity = (HomeActivity)getActivity();
-                try {
-                    homeActivity.iBackService.userLogin(cardNo);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+        if (keyCode == LikingTreadKeyEvent.KEY_CARD) {//刷卡
+            if(StringUtils.isEmpty(cardNo) || !cardNo.equals(SerialPortUtil.getTreadInstance().getCardNo())) {
+                cardNo = SerialPortUtil.getTreadInstance().getCardNo();
+                LogUtils.e(TAG," onTreadKeyDown :" + LikingTreadKeyEvent.KEY_CARD + ";cardNo" + cardNo);
+                if(!StringUtils.isEmpty(cardNo)) {
+                    homeActivity = (HomeActivity)getActivity();
+                    try {
+                        homeActivity.iBackService.userLogin(cardNo);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
     }
 
     public void onEvent(LoginUserInfoMessage loginUserInfoMessage) {
-        if(loginUserInfoMessage.errcode != 0) {
-            IToast.show(loginUserInfoMessage.errmsg);
-            SerialPortUtil.setCardNoUnValid();
-        } else {
+        if(loginUserInfoMessage.errcode == 0) {
+            SerialPortUtil.getTreadInstance().setCardNo(cardNo);
             SerialPortUtil.setCardNoValid();
             homeActivity.launchFragment(new RunFragment());
+        } else {
+            cardNo = "";
+            IToast.show(loginUserInfoMessage.errmsg);
+            SerialPortUtil.setCardNoUnValid();
+            SerialPortUtil.getTreadInstance().reset();
         }
     }
 
@@ -95,4 +100,8 @@ public class AwaitActionFragment extends SerialPortFragment {
 
     }
 
+    @Override
+    protected boolean isEventTarget() {
+        return true;
+    }
 }

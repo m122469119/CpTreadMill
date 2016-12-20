@@ -1,6 +1,7 @@
 package com.liking.treadmill.treadcontroller;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.aaron.android.codelibrary.utils.StringUtils;
 
 import androidex.serialport.SerialPorManager;
 
@@ -274,6 +275,7 @@ public class SerialPortUtil {
             mDistance = 0;
             mKCAL = 0; //卡路里
             runTime = 0;
+            mCardNo = "";
         }
 
         public static class UserInfo {
@@ -550,8 +552,10 @@ public class SerialPortUtil {
                 sb.append(byteParseHex(serialPortData[INDEX_KEY + 14]));
             }
             cardNo = String.valueOf(Long.parseLong(sb.toString(), 16));
+            if(StringUtils.isEmpty(cardNo) && !StringUtils.isEmpty(sTreadData.getCardNo())) {
+                cardNo = sTreadData.getCardNo();
+            }
         }catch (Exception e){
-
         }
         return cardNo;
     }
