@@ -42,7 +42,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity {
             LogUtils.d(SocketService.TAG, "service is connected");
             try {
                 LogUtils.d(SocketService.TAG, "上报设备信息start");
-                iBackService.reportDevices();
+               // iBackService.reportDevices();
                 iBackService.login();
             } catch (RemoteException e) {
                 e.printStackTrace();

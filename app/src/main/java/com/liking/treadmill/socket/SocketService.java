@@ -107,7 +107,7 @@ public class SocketService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtils.d(TAG,"socketService  onCreate()");
+        LogUtils.d(TAG, "socketService  onCreate()");
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         mSendHandlerThread = new HandlerThread("tcpSendThread");
         mSendHandlerThread.start();
@@ -176,8 +176,11 @@ public class SocketService extends Service {
 //            if (Preference.isLogin()) {
 //                    mIBackService.init();
 //            }
-            LogUtils.d(TAG,"initSocket");
+            LogUtils.d(TAG, "initSocket");
             sendHeartMessageDelayed();//初始化成功后，就准备发送心跳包
+            if (mIBackService != null) {
+                mIBackService.reportDevices();
+            }
         } catch (Exception e) {
             LogUtils.d(TAG, "server socket is disconnect....." + e.getMessage());
             sendReConnectMesasage(RECONNECT_DELAY);
