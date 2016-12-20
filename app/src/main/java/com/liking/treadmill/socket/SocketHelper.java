@@ -121,9 +121,6 @@ public class SocketHelper {
         } else if (TYPE_EXERCISE_DATA.equals(type)) {//上传训练数据成功
             ExerciseDataResult exerciseDataResult = gson.fromJson(jsonText, ExerciseDataResult.class);
             int meessageId = exerciseDataResult.getMsgId();
-            if (meessageId > 0) {
-                SerialPortUtil.getTreadInstance().reset();//清空数据
-            }
         }
     }
 

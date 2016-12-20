@@ -104,6 +104,7 @@ public class RunFragment extends SerialPortFragment {
     private PauseCountdownTime mPauseCountdownTime;//60s 倒计时类
     private boolean isPause;//是否暂停
     private long currentDateSecond;//当前时间
+    private volatile boolean isStart = false;
 
     @Nullable
     @Override
@@ -135,7 +136,10 @@ public class RunFragment extends SerialPortFragment {
             ((HomeActivity) getActivity()).launchFragment(SettingFragment.instantiate(getActivity(), SettingFragment.class.getName()));
         } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {//返回
 //            getSupportFragmentManager().popBackStack();
-            ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
+            if(mFinishLayout.getVisibility() == View.VISIBLE  || mStartLayout.getVisibility() == View.VISIBLE) {
+                runRest();
+                ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
+            }
         } else if (keyCode == LikingTreadKeyEvent.KEY_START) {
             if (mStartLayout.getVisibility() == View.VISIBLE) {//开始跑步
                 SerialPortUtil.startTreadMill();
@@ -276,14 +280,25 @@ public class RunFragment extends SerialPortFragment {
         mConsumeKcalTextView.setText(SerialPortUtil.getTreadInstance().getKCAL() + "");
         //平均心率
         mAvergHraetRateTextView.setText(SerialPortUtil.getTreadInstance().getHeartRate() + "");
-        SerialPortUtil.setCardNoUnValid();//设置无效卡
+        CompleteCountdownTime completeCountdownTime = new CompleteCountdownTime(122 * 1000, 1000);
+        completeCountdownTime.start();
+        runRest();
     }
 
+    /**
+     * 重置跑步机设置
+     */
+    public void runRest() {
+        isStart = false;
+        SerialPortUtil.setCardNoUnValid();//设置无效卡
+        SerialPortUtil.getTreadInstance().reset();//清空数据
+    }
 
     /**
      * 开启跑步线程
      */
     private void startRunThread() {
+        isStart = true;
         RunThread runThread = new RunThread();
         runThread.start();
     }
@@ -307,7 +322,7 @@ public class RunFragment extends SerialPortFragment {
     private class RunThread extends Thread {
         @Override
         public void run() {
-            while (true) {
+            while (isStart) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -533,6 +548,26 @@ public class RunFragment extends SerialPortFragment {
         @Override
         public void onFinish() {
             finishExercise();
+        }
+    }
+
+    /**
+     * 120s 结束页面  倒计时结束
+     */
+    class CompleteCountdownTime extends CountDownTimer {
+
+        public CompleteCountdownTime(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            LogUtils.e(TAG,"完成倒计时:" + millisUntilFinished);
+        }
+
+        @Override
+        public void onFinish() {
+            ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
         }
     }
 }
