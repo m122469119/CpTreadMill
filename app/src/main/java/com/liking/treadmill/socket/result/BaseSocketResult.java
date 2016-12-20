@@ -21,7 +21,7 @@ public class BaseSocketResult implements Serializable {
     @SerializedName("type")
     private String mType;
     @SerializedName("msg_id")
-    private int msgId;
+    private String msgId;
 
     public String getType() {
         return mType;
@@ -31,11 +31,11 @@ public class BaseSocketResult implements Serializable {
         mType = type;
     }
 
-    public int getMsgId() {
+    public String getMsgId() {
         return msgId;
     }
 
-    public void setMsgId(int msgId) {
+    public void setMsgId(String msgId) {
         this.msgId = msgId;
     }
 }

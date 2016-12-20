@@ -324,7 +324,7 @@ public class SerialPortUtil {
             getTreadInstance().setPowerAd(getIndexData(serialPortData, INDEX_POWER_AD));
             getTreadInstance().setPowerState(getIndexData(serialPortData, INDEX_POWER));
             getTreadInstance().setVersion(getIndexData(serialPortData, INDEX_VERSION));
-            getTreadInstance().setCardNo(getCordNo(serialPortData));
+            setValidCardNo(serialPortData);
         }
     }
 
@@ -543,7 +543,7 @@ public class SerialPortUtil {
      * @param serialPortData
      * @return
      */
-    private static String getCordNo(byte[] serialPortData) {
+    private static void setValidCardNo(byte[] serialPortData) {
         StringBuilder sb = new StringBuilder();
         String cardNo = "";
         try {
@@ -554,12 +554,11 @@ public class SerialPortUtil {
                 sb.append(byteParseHex(serialPortData[INDEX_KEY + 14]));
             }
             cardNo = String.valueOf(Long.parseLong(sb.toString(), 16));
-            if(StringUtils.isEmpty(cardNo) && !StringUtils.isEmpty(sTreadData.getCardNo())) {
-                cardNo = sTreadData.getCardNo();
+            if (!StringUtils.isEmpty(cardNo)) {
+                sTreadData.setCardNo(cardNo);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
         }
-        return cardNo;
     }
 
     public static String byteParseHex(byte b) {

@@ -1,8 +1,6 @@
 package com.liking.treadmill.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,8 +91,8 @@ public class NetworkSettingFragment extends SerialPortFragment {
                 postEvent(new SettingNextMessage(1));
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SET) {
-            Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
-            startActivity(intent);
+//            Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
+//            startActivity(intent);
         }
     }
 

@@ -15,7 +15,6 @@ import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.socket.result.ApkUpdateResult;
 import com.liking.treadmill.socket.result.BaseSocketResult;
 import com.liking.treadmill.socket.result.BindUserResult;
-import com.liking.treadmill.socket.result.ExerciseDataResult;
 import com.liking.treadmill.socket.result.MemberListResult;
 import com.liking.treadmill.socket.result.QrcodeResult;
 import com.liking.treadmill.socket.result.UserInfoResult;
@@ -46,8 +45,8 @@ public class SocketHelper {
 
     private static final String mTcpVersion = "v1.0";
 
-    public static final String HEART_BEAT_STRING = "{\"type\":\"ping\",\"version\":\"" + mTcpVersion + "\",\"data\":{}, \"msg_id\":0}\\r\\n";//心跳包内容
-    public static final String HEART_BEAT_PONG_STRING = "{\"type\":\"pong\",\"data\":{}, \"msg_id\":0}";//心跳包内容
+    public static final String HEART_BEAT_STRING = "{\"type\":\"ping\",\"version\":\"" + mTcpVersion + "\",\"data\":{}, \"msg_id\":\"\"}\\r\\n";//心跳包内容
+    public static final String HEART_BEAT_PONG_STRING = "{\"type\":\"pong\",\"data\":{}, \"msg_id\":\"\"}";//心跳包内容
     public static final String REBIND_STRING = "{\"type\":\"bind\",\"version\":" + mTcpVersion + ",\"data\":{}}";//心跳包内容
     public static final String CONFIRM_STRING = "{\"type\":\"confirm\",\"data\":{}}";//心跳包内容
 
@@ -101,10 +100,10 @@ public class SocketHelper {
                 List<String> memberListId = memberData.getBraceletId();
                 Preference.setMemberList(memberListId);
             }
-        } else if(TYPE_USERLOGIN.equals(type)) {//刷卡用户登录成功返回
+        } else if (TYPE_USERLOGIN.equals(type)) {//刷卡用户登录成功返回
             UserInfoResult userInfoResult = gson.fromJson(jsonText, UserInfoResult.class);
             UserInfoResult.UserData userData = userInfoResult.getUserInfoData();
-            if(userData != null && userData.getErrcode() == 0) { //合法有效用户
+            if (userData != null && userData.getErrcode() == 0) { //合法有效用户
                 UserInfoResult.UserData.UserInfoData userResult = userData.getUserInfoData();
                 SerialPortUtil.TreadData.UserInfo userInfo = new SerialPortUtil.TreadData.UserInfo();
                 userInfo.mUserName = userResult.getUserName();
@@ -113,19 +112,17 @@ public class SocketHelper {
                 SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
             }
             LoginUserInfoMessage loginUserInfoMessage = new LoginUserInfoMessage();
-            if(userData != null) {
+            if (userData != null) {
                 loginUserInfoMessage.errcode = userData.getErrcode();
                 loginUserInfoMessage.errmsg = userData.getErrmsg();
             }
             EventBus.getDefault().post(loginUserInfoMessage);
         } else if (TYPE_EXERCISE_DATA.equals(type)) {//上传训练数据成功
-            ExerciseDataResult exerciseDataResult = gson.fromJson(jsonText, ExerciseDataResult.class);
-            int meessageId = exerciseDataResult.getMsgId();
         }
     }
 
     public static String loginString() {
-        return "{\"type\":\"qcode\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"0\",\"data\":{\"device_id\":\"" +
+        return "{\"type\":\"qcode\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
                 SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"}}\\r\\n";
     }
 
@@ -134,7 +131,7 @@ public class SocketHelper {
     }
 
     public static String reportDevicesString() {
-        return "{\"type\":\"treadmill\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"0\",\"data\":{\"device_id\":\"" +
+        return "{\"type\":\"treadmill\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
                 SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"," +
                 "\"gym_id\":\"0\",\"mac\":\"" + EnvironmentUtils.Network.wifiMac() + "\",\"app_version\":\"" + EnvironmentUtils.Config.getAppVersionName() + "\"," +
                 "\"total_distance\":\"0\",\"total_time\":\"0\",\"power_times\":\"0\"}}\\r\\n";
@@ -142,21 +139,23 @@ public class SocketHelper {
 
     /**
      * 用户刷卡登录
+     *
      * @param cardno
      * @return
      */
     public static String userloginString(String cardno) {
-        return "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":0,\"data\":{\"bracelet_id\":" + cardno + ",\"gym_id\":" + Preference.getBindUserGymId() + "}}\\r\\n";
+        return "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"bracelet_id\":" + cardno + ",\"gym_id\":" + Preference.getBindUserGymId() + "}}\\r\\n";
 
     }
-        /**
-         * 上报跑步数据
-         *
-         * @return
-         */
+
+    /**
+     * 上报跑步数据
+     *
+     * @return
+     */
 
     public static String reportExerciseData() {
-        return "{\"type\":\"data\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"" + SerialPortUtil.getTreadInstance().getCardNo() + new Date().getTime() + "\",\"data\":{\"bracelet_id\":\""+ SerialPortUtil.getTreadInstance().getCardNo() +"\"" +
+        return "{\"type\":\"data\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"" + SerialPortUtil.getTreadInstance().getCardNo() + new Date().getTime() + "\",\"data\":{\"bracelet_id\":\"" + SerialPortUtil.getTreadInstance().getCardNo() + "\"" +
                 ",\"gym_id\":\"" + Preference.getBindUserGymId() + "\",\"device_id\":\"" + SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"" +
                 ",\"period\":\"" + SerialPortUtil.getTreadInstance().getRunTime() + "\",\"distance\":\"" + SerialPortUtil.getTreadInstance().getDistance() + "\",\"cal\":\"" + SerialPortUtil.getTreadInstance().getKCAL() + "\"}}\\r\\n";
     }

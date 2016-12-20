@@ -67,7 +67,6 @@ public class AwaitActionFragment extends SerialPortFragment {
     }
 
     public void onEvent(LoginUserInfoMessage loginUserInfoMessage) {
-        cardNo = "";
         if(loginUserInfoMessage.errcode == 0) {
             SerialPortUtil.getTreadInstance().setCardNo(cardNo);
             SerialPortUtil.setCardNoValid();
@@ -77,6 +76,7 @@ public class AwaitActionFragment extends SerialPortFragment {
             SerialPortUtil.setCardNoUnValid();
             SerialPortUtil.getTreadInstance().reset();
         }
+        cardNo = "";
     }
 
     @Override

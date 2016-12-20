@@ -125,8 +125,8 @@ public class RunFragment extends SerialPortFragment {
     private void initPauseView() {
         mGoOnLeftPromptTextView.setText("点击 ");
         mGoOnPromptTextView.setText("QUICK" + "\n" + "START");
-        mGoOnRightPromptTextView.setText(" 进入下一步");
-        Spanned visitorText = Html.fromHtml("点击 " + "<font color=#25ff8c><b>STOP</b></font>" + " 进入下一步");
+        mGoOnRightPromptTextView.setText(" 继续运动");
+        Spanned visitorText = Html.fromHtml("点击 " + "<font color=#25ff8c><b>STOP</b></font>" + " 完成锻炼");
         mStopPromptTextView.setText(visitorText);
     }
 
@@ -135,7 +135,7 @@ public class RunFragment extends SerialPortFragment {
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_SET) {//参数设置
-            ((HomeActivity) getActivity()).launchFragment(SettingFragment.instantiate(getActivity(), SettingFragment.class.getName()));
+//            ((HomeActivity) getActivity()).launchFragment(SettingFragment.instantiate(getActivity(), SettingFragment.class.getName()));
         } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {//返回
 //            getSupportFragmentManager().popBackStack();
             if(mFinishLayout.getVisibility() == View.VISIBLE  || mStartLayout.getVisibility() == View.VISIBLE) {
@@ -156,6 +156,7 @@ public class RunFragment extends SerialPortFragment {
             } else if (mLayoutRun.getVisibility() == View.VISIBLE) {//正在跑步界面
 
             } else if (mPauseLayout.getVisibility() == View.VISIBLE) {//暂停界面
+                SerialPortUtil.startTreadMill();
                 destroyPauseCountTime();
                 isPause = false;
                 mPauseLayout.setVisibility(View.GONE);
@@ -179,21 +180,13 @@ public class RunFragment extends SerialPortFragment {
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS) {//速度加
             if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                int speed = SerialPortUtil.getTreadInstance().getCurrentSpeed();
-                if (speed < 200) {
-                    mSpeed = speed + 1;
-                }
-                SerialPortUtil.setSpeedInRunning(mSpeed);
+                setSpeed(SerialPortUtil.getTreadInstance().getCurrentSpeed() + 1);
                 setSpeedBack(mSpeed);
             }
 
         } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE) {//速度减
             if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                int speed = SerialPortUtil.getTreadInstance().getCurrentSpeed();
-                if (speed > 0) {
-                    mSpeed = speed - 1;
-                }
-                SerialPortUtil.setSpeedInRunning(mSpeed);
+                setSpeed(SerialPortUtil.getTreadInstance().getCurrentSpeed() - 1);
                 setSpeedBack(mSpeed);
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {//坡度+
@@ -212,6 +205,60 @@ public class RunFragment extends SerialPortFragment {
                 }
                 SerialPortUtil.setGradeInRunning(mGrade);
             }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_3) {
+            if (mLayoutRun.getVisibility() == View.VISIBLE) {
+               setSpeed(30);
+            }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_6) {
+            if (mLayoutRun.getVisibility() == View.VISIBLE) {
+                setSpeed(60);
+            }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_9) {
+            if (mLayoutRun.getVisibility() == View.VISIBLE) {
+                setSpeed(90);
+            }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_12) {
+            if (mLayoutRun.getVisibility() == View.VISIBLE) {
+                setSpeed(120);
+            }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_15) {
+            if (mLayoutRun.getVisibility() == View.VISIBLE) {
+                setSpeed(150);
+            }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_3) {
+            if (mLayoutRun.getVisibility() == View.VISIBLE) {
+                setGrade(3);
+            }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_6) {
+            if (mLayoutRun.getVisibility() == View.VISIBLE) {
+                setGrade(6);
+            }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_9) {
+            if (mLayoutRun.getVisibility() == View.VISIBLE) {
+                setGrade(9);
+            }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_12) {
+            if (mLayoutRun.getVisibility() == View.VISIBLE) {
+                setGrade(12);
+            }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_15) {
+            if (mLayoutRun.getVisibility() == View.VISIBLE) {
+                setGrade(15);
+            }
+        }
+    }
+
+    private void setSpeed(int speed) {
+        if (speed > 0 && speed <= 200) {
+            mSpeed = speed;
+            SerialPortUtil.setSpeedInRunning(mSpeed);
+        }
+    }
+
+    private void setGrade(int grade) {
+        if (grade > 0 && grade <= 25) {
+            mGrade = grade;
+            SerialPortUtil.setGradeInRunning(mGrade);
         }
     }
 
