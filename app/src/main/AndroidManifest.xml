@@ -8,7 +8,8 @@
         android:name=".app.LikingThreadMillApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/LikingThreadmillTheme">
+        android:theme="@style/LikingThreadmillTheme"
+        android:sharedUserId= "android.uid.system">
         <activity
             android:name=".activity.HomeActivity"
             android:screenOrientation="landscape">
@@ -25,15 +26,6 @@
         <service
             android:name=".socket.SocketService"/>
         <service android:name=".service.ApkDownloadService"/>
-        <!--更新界面-->
-        <activity
-            android:name=".activity.UpdateActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape"/>
-        <!--待机页面-->
-        <activity
-            android:name=".activity.AwaitActionActivity"
-            android:screenOrientation="landscape"/>
         <!--网络服务-->
         <service android:name=".service.NetworkStateService"/>
     </application>
