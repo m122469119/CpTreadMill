@@ -16,4 +16,6 @@
     <color name="colorfulringprogress_pre_fgcolorstart">#00000000</color>
 
     <color name="run_await_action_hint_color">#3A3A41</color>
+
+    <color name="c60black">#60000000</color>
 </resources>

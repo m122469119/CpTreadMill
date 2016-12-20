@@ -308,6 +308,10 @@ public class RunFragment extends SerialPortFragment {
         mSpeedInfoTextView.setText("0");
         mHotInfoTextView.setText("0.0");
         mHeartRateInfoTextView.setText("0");
+        if(SerialPortUtil.getTreadInstance().getUserInfo() != null) {
+            mUserNameTextView.setText(SerialPortUtil.getTreadInstance().getUserInfo().mUserName);
+            HImageLoaderSingleton.getInstance().loadImage(mHeadHImageView, SerialPortUtil.getTreadInstance().getUserInfo().mGender);
+        }
     }
 
     private void setupRunInfoCell(View cellView, String title) {

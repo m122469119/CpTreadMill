@@ -97,6 +97,12 @@ public class SocketService extends Service {
             LogUtils.d(SocketService.TAG, "设备信息" + SocketHelper.reportDevicesString());
             sendUpStreamMessage(SocketHelper.reportDevicesString());
         }
+
+        @Override
+        public void userLogin(String cardno) throws RemoteException {
+            sendUpStreamMessage(SocketHelper.userloginString(cardno));
+        }
+
     };
 
     @Override

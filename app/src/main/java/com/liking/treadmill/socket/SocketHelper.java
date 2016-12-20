@@ -11,18 +11,21 @@ import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
 import com.liking.treadmill.message.GymBindSuccessMessage;
+import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.socket.result.ApkUpdateResult;
 import com.liking.treadmill.socket.result.BaseSocketResult;
 import com.liking.treadmill.socket.result.BindUserResult;
 import com.liking.treadmill.socket.result.MemberListResult;
 import com.liking.treadmill.socket.result.QrcodeResult;
+import com.liking.treadmill.socket.result.UserInfoResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.ApkUpdateUtils;
 
 import java.util.List;
 
+import androidex.serialport.SerialPorManager;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -37,6 +40,7 @@ public class SocketHelper {
     private static final String TYPE_QRCODE_SHOW = "qcode";
     private static final String TYPE_UPDATE_NOTIFY = "update";
     private static final String TYPE_BIND = "bind";
+    private static final String TYPE_USERLOGIN = "login";
     private static final String TYPE_MEMBER_LIST = "member_list";
 
     private static final String mTcpVersion = "v1.0";
@@ -95,6 +99,23 @@ public class SocketHelper {
                 List<String> memberListId = memberData.getBraceletId();
                 Preference.setMemberList(memberListId);
             }
+        } else if(TYPE_USERLOGIN.equals(type)) {//刷卡用户登录成功返回
+            UserInfoResult userInfoResult = gson.fromJson(jsonText, UserInfoResult.class);
+            UserInfoResult.UserData userData = userInfoResult.getUserInfoData();
+            if(userData != null && userData.getErrcode() == 0) { //合法有效用户
+                UserInfoResult.UserData.UserInfoData userResult = userData.getUserInfoData();
+                SerialPortUtil.TreadData.UserInfo userInfo = new SerialPortUtil.TreadData.UserInfo();
+                userInfo.mUserName = userResult.getUserName();
+                userInfo.mAvatar = userResult.getAvatar();
+                userInfo.mGender = userResult.getGender();
+                SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
+            }
+            LoginUserInfoMessage loginUserInfoMessage = new LoginUserInfoMessage();
+            if(userData != null) {
+                loginUserInfoMessage.errcode = userData.getErrcode();
+                loginUserInfoMessage.errmsg = userData.getErrmsg();
+            }
+            EventBus.getDefault().post(loginUserInfoMessage);
         }
     }
 
@@ -112,6 +133,10 @@ public class SocketHelper {
                 SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"," +
                 "\"gym_id\":\"0\",\"mac\":\"" + EnvironmentUtils.Network.wifiMac() + "\",\"app_version\":\"" + EnvironmentUtils.Config.getAppVersionName() + "\"," +
                 "\"total_distance\":\"0\",\"total_time\":\"0\",\"power_times\":\"0\"}}\\r\\n";
+    }
+
+    public static String userloginString(String cardno) {
+        return "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":0,\"data\":{\"bracelet_id\":" + cardno+ ",\"gym_id\":" + Preference.getBindUserGymId() + "}}";
     }
 
 }

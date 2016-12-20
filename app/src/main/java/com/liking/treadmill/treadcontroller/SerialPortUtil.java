@@ -53,6 +53,8 @@ public class SerialPortUtil {
         private int mCardIsValid;
         private int runTime = 0;
 
+        private UserInfo mUserInfo;
+
         private String mCardNo;
 
         public int isCardIsValid() {
@@ -183,6 +185,14 @@ public class SerialPortUtil {
             mStepCount = stepCount;
         }
 
+        public UserInfo getUserInfo() {
+            return mUserInfo;
+        }
+
+        public void setUserInfo(UserInfo userInfo) {
+            mUserInfo = userInfo;
+        }
+
         /**
          * 单位时间内距离
          *
@@ -264,6 +274,14 @@ public class SerialPortUtil {
             runTime = 0;
         }
 
+        public static class UserInfo {
+
+            public String mUserName;
+
+            public String mAvatar;
+
+            public String mGender;
+        }
 
     }
 
@@ -419,6 +437,9 @@ public class SerialPortUtil {
     private final static int DEFAULT_SPEED = 0x0A;
     private final static int DEFAULT_GRADE = 0x01;
 
+    private final static int BYTE_CARDNO_VALID = 0x01;
+    private final static int BYTE_CARDNO_UNVALID = 0x00;
+
     /**
      * 设置速度,向串口发送数据
      *
@@ -469,6 +490,24 @@ public class SerialPortUtil {
         sTreadData.setTreadmillState(BYTE_TREADMILL_STOP);
     }
 
+    /**
+     * 是有效用户
+     */
+    public static void setCardNoValid() {
+        byte[] bytes = getControlBuffer();
+        bytes[8] = BYTE_CARDNO_VALID;
+        SerialPorManager.getInstance().sendMessage(bytes);
+    }
+
+    /**
+     * 无效用户
+     */
+    public static void setCardNoUnValid() {
+        byte[] bytes = getControlBuffer();
+        bytes[8] = BYTE_CARDNO_UNVALID;
+        SerialPorManager.getInstance().sendMessage(bytes);
+    }
+
     private static byte[] getControlBuffer() {
         byte[] bytes = new byte[11];
         bytes[0] = BTYE_CONTROL;
@@ -493,21 +532,26 @@ public class SerialPortUtil {
      */
     private static String getCordNo(byte[] serialPortData) {
         StringBuilder sb = new StringBuilder();
-        if (checkSerialPortData(serialPortData) && ((byte) PROTOCOL_HEAD_CARDNO) == getKeyCodeFromSerialPort(serialPortData)) {
-            sb.append(byteParseInt(serialPortData[INDEX_KEY + 14]));
-            sb.append(byteParseInt(serialPortData[INDEX_KEY + 15]));
-            sb.append(byteParseInt(serialPortData[INDEX_KEY + 16]));
-            sb.append(byteParseInt(serialPortData[INDEX_KEY + 17]));
+        String cardNo = "";
+        try {
+            if (checkSerialPortData(serialPortData) && ((byte) PROTOCOL_HEAD_CARDNO) == getKeyCodeFromSerialPort(serialPortData)) {
+                sb.append(byteParseHex(serialPortData[INDEX_KEY + 17]));
+                sb.append(byteParseHex(serialPortData[INDEX_KEY + 16]));
+                sb.append(byteParseHex(serialPortData[INDEX_KEY + 15]));
+                sb.append(byteParseHex(serialPortData[INDEX_KEY + 14]));
+            }
+            cardNo = String.valueOf(Long.parseLong(sb.toString(), 16));
+        }catch (Exception e){
+
         }
-        return sb.toString();
+        return cardNo;
     }
 
-    public static int byteParseInt(byte b) {
+    public static String byteParseHex(byte b) {
         String hex = Integer.toHexString(b & 0xFF);
         if (hex.length() == 1) {
             hex = '0' + hex;
         }
-        String byteHex = hex.toUpperCase();
-        return Integer.parseInt(byteHex,16);
+        return hex.toUpperCase();
     }
 }
