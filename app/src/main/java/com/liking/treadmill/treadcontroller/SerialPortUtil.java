@@ -12,6 +12,7 @@ import androidex.serialport.SerialPorManager;
 public class SerialPortUtil {
     private final static int PROTOCOL_HEAD_1 = 0xAA;
     private final static int PROTOCOL_HEAD_2 = 0x55;
+    private final static int PROTOCOL_HEAD_CARDNO = 0x40;
     private final static int INDEX_KEY = 3;
     private final static int INDEX_SAFE_LOCK = 4;
     private final static int INDEX_OIL_PUMP = 5;
@@ -51,6 +52,8 @@ public class SerialPortUtil {
         private int mTreadmillState;
         private int mCardIsValid;
         private int runTime = 0;
+
+        private String mCardNo;
 
         public int isCardIsValid() {
             return mCardIsValid;
@@ -242,6 +245,14 @@ public class SerialPortUtil {
             this.runTime += runTime;
         }
 
+        public String getCardNo() {
+            return mCardNo;
+        }
+
+        public void setCardNo(String cardNo) {
+            mCardNo = cardNo;
+        }
+
         /**
          * 清空上次跑步数据
          */
@@ -290,6 +301,7 @@ public class SerialPortUtil {
         getTreadInstance().setPowerAd(getIndexData(serialPortData, INDEX_POWER_AD));
         getTreadInstance().setPowerState(getIndexData(serialPortData, INDEX_POWER));
         getTreadInstance().setVersion(getIndexData(serialPortData, INDEX_VERSION));
+        getTreadInstance().setCardNo(getCordNo(serialPortData));
     }
 
     public static TreadData getTreadInstance() {
@@ -473,4 +485,29 @@ public class SerialPortUtil {
         return bytes;
     }
 
+    /**
+     * 获取卡号
+     *
+     * @param serialPortData
+     * @return
+     */
+    private static String getCordNo(byte[] serialPortData) {
+        StringBuilder sb = new StringBuilder();
+        if (checkSerialPortData(serialPortData) && ((byte) PROTOCOL_HEAD_CARDNO) == getKeyCodeFromSerialPort(serialPortData)) {
+            sb.append(byteParseInt(serialPortData[INDEX_KEY + 14]));
+            sb.append(byteParseInt(serialPortData[INDEX_KEY + 15]));
+            sb.append(byteParseInt(serialPortData[INDEX_KEY + 16]));
+            sb.append(byteParseInt(serialPortData[INDEX_KEY + 17]));
+        }
+        return sb.toString();
+    }
+
+    public static int byteParseInt(byte b) {
+        String hex = Integer.toHexString(b & 0xFF);
+        if (hex.length() == 1) {
+            hex = '0' + hex;
+        }
+        String byteHex = hex.toUpperCase();
+        return Integer.parseInt(byteHex,16);
+    }
 }
