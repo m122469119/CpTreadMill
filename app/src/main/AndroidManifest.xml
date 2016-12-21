@@ -27,7 +27,11 @@
             android:name=".socket.SocketService"/>
         <service android:name=".service.ApkDownloadService"/>
         <!--网络服务-->
-        <service android:name=".service.NetworkStateService"/>
+        <service android:name=".service.NetworkStateService">
+            <intent-filter android:priority="1000" >
+                <action android:name="com.liking.treadmill.service.NetworkStateService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.liking.treadmill.message.WifiMessage;
+import com.liking.treadmill.widget.IToast;
 
 import de.greenrobot.event.EventBus;
 
@@ -65,11 +66,10 @@ public class NetworkStateService extends Service {
                     if (name.equals("WIFI")) {
                         networkStatus = 2;
                         // PopupUtils.showToast("wifi");
-                        EventBus.getDefault().post(new WifiMessage(true));
                     } else {
                         networkStatus = 1;
                     }
-
+                    EventBus.getDefault().post(new WifiMessage(true));
                 } else {
                     // NetworkInfo为空或者是不可用的情况下
                     networkStatus = 0;

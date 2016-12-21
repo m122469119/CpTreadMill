@@ -88,6 +88,10 @@ public class HomeActivity extends LikingTreadmillBaseActivity {
             localBroadcastManager.registerReceiver(mMessageBackReceiver, mIntentFilter);
             bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         }
+        //网络连接状态监听服务
+        Intent intent = new Intent();
+        intent.setAction("com.liking.treadmill.service.NetworkStateService");
+        startService(intent);
         super.onStart();
     }
 
