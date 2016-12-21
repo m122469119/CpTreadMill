@@ -14,4 +14,5 @@
     <string name="run_welcom_hint">Hello,欢迎使用Liking Fit 智能跑步机</string>
     <string name="this_run_finish">本次锻炼完成</string>
     <string name="bind_gym_success_hint">完成设置,正在为您跳转...</string>
+    <string name="read_card_error">读卡失败!</string>
 </resources>

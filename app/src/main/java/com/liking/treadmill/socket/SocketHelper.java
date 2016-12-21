@@ -101,20 +101,11 @@ public class SocketHelper {
                 Preference.setMemberList(memberListId);
             }
         } else if (TYPE_USERLOGIN.equals(type)) {//刷卡用户登录成功返回
+            LoginUserInfoMessage loginUserInfoMessage = new LoginUserInfoMessage();
             UserInfoResult userInfoResult = gson.fromJson(jsonText, UserInfoResult.class);
             UserInfoResult.UserData userData = userInfoResult.getUserInfoData();
-            if (userData != null && userData.getErrcode() == 0) { //合法有效用户
-                UserInfoResult.UserData.UserInfoData userResult = userData.getUserInfoData();
-                SerialPortUtil.TreadData.UserInfo userInfo = new SerialPortUtil.TreadData.UserInfo();
-                userInfo.mUserName = userResult.getUserName();
-                userInfo.mAvatar = userResult.getAvatar();
-                userInfo.mGender = userResult.getGender();
-                SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
-            }
-            LoginUserInfoMessage loginUserInfoMessage = new LoginUserInfoMessage();
             if (userData != null) {
-                loginUserInfoMessage.errcode = userData.getErrcode();
-                loginUserInfoMessage.errmsg = userData.getErrmsg();
+                loginUserInfoMessage.mUserData = userData;
             }
             EventBus.getDefault().post(loginUserInfoMessage);
         } else if (TYPE_EXERCISE_DATA.equals(type)) {//上传训练数据成功

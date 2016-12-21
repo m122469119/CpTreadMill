@@ -276,6 +276,7 @@ public class SerialPortUtil {
             mKCAL = 0; //卡路里
             runTime = 0;
             mCardNo = "";
+            mUserInfo = null;
         }
 
         public static class UserInfo {
@@ -285,6 +286,8 @@ public class SerialPortUtil {
             public String mAvatar;
 
             public String mGender;
+
+            public String mBraceletId;
         }
 
     }

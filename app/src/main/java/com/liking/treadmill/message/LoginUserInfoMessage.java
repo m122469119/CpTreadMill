@@ -1,6 +1,8 @@
 package com.liking.treadmill.message;
 
 
+import com.liking.treadmill.socket.result.UserInfoResult;
+
 /**
  * 说明:
  * Author: chenlei
@@ -9,6 +11,6 @@ package com.liking.treadmill.message;
 
 public class LoginUserInfoMessage {
 
-   public int errcode = -1;
-   public String errmsg;
+   public UserInfoResult.UserData mUserData = null;
+
 }
