@@ -71,25 +71,6 @@ public class SettingFragment extends BaseFragment {
         mSettingViewPager.setAdapter(tabFragmentPagerAdapter);
         mSettingViewPager.setOffscreenPageLimit(1);
         mSettingViewPager.setCurrentItem(0);
-        mSettingViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                android.support.v4.app.Fragment fragment = tabFragmentPagerAdapter.getItem(position);
-                if(fragment instanceof BindGymFragment) {
-                    Preference.setStartingUp(false);
-                }
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
     }
 
     private List<TabFragmentPagerAdapter.FragmentBinder> getMainFragmentList() {

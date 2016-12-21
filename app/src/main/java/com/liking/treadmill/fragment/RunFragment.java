@@ -484,7 +484,7 @@ public class RunFragment extends SerialPortFragment {
         mHeartRateInfoTextView.setText("0");
         if (SerialPortUtil.getTreadInstance().getUserInfo() != null) {
             mUserNameTextView.setText(SerialPortUtil.getTreadInstance().getUserInfo().mUserName);
-            HImageLoaderSingleton.getInstance().loadImage(mHeadHImageView, SerialPortUtil.getTreadInstance().getUserInfo().mGender);
+            HImageLoaderSingleton.getInstance().loadImage(mHeadHImageView, SerialPortUtil.getTreadInstance().getUserInfo().mAvatar);
         }
     }
 

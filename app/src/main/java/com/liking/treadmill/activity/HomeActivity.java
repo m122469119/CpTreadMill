@@ -32,8 +32,8 @@ public class HomeActivity extends LikingTreadmillBaseActivity {
     public IBackService iBackService;
     private Intent mServiceIntent;
 
-    private Handler mWelcomeHandler = new Handler();
-    private long welcomeInterval = 3000;
+    private Handler mDelayedHandler = new Handler();
+    private long delayedInterval = 3000;
     private boolean isUpdate = false;
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -66,14 +66,14 @@ public class HomeActivity extends LikingTreadmillBaseActivity {
     public void launchInit() {
         if (Preference.getIsStartingUp()) {  //首次开机
             launchFragment(new SettingFragment());
-            mWelcomeHandler.postDelayed(new Runnable() {
+            mDelayedHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if (!isUpdate) {
                         launchFragment(new SettingFragment());
                     }
                 }
-            }, welcomeInterval);
+            }, delayedInterval);
         } else {
             launchFragment(new AwaitActionFragment());
         }
@@ -123,7 +123,14 @@ public class HomeActivity extends LikingTreadmillBaseActivity {
      * @param message
      */
     public void onEvent(GymBindSuccessMessage message) {
-        launchFragment(new AwaitActionFragment());
+        if(mDelayedHandler != null) {
+            mDelayedHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    launchFragment(new AwaitActionFragment());
+                }
+            },delayedInterval);
+        }
     }
 
     /**
