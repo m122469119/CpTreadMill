@@ -95,6 +95,17 @@ public class AwaitActionFragment extends SerialPortFragment implements UserLogin
 
 
     @Override
+    public void userLogin(String cardno) {
+        homeActivity = (HomeActivity)getActivity();
+        try {
+            homeActivity.iBackService.userLogin(cardno);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            IToast.show(ResourceUtils.getString(R.string.read_card_error));
+        }
+    }
+
+    @Override
     public void launchRunFragment() {
         homeActivity.launchFragment(new RunFragment());
     }

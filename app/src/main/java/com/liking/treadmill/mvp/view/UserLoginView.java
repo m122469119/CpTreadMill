@@ -10,6 +10,10 @@ import com.aaron.android.framework.base.mvp.BaseNetworkLoadView;
 
 public interface UserLoginView extends BaseNetworkLoadView {
     /**
+     * 刷卡登录
+     */
+    void userLogin(String cardno);
+    /**
      * 进入跑步界面
      */
     void launchRunFragment();
