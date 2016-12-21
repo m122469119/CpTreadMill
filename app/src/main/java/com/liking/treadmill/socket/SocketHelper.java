@@ -135,7 +135,7 @@ public class SocketHelper {
      * @return
      */
     public static String userloginString(String cardno) {
-        return "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"bracelet_id\":" + cardno + ",\"gym_id\":" + Preference.getBindUserGymId() + "}}\\r\\n";
+        return "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"bracelet_id\":" + cardno + ",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
 
     }
 
