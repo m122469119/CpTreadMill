@@ -41,6 +41,7 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
                 }
             }
         } else {
+            userLoginFail();
             IToast.show(ResourceUtils.getString(R.string.network_no_connection));
         }
     }
@@ -86,10 +87,18 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
             }
         } else {
             IToast.show(mUserData.getErrmsg());
-            SerialPortUtil.setCardNoUnValid();
-            SerialPortUtil.getTreadInstance().reset();
+            userLoginFail();
+
         }
         mCurrCardNo = "";
+    }
+
+    public void userLoginFail() {
+        SerialPortUtil.setCardNoUnValid();
+        SerialPortUtil.getTreadInstance().reset();
+        if(mView != null) {
+            mView.userLoginFail();
+        }
     }
 
 }

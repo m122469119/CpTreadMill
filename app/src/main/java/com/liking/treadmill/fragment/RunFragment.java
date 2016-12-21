@@ -23,11 +23,15 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
+import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
+import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.RunTimeUtil;
+import com.liking.treadmill.widget.IToast;
 
 import java.util.Date;
 
@@ -41,7 +45,7 @@ import butterknife.ButterKnife;
  * @version 1.0.0
  */
 
-public class RunFragment extends SerialPortFragment {
+public class RunFragment extends SerialPortFragment implements UserLoginView {
     @BindView(R.id.left_ad_imageView)
     HImageView mLeftAdImageView;
     @BindView(R.id.dashboard_imageView)
@@ -104,9 +108,12 @@ public class RunFragment extends SerialPortFragment {
 
     private Typeface mTypeFace;//字体
     private PauseCountdownTime mPauseCountdownTime;//60s 倒计时类
+    private CompleteCountdownTime completeCountdownTime;// 120s 倒计时
     private boolean isPause;//是否暂停
     private long currentDateSecond;//当前时间
-    private volatile boolean isStart = false;
+    private volatile boolean isStart = false; //跑步机是否计数
+
+    private UserLoginPresenter mUserLoginPresenter = null;
 
     @Nullable
     @Override
@@ -116,6 +123,9 @@ public class RunFragment extends SerialPortFragment {
         mTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Impact.ttf");
         mPauseCountdownTime = new PauseCountdownTime(60000, 1000);
         initPauseView();
+        if(mUserLoginPresenter == null) {//刷卡登录
+            mUserLoginPresenter = new UserLoginPresenter(getActivity(), this);
+        }
         return mRootView;
     }
 
@@ -245,6 +255,13 @@ public class RunFragment extends SerialPortFragment {
             if (mLayoutRun.getVisibility() == View.VISIBLE) {
                 setGrade(15);
             }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {//刷卡
+            if(mFinishLayout.getVisibility() == View.VISIBLE  || mStartLayout.getVisibility() == View.VISIBLE) {
+                isStart = false;
+                if(mUserLoginPresenter != null) {
+                    mUserLoginPresenter.userLogin();
+                }
+            }
         }
     }
 
@@ -338,6 +355,9 @@ public class RunFragment extends SerialPortFragment {
      */
     public void runRest() {
         isStart = false;
+        if(completeCountdownTime != null) {
+            completeCountdownTime.cancel();
+        }
         SerialPortUtil.setCardNoUnValid();//设置无效卡
         SerialPortUtil.getTreadInstance().reset();//清空数据
     }
@@ -578,6 +598,44 @@ public class RunFragment extends SerialPortFragment {
     private void initAdViews() {
         HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.image_ad_run_left);
         HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, R.drawable.image_ad_run_right);
+    }
+
+    /**
+     * 刷卡登录
+     * @param cardno
+     */
+    @Override
+    public void userLogin(String cardno) {
+        try {
+            ((HomeActivity) getActivity()).iBackService.userLogin(cardno);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            if(mUserLoginPresenter != null) {
+                mUserLoginPresenter.userLoginFail();
+            }
+            IToast.show(ResourceUtils.getString(R.string.read_card_error));
+        }
+    }
+
+    /**
+     * 重新开始跑步
+     */
+    @Override
+    public void launchRunFragment() {
+        ((HomeActivity) getActivity()).launchFragment(new RunFragment());
+    }
+
+    /**
+     * 用户刷卡失败
+     */
+    @Override
+    public void userLoginFail() {
+        ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
+    }
+
+    @Override
+    public void handleNetworkFailure() {
+
     }
 
     /**
