@@ -26,6 +26,7 @@ import com.aaron.android.framework.library.imageloader.HImageView;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
@@ -45,7 +46,7 @@ import butterknife.ButterKnife;
  * @version 1.0.0
  */
 
-public class RunFragment extends SerialPortFragment implements UserLoginView {
+public class RunFragment extends SerialPortFragment {
     @BindView(R.id.left_ad_imageView)
     HImageView mLeftAdImageView;
     @BindView(R.id.dashboard_imageView)
@@ -113,8 +114,6 @@ public class RunFragment extends SerialPortFragment implements UserLoginView {
     private long currentDateSecond;//当前时间
     private volatile boolean isStart = false; //跑步机是否计数
 
-    private UserLoginPresenter mUserLoginPresenter = null;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -123,9 +122,6 @@ public class RunFragment extends SerialPortFragment implements UserLoginView {
         mTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Impact.ttf");
         mPauseCountdownTime = new PauseCountdownTime(60000, 1000);
         initPauseView();
-        if(mUserLoginPresenter == null) {//刷卡登录
-            mUserLoginPresenter = new UserLoginPresenter(getActivity(), this);
-        }
         return mRootView;
     }
 
@@ -258,8 +254,9 @@ public class RunFragment extends SerialPortFragment implements UserLoginView {
         } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {//刷卡
             if(mFinishLayout.getVisibility() == View.VISIBLE  || mStartLayout.getVisibility() == View.VISIBLE) {
                 isStart = false;
-                if(mUserLoginPresenter != null) {
-                    mUserLoginPresenter.userLogin();
+                HomeActivity homeActivity = (HomeActivity) getActivity();
+                if(homeActivity.mUserLoginPresenter != null) {
+                    homeActivity.mUserLoginPresenter.userLogin();
                 }
             }
         }
@@ -345,7 +342,7 @@ public class RunFragment extends SerialPortFragment implements UserLoginView {
         mConsumeKcalTextView.setText(StringUtils.getDecimalString(SerialPortUtil.getTreadInstance().getKCAL(), 2));
         //平均心率
         mAvergHraetRateTextView.setText(SerialPortUtil.getTreadInstance().getHeartRate() + "");
-        CompleteCountdownTime completeCountdownTime = new CompleteCountdownTime(122 * 1000, 1000);
+        completeCountdownTime = new CompleteCountdownTime(122 * 1000, 1000);
         completeCountdownTime.start();
         runRest();
     }
@@ -598,44 +595,6 @@ public class RunFragment extends SerialPortFragment implements UserLoginView {
     private void initAdViews() {
         HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.image_ad_run_left);
         HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, R.drawable.image_ad_run_right);
-    }
-
-    /**
-     * 刷卡登录
-     * @param cardno
-     */
-    @Override
-    public void userLogin(String cardno) {
-        try {
-            ((HomeActivity) getActivity()).iBackService.userLogin(cardno);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-            if(mUserLoginPresenter != null) {
-                mUserLoginPresenter.userLoginFail();
-            }
-            IToast.show(ResourceUtils.getString(R.string.read_card_error));
-        }
-    }
-
-    /**
-     * 重新开始跑步
-     */
-    @Override
-    public void launchRunFragment() {
-        ((HomeActivity) getActivity()).launchFragment(new RunFragment());
-    }
-
-    /**
-     * 用户刷卡失败
-     */
-    @Override
-    public void userLoginFail() {
-        ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
-    }
-
-    @Override
-    public void handleNetworkFailure() {
-
     }
 
     /**

@@ -22,7 +22,6 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
 
     private static long lastTime;
     private final static int SPACE_TIME = 1000;
-    private String mCurrCardNo = ""; //最后一次的读卡
 
     public UserLoginPresenter(Context context, UserLoginView mainView) {
         super(context, mainView);
@@ -35,13 +34,12 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
         if(EnvironmentUtils.Network.isNetWorkAvailable()) {
             String cardNo = SerialPortUtil.getTreadInstance().getCardNo();
             if(!StringUtils.isEmpty(cardNo) && !isRepeatReadCard()) {//不为空并且1s内只允许发起一次刷卡请求
-                mCurrCardNo = cardNo;
+
                 if(mView != null) {
                     mView.userLogin(cardNo);
                 }
             }
         } else {
-            userLoginFail();
             IToast.show(ResourceUtils.getString(R.string.network_no_connection));
         }
     }
@@ -70,27 +68,26 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
         UserInfoResult.UserData mUserData = message.mUserData;
         if(mUserData.getErrcode() == 0) {
             UserInfoResult.UserData.UserInfoData userResult = message.mUserData.getUserInfoData();
-            if(!mCurrCardNo.equals(userResult.getBraceletId())) { //返回的卡号与当前卡号不一致
-
-            } else {
-                SerialPortUtil.TreadData.UserInfo userInfo = new SerialPortUtil.TreadData.UserInfo();
-                userInfo.mUserName = userResult.getUserName();
-                userInfo.mAvatar = userResult.getAvatar();
-                userInfo.mGender = userResult.getGender();
-                userInfo.mBraceletId = userResult.getBraceletId();
-                SerialPortUtil.getTreadInstance().setCardNo(userInfo.mBraceletId);
-                SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
-                SerialPortUtil.setCardNoValid();
-                if(mView != null) {
-                    mView.launchRunFragment();
-                }
+//            if(!mCurrCardNo.equals(userResult.getBraceletId())) { //返回的卡号与当前卡号不一致
+//            } else {
+//            }
+            SerialPortUtil.TreadData.UserInfo userInfo = new SerialPortUtil.TreadData.UserInfo();
+            userInfo.mUserName = userResult.getUserName();
+            userInfo.mAvatar = userResult.getAvatar();
+            userInfo.mGender = userResult.getGender();
+            userInfo.mBraceletId = userResult.getBraceletId();
+            SerialPortUtil.getTreadInstance().setCardNo(userInfo.mBraceletId);
+            SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
+            SerialPortUtil.setCardNoValid();
+            if(mView != null) {
+                mView.launchRunFragment();
             }
         } else {
             IToast.show(mUserData.getErrmsg());
             userLoginFail();
 
         }
-        mCurrCardNo = "";
+//        mCurrCardNo = "";
     }
 
     public void userLoginFail() {

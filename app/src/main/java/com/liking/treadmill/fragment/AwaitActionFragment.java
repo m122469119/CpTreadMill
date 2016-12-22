@@ -27,24 +27,17 @@ import butterknife.ButterKnife;
  *
  */
 
-public class AwaitActionFragment extends SerialPortFragment implements UserLoginView {
+public class AwaitActionFragment extends SerialPortFragment {
 
     private View mRootView;
 
     private static final String KEY_CARDNO_VALUE = "cardno";
-
-    private  HomeActivity homeActivity = null;
-
-    private UserLoginPresenter mUserLoginPresenter = null;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_awaitaction, container, false);
         ButterKnife.bind(this, mRootView);
-        if(mUserLoginPresenter == null) {
-            mUserLoginPresenter = new UserLoginPresenter(getActivity(), this);
-        }
         return mRootView;
     }
 
@@ -52,15 +45,10 @@ public class AwaitActionFragment extends SerialPortFragment implements UserLogin
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_CARD) {//刷卡
-            if(mUserLoginPresenter != null) {
-                mUserLoginPresenter.userLogin();
+            HomeActivity homeActivity = (HomeActivity) getActivity();
+            if(homeActivity.mUserLoginPresenter != null) {
+                homeActivity.mUserLoginPresenter.userLogin();
             }
-        }
-    }
-
-    public void onEvent(LoginUserInfoMessage loginUserInfoMessage) {
-        if(mUserLoginPresenter != null) {
-            mUserLoginPresenter.userLoginResult(loginUserInfoMessage);
         }
     }
 
@@ -88,38 +76,4 @@ public class AwaitActionFragment extends SerialPortFragment implements UserLogin
 
     }
 
-    @Override
-    protected boolean isEventTarget() {
-        return true;
-    }
-
-
-    @Override
-    public void userLogin(String cardno) {
-        homeActivity = (HomeActivity)getActivity();
-        try {
-            homeActivity.iBackService.userLogin(cardno);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-            if(mUserLoginPresenter != null) {
-                mUserLoginPresenter.userLoginFail();
-            }
-            IToast.show(ResourceUtils.getString(R.string.read_card_error));
-        }
-    }
-
-    @Override
-    public void launchRunFragment() {
-        homeActivity.launchFragment(new RunFragment());
-    }
-
-    @Override
-    public void userLoginFail() {
-
-    }
-
-    @Override
-    public void handleNetworkFailure() {
-
-    }
 }

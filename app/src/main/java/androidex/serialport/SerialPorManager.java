@@ -136,9 +136,9 @@ public class SerialPorManager {
                             @Override
                             public void run() {
                                 if (mSerialPortCallback != null) {
+                                    SerialPortUtil.updateTreadDataFromSerialPort(serialPortData);
                                     mSerialPortCallback.onTreadKeyDown(
                                             SerialPortUtil.getKeyCodeFromSerialPort(serialPortData), new LikingTreadKeyEvent());
-                                    SerialPortUtil.updateTreadDataFromSerialPort(serialPortData);
                                     if (SerialPortUtil.getTreadInstance() != null) {
                                         mSerialPortCallback.handleTreadData(SerialPortUtil.getTreadInstance());
                                     }

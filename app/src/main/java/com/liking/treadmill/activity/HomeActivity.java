@@ -11,18 +11,25 @@ import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.aaron.android.framework.utils.ResourceUtils;
+import com.liking.treadmill.R;
 import com.liking.treadmill.fragment.AwaitActionFragment;
+import com.liking.treadmill.fragment.RunFragment;
 import com.liking.treadmill.fragment.SettingFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
 import com.liking.treadmill.message.GymBindSuccessMessage;
+import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.message.UpdateCompleteMessage;
+import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
+import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
+import com.liking.treadmill.widget.IToast;
 
-public class HomeActivity extends LikingTreadmillBaseActivity {
+public class HomeActivity extends LikingTreadmillBaseActivity implements UserLoginView {
     public MessageBackReceiver mMessageBackReceiver = new MessageBackReceiver();
     private LocalBroadcastManager localBroadcastManager;
     private IntentFilter mIntentFilter;
@@ -57,10 +64,15 @@ public class HomeActivity extends LikingTreadmillBaseActivity {
         }
     };
 
+    public UserLoginPresenter mUserLoginPresenter = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         launchInit();
+        if(mUserLoginPresenter == null) {
+            mUserLoginPresenter = new UserLoginPresenter(this, this);
+        }
     }
 
     public void launchInit() {
@@ -157,5 +169,43 @@ public class HomeActivity extends LikingTreadmillBaseActivity {
         } else {
             launchFragment(new AwaitActionFragment());
         }
+    }
+
+    /**
+     * 刷卡登录成功监听
+     * @param loginUserInfoMessage
+     */
+    public void onEvent(LoginUserInfoMessage loginUserInfoMessage) {
+        if(mUserLoginPresenter != null) {
+            mUserLoginPresenter.userLoginResult(loginUserInfoMessage);
+        }
+    }
+
+    @Override
+    public void userLogin(String cardno) {
+        try {
+            iBackService.userLogin(cardno);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            if(mUserLoginPresenter != null) {
+                mUserLoginPresenter.userLoginFail();
+            }
+            IToast.show(ResourceUtils.getString(R.string.read_card_error));
+        }
+    }
+
+    @Override
+    public void launchRunFragment() {
+        launchFragment(new RunFragment());
+    }
+
+    @Override
+    public void userLoginFail() {
+        launchFragment(new AwaitActionFragment());
+    }
+
+    @Override
+    public void handleNetworkFailure() {
+
     }
 }
