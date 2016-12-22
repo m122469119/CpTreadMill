@@ -324,10 +324,10 @@ public class RunFragment extends SerialPortFragment {
         //用时
         String userTime = RunTimeUtil.secToTime(SerialPortUtil.getTreadInstance().getRunTime());
         mUseTimeTextView.setText(userTime);
-        float totalDistance = TreadData.getDistance();
+        float totalDistance = TreadData.getDistance();//米
+        float totalDistanceKm = getKmDistance(totalDistance);
         //总距离
-        mDistanceTextView.setText(StringUtils.getDecimalString(totalDistance, 2));
-        float time = (float) SerialPortUtil.getTreadInstance().getRunTime() / 3600;
+        mDistanceTextView.setText(StringUtils.getDecimalString(totalDistanceKm, 2));
         //平均坡度
         if (totalGrade > 0) {
             float averagerGrade = totalGrade / SerialPortUtil.getTreadInstance().getRunTime();
@@ -335,7 +335,8 @@ public class RunFragment extends SerialPortFragment {
         }
         //平均速度
         if (totalDistance > 0) {
-            float avergageSpeed = totalDistance / time;
+            float h = (float) (SerialPortUtil.getTreadInstance().getRunTime() / 3600.0);
+            float avergageSpeed = totalDistanceKm  / h;
             mAvergageSpeedTextView.setText(StringUtils.getDecimalString(avergageSpeed, 2));
         }
         //消耗热量
@@ -373,13 +374,17 @@ public class RunFragment extends SerialPortFragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 0) {
-                mCurrentDistanceTextView.setText(StringUtils.getDecimalString(SerialPortUtil.getTreadInstance().getDistance(), 2));
+                mCurrentDistanceTextView.setText(StringUtils.getDecimalString(getKmDistance(SerialPortUtil.getTreadInstance().getDistance()) , 2));
                 String userTime = RunTimeUtil.secToTime(SerialPortUtil.getTreadInstance().getRunTime());
                 mCurrentUserTime.setText(userTime);
                 LogUtils.d("dddd", "distance: " + SerialPortUtil.getTreadInstance().getDistance() + " kcal: " + SerialPortUtil.getTreadInstance().getKCAL());
             }
         }
     };
+
+    public float getKmDistance (float distance) {
+        return (float) (distance / 1000.0);
+    }
 
     /**
      * 开启一个线程记录时间和距离等数据
@@ -395,11 +400,18 @@ public class RunFragment extends SerialPortFragment {
                 }
                 if (!isPause) {
                     SerialPortUtil.getTreadInstance().setRunTime(SerialPortUtil.getTreadInstance().getRunTime() + 1);
-                    float distance = SerialPortUtil.getTreadInstance().getDistance() + (float) (SerialPortUtil.getTreadInstance().getCurrentSpeed() / 36000.0);
-                    float kcal = SerialPortUtil.getTreadInstance().getKCAL() +
-                            (float) (0.0703 * (1 + SerialPortUtil.getTreadInstance().getCurrentSpeed() / 100) * SerialPortUtil.getTreadInstance().getDistance());
+//                    float distance = SerialPortUtil.getTreadInstance().getDistance() + (float) (SerialPortUtil.getTreadInstance().getCurrentSpeed() / 36000.0);
+//                    float kcal = SerialPortUtil.getTreadInstance().getKCAL() +
+//                            (float) (0.0703 * (1 + SerialPortUtil.getTreadInstance().getCurrentSpeed() / 100) * SerialPortUtil.getTreadInstance().getDistance());
                     totalGrade =  totalGrade + SerialPortUtil.getTreadInstance().getCurrentGrade();
-                    LogUtils.d("rrrr", "distance: " + distance + " KCAL: " + kcal);
+                    LogUtils.d(TAG, "increment: Speed: " + SerialPortUtil.getTreadInstance().getCurrentSpeed() );
+                    float mDistanceIncrement = SerialPortUtil.getTreadInstance().measureDistanceIncrement();
+                    float mKcalIncrement = SerialPortUtil.getTreadInstance().measureKcalIncrement();
+                    float distance = SerialPortUtil.getTreadInstance().getDistance() + mDistanceIncrement;
+                    float kcal = SerialPortUtil.getTreadInstance().getKCAL() + mKcalIncrement;
+                    LogUtils.d(TAG, "increment: Distance: " + mDistanceIncrement + " KCAL: " + mKcalIncrement + ";;Grade:" + SerialPortUtil.getTreadInstance().getCurrentGrade());
+                    LogUtils.d(TAG, "total: " + SerialPortUtil.getTreadInstance().getDistance() + " KCAL: " + SerialPortUtil.getTreadInstance().getKCAL());
+
                     SerialPortUtil.getTreadInstance().setDistance(distance);
                     SerialPortUtil.getTreadInstance().setKCAL(kcal);
                     mHandler.sendEmptyMessage(0);

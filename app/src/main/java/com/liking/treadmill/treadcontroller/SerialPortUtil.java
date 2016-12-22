@@ -198,6 +198,24 @@ public class SerialPortUtil {
         }
 
         /**
+         * 计算距离增量
+         * @return
+         */
+        public float measureDistanceIncrement() {
+            float increment = (float) (getCurrentSpeed() / 36.0); //(Speed /10 * 1000 / 3600.0)
+            return increment;
+        }
+
+        /**
+         * 计算卡路里增量
+         * @return
+         */
+        public float measureKcalIncrement() {
+            float increment = (float) (0.0703 * (1 + getCurrentGrade() / 100.0 ) * measureDistanceIncrement());
+            return increment;
+        }
+
+        /**
          * 单位时间内距离
          *
          * @return
