@@ -117,6 +117,7 @@ public class RunFragment extends SerialPortFragment {
         mTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Impact.ttf");
         mPauseCountdownTime = new PauseCountdownTime(60000, 1000);
         initPauseView();
+        setViewTypeFace();
         return mRootView;
     }
 
@@ -129,6 +130,11 @@ public class RunFragment extends SerialPortFragment {
         mGoOnRightPromptTextView.setText(" 继续运动");
         Spanned visitorText = Html.fromHtml("点击 " + "<font color=#25ff8c><b>STOP</b></font>" + " 完成锻炼");
         mStopPromptTextView.setText(visitorText);
+    }
+
+    public void setViewTypeFace (){
+        mCurrentDistanceTextView.setTypeface(mTypeFace);
+        mCurrentUserTime.setTypeface(mTypeFace);
     }
 
 
