@@ -5,8 +5,6 @@ import com.aaron.android.codelibrary.utils.StringUtils;
 
 import androidex.serialport.SerialPorManager;
 
-import static com.liking.treadmill.treadcontroller.SerialPortUtil.FanState.FAN_STATE_STOP;
-
 /**
  * Created on 16/12/15.
  *
@@ -463,8 +461,8 @@ public class SerialPortUtil {
     private final static int BYTE_TREADMILL_START = 0x01;
     private final static int BYTE_TREADMILL_RUNNING = 0x02;
 
-    private final static int DEFAULT_SPEED = 0x0A;
-    private final static int DEFAULT_GRADE = 0x01;
+    public final static int DEFAULT_SPEED = 0x0A;
+    public final static int DEFAULT_GRADE = 0x01;
 
     private final static int BYTE_CARDNO_VALID = 0x01;
     private final static int BYTE_CARDNO_UNVALID = 0x00;
@@ -502,9 +500,13 @@ public class SerialPortUtil {
      * 启动跑步机
      */
     public static void startTreadMill() {
+        startTreadMill(DEFAULT_SPEED, DEFAULT_GRADE);
+    }
+
+    public static void startTreadMill(int speed, int grade) {
         byte[] bytes = getControlBuffer();
-        bytes[1] = DEFAULT_SPEED;
-        bytes[2] = DEFAULT_GRADE;
+        bytes[1] = (byte) speed;
+        bytes[2] = (byte) grade;
         bytes[6] = BYTE_TREADMILL_START;
         SerialPorManager.getInstance().sendMessage(bytes);
         sTreadData.setTreadmillState(BYTE_TREADMILL_RUNNING);

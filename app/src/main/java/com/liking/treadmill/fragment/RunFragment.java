@@ -23,16 +23,11 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
-import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
-import com.liking.treadmill.message.LoginUserInfoMessage;
-import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
-import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.RunTimeUtil;
-import com.liking.treadmill.widget.IToast;
 
 import java.util.Date;
 
@@ -162,7 +157,7 @@ public class RunFragment extends SerialPortFragment {
             } else if (mLayoutRun.getVisibility() == View.VISIBLE) {//正在跑步界面
 
             } else if (mPauseLayout.getVisibility() == View.VISIBLE) {//暂停界面
-                SerialPortUtil.startTreadMill();
+                SerialPortUtil.startTreadMill(SerialPortUtil.DEFAULT_SPEED, SerialPortUtil.getTreadInstance().getCurrentGrade());
                 destroyPauseCountTime();
                 isPause = false;
                 mPauseLayout.setVisibility(View.GONE);
