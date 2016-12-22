@@ -17,6 +17,7 @@ import com.liking.treadmill.fragment.AwaitActionFragment;
 import com.liking.treadmill.fragment.RunFragment;
 import com.liking.treadmill.fragment.SettingFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
+import com.liking.treadmill.message.FanStateMessage;
 import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
@@ -27,6 +28,8 @@ import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
+import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
+import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.widget.IToast;
 
 public class HomeActivity extends LikingTreadmillBaseActivity implements UserLoginView {
@@ -181,6 +184,16 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         }
     }
 
+    /**
+     * 风扇显示
+     */
+    public void onEvent(FanStateMessage fanStateMessage) {
+        if(fanStateMessage != null) {
+            mFanImageView.setVisibility(fanStateMessage.visibility);
+        }
+    }
+
+
     @Override
     public void userLogin(String cardno) {
         try {
@@ -208,4 +221,5 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     public void handleNetworkFailure() {
 
     }
+
 }

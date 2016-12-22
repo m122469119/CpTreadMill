@@ -1,9 +1,13 @@
 package com.liking.treadmill.fragment;
 
+import android.view.View;
+
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.ui.BaseFragment;
+import com.liking.treadmill.message.FanStateMessage;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
+import com.liking.treadmill.widget.IToast;
 
 import androidex.serialport.SerialPorManager;
 
@@ -62,6 +66,19 @@ public abstract class SerialPortFragment extends BaseFragment implements SerialP
 
     @Override
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
+        if (keyCode == LikingTreadKeyEvent.KEY_FAN) { //风扇控制
+            switch (SerialPortUtil.getTreadInstance().getFanState()) {
+                case SerialPortUtil.FanState.FAN_STATE_STOP:
+                    SerialPortUtil.setFanState(SerialPortUtil.FanState.FAN_STATE_LOW_SPEED);
+                    break;
+                case SerialPortUtil.FanState.FAN_STATE_LOW_SPEED:
+                    SerialPortUtil.setFanState(SerialPortUtil.FanState.FAN_STATE_HIGH_SPEED);
+                    break;
+                case SerialPortUtil.FanState.FAN_STATE_HIGH_SPEED:
+                    SerialPortUtil.setFanState(SerialPortUtil.FanState.FAN_STATE_STOP);
+                    break;
+            }
+        }
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
 //            getActivity().getSupportFragmentManager().popBackStack();
         }
@@ -69,6 +86,15 @@ public abstract class SerialPortFragment extends BaseFragment implements SerialP
 
     @Override
     public void handleTreadData(SerialPortUtil.TreadData treadData) {
-
+        //风扇显示刷新
+        switch (treadData.getFanState()) {
+            case SerialPortUtil.FanState.FAN_STATE_STOP:
+                postEvent(new FanStateMessage(View.GONE));
+                break;
+            case SerialPortUtil.FanState.FAN_STATE_LOW_SPEED:
+            case SerialPortUtil.FanState.FAN_STATE_HIGH_SPEED:
+                postEvent(new FanStateMessage(View.VISIBLE));
+                break;
+        }
     }
 }

@@ -62,7 +62,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="140dp"
                     android:text="距离(km)"
-                    android:textColor="@color/c6a6a71"
+                    android:textColor="@color/c94949c"
                     android:textSize="@dimen/textsize_20sp"/>
 
                 <TextView
@@ -80,7 +80,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="100dp"
                     android:text="用时(h:m:s)"
-                    android:textColor="@color/c6a6a71"
+                    android:textColor="@color/c94949c"
                     android:textSize="@dimen/textsize_20sp"/>
 
                 <TextView

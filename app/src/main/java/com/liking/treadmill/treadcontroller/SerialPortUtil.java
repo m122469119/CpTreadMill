@@ -5,6 +5,8 @@ import com.aaron.android.codelibrary.utils.StringUtils;
 
 import androidex.serialport.SerialPorManager;
 
+import static com.liking.treadmill.treadcontroller.SerialPortUtil.FanState.FAN_STATE_STOP;
+
 /**
  * Created on 16/12/15.
  *
@@ -375,9 +377,9 @@ public class SerialPortUtil {
 //    }
 
     public final static class FanState {
-        public final static String FAN_STATE_STOP = "00";
-        public final static String FAN_STATE_LOW_SPEED = "01";
-        public final static String FAN_STATE_HIGH_SPEED = "02";
+        public final static int FAN_STATE_STOP = 0x00;
+        public final static int FAN_STATE_LOW_SPEED = 0x01;
+        public final static int FAN_STATE_HIGH_SPEED = 0x02;
     }
 
     public final static class SaveLock {
@@ -539,6 +541,15 @@ public class SerialPortUtil {
     public static void setCardNoUnValid() {
         byte[] bytes = getControlBuffer();
         bytes[8] = BYTE_CARDNO_UNVALID;
+        SerialPorManager.getInstance().sendMessage(bytes);
+    }
+
+    /**
+     * 设置风扇
+     */
+    public static void setFanState(int fanstate) {
+        byte[] bytes = getControlBuffer();
+        bytes[9] = (byte) fanstate;
         SerialPorManager.getInstance().sendMessage(bytes);
     }
 

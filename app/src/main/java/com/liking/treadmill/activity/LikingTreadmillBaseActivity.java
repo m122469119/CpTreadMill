@@ -19,8 +19,8 @@ import com.liking.treadmill.service.NetworkStateService;
 
 public class LikingTreadmillBaseActivity extends AppBarActivity {
     private ImageView mWifiImageView;
-    private ImageView mFanImageView;
-    private ImageView mCooldownImageView;
+    public ImageView mFanImageView;
+    public ImageView mCooldownImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

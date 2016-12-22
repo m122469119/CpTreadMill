@@ -166,6 +166,7 @@ public class ApkDownloadService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Preference.setDownloadAppFile(false);
         LogUtils.i("ApkDownloadService", "ApkDownloadService stop");
     }
 }

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="坡度"
-        android:textColor="@color/c6a6a71"
+        android:textColor="@color/c94949c"
         android:textSize="16sp"
         />
 

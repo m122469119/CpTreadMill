@@ -45,7 +45,7 @@ public class LikingTreadKeyEvent {
     public final static byte KEY_VOL_REDUCE = 0x33;//音量-
     public final static byte KEY_AVIN = 0x34;//外部视频输入（AVin）
     public final static byte KEY_AWAKEN = 0x35; //休眠（AWAKEN）
-    public final static byte KEY_COOLDOWN = 0x36; //休眠（AWAKEN）
+    public final static byte KEY_COOLDOWN = 0x36; //cooldown（AWAKEN）
     public final static byte KEY_FAN = 0x37; //风扇（FAN）
     public final static byte KEY_RETURN = 0x38; //返回（RETURN）
     public final static byte KEY_SET = 0x39;//参数设置（SET）
