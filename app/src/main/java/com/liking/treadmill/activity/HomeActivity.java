@@ -14,6 +14,7 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.fragment.AwaitActionFragment;
+import com.liking.treadmill.fragment.GoalSettingFragment;
 import com.liking.treadmill.fragment.RunFragment;
 import com.liking.treadmill.fragment.SettingFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
@@ -54,7 +55,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             try {
                 LogUtils.d(SocketService.TAG, "上报设备信息start");
                 // iBackService.reportDevices();
-                iBackService.login();
+                iBackService.bind();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -72,10 +73,11 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        launchInit();
-        if(mUserLoginPresenter == null) {
-            mUserLoginPresenter = new UserLoginPresenter(this, this);
-        }
+//        launchInit();
+//        if(mUserLoginPresenter == null) {
+//            mUserLoginPresenter = new UserLoginPresenter(this, this);
+//        }
+        launchFragment(new GoalSettingFragment());
     }
 
     public void launchInit() {
@@ -156,7 +158,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     public void onEvent(UpdateAppMessage message) {
         LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "get updateMessage");
         isUpdate = true;
-        launchFragment(new UpdateFragment());
+//        launchFragment(new UpdateFragment());
     }
 
     /**
@@ -166,12 +168,12 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      */
     public void onEvent(UpdateCompleteMessage message) {
         LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "Update Complete");
-        isUpdate = false;
-        if (Preference.getIsStartingUp()) {
-            launchFragment(new SettingFragment());
-        } else {
-            launchFragment(new AwaitActionFragment());
-        }
+//        isUpdate = false;
+//        if (Preference.getIsStartingUp()) {
+//            launchFragment(new SettingFragment());
+//        } else {
+//            launchFragment(new AwaitActionFragment());
+//        }
     }
 
     /**

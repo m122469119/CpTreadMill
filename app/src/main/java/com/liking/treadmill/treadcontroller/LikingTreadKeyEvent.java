@@ -50,6 +50,7 @@ public class LikingTreadKeyEvent {
     public final static byte KEY_RETURN = 0x38; //返回（RETURN）
     public final static byte KEY_SET = 0x39;//参数设置（SET）
     public final static byte KEY_CARD = 0x40;//刷卡
+    public final static byte KEY_MODE_MODE = 0x55;
 
     /**
      * 以下是产品定义的组合键
@@ -59,7 +60,7 @@ public class LikingTreadKeyEvent {
     public final static String KEY_PGR_SPEED_COOLDOWN = "52"; //PGR+ SPEED++ COOLDWON
     public final static String KEY_PGR_PAUSE_STOP = "53"; //PGR+ PAUSE+ STOP
     public final static String KEY_PGR_START = "54"; //PGR+ START
-    public final static String KEY_MODE_MODE = "55"; //MODE+ MODE
+//    public final static String KEY_MODE_MODE = "55"; //MODE+ MODE
     public final static String KEY_INCLINE_INCLINE_REDUCE_INCLINE_PLUS = "56"; //INCLINE++INCLINE-+ INCLINE+
     public final static String KEY_SPEED_SPEED_REDUCE_SPEED_PLUS = "57"; //SPEED++ SPEED-+ SPEED+
     public final static String KEY_VOL_VOL_REDUCE_VOL_PLUS = "58"; //VOL+ +  VOL- +  VOL+

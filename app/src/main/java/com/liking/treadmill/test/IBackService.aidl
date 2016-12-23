@@ -10,7 +10,8 @@ interface IBackService {
      */
    void rebind();
    void init();
-   void login();
+   void bind();
+   void unBind();
    void confirm();
    void reportDevices();
    void userLogin(String cardno);

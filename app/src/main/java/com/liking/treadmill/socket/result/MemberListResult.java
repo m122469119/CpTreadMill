@@ -30,14 +30,37 @@ public class MemberListResult extends BaseSocketResult {
 
     public static class MemberData {
         @SerializedName("bracelet_id")
-        private List<String> braceletId;
+        private MemberListData braceletId;
 
-        public List<String> getBraceletId() {
+        public MemberListData getBraceletId() {
             return braceletId;
         }
 
-        public void setBraceletId(List<String> braceletId) {
+        public void setBraceletId(MemberListData braceletId) {
             this.braceletId = braceletId;
+        }
+
+        public static class MemberListData {
+            @SerializedName("member")
+            private List<String> mMember;
+            @SerializedName("manger")
+            private List<String> mManger;
+
+            public List<String> getMember() {
+                return mMember;
+            }
+
+            public void setMember(List<String> member) {
+                mMember = member;
+            }
+
+            public List<String> getManger() {
+                return mManger;
+            }
+
+            public void setManger(List<String> manger) {
+                mManger = manger;
+            }
         }
     }
 }

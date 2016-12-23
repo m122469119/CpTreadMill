@@ -15,4 +15,10 @@
     <string name="this_run_finish">本次锻炼完成</string>
     <string name="bind_gym_success_hint">完成设置,正在为您跳转...</string>
     <string name="read_card_error">读卡失败!</string>
+    <string name="goalsetting_step_run_time">运动时间</string>
+    <string name="goalsetting_step_kilometre">公里</string>
+    <string name="goalsetting_step_kcal">消耗卡路里</string>
+    <string name="goalsetting_step_mode_time">设定跑步总时间</string>
+    <string name="goalsetting_step_mode_kcl">设定总消耗卡路里</string>
+    <string name="goalsetting_step_mode_kilometre">设定跑步总距离</string>
 </resources>

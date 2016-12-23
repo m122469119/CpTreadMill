@@ -83,8 +83,13 @@ public class SocketService extends Service {
         }
 
         @Override
-        public void login() throws RemoteException {
-            sendUpStreamMessage(SocketHelper.loginString());
+        public void bind() throws RemoteException {
+            sendUpStreamMessage(SocketHelper.bind());
+        }
+
+        @Override
+        public void unBind() throws RemoteException {
+            sendUpStreamMessage(SocketHelper.unBind());
         }
 
         @Override

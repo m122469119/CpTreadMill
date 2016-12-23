@@ -39,6 +39,7 @@ public class SocketHelper {
     private static final String TYPE_QRCODE_SHOW = "qcode";
     private static final String TYPE_UPDATE_NOTIFY = "update";
     private static final String TYPE_BIND = "bind";
+    private static final String TYPE_UNBIND = "unbind";
     private static final String TYPE_USERLOGIN = "login";
     private static final String TYPE_MEMBER_LIST = "member_list";
     private static final String TYPE_EXERCISE_DATA = "data";
@@ -93,12 +94,17 @@ public class SocketHelper {
                     EventBus.getDefault().post(new GymBindSuccessMessage());
                 }
             }
+        } else if(TYPE_UNBIND.equals(type)) {//解绑场馆
+
         } else if (TYPE_MEMBER_LIST.equals(type)) {//当前用户所在场馆的所有会员id
             MemberListResult memberListResult = gson.fromJson(jsonText, MemberListResult.class);
             MemberListResult.MemberData memberData = memberListResult.getData();
             if (memberData != null) {
-                List<String> memberListId = memberData.getBraceletId();
-                Preference.setMemberList(memberListId);
+                MemberListResult.MemberData.MemberListData memberList = memberData.getBraceletId();
+                try {
+                    Preference.setMemberList(gson.toJson(memberList));
+                }catch (Exception e) {
+                }
             }
         } else if (TYPE_USERLOGIN.equals(type)) {//刷卡用户登录成功返回
             LoginUserInfoMessage loginUserInfoMessage = new LoginUserInfoMessage();
@@ -112,8 +118,21 @@ public class SocketHelper {
         }
     }
 
-    public static String loginString() {
-        return "{\"type\":\"qcode\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
+    /**
+     * 场馆绑定
+     * @return
+     */
+    public static String bind() {
+        return "{\"type\":\"bind_qcode\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
+                SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"}}\\r\\n";
+    }
+
+    /**
+     * 场馆解绑
+     * @return
+     */
+    public static String unBind() {
+        return "{\"type\":\"unbind_qcode\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
                 SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"}}\\r\\n";
     }
 

@@ -218,10 +218,8 @@ public class Preference extends AbsPreference {
      * @param memberList
      * @return
      */
-    public static boolean setMemberList(List<String> memberList) {
-        Gson gson = new Gson();
-        String jsonString = gson.toJson(memberList);
-        return setObject(MEMBER_ID_LIST, jsonString);
+    public static boolean setMemberList(String memberList) {
+        return setObject(MEMBER_ID_LIST, memberList);
     }
 
     /**
@@ -229,10 +227,8 @@ public class Preference extends AbsPreference {
      *
      * @return
      */
-    public static List<String> getMemberList() {
+    public static String getMemberList() {
         String jsonString = (String) getObject(MEMBER_ID_LIST, "");
-        Gson gson = new Gson();
-        List<String> menberList = (List<String>) gson.fromJson(jsonString, MemberListResult.MemberData.class);
-        return menberList;
+        return jsonString;
     }
 }
