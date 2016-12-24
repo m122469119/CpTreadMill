@@ -68,13 +68,14 @@ public class ApkDownloaderManager {
                     unregisterDownloadNewApkBroadcast();
                     String path = intent.getStringExtra(ApkDownloadService.EXTRA_INSTALL_APK_PATH);
                     if(FileUtils.fileExists(path)) {
-                        //自动安装后重启
-                        SystemProperties.set("ctl.start","fstautowork");
-                        if(!ApkController.install(path, mContext)){
-                            if(mDownloadListener != null) {
-                                mDownloadListener.ononDownloadFail();
-                            }
-                        }
+                        Intent intentauto = new Intent("fst.autowork.linnezons");
+                        mContext.sendBroadcast(intentauto);
+//                        //自动安装后重启
+//                        if(!ApkController.install(path, mContext)){
+//                            if(mDownloadListener != null) {
+//                                mDownloadListener.ononDownloadFail();
+//                            }
+//                        }
                     } else {
                         if(mDownloadListener != null) {
                             mDownloadListener.ononDownloadFail();
