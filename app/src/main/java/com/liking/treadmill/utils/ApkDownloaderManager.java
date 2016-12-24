@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.SystemProperties;
 
 import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
@@ -70,12 +69,6 @@ public class ApkDownloaderManager {
                     if(FileUtils.fileExists(path)) {
                         Intent intentauto = new Intent("fst.autowork.linnezons");
                         mContext.sendBroadcast(intentauto);
-//                        //自动安装后重启
-//                        if(!ApkController.install(path, mContext)){
-//                            if(mDownloadListener != null) {
-//                                mDownloadListener.ononDownloadFail();
-//                            }
-//                        }
                     } else {
                         if(mDownloadListener != null) {
                             mDownloadListener.ononDownloadFail();

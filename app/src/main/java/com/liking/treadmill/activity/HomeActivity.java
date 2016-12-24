@@ -14,7 +14,6 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.fragment.AwaitActionFragment;
-import com.liking.treadmill.fragment.GoalSettingFragment;
 import com.liking.treadmill.fragment.RunFragment;
 import com.liking.treadmill.fragment.SettingFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
@@ -29,8 +28,6 @@ import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
-import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
-import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.widget.IToast;
 
 public class HomeActivity extends LikingTreadmillBaseActivity implements UserLoginView {
@@ -81,19 +78,19 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     }
 
     public void launchInit() {
-        if (Preference.getIsStartingUp()) {  //首次开机
-            launchFragment(new SettingFragment());
-            mDelayedHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (!isUpdate) {
-                        launchFragment(new SettingFragment());
-                    }
-                }
-            }, delayedInterval);
-        } else {
+//        if (Preference.getIsStartingUp()) {  //首次开机
+//            launchFragment(new SettingFragment());
+//            mDelayedHandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (!isUpdate) {
+//                        launchFragment(new SettingFragment());
+//                    }
+//                }
+//            }, delayedInterval);
+//        } else {
             launchFragment(new AwaitActionFragment());
-        }
+//        }
     }
 
     @Override
