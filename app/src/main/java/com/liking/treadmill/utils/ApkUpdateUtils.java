@@ -15,6 +15,8 @@ import com.liking.treadmill.storge.Preference;
 
 public class ApkUpdateUtils {
 
+    private static final String downloadPath = "/mnt/internal_sd/Download/";
+
     /**
      * 检测跑步机状态,使用中退出更新 true使用中, false 待机
      */
@@ -38,8 +40,7 @@ public class ApkUpdateUtils {
     public static boolean startDownloadApk(Context context, ApkDownloaderManager.ApkDownloadListener listener) {
         if (EnvironmentUtils.Network.isNetWorkAvailable()) {//升级
             ApkDownloaderManager mFileDownloaderManager = new ApkDownloaderManager(context,listener);
-            mFileDownloaderManager.downloadFile(Preference.getServerVersionUrl(),
-                    DiskStorageManager.getInstance().getApkFileStoragePath());
+            mFileDownloaderManager.downloadFile(Preference.getServerVersionUrl(), downloadPath);
             return true;
         }
         return false;

@@ -69,10 +69,19 @@ android {
     lintOptions {
         abortOnError rootProject.ext.abortOnError
     }
+
+//    tasks.withType(JavaCompile) {
+//        options.encoding = "UTF-8"
+//    }
+}
+
+def getLayoutLibPath() {
+    return "${android.getSdkDirectory().getAbsolutePath()}" + "/platforms/" +
+            android.compileSdkVersion + "/data/layoutlib.jar"
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -80,7 +89,7 @@ dependencies {
     compile project(':framework')
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
-
     compile 'io.reactivex:rxjava:1.1.5'
     compile 'io.reactivex:rxandroid:1.2.0'
+    provided files(getLayoutLibPath())
 }

@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.SystemProperties;
 
+import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.liking.treadmill.service.ApkDownloadService;
@@ -20,6 +22,7 @@ public class ApkDownloaderManager {
     private Context mContext;
 
     private ApkDownloadListener mDownloadListener = null;
+
 
     public ApkDownloaderManager(Context context, ApkDownloadListener listener) {
         mContext = context;
@@ -63,12 +66,21 @@ public class ApkDownloaderManager {
                         mDownloadListener.onDownloadComplete();
                     }
                     unregisterDownloadNewApkBroadcast();
-                    //自动安装后重启
-                    if(!ApkController.install(intent.getStringExtra(ApkDownloadService.EXTRA_INSTALL_APK_PATH), mContext)){
+                    String path = intent.getStringExtra(ApkDownloadService.EXTRA_INSTALL_APK_PATH);
+                    if(FileUtils.fileExists(path)) {
+                        //自动安装后重启
+                        SystemProperties.set("ctl.start","fstautowork");
+                        if(!ApkController.install(path, mContext)){
+                            if(mDownloadListener != null) {
+                                mDownloadListener.ononDownloadFail();
+                            }
+                        }
+                    } else {
                         if(mDownloadListener != null) {
                             mDownloadListener.ononDownloadFail();
                         }
                     }
+
                 } else if(action.equals(ApkDownloadService.ACTION_DOWNLOAD_FAIL)) {
                     if(mDownloadListener != null) {
                         mDownloadListener.ononDownloadFail();

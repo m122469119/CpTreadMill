@@ -73,11 +73,11 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        launchInit();
-//        if(mUserLoginPresenter == null) {
-//            mUserLoginPresenter = new UserLoginPresenter(this, this);
-//        }
-        launchFragment(new GoalSettingFragment());
+        launchInit();
+        if(mUserLoginPresenter == null) {
+            mUserLoginPresenter = new UserLoginPresenter(this, this);
+        }
+//        launchFragment(new GoalSettingFragment());
     }
 
     public void launchInit() {
@@ -158,7 +158,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     public void onEvent(UpdateAppMessage message) {
         LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "get updateMessage");
         isUpdate = true;
-//        launchFragment(new UpdateFragment());
+        launchFragment(new UpdateFragment());
     }
 
     /**
@@ -168,12 +168,12 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      */
     public void onEvent(UpdateCompleteMessage message) {
         LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "Update Complete");
-//        isUpdate = false;
-//        if (Preference.getIsStartingUp()) {
-//            launchFragment(new SettingFragment());
-//        } else {
-//            launchFragment(new AwaitActionFragment());
-//        }
+        isUpdate = false;
+        if (Preference.getIsStartingUp()) {
+            launchFragment(new SettingFragment());
+        } else {
+            launchFragment(new AwaitActionFragment());
+        }
     }
 
     /**
