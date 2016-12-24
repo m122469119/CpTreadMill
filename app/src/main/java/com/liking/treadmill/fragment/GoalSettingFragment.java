@@ -1,7 +1,9 @@
 package com.liking.treadmill.fragment;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +11,11 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
+import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.widget.IToast;
@@ -58,8 +63,8 @@ public class GoalSettingFragment extends SerialPortFragment {
     private int mode_runtime_grade_increment = 10 ;//设置跑步时间 坡度以10分钟上下调整
     private int mode_runtime_speed_increment = 1 ;//设置跑步时间 速度以1分钟上下调整
 
-    private float mode_kilometre_grade_increment = 1 ;//设置跑步时间 坡度以10分钟上下调整
-    private float mode_kilometre_speed_increment = 0.1f ;//设置跑步时间 速度以1分钟上下调整
+    private int mode_kilometre_grade_increment = 1 ;//设置跑步时间 坡度以10分钟上下调整
+    private float mode_kilometre_speed_increment = 0.1f;//设置跑步时间 速度以1分钟上下调整
 
     private int mode_kcal_grade_increment = 100 ;//设置跑步时间 坡度以10分钟上下调整
     private int mode_kcal_speed_increment = 10 ;//设置跑步时间 速度以1分钟上下调整
@@ -93,15 +98,29 @@ public class GoalSettingFragment extends SerialPortFragment {
             isModeSelect = false;
             isModeSetting = true;
             showModeView();
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS) {//速度+
-
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE) {//速度-
-
-        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {//坡度+
-
-        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE) {//坡度-
-
+        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS  //速度+
+                || keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE //速度-
+                || keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS  //坡度+
+                || keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE //坡度-
+                ) {
+            setNumerical(keyCode);
+        } else if(keyCode == LikingTreadKeyEvent.KEY_START) {
+            if(totalTime > 0) {
+                goToRun(ThreadMillConstant.GOALSETTING_RUNTIME, totalTime);
+            } else if(totalKilometre > 0) {
+                goToRun(ThreadMillConstant.GOALSETTING_KILOMETRE, totalKilometre);
+            } else if(totalKcal > 0) {
+                goToRun(ThreadMillConstant.GOALSETTING_KCAL, totalKcal);
+            }
         }
+    }
+
+    public void goToRun(String key, float value) {
+        RunFragment run = new RunFragment();
+        Bundle bundle = new Bundle();
+        bundle.putFloat(key, value);
+        run.setArguments(bundle);
+        ((HomeActivity)getActivity()).launchFragment(run);
     }
 
     @Override
@@ -183,6 +202,7 @@ public class GoalSettingFragment extends SerialPortFragment {
             modeSettingIcon = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_icon);
             modeSettingType = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_type);
             modeSettingValue = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_value);
+            modeSettingValue.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG );//下划线
             modeSettingUnit = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_unit);
             modeSettingHint1 = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_hint1);
             modeSettingHint2 = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_hint2);
@@ -199,19 +219,26 @@ public class GoalSettingFragment extends SerialPortFragment {
         switch (mCurrMode) {
             case GOAL_SETTING_MODE_RUNTIME:
                 modeSettingType.setText(ResourceUtils.getString(R.string.goalsetting_step_mode_time));
+                modeSettingValue.setText("0");
                 modeSettingUnit.setText("min");
                 break;
             case GOAL_SETTING_MODE_KILOMETRE:
                 modeSettingType.setText(ResourceUtils.getString(R.string.goalsetting_step_mode_kilometre));
+                modeSettingValue.setText("0.0");
                 modeSettingUnit.setText("Km");
                 break;
             case GOAL_SETTING_MODE_KCAL:
                 modeSettingType.setText(ResourceUtils.getString(R.string.goalsetting_step_mode_kcl));
+                modeSettingValue.setText("0");
                 modeSettingUnit.setText("Kcal");
                 break;
         }
     }
 
+    /**
+     * 设置
+     * @param keyCode
+     */
     public void setNumerical(int keyCode) {
         float value = 0;
         switch (mCurrMode) {
@@ -219,18 +246,58 @@ public class GoalSettingFragment extends SerialPortFragment {
                 switch (keyCode) {
                     case LikingTreadKeyEvent.KEY_SPEED_PLUS:
                         value = mode_runtime_speed_increment;
-                    break;
+                        break;
+                    case LikingTreadKeyEvent.KEY_SPEED_REDUCE:
+                        value = -mode_runtime_speed_increment;
+                        break;
+                    case LikingTreadKeyEvent.KEY_GRADE_PLUS:
+                        value = mode_runtime_grade_increment;
+                        break;
+                    case LikingTreadKeyEvent.KEY_GRADE_REDUCE:
+                        value = -mode_runtime_grade_increment;
+                        break;
                 }
                 totalTime +=value;
-                modeSettingValue.setText(String.valueOf(totalTime));
+                if(totalTime < 0) totalTime = 0;
+                modeSettingValue.setText(String.valueOf((int)totalTime));
                 break;
             case GOAL_SETTING_MODE_KILOMETRE:
+                switch (keyCode) {
+                    case LikingTreadKeyEvent.KEY_SPEED_PLUS:
+                        value = mode_kilometre_speed_increment;
+                        break;
+                    case LikingTreadKeyEvent.KEY_SPEED_REDUCE:
+                        value = -mode_kilometre_speed_increment;
+                        break;
+                    case LikingTreadKeyEvent.KEY_GRADE_PLUS:
+                        value = mode_kilometre_grade_increment;
+                        break;
+                    case LikingTreadKeyEvent.KEY_GRADE_REDUCE:
+                        value = -mode_kilometre_grade_increment;
+                        break;
+                }
                 totalKilometre += value;
-                modeSettingValue.setText(String.valueOf(totalKilometre));
+                if(totalKilometre < 0) totalKilometre = 0;
+                modeSettingValue.setText(StringUtils.getDecimalString(totalKilometre,1));
                 break;
             case GOAL_SETTING_MODE_KCAL:
+                switch (keyCode) {
+                    case LikingTreadKeyEvent.KEY_SPEED_PLUS:
+                        value = mode_kcal_speed_increment;
+                        break;
+                    case LikingTreadKeyEvent.KEY_SPEED_REDUCE:
+                        value = -mode_kcal_speed_increment;
+                        break;
+                    case LikingTreadKeyEvent.KEY_GRADE_PLUS:
+                        value = mode_kcal_grade_increment;
+                        break;
+                    case LikingTreadKeyEvent.KEY_GRADE_REDUCE:
+                        value = -mode_kcal_grade_increment;
+                        break;
+                }
                 totalKcal += value;
-                modeSettingValue.setText(String.valueOf(totalKcal));
+                if(totalKcal < 0) totalKcal = 0;
+                modeSettingValue.setText(String.valueOf((int) totalKcal));
                 break;
         }
     }
