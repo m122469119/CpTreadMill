@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@drawable/setting_background"
+              android:background="@drawable/run_bg"
               android:orientation="horizontal">
 
     <LinearLayout
@@ -36,7 +36,7 @@
                 android:text="@string/goalsetting_step_run_time"
                 android:textColor="@color/c7c7c8"
                 android:textSize="@dimen/textsize_16sp"
-                android:background="@drawable/shape_step_frame_select"/>
+                android:background="@drawable/shape_step_frame_none_1"/>
 
             <TextView
                 android:id="@+id/step1_mode_kilometre"

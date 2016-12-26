@@ -24,6 +24,7 @@ import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.message.UpdateCompleteMessage;
 import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
+import com.liking.treadmill.service.ThreadMillService;
 import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
 import com.liking.treadmill.storge.Preference;
@@ -74,23 +75,22 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         if(mUserLoginPresenter == null) {
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
-//        launchFragment(new GoalSettingFragment());
     }
 
     public void launchInit() {
-//        if (Preference.getIsStartingUp()) {  //首次开机
-//            launchFragment(new SettingFragment());
-//            mDelayedHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (!isUpdate) {
-//                        launchFragment(new SettingFragment());
-//                    }
-//                }
-//            }, delayedInterval);
-//        } else {
+        if (Preference.getIsStartingUp()) {  //首次开机
+            launchFragment(new SettingFragment());
+            mDelayedHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (!isUpdate) {
+                        launchFragment(new SettingFragment());
+                    }
+                }
+            }, delayedInterval);
+        } else {
             launchFragment(new AwaitActionFragment());
-//        }
+        }
     }
 
     @Override
@@ -102,9 +102,8 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             localBroadcastManager.registerReceiver(mMessageBackReceiver, mIntentFilter);
             bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         }
-        //网络连接状态监听服务
-        Intent intent = new Intent();
-        intent.setAction("com.liking.treadmill.service.NetworkStateService");
+        //广播监听服务
+        Intent intent = new Intent(this, ThreadMillService.class);
         startService(intent);
         super.onStart();
     }
@@ -188,7 +187,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      */
     public void onEvent(FanStateMessage fanStateMessage) {
         if(fanStateMessage != null) {
-            mFanImageView.setVisibility(fanStateMessage.visibility);
+            setFanViewVisibility(fanStateMessage.visibility);
         }
     }
 

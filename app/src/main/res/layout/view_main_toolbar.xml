@@ -36,6 +36,14 @@
                 />
 
             <TextView
+                android:id="@+id/centre_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textsize_30sp"/>
+
+            <TextView
                 android:id="@+id/time_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

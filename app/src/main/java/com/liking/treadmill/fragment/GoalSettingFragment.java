@@ -59,6 +59,7 @@ public class GoalSettingFragment extends SerialPortFragment {
     private float totalTime = 0;
     private float totalKilometre = 0;
     private float totalKcal = 0;
+    private String totalTarget = "";
 
     private int mode_runtime_grade_increment = 10 ;//设置跑步时间 坡度以10分钟上下调整
     private int mode_runtime_speed_increment = 1 ;//设置跑步时间 速度以1分钟上下调整
@@ -82,35 +83,45 @@ public class GoalSettingFragment extends SerialPortFragment {
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_NEXT) {//模式选择:下一步
-            modeSelect();
+            if(isModeSelect) {
+                modeSelect();
+            }
         } else if(keyCode == LikingTreadKeyEvent.KEY_RETURN) { //返回
             if(isModeSetting) {
                 isModeSelect = true;
                 isModeSetting = false;
                 showSettingView();
+                restSetting();
+            } else {
+                ((HomeActivity) getActivity()).launchFragment(new RunFragment());
             }
         } else if(keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) { //双击mode
 
         } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {
-            if(isModeSetting) return;
-            //双击MODE 处理
-            IToast.show("双击");
-            isModeSelect = false;
-            isModeSetting = true;
-            showModeView();
+            if(isModeSelect) {
+                //双击MODE 处理
+                isModeSelect = false;
+                isModeSetting = true;
+                showModeView();
+            }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS  //速度+
                 || keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE //速度-
                 || keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS  //坡度+
                 || keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE //坡度-
                 ) {
-            setNumerical(keyCode);
+            if(isModeSetting) {
+                setNumerical(keyCode);
+            }
         } else if(keyCode == LikingTreadKeyEvent.KEY_START) {
-            if(totalTime > 0) {
-                goToRun(ThreadMillConstant.GOALSETTING_RUNTIME, totalTime);
-            } else if(totalKilometre > 0) {
-                goToRun(ThreadMillConstant.GOALSETTING_KILOMETRE, totalKilometre);
-            } else if(totalKcal > 0) {
-                goToRun(ThreadMillConstant.GOALSETTING_KCAL, totalKcal);
+            if(isModeSetting) {
+                if(totalTime > 0) {
+                    goToRun(ThreadMillConstant.GOALSETTING_RUNTIME, totalTime);
+                } else if(totalKilometre > 0) {
+                    goToRun(ThreadMillConstant.GOALSETTING_KILOMETRE, totalKilometre);
+                } else if(totalKcal > 0) {
+                    goToRun(ThreadMillConstant.GOALSETTING_KCAL, totalKcal);
+                }
+                restSetting();
             }
         }
     }
@@ -162,21 +173,18 @@ public class GoalSettingFragment extends SerialPortFragment {
                 mTvKilometreMode.setBackgroundResource(R.drawable.shape_step_frame_select);
                 mTvKcalMode.setBackgroundResource(R.drawable.shape_step_frame_none);
                 mCurrMode = GOAL_SETTING_MODE_KILOMETRE;
-                IToast.show("公里");
                 break;
             case GOAL_SETTING_MODE_KILOMETRE:
                 mTvRunTimeMode.setBackgroundResource(R.drawable.shape_step_frame_none);
                 mTvKilometreMode.setBackgroundResource(R.drawable.shape_step_frame_none);
                 mTvKcalMode.setBackgroundResource(R.drawable.shape_step_frame_select);
                 mCurrMode = GOAL_SETTING_MODE_KCAL;
-                IToast.show("消耗卡路里");
                 break;
             case GOAL_SETTING_MODE_KCAL:
                 mTvRunTimeMode.setBackgroundResource(R.drawable.shape_step_frame_select);
                 mTvKilometreMode.setBackgroundResource(R.drawable.shape_step_frame_none);
                 mTvKcalMode.setBackgroundResource(R.drawable.shape_step_frame_none);
                 mCurrMode = GOAL_SETTING_MODE_RUNTIME;
-                IToast.show("运动时间");
                 break;
         }
     }
@@ -259,7 +267,7 @@ public class GoalSettingFragment extends SerialPortFragment {
                 }
                 totalTime +=value;
                 if(totalTime < 0) totalTime = 0;
-                modeSettingValue.setText(String.valueOf((int)totalTime));
+                totalTarget = String.valueOf((int)totalTime);
                 break;
             case GOAL_SETTING_MODE_KILOMETRE:
                 switch (keyCode) {
@@ -278,7 +286,7 @@ public class GoalSettingFragment extends SerialPortFragment {
                 }
                 totalKilometre += value;
                 if(totalKilometre < 0) totalKilometre = 0;
-                modeSettingValue.setText(StringUtils.getDecimalString(totalKilometre,1));
+                totalTarget = StringUtils.getDecimalString(totalKilometre,1);
                 break;
             case GOAL_SETTING_MODE_KCAL:
                 switch (keyCode) {
@@ -297,9 +305,17 @@ public class GoalSettingFragment extends SerialPortFragment {
                 }
                 totalKcal += value;
                 if(totalKcal < 0) totalKcal = 0;
-                modeSettingValue.setText(String.valueOf((int) totalKcal));
+                totalTarget = String.valueOf((int) totalKcal);
                 break;
         }
+        modeSettingValue.setText(totalTarget);
+    }
+
+    private void restSetting() {
+        totalTime = 0;
+        totalKilometre = 0;
+        totalKcal = 0;
+        totalTarget = "";
     }
 
 }

@@ -13,6 +13,7 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,9 +26,11 @@ import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.RunTimeUtil;
+import com.liking.treadmill.widget.ColorfulRingProgressView;
 
 import java.util.Date;
 
@@ -82,6 +85,15 @@ public class RunFragment extends SerialPortFragment {
     @BindView(R.id.user_name_TextView)
     TextView mUserNameTextView;
 
+    @BindView(R.id.run_finish_ImageView)
+    ImageView mRunCompleteImg;
+    @BindView(R.id.run_progress_layout)
+    FrameLayout mRunProgressLayout;
+    @BindView(R.id.colorfulring_progress)
+    ColorfulRingProgressView mRunProgressView;
+    @BindView(R.id.run_progress)
+    TextView mRunPrgressValue;
+
 
     private View mRootView;
     private TextView mGradeInfoTextView;
@@ -109,6 +121,12 @@ public class RunFragment extends SerialPortFragment {
     private long currentDateSecond;//当前时间
     private volatile boolean isStart = false; //跑步机是否计数
 
+    private float totalTime ;  //目标设置的总时间
+    private float totalKilometre ;//目标设置的总距离
+    private float totalKcal ;//目标设置的总卡路里
+    private String totalTarget = "";
+    private int THREADMILL_MODE_SELECT = ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -116,9 +134,39 @@ public class RunFragment extends SerialPortFragment {
         ButterKnife.bind(this, mRootView);
         mTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Impact.ttf");
         mPauseCountdownTime = new PauseCountdownTime(60000, 1000);
+        initData();
         initPauseView();
         setViewTypeFace();
         return mRootView;
+    }
+
+    public void initData() {
+        Bundle bundle = getArguments();
+        if(bundle !=null ){
+            totalTime = bundle.getFloat(ThreadMillConstant.GOALSETTING_RUNTIME, 0);
+            totalKilometre = bundle.getFloat(ThreadMillConstant.GOALSETTING_KILOMETRE, 0);
+            totalKcal = bundle.getFloat(ThreadMillConstant.GOALSETTING_KCAL, 0);
+
+            if(totalTime > 0) {
+                totalTarget = String.valueOf((int)totalTime) + "min";
+            } else if(totalKilometre > 0) {
+                totalTarget = StringUtils.getDecimalString(totalKilometre,1) + "Km";
+            } else if (totalKcal > 0) {
+                totalTarget = String.valueOf((int) totalKcal) + "Kcal";
+            }
+            setGoalSttingValue(totalTarget);
+            if(totalTime > 0 || totalKilometre > 0 || totalKcal > 0 ) {
+                runStart();
+            }
+        }
+    }
+
+    public void setGoalSttingValue(String value) {
+        HomeActivity homeActivity = (HomeActivity) getActivity();
+        if(homeActivity != null) {
+            THREADMILL_MODE_SELECT = ThreadMillConstant.THREADMILL_MODE_SELECT_GOAL_SETTING;
+            homeActivity.setCentreTvText("目标:" + value);
+        }
     }
 
     /**
@@ -142,24 +190,18 @@ public class RunFragment extends SerialPortFragment {
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_SET) {//参数设置
+            ((HomeActivity) getActivity()).launchFragment(new GoalSettingFragment());
 //            ((HomeActivity) getActivity()).launchFragment(SettingFragment.instantiate(getActivity(), SettingFragment.class.getName()));
         } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {//返回
 //            getSupportFragmentManager().popBackStack();
             if(mFinishLayout.getVisibility() == View.VISIBLE  || mStartLayout.getVisibility() == View.VISIBLE) {
                 runRest();
+                ((HomeActivity) getActivity()).setCentreTvText("");
                 ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_START) {
             if (mStartLayout.getVisibility() == View.VISIBLE) {//开始跑步
-                SerialPortUtil.startTreadMill();
-                isPause = false;
-                destroyPauseCountTime();
-                mPauseLayout.setVisibility(View.GONE);
-                mLayoutRun.setVisibility(View.VISIBLE);
-                mFinishLayout.setVisibility(View.GONE);
-                mStartLayout.setVisibility(View.GONE);
-                currentDateSecond = DateUtils.currentDataSeconds();
-                startRunThread();//计时开始
+                runStart();
             } else if (mLayoutRun.getVisibility() == View.VISIBLE) {//正在跑步界面
 
             } else if (mPauseLayout.getVisibility() == View.VISIBLE) {//暂停界面
@@ -256,11 +298,27 @@ public class RunFragment extends SerialPortFragment {
             if(mFinishLayout.getVisibility() == View.VISIBLE  || mStartLayout.getVisibility() == View.VISIBLE) {
                 isStart = false;
                 HomeActivity homeActivity = (HomeActivity) getActivity();
+                homeActivity.setCentreTvText("");
                 if(homeActivity.mUserLoginPresenter != null) {
                     homeActivity.mUserLoginPresenter.userLogin();
                 }
             }
         }
+    }
+
+    /**
+     * 开始跑步
+     */
+    public void runStart() {
+        SerialPortUtil.startTreadMill();
+        isPause = false;
+        destroyPauseCountTime();
+        mPauseLayout.setVisibility(View.GONE);
+        mLayoutRun.setVisibility(View.VISIBLE);
+        mFinishLayout.setVisibility(View.GONE);
+        mStartLayout.setVisibility(View.GONE);
+        currentDateSecond = DateUtils.currentDataSeconds();
+        startRunThread();//计时开始
     }
 
     private void setSpeed(int speed) {
@@ -344,10 +402,46 @@ public class RunFragment extends SerialPortFragment {
         mConsumeKcalTextView.setText(StringUtils.getDecimalString(SerialPortUtil.getTreadInstance().getKCAL(), 2));
         //平均心率
         mAvergHraetRateTextView.setText(SerialPortUtil.getTreadInstance().getHeartRate() + "");
+        checkRunResult(SerialPortUtil.getTreadInstance().getRunTime(), totalDistanceKm, SerialPortUtil.getTreadInstance().getKCAL());
         completeCountdownTime = new CompleteCountdownTime(122 * 1000, 1000);
         completeCountdownTime.start();
         runRest();
     }
+
+    /**
+     * 验证跑步结果
+     * @param time
+     * @param distanceKm
+     * @param kcal
+     */
+    public void checkRunResult(float time, float distanceKm, float kcal) {
+        if(totalTime > 0 ) {
+            showUnfinishedView(time / (totalTime * 60));
+        } else if(totalKilometre > 0) {
+            showUnfinishedView(distanceKm / totalKilometre );
+        } else if(totalKcal > 0) {
+            showUnfinishedView(kcal / totalKcal);
+        }
+    }
+
+    /**
+     * 显示未完成界面
+     * @param percentage
+     */
+    public void showUnfinishedView(float percentage) {
+        if(percentage < 1) {
+            int percent = (int) (percentage * 100);
+            mRunCompleteImg.setVisibility(View.GONE);
+            mRunProgressLayout.setVisibility(View.VISIBLE);
+            mRunProgressView.setPercent(percent);
+            mRunPrgressValue.setText(percent+ "%");
+        } else {
+            mRunProgressLayout.setVisibility(View.GONE);
+            mRunCompleteImg.setVisibility(View.VISIBLE);
+        }
+    }
+
+
 
     /**
      * 重置跑步机设置
@@ -461,7 +555,6 @@ public class RunFragment extends SerialPortFragment {
         }
         setSpeedBack(mSpeed);
     }
-
 
     @Override
     public void onResume() {
@@ -646,6 +739,7 @@ public class RunFragment extends SerialPortFragment {
 
         @Override
         public void onFinish() {
+            ((HomeActivity) getActivity()).setCentreTvText("");
             ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
         }
     }

@@ -10,8 +10,9 @@
     <color name="c94949c">#94949c</color>
 
     <color name="colorfulringprogress_bgcolor">#2A2B2C</color>
-    <color name="colorfulringprogress_fgcolorstart">#22DCEB</color>
-    <color name="colorfulringprogress_fgcolorend">#2CFE8A</color>
+    <color name="colorfulringprogress_run_progress_bgcolor">#265d46</color>
+    <color name="colorfulringprogress_fgcolorstart">#2CFE8A</color>
+    <color name="colorfulringprogress_fgcolorend">#22DCEB</color>
     <color name="colorfulringprogress_pre_bgcolor">#2A2B2C</color>
     <color name="colorfulringprogress_pre_fgcolorend">#28E3CC</color>
     <color name="colorfulringprogress_pre_fgcolorstart">#00000000</color>

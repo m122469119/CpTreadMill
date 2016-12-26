@@ -3,12 +3,12 @@ package com.liking.treadmill.activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.aaron.android.framework.base.ui.actionbar.AppBarActivity;
-import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.message.WifiMessage;
-import com.liking.treadmill.service.NetworkStateService;
+import com.liking.treadmill.service.ThreadMillService;
 
 /**
  * Created on 16/12/9.
@@ -19,8 +19,9 @@ import com.liking.treadmill.service.NetworkStateService;
 
 public class LikingTreadmillBaseActivity extends AppBarActivity {
     private ImageView mWifiImageView;
-    public ImageView mFanImageView;
-    public ImageView mCooldownImageView;
+    private ImageView mFanImageView;
+    private ImageView mCooldownImageView;
+    private TextView mCentreTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +34,24 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
         hideHomeUpIcon();
         View customToolBarView = getLayoutInflater().inflate(R.layout.view_main_toolbar, null, false);
         mWifiImageView = (ImageView)customToolBarView.findViewById(R.id.wifi_imageView);
-        int drawStateId  = NetworkStateService.isNetworkAvailable(this)? R.drawable.main_wifi : R.drawable.fail_wifi;
+        int drawStateId  = ThreadMillService.isNetworkAvailable(this)? R.drawable.main_wifi : R.drawable.fail_wifi;
         mWifiImageView.setImageResource(drawStateId);
         mFanImageView = (ImageView)customToolBarView.findViewById(R.id.fan_imageView);
         mCooldownImageView = (ImageView)customToolBarView.findViewById(R.id.cooldown_imageView);
+        mCentreTv = (TextView)customToolBarView.findViewById(R.id.centre_textView);
         setCustomToolBar(customToolBarView);
+    }
+
+    public void setCentreTvText(String value) {
+        if(mCentreTv != null) {
+            mCentreTv.setText(value);
+        }
+    }
+
+    public void setFanViewVisibility(int visibility) {
+        if(mFanImageView != null) {
+            mFanImageView.setVisibility(visibility);
+        }
     }
 
     @Override

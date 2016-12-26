@@ -8,30 +8,27 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.liking.treadmill.message.WifiMessage;
-import com.liking.treadmill.widget.IToast;
 
 import de.greenrobot.event.EventBus;
 
 /**
  * 说明:
- * Author : shaozucheng
- * Time: 上午10:38
- * version 1.0.0
+ * Author: chenlei
+ * Time: 下午6:30
  */
 
-public class NetworkStateService extends Service {
+public class ThreadMillService extends Service{
 
     // Class that answers queries about the state of network connectivity.
     // 系统网络连接相关的操作管理类.
-
     private ConnectivityManager connectivityManager;
     // Describes the status of a network interface.
     // 网络状态信息的实例
     private NetworkInfo info;
-
     /**
      * 当前处于的网络
      * 0 ：null
@@ -42,16 +39,38 @@ public class NetworkStateService extends Service {
 
     public static final String NETWORKSTATE = "com.text.android.network.state"; // An action name
 
-    /**
-     * 广播实例
-     */
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        initReceiver();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //注销接收
+        unregisterReceiver(mReceiver);
+    }
+
+    private void initReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_TIME_TICK);
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mReceiver, filter);
+    }
+
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // The action of this intent or null if none is specified.
             // action是行动的意思，也许是我水平问题无法理解为什么叫行动，我一直理解为标识（现在理解为意图）
             String action = intent.getAction(); //当前接受到的广播的标识(行动/意图)
-
             // 当当前接受到的广播的标识(意图)为网络状态的标识时做相应判断
             if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
                 // 获取网络连接管理器
@@ -81,38 +100,11 @@ public class NetworkStateService extends Service {
                     //  这里推荐使用本地广播的方式发送:
                     LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
                     EventBus.getDefault().post(new WifiMessage(false));
-
                 }
+            } else if (action.equals(Intent.ACTION_TIME_TICK)) { //时间广播
             }
         }
     };
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        //注册网络状态的广播，绑定到mReceiver
-        IntentFilter mFilter = new IntentFilter();
-        mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mReceiver, mFilter);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //注销接收
-        unregisterReceiver(mReceiver);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
 
     /**
      * 判断网络是否可用
@@ -133,4 +125,5 @@ public class NetworkStateService extends Service {
 
         return false;
     }
+
 }

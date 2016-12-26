@@ -2,13 +2,19 @@ package com.liking.treadmill.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.liking.treadmill.R;
 
@@ -23,11 +29,13 @@ public class ColorfulRingProgressView extends View {
     private float mStartAngle = 0;
     private int mFgColorStart = 0xffffe400;
     private int mFgColorEnd = 0xffff4800;
+    private BitmapDrawable mStartTagDrawable = null;
 
     private LinearGradient mShader;
     private Context mContext;
     private RectF mOval;
     private Paint mPaint;
+    private Paint mPaintTag;
 
 
     public ColorfulRingProgressView(Context context, AttributeSet attrs) {
@@ -46,6 +54,7 @@ public class ColorfulRingProgressView extends View {
             mPercent = a.getFloat(R.styleable.ColorfulRingProgressView_percent, 75);
             mStartAngle = a.getFloat(R.styleable.ColorfulRingProgressView_startAngle, 0)+270;
             mStrokeWidth = a.getDimensionPixelSize(R.styleable.ColorfulRingProgressView_strokeWidth, dp2px(21));
+            mStartTagDrawable = (BitmapDrawable) a.getDrawable(R.styleable.ColorfulRingProgressView_startTagImg);
             System.out.println("**** m"+mStrokeWidth);
         } finally {
             a.recycle();
@@ -60,6 +69,8 @@ public class ColorfulRingProgressView extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(mStrokeWidth);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
+
+        mPaintTag = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     private int dp2px(float dp) {
@@ -75,6 +86,17 @@ public class ColorfulRingProgressView extends View {
         canvas.drawArc(mOval, 0, 360, false, mPaint);
         mPaint.setShader(mShader);
         canvas.drawArc(mOval, mStartAngle, mPercent * 3.6f, false, mPaint);
+
+        if(mStartTagDrawable != null) {
+            float r = mOval.width() / 2;
+            int x = (int) (mOval.centerX()   +   r   *   Math.cos(mStartAngle   *   3.14   / 180 ));
+            int y = (int) (mOval.centerY()   +   r   *  Math.sin(mStartAngle   *   3.14   / 180 ));
+            canvas.drawCircle(Math.abs(x), Math.abs(y) , mStrokeWidth / 2 + 6 , mPaintTag);
+            Bitmap bitmap = mStartTagDrawable.getBitmap();
+            canvas.drawBitmap(bitmap, Math.abs(x) - (bitmap.getWidth() / 2),
+                    Math.abs(y) - (bitmap.getHeight() / 2), mPaintTag);
+
+        }
     }
 
     @Override
