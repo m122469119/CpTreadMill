@@ -15,7 +15,6 @@ import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.fragment.AwaitActionFragment;
 import com.liking.treadmill.fragment.RunFragment;
-import com.liking.treadmill.fragment.SettingFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
 import com.liking.treadmill.message.FanStateMessage;
 import com.liking.treadmill.message.GymBindSuccessMessage;
@@ -27,7 +26,6 @@ import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
 import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
-import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
 import com.liking.treadmill.widget.IToast;
 
@@ -78,19 +76,19 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     }
 
     public void launchInit() {
-        if (Preference.getIsStartingUp()) {  //首次开机
-            launchFragment(new SettingFragment());
-            mDelayedHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (!isUpdate) {
-                        launchFragment(new SettingFragment());
-                    }
-                }
-            }, delayedInterval);
-        } else {
+//        if (Preference.getIsStartingUp()) {  //首次开机
+//            launchFragment(new StartSettingFragment());
+//            mDelayedHandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    if (!isUpdate) {
+//                        launchFragment(new StartSettingFragment());
+//                    }
+//                }
+//            }, delayedInterval);
+//        } else {
             launchFragment(new AwaitActionFragment());
-        }
+//        }
     }
 
     @Override
@@ -165,11 +163,11 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     public void onEvent(UpdateCompleteMessage message) {
         LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "Update Complete");
         isUpdate = false;
-        if (Preference.getIsStartingUp()) {
-            launchFragment(new SettingFragment());
-        } else {
+//        if (Preference.getIsStartingUp()) {
+//            launchFragment(new StartSettingFragment());
+//        } else {
             launchFragment(new AwaitActionFragment());
-        }
+//        }
     }
 
     /**
