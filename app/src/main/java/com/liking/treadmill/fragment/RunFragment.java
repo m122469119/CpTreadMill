@@ -93,6 +93,8 @@ public class RunFragment extends SerialPortFragment {
     ColorfulRingProgressView mRunProgressView;
     @BindView(R.id.run_progress)
     TextView mRunPrgressValue;
+    @BindView(R.id.layout_setting)
+    View mSettingLayout;
 
 
     private View mRootView;
@@ -105,7 +107,7 @@ public class RunFragment extends SerialPortFragment {
     private int mSpeed = 0;
     private int mGrade = 0;
 
-    private int totalGrade ; //总坡度
+    private int totalGrade; //总坡度
 
     private TextView mDistanceTextView;//距离
     private TextView mUseTimeTextView; //用时
@@ -121,9 +123,9 @@ public class RunFragment extends SerialPortFragment {
     private long currentDateSecond;//当前时间
     private volatile boolean isStart = false; //跑步机是否计数
 
-    private float totalTime ;  //目标设置的总时间
-    private float totalKilometre ;//目标设置的总距离
-    private float totalKcal ;//目标设置的总卡路里
+    private float totalTime;  //目标设置的总时间
+    private float totalKilometre;//目标设置的总距离
+    private float totalKcal;//目标设置的总卡路里
     private String totalTarget = "";
     private int THREADMILL_MODE_SELECT = ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START;
 
@@ -142,30 +144,31 @@ public class RunFragment extends SerialPortFragment {
 
     public void initData() {
         Bundle bundle = getArguments();
-        if(bundle !=null ){
+        if (bundle != null) {
             totalTime = bundle.getFloat(ThreadMillConstant.GOALSETTING_RUNTIME, 0);
             totalKilometre = bundle.getFloat(ThreadMillConstant.GOALSETTING_KILOMETRE, 0);
             totalKcal = bundle.getFloat(ThreadMillConstant.GOALSETTING_KCAL, 0);
 
-            if(totalTime > 0) {
-                totalTarget = String.valueOf((int)totalTime) + "min";
-            } else if(totalKilometre > 0) {
-                totalTarget = StringUtils.getDecimalString(totalKilometre,1) + "Km";
+            if (totalTime > 0) {
+                totalTarget = String.valueOf((int) totalTime) + "min";
+            } else if (totalKilometre > 0) {
+                totalTarget = StringUtils.getDecimalString(totalKilometre, 1) + "Km";
             } else if (totalKcal > 0) {
                 totalTarget = String.valueOf((int) totalKcal) + "Kcal";
             }
             setGoalSttingValue(totalTarget);
-            if(totalTime > 0 || totalKilometre > 0 || totalKcal > 0 ) {
-                runStart();
+            if (totalTime > 0 || totalKilometre > 0 || totalKcal > 0) {
+                startTreadMill(SerialPortUtil.DEFAULT_SPEED, SerialPortUtil.DEFAULT_GRADE);
+                startRunThread();
             }
         }
     }
 
     public void setGoalSttingValue(String value) {
         HomeActivity homeActivity = (HomeActivity) getActivity();
-        if(homeActivity != null) {
+        if (homeActivity != null) {
             THREADMILL_MODE_SELECT = ThreadMillConstant.THREADMILL_MODE_SELECT_GOAL_SETTING;
-            homeActivity.setCentreTvText("目标:" + value);
+            homeActivity.setTitle("目标:" + value);
         }
     }
 
@@ -180,7 +183,7 @@ public class RunFragment extends SerialPortFragment {
         mStopPromptTextView.setText(visitorText);
     }
 
-    public void setViewTypeFace (){
+    public void setViewTypeFace() {
         mCurrentDistanceTextView.setTypeface(mTypeFace);
         mCurrentUserTime.setTypeface(mTypeFace);
     }
@@ -189,138 +192,194 @@ public class RunFragment extends SerialPortFragment {
     @Override
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
-        if (keyCode == LikingTreadKeyEvent.KEY_SET) {//参数设置
-            ((HomeActivity) getActivity()).launchFragment(new GoalSettingFragment());
-//            ((HomeActivity) getActivity()).launchFragment(SettingFragment.instantiate(getActivity(), SettingFragment.class.getName()));
-        } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {//返回
-//            getSupportFragmentManager().popBackStack();
-            if(mFinishLayout.getVisibility() == View.VISIBLE  || mStartLayout.getVisibility() == View.VISIBLE) {
-                runRest();
-                ((HomeActivity) getActivity()).setCentreTvText("");
+        if (isInRunUI()) { //正在跑步界面
+            if (keyCode == LikingTreadKeyEvent.KEY_PAUSE) {
+                pauseTreadmill();
+            } else if (keyCode == LikingTreadKeyEvent.KEY_STOP) {
+                finishExercise();
+            } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS) {
+                setSpeed(SerialPortUtil.getTreadInstance().getCurrentSpeed() + 1);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE) {
+                setSpeed(SerialPortUtil.getTreadInstance().getCurrentSpeed() - 1);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {
+                setGrade(SerialPortUtil.getTreadInstance().getCurrentGrade() + 1);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE) {
+                setGrade(SerialPortUtil.getTreadInstance().getCurrentGrade() - 1);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_3) {
+                setSpeed(30);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_6) {
+                setSpeed(60);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_9) {
+                setSpeed(90);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_12) {
+                setSpeed(120);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_15) {
+                setSpeed(150);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_3) {
+                setGrade(30);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_6) {
+                setGrade(60);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_9) {
+                setGrade(90);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_12) {
+                setGrade(120);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_15) {
+                setGrade(150);
+            }
+        } else if (isInStartUI()) {
+            if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
+                ResetTreadmill();
+                ((HomeActivity) getActivity()).setTitle("");
                 ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
+            } else if (keyCode == LikingTreadKeyEvent.KEY_START) {
+                startTreadMill(SerialPortUtil.DEFAULT_SPEED, SerialPortUtil.DEFAULT_GRADE);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {
+                cardLogin();
             }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_START) {
-            if (mStartLayout.getVisibility() == View.VISIBLE) {//开始跑步
-                runStart();
-            } else if (mLayoutRun.getVisibility() == View.VISIBLE) {//正在跑步界面
-
-            } else if (mPauseLayout.getVisibility() == View.VISIBLE) {//暂停界面
-                SerialPortUtil.startTreadMill(SerialPortUtil.DEFAULT_SPEED, SerialPortUtil.getTreadInstance().getCurrentGrade());
-                destroyPauseCountTime();
-                isPause = false;
-                mPauseLayout.setVisibility(View.GONE);
-                mLayoutRun.setVisibility(View.VISIBLE);
-                mFinishLayout.setVisibility(View.GONE);
-                mStartLayout.setVisibility(View.GONE);
+        } else if (isInFinishUI()) {
+            if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
+                ResetTreadmill();
+                ((HomeActivity) getActivity()).setTitle("");
+                ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
+            } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {
+                cardLogin();
             }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_PAUSE) {//暂停
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                startPauseCountTime();
-                isPause = true;
-                mPauseLayout.setVisibility(View.VISIBLE);
-                mLayoutRun.setVisibility(View.GONE);
-                mFinishLayout.setVisibility(View.GONE);
-                mStartLayout.setVisibility(View.GONE);
-                SerialPortUtil.stopTreadMill();//暂停命令
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_STOP) {//结束
-            if (mLayoutRun.getVisibility() == View.VISIBLE || mPauseLayout.getVisibility() == View.VISIBLE) {
+        } else if (isInPauseUI()) {
+            if (keyCode == LikingTreadKeyEvent.KEY_START) {
+                startTreadMill(SerialPortUtil.DEFAULT_SPEED, SerialPortUtil.getTreadInstance().getCurrentGrade());
+            } else if (keyCode == LikingTreadKeyEvent.KEY_STOP) {
                 finishExercise();
             }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS) {//速度加
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                setSpeed(SerialPortUtil.getTreadInstance().getCurrentSpeed() + 1);
-                setSpeedBack(mSpeed);
-            }
-
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE) {//速度减
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                setSpeed(SerialPortUtil.getTreadInstance().getCurrentSpeed() - 1);
-                setSpeedBack(mSpeed);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {//坡度+
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                int grade = SerialPortUtil.getTreadInstance().getCurrentGrade();
-                if (grade < 25) {
-                    mGrade = grade + 1;
-                }
-                SerialPortUtil.setGradeInRunning(mGrade);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE) {//坡度减
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                int grade = SerialPortUtil.getTreadInstance().getCurrentGrade();
-                if (grade > 0) {
-                    mGrade = grade - 1;
-                }
-                SerialPortUtil.setGradeInRunning(mGrade);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_3) {
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-               setSpeed(30);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_6) {
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                setSpeed(60);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_9) {
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                setSpeed(90);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_12) {
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                setSpeed(120);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_15) {
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                setSpeed(150);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_3) {
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                setGrade(3);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_6) {
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                setGrade(6);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_9) {
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                setGrade(9);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_12) {
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                setGrade(12);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_15) {
-            if (mLayoutRun.getVisibility() == View.VISIBLE) {
-                setGrade(15);
-            }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {//刷卡
-            if(mFinishLayout.getVisibility() == View.VISIBLE  || mStartLayout.getVisibility() == View.VISIBLE) {
-                isStart = false;
-                HomeActivity homeActivity = (HomeActivity) getActivity();
-                homeActivity.setCentreTvText("");
-                if(homeActivity.mUserLoginPresenter != null) {
-                    homeActivity.mUserLoginPresenter.userLogin();
-                }
-            }
         }
+        if (keyCode == LikingTreadKeyEvent.KEY_SET) {//参数设置
+            ((HomeActivity) getActivity()).launchFragment(new GoalSettingFragment());
+        } else if (keyCode == LikingTreadKeyEvent.KEY_PROGRAM) {
+            showSettingUI();
+        }
+    }
+
+    /**
+     * 刷卡登录
+     */
+    private void cardLogin() {
+        isStart = false;
+        HomeActivity homeActivity = (HomeActivity) getActivity();
+        homeActivity.setTitle("");
+        if (homeActivity.mUserLoginPresenter != null) {
+            homeActivity.mUserLoginPresenter.userLogin();
+        }
+    }
+
+    /**
+     * 当前是否在跑步暂停界面
+     *
+     * @return
+     */
+    private boolean isInPauseUI() {
+        return mPauseLayout.getVisibility() == View.VISIBLE;
+    }
+
+    /**
+     * 当前是否在训练结束界面
+     *
+     * @return
+     */
+    private boolean isInFinishUI() {
+        return mFinishLayout.getVisibility() == View.VISIBLE;
+    }
+
+    /**
+     * 当前是否在正在跑步的界面
+     *
+     * @return
+     */
+    private boolean isInRunUI() {
+        return mLayoutRun.getVisibility() == View.VISIBLE;
+    }
+
+    /**
+     * 当前是否在跑步启动页界面
+     *
+     * @return
+     */
+    private boolean isInStartUI() {
+        return mStartLayout.getVisibility() == View.VISIBLE;
+    }
+
+    private boolean isInSettingUI() {
+        return mSettingLayout.getVisibility() == View.VISIBLE;
     }
 
     /**
      * 开始跑步
      */
-    public void runStart() {
-        SerialPortUtil.startTreadMill();
+    public void startTreadMill(int speed, int grade) {
+        ((HomeActivity) getActivity()).setTitle("");
+        SerialPortUtil.startTreadMill(speed, grade);
         isPause = false;
         destroyPauseCountTime();
         mPauseLayout.setVisibility(View.GONE);
         mLayoutRun.setVisibility(View.VISIBLE);
         mFinishLayout.setVisibility(View.GONE);
         mStartLayout.setVisibility(View.GONE);
-        currentDateSecond = DateUtils.currentDataSeconds();
-        startRunThread();//计时开始
+        mSettingLayout.setVisibility(View.GONE);
+
     }
 
+    /**
+     * 暂停跑步机
+     */
+    private void pauseTreadmill() {
+        ((HomeActivity) getActivity()).setTitle("");
+        startPauseCountTime();
+        isPause = true;
+        mPauseLayout.setVisibility(View.VISIBLE);
+        mLayoutRun.setVisibility(View.GONE);
+        mFinishLayout.setVisibility(View.GONE);
+        mStartLayout.setVisibility(View.GONE);
+        mSettingLayout.setVisibility(View.GONE);
+        SerialPortUtil.stopTreadMill();//暂停命令
+    }
+
+    private void showSettingUI() {
+        ((HomeActivity) getActivity()).setTitle("系统设置");
+        mPauseLayout.setVisibility(View.GONE);
+        mLayoutRun.setVisibility(View.GONE);
+        mFinishLayout.setVisibility(View.GONE);
+        mStartLayout.setVisibility(View.GONE);
+        mSettingLayout.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 结束锻炼
+     */
+    private void finishExercise() {
+        ((HomeActivity) getActivity()).setTitle("");
+        destroyPauseCountTime();
+        isPause = true;
+        SerialPortUtil.stopTreadMill();
+        mPauseLayout.setVisibility(View.GONE);
+        mLayoutRun.setVisibility(View.GONE);
+        mFinishLayout.setVisibility(View.VISIBLE);
+        mStartLayout.setVisibility(View.GONE);
+        mSettingLayout.setVisibility(View.GONE);
+
+        //运动结束跳转到完成界面
+        try {
+            //上传锻炼数据
+            ((HomeActivity) getActivity()).iBackService.reportExerciseData();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        statisticsRunData();
+    }
+
+
+    /**
+     * 设置跑步机速度
+     *
+     * @param speed
+     */
     private void setSpeed(int speed) {
         if (speed > 0 && speed <= 200) {
             mSpeed = speed;
@@ -328,6 +387,11 @@ public class RunFragment extends SerialPortFragment {
         }
     }
 
+    /**
+     * 设置跑步机速度
+     *
+     * @param grade
+     */
     private void setGrade(int grade) {
         if (grade > 0 && grade <= 25) {
             mGrade = grade;
@@ -341,7 +405,7 @@ public class RunFragment extends SerialPortFragment {
      * @param speed
      */
     private void setSpeedBack(int speed) {
-        float currentSpeed = (float) speed / 10f;
+        float currentSpeed = (float) speed / 10.0f;
         if (currentSpeed > 0f && currentSpeed <= 6f) {//快走
             mRunSpeedImageView.setBackgroundResource(R.drawable.fast_11);
         } else if (currentSpeed > 6f && currentSpeed < 8.5f) {//慢跑
@@ -351,28 +415,6 @@ public class RunFragment extends SerialPortFragment {
         }
         mSpeedInfoTextView.setText(StringUtils.getDecimalString(currentSpeed, 1));
     }
-
-    /**
-     * 结束锻炼
-     */
-    private void finishExercise() {
-        destroyPauseCountTime();
-        isPause = true;
-        SerialPortUtil.stopTreadMill();
-        mPauseLayout.setVisibility(View.GONE);
-        mLayoutRun.setVisibility(View.GONE);
-        mFinishLayout.setVisibility(View.VISIBLE);
-        mStartLayout.setVisibility(View.GONE);
-        //运动结束跳转到完成界面
-        try {
-            //上传锻炼数据
-            ((HomeActivity) getActivity()).iBackService.reportExerciseData();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-        statisticsRunData();
-    }
-
 
     /***
      * 跑步结束统计 距离 、用时、平均坡度、平均速度、消耗热量，平均心率
@@ -395,7 +437,7 @@ public class RunFragment extends SerialPortFragment {
         //平均速度
         if (totalDistance > 0) {
             float h = (float) (SerialPortUtil.getTreadInstance().getRunTime() / 3600.0);
-            float avergageSpeed = totalDistanceKm  / h;
+            float avergageSpeed = totalDistanceKm / h;
             mAvergageSpeedTextView.setText(StringUtils.getDecimalString(avergageSpeed, 2));
         }
         //消耗热量
@@ -405,36 +447,38 @@ public class RunFragment extends SerialPortFragment {
         checkRunResult(SerialPortUtil.getTreadInstance().getRunTime(), totalDistanceKm, SerialPortUtil.getTreadInstance().getKCAL());
         completeCountdownTime = new CompleteCountdownTime(122 * 1000, 1000);
         completeCountdownTime.start();
-        runRest();
+        ResetTreadmill();
     }
 
     /**
      * 验证跑步结果
+     *
      * @param time
      * @param distanceKm
      * @param kcal
      */
     public void checkRunResult(float time, float distanceKm, float kcal) {
-        if(totalTime > 0 ) {
+        if (totalTime > 0) {
             showUnfinishedView(time / (totalTime * 60));
-        } else if(totalKilometre > 0) {
-            showUnfinishedView(distanceKm / totalKilometre );
-        } else if(totalKcal > 0) {
+        } else if (totalKilometre > 0) {
+            showUnfinishedView(distanceKm / totalKilometre);
+        } else if (totalKcal > 0) {
             showUnfinishedView(kcal / totalKcal);
         }
     }
 
     /**
      * 显示未完成界面
+     *
      * @param percentage
      */
     public void showUnfinishedView(float percentage) {
-        if(percentage < 1) {
+        if (percentage < 1) {
             int percent = (int) (percentage * 100);
             mRunCompleteImg.setVisibility(View.GONE);
             mRunProgressLayout.setVisibility(View.VISIBLE);
             mRunProgressView.setPercent(percent);
-            mRunPrgressValue.setText(percent+ "%");
+            mRunPrgressValue.setText(percent + "%");
         } else {
             mRunProgressLayout.setVisibility(View.GONE);
             mRunCompleteImg.setVisibility(View.VISIBLE);
@@ -442,13 +486,12 @@ public class RunFragment extends SerialPortFragment {
     }
 
 
-
     /**
      * 重置跑步机设置
      */
-    public void runRest() {
+    public void ResetTreadmill() {
         isStart = false;
-        if(completeCountdownTime != null) {
+        if (completeCountdownTime != null) {
             completeCountdownTime.cancel();
         }
         SerialPortUtil.setCardNoUnValid();//设置无效卡
@@ -456,10 +499,11 @@ public class RunFragment extends SerialPortFragment {
     }
 
     /**
-     * 开启跑步线程
+     * 开启跑步计时和相关计算的线程
      */
     private void startRunThread() {
         isStart = true;
+        currentDateSecond = DateUtils.currentDataSeconds();
         RunThread runThread = new RunThread();
         runThread.start();
     }
@@ -469,7 +513,7 @@ public class RunFragment extends SerialPortFragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 0) {
-                mCurrentDistanceTextView.setText(StringUtils.getDecimalString(getKmDistance(SerialPortUtil.getTreadInstance().getDistance()) , 2));
+                mCurrentDistanceTextView.setText(StringUtils.getDecimalString(getKmDistance(SerialPortUtil.getTreadInstance().getDistance()), 2));
                 String userTime = RunTimeUtil.secToTime(SerialPortUtil.getTreadInstance().getRunTime());
                 mCurrentUserTime.setText(userTime);
                 LogUtils.d("dddd", "distance: " + SerialPortUtil.getTreadInstance().getDistance() + " kcal: " + SerialPortUtil.getTreadInstance().getKCAL());
@@ -477,7 +521,7 @@ public class RunFragment extends SerialPortFragment {
         }
     };
 
-    public float getKmDistance (float distance) {
+    public float getKmDistance(float distance) {
         return (float) (distance / 1000.0);
     }
 
@@ -498,8 +542,8 @@ public class RunFragment extends SerialPortFragment {
 //                    float distance = SerialPortUtil.getTreadInstance().getDistance() + (float) (SerialPortUtil.getTreadInstance().getCurrentSpeed() / 36000.0);
 //                    float kcal = SerialPortUtil.getTreadInstance().getKCAL() +
 //                            (float) (0.0703 * (1 + SerialPortUtil.getTreadInstance().getCurrentSpeed() / 100) * SerialPortUtil.getTreadInstance().getDistance());
-                    totalGrade =  totalGrade + SerialPortUtil.getTreadInstance().getCurrentGrade();
-                    LogUtils.d(TAG, "increment: Speed: " + SerialPortUtil.getTreadInstance().getCurrentSpeed() );
+                    totalGrade = totalGrade + SerialPortUtil.getTreadInstance().getCurrentGrade();
+                    LogUtils.d(TAG, "increment: Speed: " + SerialPortUtil.getTreadInstance().getCurrentSpeed());
                     float mDistanceIncrement = SerialPortUtil.getTreadInstance().measureDistanceIncrement();
                     float mKcalIncrement = SerialPortUtil.getTreadInstance().measureKcalIncrement();
                     float distance = SerialPortUtil.getTreadInstance().getDistance() + mDistanceIncrement;
@@ -734,12 +778,12 @@ public class RunFragment extends SerialPortFragment {
 
         @Override
         public void onTick(long millisUntilFinished) {
-            LogUtils.e(TAG,"完成倒计时:" + millisUntilFinished);
+            LogUtils.e(TAG, "完成倒计时:" + millisUntilFinished);
         }
 
         @Override
         public void onFinish() {
-            ((HomeActivity) getActivity()).setCentreTvText("");
+            ((HomeActivity) getActivity()).setTitle("");
             ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
         }
     }

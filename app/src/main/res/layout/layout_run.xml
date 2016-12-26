@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/layout_dashboard"
+        android:layout_width="507dp"
+        android:layout_height="507dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp">
+
+        <ImageView
+            android:id="@+id/run_speed_ImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/fast_11"/>
+
+        <ImageView
+            android:id="@+id/dashboard_imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/dashboard_anim_backgroud"
+            android:orientation="vertical"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="140dp"
+                android:text="距离(km)"
+                android:textColor="@color/c94949c"
+                android:textSize="@dimen/textsize_20sp"/>
+
+            <TextView
+                android:id="@+id/current_distance_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/c7c7c8"
+                android:textSize="28sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="100dp"
+                android:text="用时(h:m:s)"
+                android:textColor="@color/c94949c"
+                android:textSize="@dimen/textsize_20sp"/>
+
+            <TextView
+                android:id="@+id/current_user_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/c7c7c8"
+                android:textSize="28sp"/>
+        </LinearLayout>
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:layout_toRightOf="@id/layout_dashboard"
+        android:text="步行"
+        android:textColor="@color/white"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_dashboard"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="慢跑"
+        android:textColor="@color/white"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:layout_toLeftOf="@+id/layout_dashboard"
+        android:text="快跑"
+        android:textColor="@color/white"
+        android:textSize="16sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:layout_alignParentBottom="true"
+        android:background="#179B9B9B"
+        android:orientation="horizontal">
+
+        <include
+            android:id="@+id/cell_grade"
+            layout="@layout/run_info_cell"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <include
+            android:id="@+id/cell_speed"
+            layout="@layout/run_info_cell"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <include
+            android:id="@+id/cell_hot"
+            layout="@layout/run_info_cell"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <include
+            android:id="@+id/cell_heart_rate"
+            layout="@layout/run_info_cell"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+    </LinearLayout>
+</RelativeLayout>

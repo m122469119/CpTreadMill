@@ -12,7 +12,6 @@ import com.aaron.android.framework.base.adapter.TabFragmentPagerAdapter;
 import com.aaron.android.framework.base.ui.BaseFragment;
 import com.liking.treadmill.R;
 import com.liking.treadmill.message.SettingNextMessage;
-import com.liking.treadmill.storge.Preference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,20 +26,20 @@ import butterknife.ButterKnife;
  * @version 1.0.0
  */
 
-public class SettingFragment extends BaseFragment {
+public class StartSettingFragment extends BaseFragment {
     private static final int INDEX_BIND_GYM = 0;
     private static final int INDEX_SETUP = 1;
     private static final int INDEX_NETWORK = 2;
     @BindView(R.id.setting_viewPager)
     ViewPager mSettingViewPager;
 
-    public SettingFragment() {
+    public StartSettingFragment() {
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_setting, container, false);
+        View view = inflater.inflate(R.layout.fragment_start_setting, container, false);
         ButterKnife.bind(this, view);
         initViewPager();
         return view;

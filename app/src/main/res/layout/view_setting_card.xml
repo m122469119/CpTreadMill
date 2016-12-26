@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/setting_car_normal"
+              android:gravity="center"
+              android:orientation="vertical">
+
+    <View
+        android:id="@+id/setting_card_icon"
+        android:layout_width="100dp"
+        android:layout_height="124dp"
+        android:background="@drawable/setting_icon_start"/>
+
+    <TextView
+        android:id="@+id/setting_cart_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="启动方式"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textsize_16sp"/>
+</LinearLayout>

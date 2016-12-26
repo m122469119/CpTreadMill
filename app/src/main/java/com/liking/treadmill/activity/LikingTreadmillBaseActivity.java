@@ -21,7 +21,7 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
     private ImageView mWifiImageView;
     private ImageView mFanImageView;
     private ImageView mCooldownImageView;
-    private TextView mCentreTv;
+    private TextView mTitleView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +38,13 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
         mWifiImageView.setImageResource(drawStateId);
         mFanImageView = (ImageView)customToolBarView.findViewById(R.id.fan_imageView);
         mCooldownImageView = (ImageView)customToolBarView.findViewById(R.id.cooldown_imageView);
-        mCentreTv = (TextView)customToolBarView.findViewById(R.id.centre_textView);
+        mTitleView = (TextView)customToolBarView.findViewById(R.id.title_textView);
         setCustomToolBar(customToolBarView);
     }
 
-    public void setCentreTvText(String value) {
-        if(mCentreTv != null) {
-            mCentreTv.setText(value);
+    public void setTitle(String value) {
+        if(mTitleView != null) {
+            mTitleView.setText(value);
         }
     }
 

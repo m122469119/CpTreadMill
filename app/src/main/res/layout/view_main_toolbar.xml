@@ -36,12 +36,12 @@
                 />
 
             <TextView
-                android:id="@+id/centre_textView"
+                android:id="@+id/title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:textColor="@color/white"
-                android:textSize="@dimen/textsize_30sp"/>
+                android:textSize="@dimen/textsize_20sp"/>
 
             <TextView
                 android:id="@+id/time_textView"

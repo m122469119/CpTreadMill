@@ -1,30 +1,22 @@
 package com.liking.treadmill.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
-import com.aaron.android.codelibrary.utils.StringUtils;
-import com.aaron.android.framework.utils.EnvironmentUtils;
-import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
-import com.liking.treadmill.message.LoginUserInfoMessage;
-import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
-import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
-import com.liking.treadmill.treadcontroller.SerialPortUtil;
-import com.liking.treadmill.widget.IToast;
 
 import butterknife.ButterKnife;
 
 /**
  * Created on 16/12/15.
- *
  */
 
 public class AwaitActionFragment extends SerialPortFragment {
@@ -46,9 +38,12 @@ public class AwaitActionFragment extends SerialPortFragment {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_CARD) {//刷卡
             HomeActivity homeActivity = (HomeActivity) getActivity();
-            if(homeActivity.mUserLoginPresenter != null) {
+            if (homeActivity.mUserLoginPresenter != null) {
                 homeActivity.mUserLoginPresenter.userLogin();
             }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_SET) {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
+            startActivity(intent);
         }
     }
 
