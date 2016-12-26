@@ -14,6 +14,7 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.fragment.AwaitActionFragment;
+import com.liking.treadmill.fragment.GoalSettingFragment;
 import com.liking.treadmill.fragment.RunFragment;
 import com.liking.treadmill.fragment.SettingFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
@@ -75,6 +76,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         if(mUserLoginPresenter == null) {
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
+//        launchFragment(new GoalSettingFragment());
     }
 
     public void launchInit() {

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/goal_setting_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/spacing_24dp"
+        android:layout_marginRight="@dimen/spacing_24dp"
+        android:background="@drawable/shape_step_frame_none"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/step1_mode_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/spacing_50dp"
+            android:gravity="center"
+            android:paddingBottom="@dimen/spacing_30dp"
+            android:src="@drawable/icon_goal_mode_time"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1.8dp"
+            android:layout_marginTop="@dimen/spacing_8dp"
+            android:background="@color/c3a4d65"/>
+
+        <TextView
+            android:id="@+id/step1_mode_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/spacing_24dp"
+            android:text="@string/goalsetting_step_run_time"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize_30sp"/>
+    </LinearLayout>
+</FrameLayout>
