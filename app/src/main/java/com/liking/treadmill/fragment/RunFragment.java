@@ -360,7 +360,6 @@ public class RunFragment extends SerialPortFragment {
      * 结束锻炼
      */
     private void finishExercise() {
-        ((HomeActivity) getActivity()).setTitle("");
         destroyPauseCountTime();
         isPause = true;
         SerialPortUtil.stopTreadMill();
@@ -450,7 +449,7 @@ public class RunFragment extends SerialPortFragment {
         mConsumeKcalTextView.setText(StringUtils.getDecimalString(SerialPortUtil.getTreadInstance().getKCAL(), 2));
         //平均心率
         mAvergHraetRateTextView.setText(SerialPortUtil.getTreadInstance().getHeartRate() + "");
-        checkRunResult(SerialPortUtil.getTreadInstance().getRunTime(), totalDistanceKm, SerialPortUtil.getTreadInstance().getKCAL());
+        showRunResult(SerialPortUtil.getTreadInstance().getRunTime(), totalDistanceKm, SerialPortUtil.getTreadInstance().getKCAL());
         completeCountdownTime = new CompleteCountdownTime(122 * 1000, 1000);
         completeCountdownTime.start();
         ResetTreadmill();
@@ -463,15 +462,15 @@ public class RunFragment extends SerialPortFragment {
      * @param distanceKm
      * @param kcal
      */
-    public void checkRunResult(float time, float distanceKm, float kcal) {
+    public void showRunResult(float time, float distanceKm, float kcal) {
         if (totalTime > 0) {
-            showUnfinishedView(time / (totalTime * 60));
+            showfinishedView(time / (totalTime * 60));
         } else if (totalKilometre > 0) {
-            showUnfinishedView(distanceKm / totalKilometre);
+            showfinishedView(distanceKm / totalKilometre);
         } else if (totalKcal > 0) {
-            showUnfinishedView(kcal / totalKcal);
+            showfinishedView(kcal / totalKcal);
         } else {
-            showUnfinishedView(-1);
+            showfinishedView(-1);
         }
     }
 
@@ -480,7 +479,7 @@ public class RunFragment extends SerialPortFragment {
      *
      * @param percentage
      */
-    public void showUnfinishedView(float percentage) {
+    public void showfinishedView(float percentage) {
         if(percentage == -1) {
             mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.white));
             mRunFinishPromptextView.setText(ResourceUtils.getString(R.string.this_run_finish));
@@ -533,16 +532,32 @@ public class RunFragment extends SerialPortFragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 0) {
-                mCurrentDistanceTextView.setText(StringUtils.getDecimalString(getKmDistance(SerialPortUtil.getTreadInstance().getDistance()), 2));
-                String userTime = RunTimeUtil.secToTime(SerialPortUtil.getTreadInstance().getRunTime());
-                mCurrentUserTime.setText(userTime);
-                LogUtils.d("dddd", "distance: " + SerialPortUtil.getTreadInstance().getDistance() + " kcal: " + SerialPortUtil.getTreadInstance().getKCAL());
+                float kmDistance = getKmDistance(SerialPortUtil.getTreadInstance().getDistance());
+                mCurrentDistanceTextView.setText(StringUtils.getDecimalString(kmDistance, 2));
+                int runTime = SerialPortUtil.getTreadInstance().getRunTime();
+                String time = RunTimeUtil.secToTime(runTime);
+                mCurrentUserTime.setText(time);
+                float kcal = SerialPortUtil.getTreadInstance().getKCAL();
+                checkRunResult(runTime, kmDistance, kcal);
+                LogUtils.d("dddd", "distance: " + SerialPortUtil.getTreadInstance().getDistance() + " kcal: " + kcal);
             }
         }
     };
 
     public float getKmDistance(float distance) {
         return (float) (distance / 1000.0);
+    }
+
+    /**
+     * 验证跑步结果
+     */
+    public void checkRunResult(float time, float distance, float kcal) {
+        if(totalTime > 0 && time >= (totalTime * 60)
+         ||totalKilometre > 0 && distance >= totalKilometre
+         ||totalKcal > 0 && kcal >= totalKcal) {
+            SerialPortUtil.stopTreadMill();
+            finishExercise();
+        }
     }
 
     /**
