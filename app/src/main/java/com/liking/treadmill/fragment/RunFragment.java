@@ -24,6 +24,7 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
+import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.app.ThreadMillConstant;
@@ -71,6 +72,8 @@ public class RunFragment extends SerialPortFragment {
 
     @BindView(R.id.layout_finish)
     RelativeLayout mFinishLayout;
+    @BindView(R.id.this_run_finish_prompt)
+    TextView mRunFinishPromptextView;
     @BindView(R.id.run_time_TextView)
     TextView mRunTimeTextView;
 
@@ -212,15 +215,15 @@ public class RunFragment extends SerialPortFragment {
             } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_15) {
                 setSpeed(150);
             } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_3) {
-                setGrade(30);
+                setGrade(3);
             } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_6) {
-                setGrade(60);
+                setGrade(6);
             } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_9) {
-                setGrade(90);
+                setGrade(9);
             } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_12) {
-                setGrade(120);
+                setGrade(12);
             } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_15) {
-                setGrade(150);
+                setGrade(15);
             }
         } else if (isInStartUI()) {
             if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
@@ -467,6 +470,8 @@ public class RunFragment extends SerialPortFragment {
             showUnfinishedView(distanceKm / totalKilometre);
         } else if (totalKcal > 0) {
             showUnfinishedView(kcal / totalKcal);
+        } else {
+            showUnfinishedView(-1);
         }
     }
 
@@ -476,15 +481,27 @@ public class RunFragment extends SerialPortFragment {
      * @param percentage
      */
     public void showUnfinishedView(float percentage) {
-        if (percentage < 1) {
-            int percent = (int) (percentage * 100);
+        if(percentage == -1) {
+            mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.white));
+            mRunFinishPromptextView.setText(ResourceUtils.getString(R.string.this_run_finish));
+        } else if (percentage < 1) {
+            int percent = Math.round(percentage * 100);
             mRunCompleteImg.setVisibility(View.GONE);
+            mRunTimeTextView.setVisibility(View.GONE);
             mRunProgressLayout.setVisibility(View.VISIBLE);
             mRunProgressView.setPercent(percent);
-            mRunPrgressValue.setText(percent + "%");
-        } else {
+            String percents = percent + "%";
+            mRunPrgressValue.setText(percents);
+            String promp = String.format(ResourceUtils.getString(R.string.run_result_unfinished_txt_hint),percents);
+            mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.white));
+            mRunFinishPromptextView.setText(Html.fromHtml(promp));
+        } else  {
             mRunProgressLayout.setVisibility(View.GONE);
             mRunCompleteImg.setVisibility(View.VISIBLE);
+            mRunTimeTextView.setVisibility(View.VISIBLE);
+            mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.c25ff8c));
+            mRunFinishPromptextView.setText(ResourceUtils.getString(R.string.this_run_attainment_target));
+            mRunTimeTextView.setText(DateUtils.formatDate("yyyy-MM-dd HH:mm", new Date()));
         }
     }
 

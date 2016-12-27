@@ -9,34 +9,28 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.0"
-        android:layout_marginLeft="@dimen/spacing_24dp"
-        android:layout_marginRight="@dimen/spacing_24dp"
         android:gravity="center"
         android:orientation="horizontal">
 
         <include
             android:id="@+id/step1_mode_runtime"
             layout="@layout/item_goal_setting"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_4dp"
-            android:layout_weight="1.0"/>
+            android:layout_width="300dp"
+            android:layout_height="338dp"/>
 
         <include
             android:id="@+id/step1_mode_kilometre"
             layout="@layout/item_goal_setting"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_4dp"
-            android:layout_weight="1.0"/>
+            android:layout_width="300dp"
+            android:layout_height="338dp"
+            android:layout_marginLeft="@dimen/spacing_24dp"/>
 
         <include
             android:id="@+id/step1_mode_kcal"
             layout="@layout/item_goal_setting"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_4dp"
-            android:layout_weight="1.0"/>
+            android:layout_width="300dp"
+            android:layout_height="338dp"
+            android:layout_marginLeft="@dimen/spacing_24dp"/>
 
     </LinearLayout>
 
@@ -44,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="#381d3e"
+        android:background="@color/c179B9B9B"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="80dp"
@@ -53,79 +47,28 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/goalsetting_step1_hint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:gravity="center"
                 android:text="点击"
                 android:textColor="@color/white"
-                android:textSize="@dimen/textsize_30sp"/>
+                android:textSize="@dimen/textsize_20sp"/>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/key_next"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="选择设定目标类型&#160;&#160;&#160;&#160;&#160;再点击"
-                android:textColor="@color/white"
-                android:textSize="@dimen/textsize_30sp"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/key_mode"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="两次确认选定"
-                android:textColor="@color/white"
-                android:textSize="@dimen/textsize_30sp"/>
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="@dimen/spacing_16dp"
-            android:padding="@dimen/spacing_4dp">
-
-            <TextView
+                android:id="@+id/goalsetting_step1_hint2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_16dp"
+                android:gravity="center"
                 android:text="点击"
                 android:textColor="@color/white"
-                android:textSize="@dimen/textsize_30sp"/>
+                android:textSize="@dimen/textsize_20sp"/>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/spacing_40dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/key_back"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="返回上一页"
-                android:textColor="@color/white"
-                android:textSize="@dimen/textsize_30sp"/>
         </LinearLayout>
 
     </LinearLayout>

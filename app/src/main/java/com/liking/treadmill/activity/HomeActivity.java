@@ -75,7 +75,6 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
         initAdViews();
-//        launchFragment(new GoalSettingFragment());
     }
 
     public void launchInit() {

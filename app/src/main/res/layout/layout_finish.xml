@@ -16,14 +16,13 @@
             android:id="@+id/run_finish_ImageView"
             android:layout_width="256dp"
             android:layout_height="256dp"
-            android:visibility="invisible"
             android:background="@drawable/icon_run_finish"/>
 
         <FrameLayout
             android:id="@+id/run_progress_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <com.liking.treadmill.widget.ColorfulRingProgressView
                 android:id="@+id/colorfulring_progress"
