@@ -11,10 +11,10 @@ import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.fragment.AwaitActionFragment;
-import com.liking.treadmill.fragment.GoalSettingFragment;
 import com.liking.treadmill.fragment.RunFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
 import com.liking.treadmill.message.FanStateMessage;
@@ -74,6 +74,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         if(mUserLoginPresenter == null) {
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
+        initAdViews();
 //        launchFragment(new GoalSettingFragment());
     }
 
@@ -91,6 +92,11 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 //        } else {
             launchFragment(new AwaitActionFragment());
 //        }
+    }
+
+    private void initAdViews() {
+        HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.image_ad_run_left);
+        HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, R.drawable.image_ad_run_right);
     }
 
     @Override

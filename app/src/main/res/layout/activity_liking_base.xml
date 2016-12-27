@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <com.aaron.android.framework.library.imageloader.HImageView xmlns:android="http://schemas.android.com/apk/res/android"
+                                                                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                                                                android:id="@+id/left_ad_imageView"
+                                                                android:layout_width="@dimen/run_ad_image_size"
+                                                                android:layout_height="match_parent"
+                                                                fresco:actualImageScaleType="centerCrop"
+                                                                fresco:fadeDuration="300"
+                                                                fresco:failureImage="@drawable/run_bg_ad"
+                                                                fresco:failureImageScaleType="centerInside"
+                                                                fresco:placeholderImage="@drawable/run_bg_ad"
+                                                                fresco:placeholderImageScaleType="centerCrop"
+                                                                fresco:progressBarAutoRotateInterval="1000"
+                                                                fresco:progressBarImageScaleType="centerInside"
+                                                                fresco:retryImageScaleType="centerCrop"
+        />
+
+    <FrameLayout
+        android:id="@+id/treadmill_container_layout"
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/run_bg">
+    </FrameLayout>
+
+    <com.aaron.android.framework.library.imageloader.HImageView xmlns:android="http://schemas.android.com/apk/res/android"
+                                                                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                                                                android:id="@+id/right_ad_imageView"
+                                                                android:layout_width="@dimen/run_ad_image_size"
+                                                                android:layout_height="match_parent"
+                                                                fresco:actualImageScaleType="centerCrop"
+                                                                fresco:fadeDuration="300"
+                                                                fresco:failureImage="@drawable/run_bg_ad"
+                                                                fresco:failureImageScaleType="centerInside"
+                                                                fresco:placeholderImage="@drawable/run_bg_ad"
+                                                                fresco:placeholderImageScaleType="centerCrop"
+                                                                fresco:progressBarAutoRotateInterval="1000"
+                                                                fresco:progressBarImageScaleType="centerInside"
+                                                                fresco:retryImageScaleType="centerCrop"
+        />
+</LinearLayout>

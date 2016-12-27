@@ -45,12 +45,8 @@ import butterknife.ButterKnife;
  */
 
 public class RunFragment extends SerialPortFragment {
-    @BindView(R.id.left_ad_imageView)
-    HImageView mLeftAdImageView;
     @BindView(R.id.dashboard_imageView)
     ImageView mDashboardImageView;
-    @BindView(R.id.right_ad_imageView)
-    HImageView mRightAdImageView;
     @BindView(R.id.layout_run)
     RelativeLayout mLayoutRun;
     @BindView(R.id.current_distance_TextView)
@@ -233,8 +229,11 @@ public class RunFragment extends SerialPortFragment {
                 ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
             } else if (keyCode == LikingTreadKeyEvent.KEY_START) {
                 startTreadMill(SerialPortUtil.DEFAULT_SPEED, SerialPortUtil.DEFAULT_GRADE);
+                startRunThread();
             } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {
                 cardLogin();
+            } else if (keyCode == LikingTreadKeyEvent.KEY_PROGRAM) {
+                showSettingUI();
             }
         } else if (isInFinishUI()) {
             if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
@@ -243,6 +242,8 @@ public class RunFragment extends SerialPortFragment {
                 ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
             } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {
                 cardLogin();
+            } else if (keyCode == LikingTreadKeyEvent.KEY_PROGRAM) {
+                showSettingUI();
             }
         } else if (isInPauseUI()) {
             if (keyCode == LikingTreadKeyEvent.KEY_START) {
@@ -250,11 +251,13 @@ public class RunFragment extends SerialPortFragment {
             } else if (keyCode == LikingTreadKeyEvent.KEY_STOP) {
                 finishExercise();
             }
+        } else if (isInSettingUI()) {
+            if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
+
+            }
         }
         if (keyCode == LikingTreadKeyEvent.KEY_SET) {//参数设置
             ((HomeActivity) getActivity()).launchFragment(new GoalSettingFragment());
-        } else if (keyCode == LikingTreadKeyEvent.KEY_PROGRAM) {
-            showSettingUI();
         }
     }
 
@@ -627,7 +630,6 @@ public class RunFragment extends SerialPortFragment {
     }
 
     private void initViews() {
-        initAdViews();
         initDashboardImageView();
         initRunInfoViews();
         initRunFinishViews();
@@ -739,12 +741,6 @@ public class RunFragment extends SerialPortFragment {
     private void initDashboardImageView() {
         AnimationDrawable animationDrawable = (AnimationDrawable) mDashboardImageView.getBackground();
         animationDrawable.start();
-    }
-
-
-    private void initAdViews() {
-//        HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.image_ad_run_left);
-//        HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, R.drawable.image_ad_run_right);
     }
 
     /**

@@ -1,84 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    tools:context="com.liking.treadmill.activity.HomeActivity">
+    android:orientation="horizontal">
 
-    <com.aaron.android.framework.library.imageloader.HImageView xmlns:android="http://schemas.android.com/apk/res/android"
-                                                                xmlns:fresco="http://schemas.android.com/apk/res-auto"
-                                                                android:id="@+id/left_ad_imageView"
-                                                                android:layout_width="@dimen/run_ad_image_size"
-                                                                android:layout_height="match_parent"
-                                                                fresco:actualImageScaleType="centerCrop"
-                                                                fresco:fadeDuration="300"
-                                                                fresco:failureImage="@drawable/run_bg_ad"
-                                                                fresco:failureImageScaleType="centerInside"
-                                                                fresco:placeholderImage="@drawable/run_bg_ad"
-                                                                fresco:placeholderImageScaleType="centerCrop"
-                                                                fresco:progressBarAutoRotateInterval="1000"
-                                                                fresco:progressBarImageScaleType="centerInside"
-                                                                fresco:retryImageScaleType="centerCrop"
-        />
-
-    <FrameLayout
-        android:layout_width="0px"
+    <include
+        android:id="@+id/layout_run"
+        layout="@layout/layout_run"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@drawable/run_bg">
+        android:visibility="gone"/>
 
-        <include
-            android:id="@+id/layout_run"
-            layout="@layout/layout_run"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
+    <include
+        android:id="@+id/layout_pause"
+        layout="@layout/layout_pause"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
-        <include
-            android:id="@+id/layout_pause"
-            layout="@layout/layout_pause"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
+    <include
+        android:id="@+id/layout_finish"
+        layout="@layout/layout_finish"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
-        <include
-            android:id="@+id/layout_finish"
-            layout="@layout/layout_finish"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
+    <include
+        android:id="@+id/layout_start"
+        layout="@layout/layout_start"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"/>
 
-        <include
-            android:id="@+id/layout_start"
-            layout="@layout/layout_start"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible"/>
-
-        <include
-            android:id="@+id/layout_setting"
-            layout="@layout/layout_setting"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
-    </FrameLayout>
-
-    <com.aaron.android.framework.library.imageloader.HImageView xmlns:android="http://schemas.android.com/apk/res/android"
-                                                                xmlns:fresco="http://schemas.android.com/apk/res-auto"
-                                                                android:id="@+id/right_ad_imageView"
-                                                                android:layout_width="@dimen/run_ad_image_size"
-                                                                android:layout_height="match_parent"
-                                                                fresco:actualImageScaleType="centerCrop"
-                                                                fresco:fadeDuration="300"
-                                                                fresco:failureImage="@drawable/run_bg_ad"
-                                                                fresco:failureImageScaleType="centerInside"
-                                                                fresco:placeholderImage="@drawable/run_bg_ad"
-                                                                fresco:placeholderImageScaleType="centerCrop"
-                                                                fresco:progressBarAutoRotateInterval="1000"
-                                                                fresco:progressBarImageScaleType="centerInside"
-                                                                fresco:retryImageScaleType="centerCrop"
-        />
-</LinearLayout>
+    <include
+        android:id="@+id/layout_setting"
+        layout="@layout/layout_setting"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+</FrameLayout>

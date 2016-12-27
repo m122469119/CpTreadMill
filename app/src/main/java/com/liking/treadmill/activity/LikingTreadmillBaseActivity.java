@@ -1,14 +1,19 @@
 package com.liking.treadmill.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aaron.android.framework.base.ui.actionbar.AppBarActivity;
+import com.aaron.android.framework.library.imageloader.HImageView;
 import com.liking.treadmill.R;
 import com.liking.treadmill.message.WifiMessage;
 import com.liking.treadmill.service.ThreadMillService;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created on 16/12/9.
@@ -18,6 +23,10 @@ import com.liking.treadmill.service.ThreadMillService;
  */
 
 public class LikingTreadmillBaseActivity extends AppBarActivity {
+    @BindView(R.id.left_ad_imageView)
+    HImageView mLeftAdImageView;
+    @BindView(R.id.right_ad_imageView)
+    HImageView mRightAdImageView;
     private ImageView mWifiImageView;
     private ImageView mFanImageView;
     private ImageView mCooldownImageView;
@@ -26,6 +35,8 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_liking_base);
+        ButterKnife.bind(this);
         setSwipeBackEnable(false);
         initToolBarViews();
     }
@@ -33,23 +44,27 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
     private void initToolBarViews() {
         hideHomeUpIcon();
         View customToolBarView = getLayoutInflater().inflate(R.layout.view_main_toolbar, null, false);
-        mWifiImageView = (ImageView)customToolBarView.findViewById(R.id.wifi_imageView);
-        int drawStateId  = ThreadMillService.isNetworkAvailable(this)? R.drawable.main_wifi : R.drawable.fail_wifi;
+        mWifiImageView = (ImageView) customToolBarView.findViewById(R.id.wifi_imageView);
+        int drawStateId = ThreadMillService.isNetworkAvailable(this) ? R.drawable.main_wifi : R.drawable.fail_wifi;
         mWifiImageView.setImageResource(drawStateId);
-        mFanImageView = (ImageView)customToolBarView.findViewById(R.id.fan_imageView);
-        mCooldownImageView = (ImageView)customToolBarView.findViewById(R.id.cooldown_imageView);
-        mTitleView = (TextView)customToolBarView.findViewById(R.id.title_textView);
+        mFanImageView = (ImageView) customToolBarView.findViewById(R.id.fan_imageView);
+        mCooldownImageView = (ImageView) customToolBarView.findViewById(R.id.cooldown_imageView);
+        mTitleView = (TextView) customToolBarView.findViewById(R.id.title_textView);
         setCustomToolBar(customToolBarView);
     }
 
     public void setTitle(String value) {
-        if(mTitleView != null) {
+        if (mTitleView != null) {
             mTitleView.setText(value);
         }
     }
 
+    public void launchFragment(Fragment fragment) {
+        launchFragment(R.id.treadmill_container_layout, fragment);
+    }
+
     public void setFanViewVisibility(int visibility) {
-        if(mFanImageView != null) {
+        if (mFanImageView != null) {
             mFanImageView.setVisibility(visibility);
         }
     }

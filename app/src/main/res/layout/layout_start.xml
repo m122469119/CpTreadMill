@@ -14,8 +14,8 @@
         <com.aaron.android.framework.library.imageloader.HImageView
             xmlns:fresco="http://schemas.android.com/apk/res-auto"
             android:id="@+id/head_image"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
             android:layout_gravity="center"
             fresco:failureImage="@drawable/icon_head_default_image"
             fresco:failureImageScaleType="centerCrop"
@@ -31,7 +31,7 @@
             android:layout_marginLeft="@dimen/spacing_20dp"
             android:text="雷达"
             android:textColor="@color/white"
-            android:textSize="28sp"/>
+            android:textSize="@dimen/textsize_20sp"/>
 
     </LinearLayout>
 
@@ -57,8 +57,8 @@
             android:layout_below="@+id/quick_start"
             android:layout_centerHorizontal="true"
             android:text="快速开始"
-            android:textColor="@color/c7c7c8"
-            android:textSize="28sp"/>
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize_24sp"/>
     </RelativeLayout>
 
     <TextView
@@ -68,11 +68,11 @@
         android:gravity="center"
         android:text="使用下方按钮进行选择"
         android:textColor="@color/white"
-        android:textSize="32sp"/>
+        android:textSize="@dimen/textsize_20sp"/>
 
     <ImageView
-        android:layout_width="40dp"
-        android:layout_height="25dp"
+        android:layout_width="20dp"
+        android:layout_height="12.5dp"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/spacing_20dp"
         android:background="@drawable/start_down_arrow"/>
