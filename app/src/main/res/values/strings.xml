@@ -30,6 +30,6 @@
     <string name="goalsetting_step_mode_hint1_part3">上下调整</string>
     <string name="goalsetting_step_mode_hint2">设定完成后点击&#160;&#160;&#160;&#160;开始训练</string>
     <string name="goalsetting_step_mode_hint3">点击&#160;&#160;&#160;&#160;返回上一页重新选择目标</string>
-    <string name="run_result_unfinished_txt_hint"><Data><![CDATA[完成目标</font color="#25ff8c"><b>%s<b></font>,下次继续挑战吧!]]></Data></string>
+    <string name="run_result_unfinished_txt_hint"><Data><![CDATA[完成目标<font color="#25ff8c"><b>%s</b></font>,下次继续挑战吧!]]></Data></string>
 
 </resources>

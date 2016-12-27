@@ -68,7 +68,7 @@
         android:layout_marginTop="30dp"
         android:text="@string/this_run_finish"
         android:textColor="@color/c25ff8c"
-        android:textSize="28sp"/>
+        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/run_time_TextView"
@@ -79,7 +79,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:textColor="@color/c7c7c8"
-        android:textSize="24sp"/>
+        android:textSize="18sp"/>
 
 
     <LinearLayout

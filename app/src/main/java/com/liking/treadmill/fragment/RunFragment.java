@@ -221,6 +221,7 @@ public class RunFragment extends SerialPortFragment {
         } else if (isInFinishUI()) {
             if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
                 ResetTreadmill();
+                ((HomeActivity) getActivity()).setTitle("");
                 ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
             } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {
                 cardLogin();
