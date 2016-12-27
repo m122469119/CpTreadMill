@@ -15,7 +15,7 @@ import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.fragment.AwaitActionFragment;
-import com.liking.treadmill.fragment.RunFragment;
+import com.liking.treadmill.fragment.StartFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
 import com.liking.treadmill.message.FanStateMessage;
 import com.liking.treadmill.message.GymBindSuccessMessage;
@@ -212,7 +212,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     @Override
     public void launchRunFragment() {
-        launchFragment(new RunFragment());
+        launchFragment(new StartFragment());
     }
 
     @Override

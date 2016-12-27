@@ -23,7 +23,6 @@ import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.ApkUpdateUtils;
 
 import java.util.Date;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -44,7 +43,7 @@ public class SocketHelper {
     private static final String TYPE_MEMBER_LIST = "member_list";
     private static final String TYPE_EXERCISE_DATA = "data";
 
-    private static final String mTcpVersion = "v1.0";
+    private static final String mTcpVersion = "v1.1";
 
     public static final String HEART_BEAT_STRING = "{\"type\":\"ping\",\"version\":\"" + mTcpVersion + "\",\"data\":{}, \"msg_id\":\"\"}\\r\\n";//心跳包内容
     public static final String HEART_BEAT_PONG_STRING = "{\"type\":\"pong\",\"data\":{}, \"msg_id\":\"\"}";//心跳包内容

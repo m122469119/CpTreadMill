@@ -22,8 +22,6 @@ import android.widget.TextView;
 import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
-import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
-import com.aaron.android.framework.library.imageloader.HImageView;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
@@ -76,13 +74,6 @@ public class RunFragment extends SerialPortFragment {
     TextView mRunFinishPromptextView;
     @BindView(R.id.run_time_TextView)
     TextView mRunTimeTextView;
-
-    @BindView(R.id.layout_start)
-    LinearLayout mStartLayout;
-    @BindView(R.id.head_image)
-    HImageView mHeadHImageView;
-    @BindView(R.id.user_name_TextView)
-    TextView mUserNameTextView;
 
     @BindView(R.id.run_finish_ImageView)
     ImageView mRunCompleteImg;
@@ -138,7 +129,13 @@ public class RunFragment extends SerialPortFragment {
         initData();
         initPauseView();
         setViewTypeFace();
+        start();
         return mRootView;
+    }
+
+    private void start() {
+        startTreadMill(SerialPortUtil.DEFAULT_SPEED, SerialPortUtil.DEFAULT_GRADE);
+        startRunThread();
     }
 
     public void initData() {
@@ -156,10 +153,6 @@ public class RunFragment extends SerialPortFragment {
                 totalTarget = String.valueOf((int) totalKcal) + "Kcal";
             }
             setGoalSttingValue(totalTarget);
-            if (totalTime > 0 || totalKilometre > 0 || totalKcal > 0) {
-                startTreadMill(SerialPortUtil.DEFAULT_SPEED, SerialPortUtil.DEFAULT_GRADE);
-                startRunThread();
-            }
         }
     }
 
@@ -225,19 +218,6 @@ public class RunFragment extends SerialPortFragment {
             } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_15) {
                 setGrade(15);
             }
-        } else if (isInStartUI()) {
-            if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
-                ResetTreadmill();
-                ((HomeActivity) getActivity()).setTitle("");
-                ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
-            } else if (keyCode == LikingTreadKeyEvent.KEY_START) {
-                startTreadMill(SerialPortUtil.DEFAULT_SPEED, SerialPortUtil.DEFAULT_GRADE);
-                startRunThread();
-            } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {
-                cardLogin();
-            } else if (keyCode == LikingTreadKeyEvent.KEY_PROGRAM) {
-                showSettingUI();
-            }
         } else if (isInFinishUI()) {
             if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
                 ResetTreadmill();
@@ -254,13 +234,6 @@ public class RunFragment extends SerialPortFragment {
             } else if (keyCode == LikingTreadKeyEvent.KEY_STOP) {
                 finishExercise();
             }
-        } else if (isInSettingUI()) {
-            if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
-
-            }
-        }
-        if (keyCode == LikingTreadKeyEvent.KEY_SET) {//参数设置
-            ((HomeActivity) getActivity()).launchFragment(new GoalSettingFragment());
         }
     }
 
@@ -303,15 +276,6 @@ public class RunFragment extends SerialPortFragment {
         return mLayoutRun.getVisibility() == View.VISIBLE;
     }
 
-    /**
-     * 当前是否在跑步启动页界面
-     *
-     * @return
-     */
-    private boolean isInStartUI() {
-        return mStartLayout.getVisibility() == View.VISIBLE;
-    }
-
     private boolean isInSettingUI() {
         return mSettingLayout.getVisibility() == View.VISIBLE;
     }
@@ -327,7 +291,6 @@ public class RunFragment extends SerialPortFragment {
         mPauseLayout.setVisibility(View.GONE);
         mLayoutRun.setVisibility(View.VISIBLE);
         mFinishLayout.setVisibility(View.GONE);
-        mStartLayout.setVisibility(View.GONE);
         mSettingLayout.setVisibility(View.GONE);
 
     }
@@ -342,7 +305,6 @@ public class RunFragment extends SerialPortFragment {
         mPauseLayout.setVisibility(View.VISIBLE);
         mLayoutRun.setVisibility(View.GONE);
         mFinishLayout.setVisibility(View.GONE);
-        mStartLayout.setVisibility(View.GONE);
         mSettingLayout.setVisibility(View.GONE);
         SerialPortUtil.stopTreadMill();//暂停命令
     }
@@ -352,7 +314,6 @@ public class RunFragment extends SerialPortFragment {
         mPauseLayout.setVisibility(View.GONE);
         mLayoutRun.setVisibility(View.GONE);
         mFinishLayout.setVisibility(View.GONE);
-        mStartLayout.setVisibility(View.GONE);
         mSettingLayout.setVisibility(View.VISIBLE);
     }
 
@@ -366,7 +327,6 @@ public class RunFragment extends SerialPortFragment {
         mPauseLayout.setVisibility(View.GONE);
         mLayoutRun.setVisibility(View.GONE);
         mFinishLayout.setVisibility(View.VISIBLE);
-        mStartLayout.setVisibility(View.GONE);
         mSettingLayout.setVisibility(View.GONE);
 
         //运动结束跳转到完成界面
@@ -683,10 +643,6 @@ public class RunFragment extends SerialPortFragment {
         mSpeedInfoTextView.setText("0");
         mHotInfoTextView.setText("0.0");
         mHeartRateInfoTextView.setText("0");
-        if (SerialPortUtil.getTreadInstance().getUserInfo() != null) {
-            mUserNameTextView.setText(SerialPortUtil.getTreadInstance().getUserInfo().mUserName);
-            HImageLoaderSingleton.getInstance().loadImage(mHeadHImageView, SerialPortUtil.getTreadInstance().getUserInfo().mAvatar);
-        }
     }
 
     private void setupRunInfoCell(View cellView, String title) {

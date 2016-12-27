@@ -11,7 +11,7 @@
         layout="@layout/layout_run"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
     <include
         android:id="@+id/layout_pause"
@@ -26,13 +26,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>
-
-    <include
-        android:id="@+id/layout_start"
-        layout="@layout/layout_start"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible"/>
 
     <include
         android:id="@+id/layout_setting"

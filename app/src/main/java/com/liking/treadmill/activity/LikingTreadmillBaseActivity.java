@@ -64,7 +64,6 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
         launchFragment(R.id.treadmill_container_layout, fragment);
     }
 
-
     public void launchFullFragment(Fragment fragment) {
         super.launchFragment(fragment);
     }
