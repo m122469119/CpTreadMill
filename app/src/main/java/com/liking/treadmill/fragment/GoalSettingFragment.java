@@ -206,7 +206,7 @@ public class GoalSettingFragment extends SerialPortFragment {
         switch (mCurrMode) {
             case GOAL_SETTING_MODE_RUNTIME:
                 mRunTimeModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
-                mKilometreModeLayout.setBackgroundResource(R.drawable.shape_step_frame_select);
+                mKilometreModeLayout.setBackgroundResource(R.drawable.setting_card_selected);
                 mKcalModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
 
                 runTimeLine.setBackgroundColor(ResourceUtils.getColor(R.color.c3a4d65));
@@ -217,7 +217,7 @@ public class GoalSettingFragment extends SerialPortFragment {
             case GOAL_SETTING_MODE_KILOMETRE:
                 mRunTimeModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
                 mKilometreModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
-                mKcalModeLayout.setBackgroundResource(R.drawable.shape_step_frame_select);
+                mKcalModeLayout.setBackgroundResource(R.drawable.setting_card_selected);
 
                 runTimeLine.setBackgroundColor(ResourceUtils.getColor(R.color.c3a4d65));
                 kilometreLine.setBackgroundColor(ResourceUtils.getColor(R.color.c3a4d65));
@@ -225,7 +225,7 @@ public class GoalSettingFragment extends SerialPortFragment {
                 mCurrMode = GOAL_SETTING_MODE_KCAL;
                 break;
             case GOAL_SETTING_MODE_KCAL:
-                mRunTimeModeLayout.setBackgroundResource(R.drawable.shape_step_frame_select);
+                mRunTimeModeLayout.setBackgroundResource(R.drawable.setting_card_selected);
                 mKilometreModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
                 mKcalModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
 
