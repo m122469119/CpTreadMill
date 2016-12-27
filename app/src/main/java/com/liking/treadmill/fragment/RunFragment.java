@@ -221,7 +221,6 @@ public class RunFragment extends SerialPortFragment {
         } else if (isInFinishUI()) {
             if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
                 ResetTreadmill();
-                ((HomeActivity) getActivity()).setTitle("");
                 ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
             } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {
                 cardLogin();
@@ -284,7 +283,6 @@ public class RunFragment extends SerialPortFragment {
      * 开始跑步
      */
     public void startTreadMill(int speed, int grade) {
-        ((HomeActivity) getActivity()).setTitle("");
         SerialPortUtil.startTreadMill(speed, grade);
         isPause = false;
         destroyPauseCountTime();
@@ -299,7 +297,6 @@ public class RunFragment extends SerialPortFragment {
      * 暂停跑步机
      */
     private void pauseTreadmill() {
-        ((HomeActivity) getActivity()).setTitle("");
         startPauseCountTime();
         isPause = true;
         mPauseLayout.setVisibility(View.VISIBLE);
@@ -441,7 +438,7 @@ public class RunFragment extends SerialPortFragment {
      */
     public void showfinishedView(float percentage) {
         if(percentage == -1) {
-            mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.white));
+            mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.c25ff8c));
             mRunFinishPromptextView.setText(ResourceUtils.getString(R.string.this_run_finish));
         } else if (percentage < 1) {
             int percent = Math.round(percentage * 100);

@@ -46,7 +46,7 @@ public class GoalSettingFragment extends SerialPortFragment {
     private boolean isModeSelect = true;//选择模式
     private boolean isModeSetting = false;//模式设置
 
-    private int mCurrMode = GOAL_SETTING_MODE_RUNTIME ;//当前mode
+    private int mCurrMode = GOAL_SETTING_MODE_KCAL ;//当前mode
 
     private FrameLayout mRootView;
 
@@ -118,7 +118,7 @@ public class GoalSettingFragment extends SerialPortFragment {
                 showSettingView();
                 restSetting();
             } else {
-                ((HomeActivity) getActivity()).launchFragment(new RunFragment());
+                ((HomeActivity) getActivity()).launchFragment(new StartFragment());
             }
         } else if(keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) { //双击mode
 
