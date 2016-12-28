@@ -32,9 +32,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="140dp"
+                android:layout_marginTop="160dp"
                 android:text="距离(km)"
-                android:textColor="@color/c94949c"
+                android:textColor="@color/white"
                 android:textSize="@dimen/textsize_20sp"/>
 
             <TextView
@@ -43,16 +43,23 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/c7c7c8"
+                android:textColor="@color/white"
                 android:textSize="28sp"/>
+
+            <View
+                android:layout_width="300dp"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/run_line"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="20dp"
                 android:text="用时(h:m:s)"
-                android:textColor="@color/c94949c"
+                android:textColor="@color/white"
                 android:textSize="@dimen/textsize_20sp"/>
 
             <TextView
@@ -61,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/c7c7c8"
+                android:textColor="@color/white"
                 android:textSize="28sp"/>
         </LinearLayout>
     </FrameLayout>

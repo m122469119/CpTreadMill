@@ -30,6 +30,7 @@ import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.RunTimeUtil;
 import com.liking.treadmill.widget.ColorfulRingProgressView;
+import com.liking.treadmill.widget.IToast;
 
 import java.util.Date;
 
@@ -237,6 +238,10 @@ public class RunFragment extends SerialPortFragment {
         }
     }
 
+    public void showToast(String n, int value) {
+        IToast.show(String.format(ResourceUtils.getString(R.string.run_thread_set_txt), n, value));
+    }
+
     /**
      * 刷卡登录
      */
@@ -347,6 +352,7 @@ public class RunFragment extends SerialPortFragment {
         if (speed > 0 && speed <= 200) {
             mSpeed = speed;
             SerialPortUtil.setSpeedInRunning(mSpeed);
+            showToast("速度", mSpeed);
         }
     }
 
@@ -359,6 +365,7 @@ public class RunFragment extends SerialPortFragment {
         if (grade > 0 && grade <= 25) {
             mGrade = grade;
             SerialPortUtil.setGradeInRunning(mGrade);
+            showToast("坡度", mGrade);
         }
     }
 
@@ -633,18 +640,21 @@ public class RunFragment extends SerialPortFragment {
         View speedCell = mRootView.findViewById(R.id.cell_speed);
         View hotCell = mRootView.findViewById(R.id.cell_hot);
         View heartRateCell = mRootView.findViewById(R.id.cell_heart_rate);
-        setupRunInfoCell(gradeCell, "坡度");
-        setupRunInfoCell(speedCell, "速度(KM/H)");
-        setupRunInfoCell(hotCell, "消耗热量(KCAL)");
-        setupRunInfoCell(heartRateCell, "心率(BPM)");
+        setupRunInfoCell(gradeCell, "坡度", R.drawable.icon_run_grade);
+        setupRunInfoCell(speedCell, "速度(KM/H)", R.drawable.icon_run_speed);
+        setupRunInfoCell(hotCell, "消耗热量(KCAL)", R.drawable.icon_run_kcal);
+        setupRunInfoCell(heartRateCell, "心率(BPM)", R.drawable.icon_run_bpm);
         mGradeInfoTextView.setText("0");
         mSpeedInfoTextView.setText("0");
         mHotInfoTextView.setText("0.0");
         mHeartRateInfoTextView.setText("0");
     }
 
-    private void setupRunInfoCell(View cellView, String title) {
+    private void setupRunInfoCell(View cellView, String title, int titleIcon) {
         TextView titleTextView = (TextView) cellView.findViewById(R.id.info_title_textView);
+        if(titleIcon > 0) {
+            titleTextView.setCompoundDrawablesWithIntrinsicBounds(titleIcon, 0, 0, 0);
+        }
         titleTextView.setText(title);
         TextView contentTextView = (TextView) cellView.findViewById(R.id.info_content_textView);
         contentTextView.setTypeface(mTypeFace);
@@ -678,12 +688,12 @@ public class RunFragment extends SerialPortFragment {
         View consumeKcalView = mRootView.findViewById(R.id.layout_consume_kcal);
         View avergHraetRateView = mRootView.findViewById(R.id.layout_average_heart_rate);
 
-        setupRunFinishData(distanceView, "距离(KM)", 24f, 32f);
-        setupRunFinishData(useTimeView, "用时", 24f, 32f);
-        setupRunFinishData(averageGradientView, "平均坡度", 20f, 24f);
-        setupRunFinishData(avergageSpeedView, "平均速度(KM/H)", 20f, 24f);
-        setupRunFinishData(consumeKcalView, "消耗热量(KCAL)", 20f, 24f);
-        setupRunFinishData(avergHraetRateView, "平均心率(BPM)", 20f, 24f);
+        setupRunFinishData(distanceView, "距离(KM)", 24f, 32f, R.drawable.icon_run_distance);
+        setupRunFinishData(useTimeView, "用时", 24f, 32f, R.drawable.icon_run_time);
+        setupRunFinishData(averageGradientView, "平均坡度", 20f, 24f, R.drawable.icon_run_grade);
+        setupRunFinishData(avergageSpeedView, "平均速度(KM/H)", 20f, 24f, R.drawable.icon_run_speed);
+        setupRunFinishData(consumeKcalView, "消耗热量(KCAL)", 20f, 24f, R.drawable.icon_run_kcal);
+        setupRunFinishData(avergHraetRateView, "平均心率(BPM)", 20f, 24f, R.drawable.icon_run_bpm);
         mRunTimeTextView.setText(DateUtils.formatDate("yyyy-MM-dd HH:mm", new Date()));
 
         mDistanceTextView.setText("0");
@@ -694,8 +704,11 @@ public class RunFragment extends SerialPortFragment {
         mAvergHraetRateTextView.setText("0");
     }
 
-    private void setupRunFinishData(View view, String title, float titleSize, float contentSize) {
+    private void setupRunFinishData(View view, String title, float titleSize, float contentSize, int titleIcon) {
         TextView titleTextView = (TextView) view.findViewById(R.id.info_title_textView);
+        if(titleIcon > 0) {
+            titleTextView.setCompoundDrawablesWithIntrinsicBounds(titleIcon, 0, 0, 0);
+        }
         TextView contentTextView = (TextView) view.findViewById(R.id.info_content_textView);
         titleTextView.setText(title);
         contentTextView.setTypeface(mTypeFace);

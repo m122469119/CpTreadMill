@@ -17,6 +17,8 @@
     <string name="this_run_attainment_target">恭喜你,目标达成</string>
     <string name="bind_gym_success_hint">完成设置,正在为您跳转...</string>
     <string name="read_card_error">读卡失败!</string>
+    <string name="start_mode_set_txt">设定目标</string>
+    <string name="start_mode_quick_start_txt">快速启动</string>
     <string name="goalsetting_step_run_time">运动时间</string>
     <string name="goalsetting_step_kilometre">公里</string>
     <string name="goalsetting_step_kcal">消耗卡路里</string>
@@ -31,5 +33,5 @@
     <string name="goalsetting_step_mode_hint2">设定完成后点击&#160;&#160;&#160;&#160;开始训练</string>
     <string name="goalsetting_step_mode_hint3">点击&#160;&#160;&#160;&#160;返回上一页重新选择目标</string>
     <string name="run_result_unfinished_txt_hint"><Data><![CDATA[完成目标<font color="#25ff8c"><b>%s</b></font>,下次继续挑战吧!]]></Data></string>
-
+    <string name="run_thread_set_txt">即将为您将%1$s调整为%2$d</string>
 </resources>

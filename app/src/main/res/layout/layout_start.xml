@@ -35,46 +35,106 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="440dp"
-        android:layout_height="440dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
         android:layout_marginTop="80dp"
-        android:layout_gravity="center"
-        android:background="@drawable/bg_start_back">
+        android:gravity="center"
+        android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/quick_start"
-            android:layout_width="260dp"
-            android:layout_height="30dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/icon_quick_start"/>
+        <LinearLayout
+            android:id="@+id/start_mode_set"
+            android:layout_width="300dp"
+            android:layout_height="338dp"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/quick_start"
-            android:layout_centerHorizontal="true"
-            android:text="快速开始"
-            android:textColor="@color/white"
-            android:textSize="@dimen/textsize_24sp"/>
-    </RelativeLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/start_mode_set"/>
 
-    <TextView
+            <TextView
+                android:id="@+id/start_mode_set_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/spacing_24dp"
+                android:text="@string/start_mode_set_txt"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textsize_18sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/start_mode_quick_start"
+            android:layout_width="300dp"
+            android:layout_height="338dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/start_mode_quick_start"/>
+
+            <TextView
+                android:id="@+id/start_mode_quick_start_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/spacing_24dp"
+                android:text="@string/start_mode_quick_start_txt"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textsize_18sp"/>
+        </LinearLayout>
+    </LinearLayout>
+    <!--<RelativeLayout-->
+        <!--android:layout_width="440dp"-->
+        <!--android:layout_height="440dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_marginTop="80dp"-->
+        <!--android:background="@drawable/bg_start_back">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/quick_start"-->
+            <!--android:layout_width="260dp"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginBottom="10dp"-->
+            <!--android:src="@drawable/icon_quick_start"/>-->
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/quick_start"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:text="快速开始"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:textSize="@dimen/textsize_24sp"/>-->
+    <!--</RelativeLayout>-->
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
-        android:gravity="center"
-        android:text="使用下方按钮进行选择"
-        android:textColor="@color/white"
-        android:textSize="@dimen/textsize_20sp"/>
+        android:layout_marginBottom="@dimen/spacing_16dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120dp"
+            android:gravity="center"
+            android:text="使用下方按钮进行选择"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize_20sp"/>
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="12.5dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/spacing_20dp"
+            android:background="@drawable/start_down_arrow"/>
+    </LinearLayout>
 
-    <ImageView
-        android:layout_width="20dp"
-        android:layout_height="12.5dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/spacing_20dp"
-        android:background="@drawable/start_down_arrow"/>
 
 </LinearLayout>

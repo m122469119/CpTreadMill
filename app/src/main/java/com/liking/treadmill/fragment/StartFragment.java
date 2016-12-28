@@ -30,8 +30,8 @@ public class StartFragment extends SerialPortFragment {
     TextView mUserNameTextView;
     @BindView(R.id.head_imageView)
     HImageView mHeadImageView;
-    @BindView(R.id.quick_start)
-    ImageView mQuickStart;
+//    @BindView(R.id.quick_start)
+//    ImageView mQuickStart;
 
     @Nullable
     @Override
