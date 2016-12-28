@@ -23,15 +23,32 @@
             fresco:placeholderImageScaleType="centerCrop"
             fresco:roundAsCircle="true"/>
 
-        <TextView
-            android:id="@+id/user_name_TextView"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="@dimen/spacing_20dp"
-            android:text="雷达"
-            android:textColor="@color/white"
-            android:textSize="@dimen/textsize_20sp"/>
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/user_name_TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/spacing_4dp"
+                android:layout_marginLeft="@dimen/spacing_20dp"
+                android:text="雷达"
+                android:background="@drawable/textview_underline"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textsize_20sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/spacing_4dp"
+                android:layout_marginLeft="@dimen/spacing_20dp"
+                android:text="@string/start_user_info_txt"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textsize_16sp"/>
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
@@ -89,31 +106,6 @@
                 android:textSize="@dimen/textsize_18sp"/>
         </LinearLayout>
     </LinearLayout>
-    <!--<RelativeLayout-->
-        <!--android:layout_width="440dp"-->
-        <!--android:layout_height="440dp"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_marginTop="80dp"-->
-        <!--android:background="@drawable/bg_start_back">-->
-
-        <!--<ImageView-->
-            <!--android:id="@+id/quick_start"-->
-            <!--android:layout_width="260dp"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:layout_marginBottom="10dp"-->
-            <!--android:src="@drawable/icon_quick_start"/>-->
-
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@+id/quick_start"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:text="快速开始"-->
-            <!--android:textColor="@color/white"-->
-            <!--android:textSize="@dimen/textsize_24sp"/>-->
-    <!--</RelativeLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"

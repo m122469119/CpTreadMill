@@ -1,7 +1,9 @@
 package com.liking.treadmill.fragment;
 
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,8 +47,15 @@ public class StartFragment extends SerialPortFragment {
     public void onResume() {
         super.onResume();
         if (SerialPortUtil.getTreadInstance().getUserInfo() != null) {
+            ////0女 1男
+            if(SerialPortUtil.getTreadInstance().getUserInfo().mGender == 0) {
+                mUserNameTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_girl, 0);
+            } else {
+                mUserNameTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_boy, 0);
+            }
             mUserNameTextView.setText(SerialPortUtil.getTreadInstance().getUserInfo().mUserName);
             HImageLoaderSingleton.getInstance().loadImage(mHeadImageView, SerialPortUtil.getTreadInstance().getUserInfo().mAvatar);
+
         }
     }
 

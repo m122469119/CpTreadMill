@@ -303,7 +303,7 @@ public class SerialPortUtil {
 
             public String mAvatar;
 
-            public String mGender;
+            public int mGender;
 
             public String mBraceletId;
         }

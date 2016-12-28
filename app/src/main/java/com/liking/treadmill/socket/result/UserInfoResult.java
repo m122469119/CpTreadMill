@@ -64,7 +64,7 @@ public class UserInfoResult extends BaseSocketResult{
             private String mAvatar;
 
             @SerializedName("gender")
-            private String mGender;
+            private int mGender;
 
             @SerializedName("bracelet_id")
             private String mBraceletId;
@@ -85,11 +85,11 @@ public class UserInfoResult extends BaseSocketResult{
                 mAvatar = avatar;
             }
 
-            public String getGender() {
+            public int getGender() {
                 return mGender;
             }
 
-            public void setGender(String gender) {
+            public void setGender(int gender) {
                 mGender = gender;
             }
 
