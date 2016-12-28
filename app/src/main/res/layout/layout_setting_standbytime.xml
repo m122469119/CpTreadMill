@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/run_bg"
+              android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        android:text="@string/threadmill_standby_time_hint_txt"
+        android:padding="@dimen/spacing_8dp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textsize_16sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_standbytime_up"/>
+        <com.liking.treadmill.widget.TimeWheelView
+            android:id="@+id/setting_standbytime_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_standbytime_down"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/c179B9B9B"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="80dp"
+        android:paddingTop="80dp">
+
+        <TextView
+            android:id="@+id/setting_standbytime_hint1_TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_16dp"
+            android:layout_marginTop="@dimen/spacing_16dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize_20sp"/>
+
+        <TextView
+            android:id="@+id/setting_standbytime_hint2_TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize_20sp"/>
+
+    </LinearLayout>
+
+</LinearLayout>
