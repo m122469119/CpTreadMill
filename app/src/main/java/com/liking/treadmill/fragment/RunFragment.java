@@ -115,6 +115,7 @@ public class RunFragment extends SerialPortFragment {
     private long currentDateSecond;//当前时间
     private volatile boolean isStart = false; //跑步机是否计数
 
+    private float maxTotalTime;  //系统设置的最长跑步时间
     private float totalTime;  //目标设置的总时间
     private float totalKilometre;//目标设置的总距离
     private float totalKcal;//目标设置的总卡路里
@@ -141,7 +142,7 @@ public class RunFragment extends SerialPortFragment {
     }
 
     public void initData() {
-        totalTime = Preference.getMotionParamMaxRunTime() * 60;
+        maxTotalTime = Preference.getMotionParamMaxRunTime();
         Bundle bundle = getArguments();
         if (bundle != null) {
             totalTime = bundle.getFloat(ThreadMillConstant.GOALSETTING_RUNTIME, totalTime);
@@ -519,11 +520,14 @@ public class RunFragment extends SerialPortFragment {
      * 验证跑步结果
      */
     public void checkRunResult(float time, float distance, float kcal) {
+        if(time >= maxTotalTime * 60) { //超过跑步的最长时间
+            SerialPortUtil.stopTreadMill();
+            finishExercise();
+        }
         if(totalTime > 0 && time >= (totalTime * 60)
          ||totalKilometre > 0 && distance >= totalKilometre
          ||totalKcal > 0 && kcal >= totalKcal) {
-            SerialPortUtil.stopTreadMill();
-            finishExercise();
+            IToast.show(ResourceUtils.getString(R.string.this_run_attainment_target));
         }
     }
 
