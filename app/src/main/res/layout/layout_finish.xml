@@ -3,7 +3,6 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/run_bg"
                 android:orientation="vertical">
 
     <FrameLayout
@@ -133,12 +132,12 @@
             android:paddingBottom="40dp"
             android:paddingTop="30dp">
 
-            <include
-                android:id="@+id/layout_average_gradient"
-                layout="@layout/run_info_cell"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
+            <!--<include-->
+                <!--android:id="@+id/layout_average_gradient"-->
+                <!--layout="@layout/run_info_cell"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"/>-->
 
             <include
                 android:id="@+id/layout_average_speed"

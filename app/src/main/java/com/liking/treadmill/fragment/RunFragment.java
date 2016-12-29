@@ -100,11 +100,11 @@ public class RunFragment extends SerialPortFragment {
     private int mSpeed = 0;
     private int mGrade = 0;
 
-    private int totalGrade; //总坡度
+//    private int totalGrade; //总坡度
 
     private TextView mDistanceTextView;//距离
     private TextView mUseTimeTextView; //用时
-    private TextView mAverageGradientTextView; //平均坡度
+//    private TextView mAverageGradientTextView; //平均坡度
     private TextView mAvergageSpeedTextView;   //平均速度
     private TextView mTotalStepNumberTextView; //总步数
     private TextView mConsumeKcalTextView;    //消耗热量
@@ -405,10 +405,10 @@ public class RunFragment extends SerialPortFragment {
         //总距离
         mDistanceTextView.setText(StringUtils.getDecimalString(totalDistanceKm, 2));
         //平均坡度
-        if (totalGrade > 0) {
-            float averagerGrade = totalGrade / SerialPortUtil.getTreadInstance().getRunTime();
-            mAverageGradientTextView.setText(StringUtils.getDecimalString(averagerGrade, 2));
-        }
+//        if (totalGrade > 0) {
+//            float averagerGrade = totalGrade / SerialPortUtil.getTreadInstance().getRunTime();
+//            mAverageGradientTextView.setText(StringUtils.getDecimalString(averagerGrade, 2));
+//        }
         //平均速度
         if (totalDistance > 0) {
             float h = (float) (SerialPortUtil.getTreadInstance().getRunTime() / 3600.0);
@@ -548,10 +548,7 @@ public class RunFragment extends SerialPortFragment {
                 }
                 if (!isPause) {
                     SerialPortUtil.getTreadInstance().setRunTime(SerialPortUtil.getTreadInstance().getRunTime() + 1);
-//                    float distance = SerialPortUtil.getTreadInstance().getDistance() + (float) (SerialPortUtil.getTreadInstance().getCurrentSpeed() / 36000.0);
-//                    float kcal = SerialPortUtil.getTreadInstance().getKCAL() +
-//                            (float) (0.0703 * (1 + SerialPortUtil.getTreadInstance().getCurrentSpeed() / 100) * SerialPortUtil.getTreadInstance().getDistance());
-                    totalGrade = totalGrade + SerialPortUtil.getTreadInstance().getCurrentGrade();
+//                    totalGrade = totalGrade + SerialPortUtil.getTreadInstance().getCurrentGrade();
                     LogUtils.d(TAG, "increment: Speed: " + SerialPortUtil.getTreadInstance().getCurrentSpeed());
                     float mDistanceIncrement = SerialPortUtil.getTreadInstance().measureDistanceIncrement();
                     float mKcalIncrement = SerialPortUtil.getTreadInstance().measureKcalIncrement();
@@ -698,15 +695,15 @@ public class RunFragment extends SerialPortFragment {
     private void initRunFinishViews() {
         View distanceView = mRootView.findViewById(R.id.layout_distance);
         View useTimeView = mRootView.findViewById(R.id.layout_user_time);
-        View averageGradientView = mRootView.findViewById(R.id.layout_average_gradient);
+//        View averageGradientView = mRootView.findViewById(R.id.layout_average_gradient);
         View avergageSpeedView = mRootView.findViewById(R.id.layout_average_speed);
         View consumeKcalView = mRootView.findViewById(R.id.layout_consume_kcal);
         View avergHraetRateView = mRootView.findViewById(R.id.layout_average_heart_rate);
 
         setupRunFinishData(distanceView, "距离(KM)", 24f, 32f, R.drawable.icon_run_distance);
         setupRunFinishData(useTimeView, "用时", 24f, 32f, R.drawable.icon_run_time);
-        setupRunFinishData(averageGradientView, "平均坡度", 20f, 24f, R.drawable.icon_run_grade);
-        setupRunFinishData(avergageSpeedView, "平均速度(KM/H)", 20f, 24f, R.drawable.icon_run_speed);
+//        setupRunFinishData(averageGradientView, "平均坡度", 20f, 24f, R.drawable.icon_run_grade);
+        setupRunFinishData(avergageSpeedView, "平均配速(KM/H)", 20f, 24f, R.drawable.icon_run_speed);
         setupRunFinishData(avergageSpeedView, "步数", 20f, 24f, R.drawable.icon_run_step_number);
         setupRunFinishData(consumeKcalView, "消耗热量(KCAL)", 20f, 24f, R.drawable.icon_run_kcal);
         setupRunFinishData(avergHraetRateView, "平均心率(BPM)", 20f, 24f, R.drawable.icon_run_bpm);
@@ -714,7 +711,7 @@ public class RunFragment extends SerialPortFragment {
 
         mDistanceTextView.setText("0");
         mUseTimeTextView.setText("0");
-        mAverageGradientTextView.setText("0");
+//        mAverageGradientTextView.setText("0");
         mAvergageSpeedTextView.setText("0");
         mTotalStepNumberTextView.setText("0");
         mConsumeKcalTextView.setText("0");
@@ -738,9 +735,9 @@ public class RunFragment extends SerialPortFragment {
             case R.id.layout_user_time:
                 mUseTimeTextView = contentTextView;
                 break;
-            case R.id.layout_average_gradient:
-                mAverageGradientTextView = contentTextView;
-                break;
+//            case R.id.layout_average_gradient:
+//                mAverageGradientTextView = contentTextView;
+//                break;
             case R.id.layout_average_speed:
                 mAvergageSpeedTextView = contentTextView;
                 break;
