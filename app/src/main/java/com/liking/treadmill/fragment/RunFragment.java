@@ -420,7 +420,7 @@ public class RunFragment extends SerialPortFragment {
             float avergageSpeed = totalDistanceKm / h;
             mAvergageSpeedTextView.setText(StringUtils.getDecimalString(avergageSpeed, 2));
         }
-        mTotalStepNumberTextView.setText(SerialPortUtil.getTreadInstance().getStepNumber());
+        mTotalStepNumberTextView.setText(String.valueOf(SerialPortUtil.getTreadInstance().getStepNumber()));
         //消耗热量
         mConsumeKcalTextView.setText(StringUtils.getDecimalString(SerialPortUtil.getTreadInstance().getKCAL(), 2));
         //平均心率
@@ -608,7 +608,7 @@ public class RunFragment extends SerialPortFragment {
             mHotInfo = treadData.getKCAL();
             mHotInfoTextView.setText(StringUtils.getDecimalString(mHotInfo, 1));
         }
-        mStepNumberInfoTextView.setText(treadData.getStepNumber());
+        mStepNumberInfoTextView.setText(String.valueOf(treadData.getStepNumber()));
         setSpeedBack(mSpeed);
     }
 
@@ -649,11 +649,12 @@ public class RunFragment extends SerialPortFragment {
     private void initRunInfoViews() {
         View gradeCell = mRootView.findViewById(R.id.cell_grade);
         View speedCell = mRootView.findViewById(R.id.cell_speed);
+        View stepNumberCell = mRootView.findViewById(R.id.cell_step_number);
         View hotCell = mRootView.findViewById(R.id.cell_hot);
         View heartRateCell = mRootView.findViewById(R.id.cell_heart_rate);
         setupRunInfoCell(gradeCell, "坡度", R.drawable.icon_run_grade);
         setupRunInfoCell(speedCell, "速度(KM/H)", R.drawable.icon_run_speed);
-        setupRunInfoCell(speedCell, "步数", R.drawable.icon_run_step_number);
+        setupRunInfoCell(stepNumberCell, "步数", R.drawable.icon_run_step_number);
         setupRunInfoCell(hotCell, "消耗热量(KCAL)", R.drawable.icon_run_kcal);
         setupRunInfoCell(heartRateCell, "心率(BPM)", R.drawable.icon_run_bpm);
         mGradeInfoTextView.setText("0");
@@ -701,6 +702,8 @@ public class RunFragment extends SerialPortFragment {
         View useTimeView = mRootView.findViewById(R.id.layout_user_time);
 //        View averageGradientView = mRootView.findViewById(R.id.layout_average_gradient);
         View avergageSpeedView = mRootView.findViewById(R.id.layout_average_speed);
+        View totalStepNumberView = mRootView.findViewById(R.id.layout_total_step_number);
+        View stepNumberCell = mRootView.findViewById(R.id.cell_step_number);
         View consumeKcalView = mRootView.findViewById(R.id.layout_consume_kcal);
         View avergHraetRateView = mRootView.findViewById(R.id.layout_average_heart_rate);
 
@@ -708,7 +711,7 @@ public class RunFragment extends SerialPortFragment {
         setupRunFinishData(useTimeView, "用时", 24f, 32f, R.drawable.icon_run_time);
 //        setupRunFinishData(averageGradientView, "平均坡度", 20f, 24f, R.drawable.icon_run_grade);
         setupRunFinishData(avergageSpeedView, "平均配速(KM/H)", 20f, 24f, R.drawable.icon_run_speed);
-        setupRunFinishData(avergageSpeedView, "步数", 20f, 24f, R.drawable.icon_run_step_number);
+        setupRunFinishData(totalStepNumberView, "步数", 20f, 24f, R.drawable.icon_run_step_number);
         setupRunFinishData(consumeKcalView, "消耗热量(KCAL)", 20f, 24f, R.drawable.icon_run_kcal);
         setupRunFinishData(avergHraetRateView, "平均心率(BPM)", 20f, 24f, R.drawable.icon_run_bpm);
         mRunTimeTextView.setText(DateUtils.formatDate("yyyy-MM-dd HH:mm", new Date()));

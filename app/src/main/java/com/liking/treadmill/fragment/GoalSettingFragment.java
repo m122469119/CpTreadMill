@@ -72,9 +72,9 @@ public class GoalSettingFragment extends SerialPortFragment {
     private TextView modeSettingHint2;
     private TextView modeSettingHint3;
 
-    private float totalTime = 0;
-    private float totalKilometre = 0;
-    private float totalKcal = 0;
+    private float totalTime = 30;
+    private float totalKilometre = 5.0f;
+    private float totalKcal = 80;
     private String totalTarget = "";
 
     private int mode_runtime_grade_increment = 10 ;//设置跑步时间 坡度以10分钟上下调整
@@ -313,7 +313,7 @@ public class GoalSettingFragment extends SerialPortFragment {
             case GOAL_SETTING_MODE_RUNTIME:
                 modeSettingType.setText(ResourceUtils.getString(R.string.goalsetting_step_mode_time));
                 modeSettingIcon.setImageResource(R.drawable.goal_mode_time_img);
-                modeSettingValue.setText("0");
+                totalTarget = String.valueOf((int)totalTime);
                 modeSettingUnit.setText("min");
                 hint1 = mode_runtime_grade_increment_str;
                 hint2 = mode_runtime_speed_increment_str;
@@ -321,7 +321,7 @@ public class GoalSettingFragment extends SerialPortFragment {
             case GOAL_SETTING_MODE_KILOMETRE:
                 modeSettingType.setText(ResourceUtils.getString(R.string.goalsetting_step_mode_kilometre));
                 modeSettingIcon.setImageResource(R.drawable.goal_mode_kilometre_img);
-                modeSettingValue.setText("0.0");
+                totalTarget = StringUtils.getDecimalString(totalKilometre,1);
                 modeSettingUnit.setText("Km");
                 hint1 = mode_kilometre_grade_increment_str;
                 hint2 = mode_kilometre_speed_increment_str;
@@ -329,12 +329,14 @@ public class GoalSettingFragment extends SerialPortFragment {
             case GOAL_SETTING_MODE_KCAL:
                 modeSettingType.setText(ResourceUtils.getString(R.string.goalsetting_step_mode_kcl));
                 modeSettingIcon.setImageResource(R.drawable.goal_mode_kcal_img);
-                modeSettingValue.setText("0");
+                totalTarget = String.valueOf((int) totalKcal);
                 modeSettingUnit.setText("Kcal");
                 hint1 = mode_kcal_grade_increment_str;
                 hint2 = mode_kcal_speed_increment_str;
                 break;
         }
+        modeSettingValue.setText(totalTarget);
+
         SpannableStringBuilder ssbh1 = new SpannableStringBuilder(ResourceUtils.getString(R.string.goalsetting_step_mode_hint1_part1));
         ImageSpan isGradeUp = new ImageSpan(getActivity(), R.drawable.key_grade_up);
         ImageSpan isGradeDown = new ImageSpan(getActivity(), R.drawable.key_grade_down);
@@ -432,9 +434,9 @@ public class GoalSettingFragment extends SerialPortFragment {
     }
 
     private void restSetting() {
-        totalTime = 0;
-        totalKilometre = 0;
-        totalKcal = 0;
+        totalTime = 30;
+        totalKilometre = 5.0f;
+        totalKcal = 80;
         totalTarget = "";
     }
 

@@ -59,11 +59,14 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
         PLANETS.add("01");
         PLANETS.add("02");
         PLANETS.add("03");
+        PLANETS.add("04");
+        PLANETS.add("05");
     }
 
     private void initView() {
         mTimeWheelView.setViewAdapter(new WheelItemAdapter(getActivity(), PLANETS));
-        mTimeWheelView.setCurrentItem(0);
+        mTimeWheelView.setCyclic(true);
+        mTimeWheelView.setCurrentItem(1);
         mTimeWheelView.addChangingListener(new OnWheelChangedListener(){
             @Override
             public void onChanged(WheelView wheel, int oldValue, int newValue) {
@@ -72,6 +75,10 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
                     time = 2000;
                 } else if("03".equals(PLANETS.get(newValue))) {
                     time = 3000;
+                } else if("04".equals(PLANETS.get(newValue))) {
+                    time = 4000;
+                } else if("05".equals(PLANETS.get(newValue))) {
+                    time = 5000;
                 }
                 Preference.setStandbyTime(time * 60);
             }
@@ -104,11 +111,13 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
             ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {
             int index = mTimeWheelView.getCurrentItem();
-            if(index < PLANETS.size())index ++;
+            index ++ ;
+//            if(index < PLANETS.size())index ++;
             mTimeWheelView.setCurrentItem(index, true);
         } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE) {
             int index = mTimeWheelView.getCurrentItem();
-            if(index > 0 )index --;
+            index --;
+//            if(index < 0 )index = 0;
             mTimeWheelView.setCurrentItem(index, true);
         }
     }
