@@ -8,16 +8,14 @@
 
     <View
         android:id="@+id/setting_card_icon"
-        android:layout_width="100dp"
-        android:layout_height="124dp"
-        android:background="@drawable/setting_icon_start"/>
+        android:layout_width="124dp"
+        android:layout_height="124dp"/>
 
     <TextView
         android:id="@+id/setting_cart_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="启动方式"
         android:textColor="@color/white"
         android:textSize="@dimen/textsize_16sp"/>
 </LinearLayout>

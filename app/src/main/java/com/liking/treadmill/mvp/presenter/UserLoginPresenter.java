@@ -1,6 +1,7 @@
 package com.liking.treadmill.mvp.presenter;
 
 import android.content.Context;
+
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.base.mvp.BasePresenter;
 import com.aaron.android.framework.utils.EnvironmentUtils;

@@ -1,5 +1,6 @@
 package com.liking.treadmill.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -7,8 +8,10 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.aaron.android.framework.base.widget.dialog.HBaseDialog;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
@@ -36,14 +39,33 @@ public class AwaitActionFragment extends SerialPortFragment {
     @Override
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
+        final HomeActivity homeActivity = (HomeActivity) getActivity();
         if (keyCode == LikingTreadKeyEvent.KEY_CARD) {//刷卡
-            HomeActivity homeActivity = (HomeActivity) getActivity();
             if (homeActivity.mUserLoginPresenter != null) {
                 homeActivity.mUserLoginPresenter.userLogin();
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SET) {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
             startActivity(intent);
+        } else if (keyCode == LikingTreadKeyEvent.KEY_PGR_PGR_SPEED_REDUCE) {
+            View customView = LayoutInflater.from(homeActivity).inflate(R.layout.layout_visit_validate, null, false);
+            final EditText inputPasswordEditText = (EditText) customView.findViewById(R.id.visit_password_editText);
+            new HBaseDialog.Builder(homeActivity).setCustomView(customView).
+            setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if ("123456".equals(inputPasswordEditText.getText().toString())) {
+                        homeActivity.launchFragment(new StartFragment());
+                    }
+                }
+            }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    dialog.dismiss();
+                }
+            }).show();
+
         }
     }
 

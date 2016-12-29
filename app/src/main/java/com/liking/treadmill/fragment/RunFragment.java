@@ -223,6 +223,14 @@ public class RunFragment extends SerialPortFragment {
                 setGrade(12);
             } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_15) {
                 setGrade(15);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_HAND_SHANK_SPEED_PLUS) {
+                setSpeed(SerialPortUtil.getTreadInstance().getCurrentSpeed() + 10);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_HAND_SHANK_SPEED_REDUCE) {
+                setSpeed(SerialPortUtil.getTreadInstance().getCurrentSpeed() - 10);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_HAND_SHANK_GRADE_PLUS) {
+                setGrade(SerialPortUtil.getTreadInstance().getCurrentGrade() + 1);
+            } else if (keyCode == LikingTreadKeyEvent.KEY_HAND_SHANK_GRADE_REDUCE) {
+                setGrade(SerialPortUtil.getTreadInstance().getCurrentGrade() - 1);
             }
         } else if (isInFinishUI()) {
             if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
@@ -319,10 +327,7 @@ public class RunFragment extends SerialPortFragment {
 
     private void showSettingUI() {
         ((HomeActivity) getActivity()).setTitle("系统设置");
-        mPauseLayout.setVisibility(View.GONE);
-        mLayoutRun.setVisibility(View.GONE);
-        mFinishLayout.setVisibility(View.GONE);
-        mSettingLayout.setVisibility(View.VISIBLE);
+        ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
     }
 
     /**
@@ -610,7 +615,6 @@ public class RunFragment extends SerialPortFragment {
     @Override
     public void onResume() {
         super.onResume();
-        LogUtils.d(TAG, "------onResume()");
         initViews();
     }
 

@@ -5,66 +5,91 @@
               android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="68dp"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:orientation="vertical"
+        android:layout_weight="1">
 
-        <include
-            layout="@layout/view_setting_card"
-            android:layout_width="210dp"
-            android:layout_height="290dp"
-            android:layout_marginRight="68dp"
-            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="68dp"
+            android:orientation="horizontal">
 
-        <include
-            layout="@layout/view_setting_card"
-            android:layout_width="210dp"
-            android:layout_height="290dp"
-            android:layout_marginRight="68dp"/>
+            <include
+                android:id="@+id/layout_start_mode"
+                layout="@layout/view_setting_card"
+                android:layout_width="210dp"
+                android:layout_height="290dp"
+                android:layout_marginRight="68dp"
+                />
 
-        <include
-            layout="@layout/view_setting_card"
-            android:layout_width="210dp"
-            android:layout_height="290dp"
-            android:layout_marginRight="68dp"/>
+            <include
+                android:id="@+id/layout_await_time"
+                layout="@layout/view_setting_card"
+                android:layout_width="210dp"
+                android:layout_height="290dp"
+                android:layout_marginRight="68dp"/>
 
-        <include
-            layout="@layout/view_setting_card"
-            android:layout_width="210dp"
-            android:layout_height="290dp"/>
+            <include
+                android:id="@+id/layout_sport_params"
+                layout="@layout/view_setting_card"
+                android:layout_width="210dp"
+                android:layout_height="290dp"
+                android:layout_marginRight="68dp"/>
+
+            <include
+                android:id="@+id/layout_user_setting"
+                layout="@layout/view_setting_card"
+                android:layout_width="210dp"
+                android:layout_height="290dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="68dp"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/layout_language_setting"
+                layout="@layout/view_setting_card"
+                android:layout_width="210dp"
+                android:layout_height="290dp"
+                android:layout_marginRight="68dp"/>
+
+            <include
+                android:id="@+id/layout_gym_binding"
+                layout="@layout/view_setting_card"
+                android:layout_width="210dp"
+                android:layout_height="290dp"
+                android:layout_marginRight="68dp"/>
+
+            <include
+                android:id="@+id/layout_network_connection"
+                layout="@layout/view_setting_card"
+                android:layout_width="210dp"
+                android:layout_height="290dp"
+                android:layout_marginRight="68dp"/>
+
+            <include
+                android:id="@+id/layout_update"
+                layout="@layout/view_setting_card"
+                android:layout_width="210dp"
+                android:layout_height="290dp"/>
+        </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+    <TextView
 
-        android:layout_marginTop="68dp"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="@color/c179B9B9B"
+        android:gravity="center"
+        android:text="asdfasdfasdf"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textsize_20sp"/>
 
-        <include
-            layout="@layout/view_setting_card"
-            android:layout_width="210dp"
-            android:layout_height="290dp"
-            android:layout_marginRight="68dp"/>
-
-        <include
-            layout="@layout/view_setting_card"
-            android:layout_width="210dp"
-            android:layout_height="290dp"
-            android:layout_marginRight="68dp"/>
-
-        <include
-            layout="@layout/view_setting_card"
-            android:layout_width="210dp"
-            android:layout_height="290dp"
-            android:layout_marginRight="68dp"/>
-
-        <include
-            layout="@layout/view_setting_card"
-            android:layout_width="210dp"
-            android:layout_height="290dp"/>
-    </LinearLayout>
 </LinearLayout>

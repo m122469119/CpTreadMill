@@ -7,7 +7,6 @@ import com.aaron.android.framework.base.ui.BaseFragment;
 import com.liking.treadmill.message.FanStateMessage;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
-import com.liking.treadmill.widget.IToast;
 
 import androidex.serialport.SerialPorManager;
 
@@ -26,6 +25,12 @@ public abstract class SerialPortFragment extends BaseFragment implements SerialP
         if (!isInViewPager()) {
             SerialPorManager.getInstance().setSerialPortCallback(this);
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LogUtils.d(TAG, "------onStart()");
     }
 
     public boolean isInViewPager() {
