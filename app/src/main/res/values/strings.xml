@@ -42,4 +42,7 @@
     <string name="threadmill_motion_param_title_txt">运动参数设置</string>
     <string name="threadmill_motion_param_maxtime_txt">设定每次跑步的最长时间</string>
     <string name="threadmill_motion_param_maxtime_hint_txt">点击坡度&#160;&#160;&#160;&#160;&#160;&#160;&#160;以10分钟上下调整运动时间</string>
+    <string name="threadmill_system_update_title_txt">系统版本</string>
+    <string name="threadmill_system_update_newest_txt">当前系统已是最新版本</string>
+    <string name="threadmill_system_update_operate_txt">点击&#160;&#160;&#160;&#160;返回上一页</string>
 </resources>

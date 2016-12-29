@@ -3,43 +3,107 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@drawable/run_bg"
               android:gravity="center"
               android:orientation="vertical">
+
     <FrameLayout
         android:id="@+id/update_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <com.liking.treadmill.widget.ColorfulRingProgressView
-            android:id="@+id/update_colorfulring_progress"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:bgColor="@color/colorfulringprogress_bgcolor"
-            app:fgColorEnd="@color/colorfulringprogress_fgcolorend"
-            app:fgColorStart="@color/colorfulringprogress_fgcolorstart"
-            app:percent="90"
-            app:startAngle="0"
-            app:strokeWidth="@dimen/colorfulringprogress_strokewidth"/>
-        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1.0">
+
+        <FrameLayout
+            android:id="@+id/update_progress_info_layout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/spacing_8dp"
             android:layout_gravity="center"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
+
+            <com.liking.treadmill.widget.ColorfulRingProgressView
+                android:id="@+id/update_colorfulring_progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:bgColor="@color/colorfulringprogress_bgcolor"
+                app:fgColorEnd="@color/colorfulringprogress_fgcolorend"
+                app:fgColorStart="@color/colorfulringprogress_fgcolorstart"
+                app:percent="90"
+                app:startAngle="0"
+                app:strokeWidth="@dimen/colorfulringprogress_strokewidth"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_8dp">
+
+                <TextView
+                    android:id="@+id/update_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/textsize_18sp"/>
+
+                <TextView
+                    android:id="@+id/update_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/textsize_24sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/update_newest_info_layout"
+            android:layout_width="400dp"
+            android:layout_height="160dp"
+            android:layout_gravity="center"
+            android:background="@color/c1A9B9B9B"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
             <TextView
-                android:id="@+id/update_hint"
+                android:id="@+id/update_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="@dimen/textsize_20sp"/>
+                android:textSize="@dimen/textsize_20sp"
+                android:textStyle="bold"/>
+
             <TextView
-                android:id="@+id/update_progress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textStyle="bold"
+                android:paddingTop="@dimen/spacing_8dp"
+                android:text="@string/threadmill_system_update_newest_txt"
                 android:textColor="@color/white"
-                android:textSize="@dimen/textsize_30sp"/>
+                android:textSize="@dimen/textsize_24sp"
+                android:textStyle="bold"/>
         </LinearLayout>
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/update_operate_layout"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/c179B9B9B"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="80dp"
+        android:paddingTop="80dp">
+        <TextView
+            android:id="@+id/update_operate_hint_TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_16dp"
+            android:layout_marginTop="@dimen/spacing_16dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize_20sp"/>
+    </LinearLayout>
 </LinearLayout>

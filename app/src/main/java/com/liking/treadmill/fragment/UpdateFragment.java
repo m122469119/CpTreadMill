@@ -5,17 +5,24 @@ import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.aaron.android.codelibrary.utils.EncodeUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.utils.DisplayUtils;
+import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
+import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.message.UpdateCompleteMessage;
 import com.liking.treadmill.mvp.presenter.AppUpdatePresenter;
 import com.liking.treadmill.mvp.view.AppUpdateView;
@@ -34,14 +41,22 @@ import butterknife.ButterKnife;
 public class UpdateFragment extends SerialPortFragment implements AppUpdateView {
 
     private View mRootView;
-    @BindView(R.id.update_layout)
-    FrameLayout mUpdateLayout;
+    @BindView(R.id.update_progress_info_layout)
+    FrameLayout mUpdateProgressLayout;
     @BindView(R.id.update_hint)
     TextView updateHint;
     @BindView(R.id.update_progress)
     TextView updateProgress;
     @BindView(R.id.update_colorfulring_progress)
     ColorfulRingProgressView mProgressView;
+    @BindView(R.id.update_newest_info_layout)
+    LinearLayout newerstInfoLayout;
+    @BindView(R.id.update_version)
+    TextView updateVersionTxt;
+    @BindView(R.id.update_operate_layout)
+    LinearLayout updateOperateLayout;
+    @BindView(R.id.update_operate_hint_TextView)
+    TextView updateOperateHint;
 
     private AppUpdatePresenter mAppUpdatePresenter = null;
 
@@ -51,25 +66,32 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
 
     private Handler apkUpdateHandler = new Handler();
 
+    private boolean isUpdate = false;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.layout_update, container, false);
         ButterKnife.bind(this, mRootView);
+        initViews();
+        initData();
         return mRootView;
     }
 
     @Override
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
-        //Tost:正在更新中,请稍后操作....
+        if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
+            if(!isUpdate) {
+                ((HomeActivity) getActivity()).setTitle("");
+                ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
+            }
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        LogUtils.d(TAG, "------onResume()");
-        initViews();
-        initData();
+        ((HomeActivity) getActivity()).setTitle(ResourceUtils.getString(R.string.threadmill_system_update_title_txt));
     }
 
     private void initData() {
@@ -101,15 +123,24 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
                         ResourceUtils.getColor(R.color.colorfulringprogress_fgcolorstart),
                         ResourceUtils.getColor(R.color.colorfulringprogress_fgcolorend));
                 if(mAppUpdatePresenter.checkAppVersion()){
+                    isUpdate = true;
+                    updateOperateLayout.setVisibility(View.GONE);
+                    newerstInfoLayout.setVisibility(View.GONE);
+                    mUpdateProgressLayout.setVisibility(View.VISIBLE);
                     updateHint.setText(ResourceUtils.getString(R.string.update_install));
                     updateProgress.setVisibility(View.VISIBLE);
                     mAppUpdatePresenter.startDownloadApk();
                 } else {
                     //已经是最新版本
-                    updateHint.setText(ResourceUtils.getString(R.string.update_none));
-                    updateProgress.setVisibility(View.GONE);
-                    mProgressView.setPercent(100);
-                    exitUpdateView();
+                    isUpdate = false;
+                    updateOperateLayout.setVisibility(View.VISIBLE);
+                    newerstInfoLayout.setVisibility(View.VISIBLE);
+                    mUpdateProgressLayout.setVisibility(View.GONE);
+                    updateVersionTxt.setText("V"+EnvironmentUtils.Config.getAppVersionName());
+                    SpannableStringBuilder ssbh = new SpannableStringBuilder(ResourceUtils.getString(R.string.threadmill_system_update_operate_txt));
+                    ImageSpan imageSpanBack = new ImageSpan(getActivity(), R.drawable.key_back);
+                    ssbh.setSpan(imageSpanBack, 3, 5, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                    updateOperateHint.setText(ssbh);
                 }
             }
 
@@ -143,8 +174,8 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
     private void initViews() {
         int height = DisplayUtils.getHeightPixels();
         int mProgressHeight = height / 2;
-        mUpdateLayout.getLayoutParams().width = mProgressHeight;
-        mUpdateLayout.getLayoutParams().height = mProgressHeight;
+        mUpdateProgressLayout.getLayoutParams().width = mProgressHeight;
+        mUpdateProgressLayout.getLayoutParams().height = mProgressHeight;
     }
 
     @Override
