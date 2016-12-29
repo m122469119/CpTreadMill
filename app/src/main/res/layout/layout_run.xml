@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+    android:background="@drawable/run_bg">
 
     <FrameLayout
         android:id="@+id/layout_dashboard"
@@ -117,6 +118,13 @@
 
         <include
             android:id="@+id/cell_speed"
+            layout="@layout/run_info_cell"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <include
+            android:id="@+id/cell_step_number"
             layout="@layout/run_info_cell"
             android:layout_width="0px"
             android:layout_height="match_parent"

@@ -55,6 +55,7 @@ public class SerialPortUtil {
         private int mTreadmillState;
         private int mCardIsValid;
         private int runTime = 0;
+        private int mStepNumber;//步数
 
         private UserInfo mUserInfo;
 
@@ -106,6 +107,14 @@ public class SerialPortUtil {
 
         public void setCheck(byte check) {
             mCheck = check;
+        }
+
+        public int getStepNumber() {
+            return mStepNumber;
+        }
+
+        public void setStepNumber(int stepNumber) {
+            mStepNumber = stepNumber;
         }
 
         public int getCurrentSpeed() {
@@ -294,6 +303,7 @@ public class SerialPortUtil {
             mKCAL = 0; //卡路里
             runTime = 0;
             mCardNo = "";
+            mStepNumber = 0;
             mUserInfo = null;
         }
 
@@ -345,7 +355,7 @@ public class SerialPortUtil {
             getTreadInstance().setPowerAd(getIndexData(serialPortData, INDEX_POWER_AD));
             getTreadInstance().setPowerState(getIndexData(serialPortData, INDEX_POWER));
             getTreadInstance().setVersion(getIndexData(serialPortData, INDEX_VERSION));
-            setValidCardNo(serialPortData);
+            obtainCardNoOrStepNumber(serialPortData);
         }
     }
 
@@ -572,8 +582,21 @@ public class SerialPortUtil {
     }
 
     /**
+     * 获取卡号或者步数
+     * @param serialPortData
+     */
+    private static void obtainCardNoOrStepNumber(byte[] serialPortData) {
+        if(checkSerialPortData(serialPortData)) {
+            if (((byte) PROTOCOL_HEAD_CARDNO) == getKeyCodeFromSerialPort(serialPortData)) {//刷卡
+                setValidCardNo(serialPortData);
+            } else { //步数  其他情况下P14~P15为步数
+
+            }
+        }
+    }
+
+    /**
      * 获取卡号
-     *
      * @param serialPortData
      * @return
      */
@@ -581,12 +604,10 @@ public class SerialPortUtil {
         StringBuilder sb = new StringBuilder();
         String cardNo = "";
         try {
-            if (checkSerialPortData(serialPortData) && ((byte) PROTOCOL_HEAD_CARDNO) == getKeyCodeFromSerialPort(serialPortData)) {
-                sb.append(byteParseHex(serialPortData[INDEX_KEY + 17]));
-                sb.append(byteParseHex(serialPortData[INDEX_KEY + 16]));
-                sb.append(byteParseHex(serialPortData[INDEX_KEY + 15]));
-                sb.append(byteParseHex(serialPortData[INDEX_KEY + 14]));
-            }
+            sb.append(byteParseHex(serialPortData[INDEX_KEY + 17]));
+            sb.append(byteParseHex(serialPortData[INDEX_KEY + 16]));
+            sb.append(byteParseHex(serialPortData[INDEX_KEY + 15]));
+            sb.append(byteParseHex(serialPortData[INDEX_KEY + 14]));
             cardNo = String.valueOf(Long.parseLong(sb.toString(), 16));
             if (!StringUtils.isEmpty(cardNo)) {
                 sTreadData.setCardNo(cardNo);

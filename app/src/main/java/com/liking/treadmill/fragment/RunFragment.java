@@ -92,6 +92,7 @@ public class RunFragment extends SerialPortFragment {
     private View mRootView;
     private TextView mGradeInfoTextView;
     private TextView mSpeedInfoTextView;
+    private TextView mStepNumberInfoTextView;
     private TextView mHotInfoTextView;
     private TextView mHeartRateInfoTextView;
     private float mHotInfo = 0;
@@ -105,6 +106,7 @@ public class RunFragment extends SerialPortFragment {
     private TextView mUseTimeTextView; //用时
     private TextView mAverageGradientTextView; //平均坡度
     private TextView mAvergageSpeedTextView;   //平均速度
+    private TextView mTotalStepNumberTextView; //总步数
     private TextView mConsumeKcalTextView;    //消耗热量
     private TextView mAvergHraetRateTextView; //平均心率
 
@@ -413,6 +415,7 @@ public class RunFragment extends SerialPortFragment {
             float avergageSpeed = totalDistanceKm / h;
             mAvergageSpeedTextView.setText(StringUtils.getDecimalString(avergageSpeed, 2));
         }
+        mTotalStepNumberTextView.setText(SerialPortUtil.getTreadInstance().getStepNumber());
         //消耗热量
         mConsumeKcalTextView.setText(StringUtils.getDecimalString(SerialPortUtil.getTreadInstance().getKCAL(), 2));
         //平均心率
@@ -603,6 +606,7 @@ public class RunFragment extends SerialPortFragment {
             mHotInfo = treadData.getKCAL();
             mHotInfoTextView.setText(StringUtils.getDecimalString(mHotInfo, 1));
         }
+        mStepNumberInfoTextView.setText(treadData.getStepNumber());
         setSpeedBack(mSpeed);
     }
 
@@ -648,10 +652,12 @@ public class RunFragment extends SerialPortFragment {
         View heartRateCell = mRootView.findViewById(R.id.cell_heart_rate);
         setupRunInfoCell(gradeCell, "坡度", R.drawable.icon_run_grade);
         setupRunInfoCell(speedCell, "速度(KM/H)", R.drawable.icon_run_speed);
+        setupRunInfoCell(speedCell, "步数", R.drawable.icon_run_step_number);
         setupRunInfoCell(hotCell, "消耗热量(KCAL)", R.drawable.icon_run_kcal);
         setupRunInfoCell(heartRateCell, "心率(BPM)", R.drawable.icon_run_bpm);
         mGradeInfoTextView.setText("0");
         mSpeedInfoTextView.setText("0");
+        mStepNumberInfoTextView.setText("0");
         mHotInfoTextView.setText("0.0");
         mHeartRateInfoTextView.setText("0");
     }
@@ -670,6 +676,9 @@ public class RunFragment extends SerialPortFragment {
                 break;
             case R.id.cell_speed:
                 mSpeedInfoTextView = contentTextView;
+                break;
+            case R.id.cell_step_number:
+                mStepNumberInfoTextView = contentTextView;
                 break;
             case R.id.cell_hot:
                 mHotInfoTextView = contentTextView;
@@ -698,6 +707,7 @@ public class RunFragment extends SerialPortFragment {
         setupRunFinishData(useTimeView, "用时", 24f, 32f, R.drawable.icon_run_time);
         setupRunFinishData(averageGradientView, "平均坡度", 20f, 24f, R.drawable.icon_run_grade);
         setupRunFinishData(avergageSpeedView, "平均速度(KM/H)", 20f, 24f, R.drawable.icon_run_speed);
+        setupRunFinishData(avergageSpeedView, "步数", 20f, 24f, R.drawable.icon_run_step_number);
         setupRunFinishData(consumeKcalView, "消耗热量(KCAL)", 20f, 24f, R.drawable.icon_run_kcal);
         setupRunFinishData(avergHraetRateView, "平均心率(BPM)", 20f, 24f, R.drawable.icon_run_bpm);
         mRunTimeTextView.setText(DateUtils.formatDate("yyyy-MM-dd HH:mm", new Date()));
@@ -706,6 +716,7 @@ public class RunFragment extends SerialPortFragment {
         mUseTimeTextView.setText("0");
         mAverageGradientTextView.setText("0");
         mAvergageSpeedTextView.setText("0");
+        mTotalStepNumberTextView.setText("0");
         mConsumeKcalTextView.setText("0");
         mAvergHraetRateTextView.setText("0");
     }
@@ -732,6 +743,9 @@ public class RunFragment extends SerialPortFragment {
                 break;
             case R.id.layout_average_speed:
                 mAvergageSpeedTextView = contentTextView;
+                break;
+            case R.id.layout_total_step_number:
+                mTotalStepNumberTextView = contentTextView;
                 break;
             case R.id.layout_consume_kcal:
                 mConsumeKcalTextView = contentTextView;
