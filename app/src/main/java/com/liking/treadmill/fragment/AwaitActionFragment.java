@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.widget.dialog.HBaseDialog;
+import com.aaron.android.framework.utils.PopupUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
@@ -47,8 +48,8 @@ public class AwaitActionFragment extends SerialPortFragment {
         } else if (keyCode == LikingTreadKeyEvent.KEY_SET) {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
             startActivity(intent);
-        } else if (keyCode == LikingTreadKeyEvent.KEY_PGR_PGR_SPEED_REDUCE) {
-            View customView = LayoutInflater.from(homeActivity).inflate(R.layout.layout_visit_validate, null, false);
+        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS) {
+            View customView =  getLayoutInflater(null).inflate(R.layout.layout_visit_validate, null, false);
             final EditText inputPasswordEditText = (EditText) customView.findViewById(R.id.visit_password_editText);
             new HBaseDialog.Builder(homeActivity).setCustomView(customView).
             setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
@@ -56,6 +57,8 @@ public class AwaitActionFragment extends SerialPortFragment {
                 public void onClick(DialogInterface dialog, int which) {
                     if ("123456".equals(inputPasswordEditText.getText().toString())) {
                         homeActivity.launchFragment(new StartFragment());
+                    } else {
+                        PopupUtils.showToast("密码不正确");
                     }
                 }
             }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

@@ -10,7 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="请输入密码:"
-        android:textColor="@drawable/back"/>
+        android:textColor="@color/black"
+        android:textSize="@dimen/textsize_16sp"/>
 
     <EditText
         android:id="@+id/visit_password_editText"
