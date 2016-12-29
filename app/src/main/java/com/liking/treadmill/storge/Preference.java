@@ -30,7 +30,7 @@ public class Preference extends AbsPreference {
     public static final String QCODE_URL = "qcode_url";
     public static final String IS_FIRST_STARTING_UP = "isFirstStartingUp";
     public static final String STANDBY_TIME = "standbytime";//待机时间
-
+    public static final String MOTION_PARAM_MAX_RUNTIME = "motionparammaxruntime";
 
     public static final String APP_SERVER_VERSION = "setserverversion";//服务器版本
     public static final String APP_SERVER_VERSION_URL = "setserverversionurl";//服务器版本地址
@@ -249,4 +249,21 @@ public class Preference extends AbsPreference {
     public static int getStandbyTime() {
         return (int) getObject(STANDBY_TIME,1000 * 60);
     }
+
+    /**
+     * 设置跑步的最长时间 min为单位
+     * @param time
+     * @return
+     */
+    public static boolean setMotionParamMaxRunTime(int time) {
+        return setObject(MOTION_PARAM_MAX_RUNTIME, time);
+    }
+
+    /**
+     * 获取跑步的最长时间
+     */
+    public static int getMotionParamMaxRunTime() {
+        return (int) getObject(MOTION_PARAM_MAX_RUNTIME, 240);
+    }
+
 }

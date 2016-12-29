@@ -26,6 +26,7 @@ import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.app.ThreadMillConstant;
+import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.RunTimeUtil;
@@ -140,9 +141,10 @@ public class RunFragment extends SerialPortFragment {
     }
 
     public void initData() {
+        totalTime = Preference.getMotionParamMaxRunTime() * 60;
         Bundle bundle = getArguments();
         if (bundle != null) {
-            totalTime = bundle.getFloat(ThreadMillConstant.GOALSETTING_RUNTIME, 0);
+            totalTime = bundle.getFloat(ThreadMillConstant.GOALSETTING_RUNTIME, totalTime);
             totalKilometre = bundle.getFloat(ThreadMillConstant.GOALSETTING_KILOMETRE, 0);
             totalKcal = bundle.getFloat(ThreadMillConstant.GOALSETTING_KCAL, 0);
 
