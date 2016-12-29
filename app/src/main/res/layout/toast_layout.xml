@@ -3,14 +3,12 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:gravity="center"
-              android:background="@color/c1a1f26"
               android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/toast_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/c60black"
         android:paddingLeft="@dimen/spacing_8dp"
         android:paddingRight="@dimen/spacing_8dp"
         android:paddingTop="@dimen/spacing_8dp">

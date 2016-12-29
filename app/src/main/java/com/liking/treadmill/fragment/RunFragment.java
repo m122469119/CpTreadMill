@@ -117,6 +117,7 @@ public class RunFragment extends SerialPortFragment {
     private long currentDateSecond;//当前时间
     private volatile boolean isStart = false; //跑步机是否计数
 
+    private boolean isTargetCmp = false;
     private float maxTotalTime;  //系统设置的最长跑步时间
     private float totalTime;  //目标设置的总时间
     private float totalKilometre;//目标设置的总距离
@@ -535,7 +536,10 @@ public class RunFragment extends SerialPortFragment {
         if(totalTime > 0 && time >= (totalTime * 60)
          ||totalKilometre > 0 && distance >= totalKilometre
          ||totalKcal > 0 && kcal >= totalKcal) {
-            IToast.show(ResourceUtils.getString(R.string.this_run_attainment_target));
+            if(!isTargetCmp) {
+                isTargetCmp = true;
+                IToast.show(ResourceUtils.getString(R.string.this_run_attainment_target));
+            }
         }
     }
 
