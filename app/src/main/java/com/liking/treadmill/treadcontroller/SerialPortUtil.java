@@ -590,7 +590,8 @@ public class SerialPortUtil {
             if (((byte) PROTOCOL_HEAD_CARDNO) == getKeyCodeFromSerialPort(serialPortData)) {//刷卡
                 setValidCardNo(serialPortData);
             } else { //步数  其他情况下P14~P15为步数
-
+                int stepNumber = serialPortData[INDEX_KEY + 14] << 8 | serialPortData[INDEX_KEY + 15];
+                sTreadData.setStepNumber(stepNumber);
             }
         }
     }
