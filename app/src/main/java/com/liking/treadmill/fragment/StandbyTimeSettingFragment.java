@@ -13,12 +13,16 @@ import android.widget.TextView;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.widget.IToast;
-import com.liking.treadmill.widget.TimeWheelView;
+import com.liking.treadmill.widget.timewheelview.OnWheelChangedListener;
+import com.liking.treadmill.widget.timewheelview.WheelItemAdapter;
+import com.liking.treadmill.widget.timewheelview.WheelView;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,30 +36,44 @@ import butterknife.ButterKnife;
 public class StandbyTimeSettingFragment extends SerialPortFragment {
 
     @BindView(R.id.setting_standbytime_time)
-    TimeWheelView mTimeWheelView;
+    WheelView mTimeWheelView;
     @BindView(R.id.setting_standbytime_hint1_TextView)
     TextView mHint1TextView;
     @BindView(R.id.setting_standbytime_hint2_TextView)
     TextView mHint2TextView;
 
-    private static final String[] PLANETS = new String[]{"01", "02", "03"};
+    private List<String> PLANETS = new ArrayList<String>();
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_setting_standbytime, container, false);
         ButterKnife.bind(this, rootView);
+        initData();
         initView();
         return rootView;
     }
 
+
+    private void initData() {
+        PLANETS.add("01");
+        PLANETS.add("02");
+        PLANETS.add("03");
+    }
+
     private void initView() {
-        mTimeWheelView.setOffset(1);
-        mTimeWheelView.setItems(Arrays.asList(PLANETS));
-        mTimeWheelView.setOnWheelViewListener(new TimeWheelView.OnWheelViewListener() {
+        mTimeWheelView.setViewAdapter(new WheelItemAdapter(getActivity(), PLANETS));
+        mTimeWheelView.setCurrentItem(0);
+        mTimeWheelView.addChangingListener(new OnWheelChangedListener(){
             @Override
-            public void onSelected(int selectedIndex, String item) {
-                IToast.show(item);
+            public void onChanged(WheelView wheel, int oldValue, int newValue) {
+                int time = 1000 ;
+                if("02".equals(PLANETS.get(newValue))) {
+                    time = 2000;
+                } else if("03".equals(PLANETS.get(newValue))) {
+                    time = 3000;
+                }
+                Preference.setStandbyTime(time * 60);
             }
         });
 
@@ -70,12 +88,12 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
         ImageSpan imageSpanBack = new ImageSpan(getActivity(), R.drawable.key_back);
         ssbh2.setSpan(imageSpanBack, 8, 10, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         mHint2TextView.setText(ssbh2);
-//        mTimeWheelView.setSeletion();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        ((HomeActivity) getActivity()).setTitle(ResourceUtils.getString(R.string.threadmill_standby_time_title_txt));
     }
 
     @Override
@@ -83,7 +101,15 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
             ((HomeActivity) getActivity()).setTitle("");
-            ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
+            ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
+        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {
+            int index = mTimeWheelView.getCurrentItem();
+            if(index < PLANETS.size())index ++;
+            mTimeWheelView.setCurrentItem(index, true);
+        } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE) {
+            int index = mTimeWheelView.getCurrentItem();
+            if(index > 0 )index --;
+            mTimeWheelView.setCurrentItem(index, true);
         }
     }
 

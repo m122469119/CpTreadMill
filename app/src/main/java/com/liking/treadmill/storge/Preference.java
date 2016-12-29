@@ -29,6 +29,7 @@ public class Preference extends AbsPreference {
     public static final String DOWNLOAD_APP_FILE = "downloadAppFile";
     public static final String QCODE_URL = "qcode_url";
     public static final String IS_FIRST_STARTING_UP = "isFirstStartingUp";
+    public static final String STANDBY_TIME = "standbytime";//待机时间
 
 
     public static final String APP_SERVER_VERSION = "setserverversion";//服务器版本
@@ -230,5 +231,22 @@ public class Preference extends AbsPreference {
     public static String getMemberList() {
         String jsonString = (String) getObject(MEMBER_ID_LIST, "");
         return jsonString;
+    }
+
+    /**
+     * 设置待机时间 s为单位
+     * @param time
+     * @return
+     */
+    public static boolean setStandbyTime(int time) {
+        return setObject(STANDBY_TIME, time);
+    }
+
+    /**
+     * 获取待机时间
+     * @return
+     */
+    public static int getStandbyTime() {
+        return (int) getObject(STANDBY_TIME,1000 * 60);
     }
 }

@@ -13,7 +13,7 @@
         android:text="@string/threadmill_standby_time_hint_txt"
         android:padding="@dimen/spacing_8dp"
         android:textColor="@color/white"
-        android:textSize="@dimen/textsize_16sp"/>
+        android:textSize="@dimen/textsize_20sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,9 +27,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/icon_standbytime_up"/>
-        <com.liking.treadmill.widget.TimeWheelView
+        <com.liking.treadmill.widget.timewheelview.WheelView
             android:id="@+id/setting_standbytime_time"
-            android:layout_width="match_parent"
+            android:layout_width="800dp"
             android:layout_height="wrap_content"/>
         <ImageView
             android:layout_width="wrap_content"
