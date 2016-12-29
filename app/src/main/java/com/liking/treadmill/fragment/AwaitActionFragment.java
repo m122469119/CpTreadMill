@@ -48,7 +48,7 @@ public class AwaitActionFragment extends SerialPortFragment {
         } else if (keyCode == LikingTreadKeyEvent.KEY_SET) {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
             startActivity(intent);
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS) {
+        } else if (keyCode == LikingTreadKeyEvent.KEY_PGR_PGR_SPEED_REDUCE) {
             View customView =  getLayoutInflater(null).inflate(R.layout.layout_visit_validate, null, false);
             final EditText inputPasswordEditText = (EditText) customView.findViewById(R.id.visit_password_editText);
             new HBaseDialog.Builder(homeActivity).setCustomView(customView).
