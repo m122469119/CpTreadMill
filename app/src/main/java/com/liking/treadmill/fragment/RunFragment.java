@@ -387,12 +387,14 @@ public class RunFragment extends SerialPortFragment {
      */
     private void setSpeedBack(int speed) {
         float currentSpeed = (float) speed / 10.0f;
-        if (currentSpeed > 0f && currentSpeed <= 6f) {//快走
-            mRunSpeedImageView.setBackgroundResource(R.drawable.fast_11);
+        if (currentSpeed > 0f && currentSpeed <= 4f) {//慢走
+            mRunSpeedImageView.setBackgroundResource(R.drawable.fast_level_1);
+        } else if(currentSpeed > 4f && currentSpeed <= 6f) {//快走
+            mRunSpeedImageView.setBackgroundResource(R.drawable.fast_level_2);
         } else if (currentSpeed > 6f && currentSpeed < 8.5f) {//慢跑
-            mRunSpeedImageView.setBackgroundResource(R.drawable.slow_run);
-        } else if (currentSpeed > 8.5f) {//快跑
-            mRunSpeedImageView.setBackgroundResource(R.drawable.fast_run);
+            mRunSpeedImageView.setBackgroundResource(R.drawable.fast_level_3);
+        } else if (currentSpeed > 8.5f) {//疾跑
+            mRunSpeedImageView.setBackgroundResource(R.drawable.fast_level_4);
         }
         mSpeedInfoTextView.setText(StringUtils.getDecimalString(currentSpeed, 1));
     }

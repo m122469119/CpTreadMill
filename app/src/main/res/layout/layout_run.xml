@@ -5,8 +5,8 @@
 
     <FrameLayout
         android:id="@+id/layout_dashboard"
-        android:layout_width="480dp"
-        android:layout_height="480dp"
+        android:layout_width="507dp"
+        android:layout_height="507dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="80dp">
 
@@ -14,7 +14,7 @@
             android:id="@+id/run_speed_ImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/fast_11"/>
+            android:background="@drawable/fast_level_1"/>
 
         <ImageView
             android:id="@+id/dashboard_imageView"
@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="160dp"
+                android:layout_marginTop="118dp"
                 android:text="距离(km)"
                 android:textColor="@color/white"
                 android:textSize="@dimen/textsize_20sp"/>
@@ -50,7 +50,7 @@
                 android:layout_width="300dp"
                 android:layout_height="10dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="28dp"
                 android:background="@drawable/run_line"/>
 
             <TextView
@@ -78,16 +78,24 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
         android:layout_toRightOf="@id/layout_dashboard"
-        android:text="步行"
+        android:text="慢走"
         android:textColor="@color/white"
         android:textSize="16sp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_dashboard"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_toRightOf="@+id/layout_dashboard"
+        android:layout_marginTop="563dp"
+        android:text="快走"
+        android:textColor="@color/white"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/layout_dashboard"
+        android:layout_marginTop="563dp"
         android:text="慢跑"
         android:textColor="@color/white"
         android:textSize="16sp"/>
