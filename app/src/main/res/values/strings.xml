@@ -53,4 +53,5 @@
     <string name="setting_network_connection">网络连接</string>
     <string name="setting_update">系统更新</string>
     <string name="setting_language">语言</string>
+    <string name="run_attainment_target_upcoming">再%s就达成目标了，加油！</string>
 </resources>

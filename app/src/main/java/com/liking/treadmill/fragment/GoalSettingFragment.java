@@ -128,7 +128,7 @@ public class GoalSettingFragment extends SerialPortFragment {
                 showModeView();
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {
-
+            
         } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS  //速度+
                 || keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE //速度-
                 || keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS  //坡度+
@@ -139,12 +139,16 @@ public class GoalSettingFragment extends SerialPortFragment {
             }
         } else if(keyCode == LikingTreadKeyEvent.KEY_START) {
             if(isModeSetting) {
-                if(totalTime > 0) {
-                    goToRun(ThreadMillConstant.GOALSETTING_RUNTIME, totalTime);
-                } else if(totalKilometre > 0) {
-                    goToRun(ThreadMillConstant.GOALSETTING_KILOMETRE, totalKilometre);
-                } else if(totalKcal > 0) {
-                    goToRun(ThreadMillConstant.GOALSETTING_KCAL, totalKcal);
+                switch (mCurrMode) {
+                    case GOAL_SETTING_MODE_RUNTIME:
+                        goToRun(ThreadMillConstant.GOALSETTING_RUNTIME, totalTime);
+                        break;
+                    case GOAL_SETTING_MODE_KILOMETRE:
+                        goToRun(ThreadMillConstant.GOALSETTING_KILOMETRE, totalKilometre);
+                        break;
+                    case GOAL_SETTING_MODE_KCAL:
+                        goToRun(ThreadMillConstant.GOALSETTING_KCAL, totalKcal);
+                        break;
                 }
                 restSetting();
             }

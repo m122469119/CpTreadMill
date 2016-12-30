@@ -576,6 +576,15 @@ public class RunFragment extends SerialPortFragment {
                 IToast.show(ResourceUtils.getString(R.string.this_run_attainment_target));
             }
         }
+
+        //在锻炼期即将达成目标时，当前画面上方出现toast消息进行提示
+        if(totalTime * 60 > 300 && (totalTime * 60 - time) == 300 ){
+            IToast.show(String.format(ResourceUtils.getString(R.string.run_attainment_target_upcoming),"继续5分钟"));
+        } else if(totalKilometre > 0.5 && totalKilometre - distance < 0.51 && totalKilometre - distance > 0.49) {
+            IToast.show(String.format(ResourceUtils.getString(R.string.run_attainment_target_upcoming),"跑步0.5公里"));
+        } else if(totalKcal > 50 && (int)(totalKcal - kcal)  == 50) {
+            IToast.show(String.format(ResourceUtils.getString(R.string.run_attainment_target_upcoming),"消耗50卡路里"));
+        }
     }
 
     /**
