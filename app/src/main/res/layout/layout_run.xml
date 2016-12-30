@@ -74,6 +74,7 @@
     </FrameLayout>
 
     <TextView
+        android:id="@+id/fast_level_1_TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
@@ -83,6 +84,7 @@
         android:textSize="16sp"/>
 
     <TextView
+        android:id="@+id/fast_level_2_TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/layout_dashboard"
@@ -92,6 +94,7 @@
         android:textSize="16sp"/>
 
     <TextView
+        android:id="@+id/fast_level_3_TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/layout_dashboard"
@@ -101,6 +104,7 @@
         android:textSize="16sp"/>
 
     <TextView
+        android:id="@+id/fast_level_4_TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"

@@ -87,7 +87,19 @@ public class RunFragment extends SerialPortFragment {
     TextView mRunPrgressValue;
     @BindView(R.id.layout_setting)
     View mSettingLayout;
+    @BindView(R.id.fast_level_1_TextView)
+    TextView mFastleve1TextView;
+    @BindView(R.id.fast_level_2_TextView)
+    TextView mFastleve2TextView;
+    @BindView(R.id.fast_level_3_TextView)
+    TextView mFastleve3TextView;
+    @BindView(R.id.fast_level_4_TextView)
+    TextView mFastleve4TextView;
 
+    @BindView(R.id.layout_prepare)
+    View mPrepareLayout;
+    @BindView(R.id.prepare_count_down_TextView)
+    TextView mPrepareCountDownTextView;
 
     private View mRootView;
     private TextView mGradeInfoTextView;
@@ -124,6 +136,7 @@ public class RunFragment extends SerialPortFragment {
     private float totalKcal;//目标设置的总卡路里
     private String totalTarget = "";
     private int THREADMILL_MODE_SELECT = ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START;
+    private PrepareCountdownTime mPrepareCountdownTime;
 
     @Nullable
     @Override
@@ -131,11 +144,11 @@ public class RunFragment extends SerialPortFragment {
         mRootView = inflater.inflate(R.layout.activity_run, container, false);
         ButterKnife.bind(this, mRootView);
         mTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Impact.ttf");
+        mPrepareCountdownTime = new PrepareCountdownTime(5000,1000);
         mPauseCountdownTime = new PauseCountdownTime(60000, 1000);
         initData();
         initPauseView();
         setViewTypeFace();
-        start();
         return mRootView;
     }
 
@@ -191,7 +204,7 @@ public class RunFragment extends SerialPortFragment {
     @Override
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
-        if (isInRunUI()) { //正在跑步界面
+        if (isInRunUI() && !isPrepareUI()) { //正在跑步界面
             if (keyCode == LikingTreadKeyEvent.KEY_PAUSE) {
                 pauseTreadmill();
             } else if (keyCode == LikingTreadKeyEvent.KEY_STOP) {
@@ -295,6 +308,10 @@ public class RunFragment extends SerialPortFragment {
         return mLayoutRun.getVisibility() == View.VISIBLE;
     }
 
+    private boolean isPrepareUI() {
+        return mPrepareLayout.getVisibility() == View.VISIBLE;
+    }
+
     private boolean isInSettingUI() {
         return mSettingLayout.getVisibility() == View.VISIBLE;
     }
@@ -387,14 +404,30 @@ public class RunFragment extends SerialPortFragment {
      */
     private void setSpeedBack(int speed) {
         float currentSpeed = (float) speed / 10.0f;
-        if (currentSpeed > 0f && currentSpeed <= 4f) {//慢走
+        if (currentSpeed > 0f && currentSpeed <= 5f) {//慢走
             mRunSpeedImageView.setBackgroundResource(R.drawable.fast_level_1);
-        } else if(currentSpeed > 4f && currentSpeed <= 6f) {//快走
+            mFastleve1TextView.setTextColor(ResourceUtils.getColor(R.color.c35EA81));
+            mFastleve2TextView.setTextColor(ResourceUtils.getColor(R.color.white));
+            mFastleve3TextView.setTextColor(ResourceUtils.getColor(R.color.white));
+            mFastleve4TextView.setTextColor(ResourceUtils.getColor(R.color.white));
+        } else if(currentSpeed > 5f && currentSpeed <= 6.5f) {//快走
             mRunSpeedImageView.setBackgroundResource(R.drawable.fast_level_2);
-        } else if (currentSpeed > 6f && currentSpeed < 8.5f) {//慢跑
+            mFastleve1TextView.setTextColor(ResourceUtils.getColor(R.color.white));
+            mFastleve2TextView.setTextColor(ResourceUtils.getColor(R.color.c35EA81));
+            mFastleve3TextView.setTextColor(ResourceUtils.getColor(R.color.white));
+            mFastleve4TextView.setTextColor(ResourceUtils.getColor(R.color.white));
+        } else if (currentSpeed > 6.5f && currentSpeed <= 9f) {//慢跑
             mRunSpeedImageView.setBackgroundResource(R.drawable.fast_level_3);
-        } else if (currentSpeed > 8.5f) {//疾跑
+            mFastleve1TextView.setTextColor(ResourceUtils.getColor(R.color.white));
+            mFastleve2TextView.setTextColor(ResourceUtils.getColor(R.color.white));
+            mFastleve3TextView.setTextColor(ResourceUtils.getColor(R.color.c35EA81));
+            mFastleve4TextView.setTextColor(ResourceUtils.getColor(R.color.white));
+        } else if (currentSpeed > 9f) {//疾跑
             mRunSpeedImageView.setBackgroundResource(R.drawable.fast_level_4);
+            mFastleve1TextView.setTextColor(ResourceUtils.getColor(R.color.white));
+            mFastleve2TextView.setTextColor(ResourceUtils.getColor(R.color.white));
+            mFastleve3TextView.setTextColor(ResourceUtils.getColor(R.color.white));
+            mFastleve4TextView.setTextColor(ResourceUtils.getColor(R.color.c35EA81));
         }
         mSpeedInfoTextView.setText(StringUtils.getDecimalString(currentSpeed, 1));
     }
@@ -622,6 +655,7 @@ public class RunFragment extends SerialPortFragment {
     public void onResume() {
         super.onResume();
         initViews();
+        mPrepareCountdownTime.start();
     }
 
     @Override
@@ -810,6 +844,29 @@ public class RunFragment extends SerialPortFragment {
         public void onFinish() {
             ((HomeActivity) getActivity()).setTitle("");
             ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
+        }
+    }
+
+    /**
+     * 3s 准备
+     */
+    class PrepareCountdownTime extends CountDownTimer {
+
+        public PrepareCountdownTime(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            mPrepareCountDownTextView.setText((millisUntilFinished - 1000)/ 1000 + "");
+        }
+
+        @Override
+        public void onFinish() {
+            mPrepareCountdownTime.cancel();
+            mPrepareCountdownTime = null;
+            RunFragment.this.start();
+            mPrepareLayout.setVisibility(View.GONE);
         }
     }
 }

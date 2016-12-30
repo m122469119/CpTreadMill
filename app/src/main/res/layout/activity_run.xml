@@ -14,6 +14,13 @@
         android:visibility="visible"/>
 
     <include
+        android:id="@+id/layout_prepare"
+        layout="@layout/layout_prepare"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"/>
+
+    <include
         android:id="@+id/layout_pause"
         layout="@layout/layout_pause"
         android:layout_width="match_parent"
