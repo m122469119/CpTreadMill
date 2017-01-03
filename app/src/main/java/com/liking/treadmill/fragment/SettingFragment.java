@@ -148,6 +148,11 @@ public class SettingFragment extends SerialPortFragment {
             case INDEX_GYM_BINDING:
                 break;
             case INDEX_NETWORK_CONNECTION:
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("setting", true);
+                NetworkSettingFragment settingFragment = new NetworkSettingFragment();
+                settingFragment.setArguments(bundle);
+                launchFragment(settingFragment);
                 break;
             case INDEX_UPDATE:
                 launchFragment(new UpdateFragment());

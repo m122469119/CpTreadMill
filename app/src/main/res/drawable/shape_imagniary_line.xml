@@ -2,8 +2,9 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
        android:shape="line">
     <stroke
-        android:width="3px"
-        android:color="#c7c7c8"
-        android:dashGap="20px"
-        android:dashWidth="60px"/>
+        android:dashGap="4px"
+        android:dashWidth="10px"
+        android:width="1px"
+        android:color="@color/white" />
+    <size android:height="4dp" />
 </shape>

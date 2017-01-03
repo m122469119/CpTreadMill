@@ -55,4 +55,7 @@
     <string name="setting_update">系统更新</string>
     <string name="setting_language">语言</string>
     <string name="run_attainment_target_upcoming">再%s就达成目标了，加油！</string>
+    <string name="threadmill_network_setting_operate_txt">点击&#160;&#160;&#160;&#160;进入下一步</string>
+    <string name="threadmill_network_setting_non_net_operate1_txt">请检查网线是否插好</string>
+    <string name="threadmill_network_setting_non_net_operate2_txt">跑步机连接网络，才能刷卡启动跑步机及同步运动数据，并为跑步机系统检查更新</string>
 </resources>
