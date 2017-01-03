@@ -247,7 +247,7 @@ public class Preference extends AbsPreference {
      * @return
      */
     public static int getStandbyTime() {
-        return (int) getObject(STANDBY_TIME,1000 * 60);
+        return (int) getObject(STANDBY_TIME, 2 * 60);
     }
 
     /**

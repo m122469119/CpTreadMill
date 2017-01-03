@@ -66,19 +66,30 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
     private void initView() {
         mTimeWheelView.setViewAdapter(new WheelItemAdapter(getActivity(), PLANETS));
         mTimeWheelView.setCyclic(true);
-        mTimeWheelView.setCurrentItem(1);
+        int standbyTime = Preference.getStandbyTime();
+        if(standbyTime == 60 ) {
+            mTimeWheelView.setCurrentItem(0);
+        } else if(standbyTime == 120) {
+            mTimeWheelView.setCurrentItem(1);
+        } else if(standbyTime == 180) {
+            mTimeWheelView.setCurrentItem(2);
+        } else if(standbyTime == 240) {
+            mTimeWheelView.setCurrentItem(3);
+        } else if(standbyTime == 300) {
+            mTimeWheelView.setCurrentItem(4);
+        }
         mTimeWheelView.addChangingListener(new OnWheelChangedListener(){
             @Override
             public void onChanged(WheelView wheel, int oldValue, int newValue) {
-                int time = 1000 ;
+                int time = 1 ;
                 if("02".equals(PLANETS.get(newValue))) {
-                    time = 2000;
+                    time = 2;
                 } else if("03".equals(PLANETS.get(newValue))) {
-                    time = 3000;
+                    time = 3;
                 } else if("04".equals(PLANETS.get(newValue))) {
-                    time = 4000;
+                    time = 4;
                 } else if("05".equals(PLANETS.get(newValue))) {
-                    time = 5000;
+                    time = 5;
                 }
                 Preference.setStandbyTime(time * 60);
             }

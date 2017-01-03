@@ -467,7 +467,7 @@ public class RunFragment extends SerialPortFragment {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        completeCountdownTime = new CompleteCountdownTime(122 * 1000, 1000);
+        completeCountdownTime = new CompleteCountdownTime(Preference.getStandbyTime() * 1000, 1000);
         completeCountdownTime.start();
         ResetTreadmill();
     }
