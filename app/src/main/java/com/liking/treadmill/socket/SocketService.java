@@ -9,10 +9,13 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
+import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.test.IBackService;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -108,9 +111,16 @@ public class SocketService extends Service {
             sendUpStreamMessage(SocketHelper.userloginString(cardno));
         }
 
-        public void reportExerciseData() throws RemoteException {
-            LogUtils.d(SocketService.TAG, "锻炼数据：" + SocketHelper.reportExerciseData());
-            sendUpStreamMessage(SocketHelper.reportExerciseData());
+        @Override
+        public void reportExerciseCacheData(String data) throws RemoteException {
+            LogUtils.d(SocketService.TAG, "缓存锻炼数据：" + data);
+            sendUpStreamMessage(data);
+        }
+
+        public void reportExerciseData(int type, int aimType, int achieve) throws RemoteException {
+            String result = SocketHelper.reportExerciseData(type, aimType, achieve);
+            LogUtils.d(SocketService.TAG, "锻炼数据：" + result);
+            sendUpStreamMessage(result);
         }
     };
 
@@ -195,6 +205,7 @@ public class SocketService extends Service {
             sendHeartMessageDelayed();//初始化成功后，就准备发送心跳包
             if (mIBackService != null) {
                 mIBackService.reportDevices();
+                reportedData(new File(ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE));
             }
         } catch (Exception e) {
             LogUtils.d(TAG, "server socket is disconnect....." + e.getMessage());
@@ -281,4 +292,25 @@ public class SocketService extends Service {
         }
     }
 
+    /**
+     * 提交未成功的数据
+     * @param file
+     */
+    public void reportedData(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    String data = FileUtils.load(f.getAbsolutePath());
+                    if(mIBackService != null) {
+                        try {
+                            mIBackService.reportExerciseCacheData(data);
+                        } catch (RemoteException e) {
+                        }
+                    }
+                    LogUtils.e("info", "reported_data : " + data);
+                }
+            }
+        }
+    }
 }

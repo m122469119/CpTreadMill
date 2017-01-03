@@ -2,13 +2,17 @@ package com.liking.treadmill.socket;
 
 import android.content.Context;
 
+import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.SecurityUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.base.BaseApplication;
+import com.aaron.android.framework.library.storage.DiskStorageManager;
 import com.aaron.android.framework.utils.DeviceUtils;
+import com.aaron.android.framework.utils.DiskStorageUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
+import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
@@ -114,6 +118,9 @@ public class SocketHelper {
             }
             EventBus.getDefault().post(loginUserInfoMessage);
         } else if (TYPE_EXERCISE_DATA.equals(type)) {//上传训练数据成功
+            if(!StringUtils.isEmpty(result.getMsgId()) && !"0".equals(result.getMsgId())) {
+                FileUtils.delete(ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE + result.getMsgId());
+            }
         }
     }
 
@@ -158,15 +165,26 @@ public class SocketHelper {
     }
 
     /**
-     * 上报跑步数据
-     *
+     *  上报跑步数据
+     * @param type //1=>快速启动， 2=>设定目标， 3=>预设课程
+     * @param aimType //1=>设定运动时间， 2=>设定公里数， 3=>设定卡路里
+     * @param achieve //0=>设定目标未完成， 1=>设定目标完成
      * @return
      */
 
-    public static String reportExerciseData() {
-        return "{\"type\":\"data\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"" + SerialPortUtil.getTreadInstance().getCardNo() + new Date().getTime() + "\",\"data\":{\"bracelet_id\":\"" + SerialPortUtil.getTreadInstance().getCardNo() + "\"" +
+    public static String reportExerciseData(int type, int aimType, int achieve) {
+        String msgId = SerialPortUtil.getTreadInstance().getCardNo() + new Date().getTime();
+        String data = "{\"type\":\"data\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"" + msgId + "\",\"data\":{\"bracelet_id\":\"" + SerialPortUtil.getTreadInstance().getCardNo() + "\"" +
                 ",\"gym_id\":\"" + Preference.getBindUserGymId() + "\",\"device_id\":\"" + SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"" +
-                ",\"period\":\"" + SerialPortUtil.getTreadInstance().getRunTime() + "\",\"distance\":\"" + SerialPortUtil.getTreadInstance().getDistance() + "\",\"cal\":\"" + SerialPortUtil.getTreadInstance().getKCAL() + "\"}}\\r\\n";
+                ",\"period\":\"" + SerialPortUtil.getTreadInstance().getRunTime() + "\"" +
+                ",\"distance\":\"" + SerialPortUtil.getTreadInstance().getDistance() + "\"" +
+                ",\"cal\":\"" + SerialPortUtil.getTreadInstance().getKCAL() + "\"" +
+                ",\"type\":\"" + type + "\"" +
+                ",\"aim_type\":\"" + aimType + "\"" +
+                ",\"achieve\":\"" + achieve + "\"" +
+                "}}\\r\\n";
+        FileUtils.store(data, ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE + msgId);
+        return data;
     }
 
 }

@@ -41,6 +41,7 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
                 }
             }
         } else {
+            //查询缓存
             IToast.show(ResourceUtils.getString(R.string.network_no_connection));
         }
     }

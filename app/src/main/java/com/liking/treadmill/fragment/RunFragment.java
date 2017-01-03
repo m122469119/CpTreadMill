@@ -135,7 +135,9 @@ public class RunFragment extends SerialPortFragment {
     private float totalKilometre;//目标设置的总距离
     private float totalKcal;//目标设置的总卡路里
     private String totalTarget = "";
-    private int THREADMILL_MODE_SELECT = ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START;
+    private int THREADMILL_MODE_SELECT = ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START;//启动方式
+    private int GOAL_TYPE = 0;//设定目标时的类型
+    private int ACHIEVE_TYPE = 0;//设定目标时完成情况
     private PrepareCountdownTime mPrepareCountdownTime;
 
     @Nullable
@@ -166,10 +168,13 @@ public class RunFragment extends SerialPortFragment {
             totalKcal = bundle.getFloat(ThreadMillConstant.GOALSETTING_KCAL, 0);
 
             if (totalTime > 0) {
+                GOAL_TYPE = 1;
                 totalTarget = String.valueOf((int) totalTime) + "min";
             } else if (totalKilometre > 0) {
+                GOAL_TYPE = 2;
                 totalTarget = StringUtils.getDecimalString(totalKilometre, 1) + "Km";
             } else if (totalKcal > 0) {
+                GOAL_TYPE = 3;
                 totalTarget = String.valueOf((int) totalKcal) + "Kcal";
             }
             setGoalSttingValue(totalTarget);
@@ -359,14 +364,7 @@ public class RunFragment extends SerialPortFragment {
         mLayoutRun.setVisibility(View.GONE);
         mFinishLayout.setVisibility(View.VISIBLE);
         mSettingLayout.setVisibility(View.GONE);
-
         //运动结束跳转到完成界面
-        try {
-            //上传锻炼数据
-            ((HomeActivity) getActivity()).iBackService.reportExerciseData();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
         statisticsRunData();
     }
 
@@ -462,6 +460,13 @@ public class RunFragment extends SerialPortFragment {
         //平均心率
         mAvergHraetRateTextView.setText(SerialPortUtil.getTreadInstance().getHeartRate() + "");
         showRunResult(SerialPortUtil.getTreadInstance().getRunTime(), totalDistanceKm, SerialPortUtil.getTreadInstance().getKCAL());
+
+        try {
+            //上传锻炼数据
+            ((HomeActivity) getActivity()).iBackService.reportExerciseData(THREADMILL_MODE_SELECT, GOAL_TYPE, ACHIEVE_TYPE);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         completeCountdownTime = new CompleteCountdownTime(122 * 1000, 1000);
         completeCountdownTime.start();
         ResetTreadmill();
@@ -507,6 +512,7 @@ public class RunFragment extends SerialPortFragment {
             mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.white));
             mRunFinishPromptextView.setText(Html.fromHtml(promp));
         } else  {
+            ACHIEVE_TYPE = 1;
             mRunProgressLayout.setVisibility(View.GONE);
             mRunCompleteImg.setVisibility(View.VISIBLE);
             mRunTimeTextView.setVisibility(View.VISIBLE);
