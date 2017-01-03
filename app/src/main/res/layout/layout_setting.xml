@@ -83,12 +83,11 @@
     </LinearLayout>
 
     <TextView
-
+        android:id="@+id/setting_description_textView"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:background="@color/c179B9B9B"
         android:gravity="center"
-        android:text="asdfasdfasdf"
         android:textColor="@color/white"
         android:textSize="@dimen/textsize_20sp"/>
 

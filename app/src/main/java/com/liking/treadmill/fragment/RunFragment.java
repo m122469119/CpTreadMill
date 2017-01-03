@@ -265,7 +265,7 @@ public class RunFragment extends SerialPortFragment {
         }
     }
 
-    public void showToast(String n, int value) {
+    public void showToast(String n, String value) {
         IToast.show(String.format(ResourceUtils.getString(R.string.run_thread_set_txt), n, value));
     }
 
@@ -380,7 +380,7 @@ public class RunFragment extends SerialPortFragment {
         if (speed > 0 && speed <= 200) {
             mSpeed = speed;
             SerialPortUtil.setSpeedInRunning(mSpeed);
-            showToast("速度", mSpeed);
+            showToast("速度", StringUtils.getDecimalString(mSpeed / 10.0f, 1));
         }
     }
 
@@ -393,7 +393,7 @@ public class RunFragment extends SerialPortFragment {
         if (grade > 0 && grade <= 25) {
             mGrade = grade;
             SerialPortUtil.setGradeInRunning(mGrade);
-            showToast("坡度", mGrade);
+            showToast("坡度", String.valueOf(mGrade));
         }
     }
 

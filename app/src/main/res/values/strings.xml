@@ -33,7 +33,7 @@
     <string name="goalsetting_step_mode_hint2">设定完成后点击&#160;&#160;&#160;&#160;开始训练</string>
     <string name="goalsetting_step_mode_hint3">点击&#160;&#160;&#160;&#160;返回上一页重新选择目标</string>
     <string name="run_result_unfinished_txt_hint"><Data><![CDATA[完成目标<font color="#25ff8c"><b>%s</b></font>,下次继续挑战吧!]]></Data></string>
-    <string name="run_thread_set_txt">即将为您将%1$s调整为%2$d</string>
+    <string name="run_thread_set_txt">即将为您将%1$s调整为%2$s</string>
     <string name="threadmill_standby_time_hint_txt">在跑步机未运行（暂停、空跑等）情况下，超过设定时间，跑步机停止运行并返回待机状态</string>
     <string name="threadmill_standby_time_title_txt">待机时间设置</string>
     <string name="threadmill_standby_time_operate1_txt">点击坡度&#160;&#160;&#160;&#160;&#160;&#160;&#160;设定待机时间</string>
@@ -45,6 +45,7 @@
     <string name="threadmill_system_update_title_txt">系统版本</string>
     <string name="threadmill_system_update_newest_txt">当前系统已是最新版本</string>
     <string name="threadmill_system_update_operate_txt">点击&#160;&#160;&#160;&#160;返回上一页</string>
+    <string name="threadmill_setting_description_txt">点击&#160;&#160;&#160;&#160;选择设置项，再点击&#160;&#160;&#160;&#160;两次确认选定</string>
     <string name="setting_start_mode">启动方式</string>
     <string name="setting_await_time">待机时间</string>
     <string name="setting_sport_params">运动参数</string>
