@@ -108,7 +108,7 @@ public class SettingFragment extends SerialPortFragment {
         View iconView = settingCardView.findViewById(R.id.setting_card_icon);
         titleView.setText(settingTitle);
         iconView.setBackgroundResource(drawableId);
-        if (settingCardView == mLanguageSettingView) {
+        if (settingCardView == mLanguageSettingView || settingCardView == mUserSettingView) {
             titleView.setTextColor(Color.parseColor("#759b9b9b"));
         }
     }
@@ -163,6 +163,9 @@ public class SettingFragment extends SerialPortFragment {
             currentIndex = INDEX_START;
         } else {
             currentIndex++;
+            if (currentIndex == INDEX_USER_SETTING) {
+                currentIndex++;
+            }
             if (currentIndex == INDEX_LANGUAGE_SETTING) {
                 currentIndex++;
             }
