@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -137,8 +138,10 @@ public class SettingFragment extends SerialPortFragment {
             case INDEX_START:
                 break;
             case INDEX_AWAIT_TIME:
+                launchFragment(new StandbyTimeSettingFragment());
                 break;
             case INDEX_SPORT_PARAMS:
+                launchFragment(new MotionParamSettingFragment());
                 break;
             case INDEX_USER_SETTING:
                 break;
@@ -147,6 +150,7 @@ public class SettingFragment extends SerialPortFragment {
             case INDEX_NETWORK_CONNECTION:
                 break;
             case INDEX_UPDATE:
+                launchFragment(new UpdateFragment());
                 break;
             default:
                 break;
@@ -169,5 +173,9 @@ public class SettingFragment extends SerialPortFragment {
     @Override
     public void handleTreadData(SerialPortUtil.TreadData treadData) {
         super.handleTreadData(treadData);
+    }
+
+    public void launchFragment(Fragment fragment) {
+        ((HomeActivity)getActivity()).launchFragment(fragment);
     }
 }
