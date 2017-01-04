@@ -16,9 +16,12 @@ import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.fragment.AwaitActionFragment;
 import com.liking.treadmill.fragment.StartFragment;
+import com.liking.treadmill.fragment.StartSettingFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
+import com.liking.treadmill.fragment.WelcomeFragment;
 import com.liking.treadmill.message.FanStateMessage;
 import com.liking.treadmill.message.GymBindSuccessMessage;
+import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.message.UpdateCompleteMessage;
@@ -79,7 +82,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     public void launchInit() {
 //        if (Preference.getIsStartingUp()) {  //首次开机
-//            launchFragment(new StartSettingFragment());
+//            launchFragment(new WelcomeFragment());
 //            mDelayedHandler.postDelayed(new Runnable() {
 //                @Override
 //                public void run() {
@@ -146,6 +149,22 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 @Override
                 public void run() {
                     launchFragment(new AwaitActionFragment());
+                }
+            },delayedInterval);
+        }
+    }
+
+    /**
+     * 解绑成功
+     *
+     * @param message
+     */
+    public void onEvent(GymUnBindSuccessMessage message) {
+        if(mDelayedHandler != null) {
+            mDelayedHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    launchFragment(new StartSettingFragment());
                 }
             },delayedInterval);
         }

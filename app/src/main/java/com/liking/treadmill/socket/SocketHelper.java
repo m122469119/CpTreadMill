@@ -14,6 +14,7 @@ import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
 import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.message.GymBindSuccessMessage;
+import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.socket.result.ApkUpdateResult;
@@ -91,14 +92,16 @@ public class SocketHelper {
             BindUserResult.BindUserData bindUserData = bindUserResult.getData();
             if (bindUserData != null) {
                 if (bindUserData.getErrCode() == 0) {
-                    Preference.setStartingUp(false);
+                    Preference.setIsStartingUp(false);
                     Preference.setBindUserGymId(bindUserData.getGymId());
                     LogUtils.d(SocketService.TAG, " gmyId =" + Preference.getBindUserGymId());
                     EventBus.getDefault().post(new GymBindSuccessMessage());
                 }
             }
         } else if(TYPE_UNBIND.equals(type)) {//解绑场馆
-
+            Preference.setIsStartingUp(true);
+            Preference.setBindUserGymId("");
+            EventBus.getDefault().post(new GymUnBindSuccessMessage());
         } else if (TYPE_MEMBER_LIST.equals(type)) {//当前用户所在场馆的所有会员id
             MemberListResult memberListResult = gson.fromJson(jsonText, MemberListResult.class);
             MemberListResult.MemberData memberData = memberListResult.getData();

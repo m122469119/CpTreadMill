@@ -186,7 +186,7 @@ public class Preference extends AbsPreference {
      * @param isStartUp
      * @return
      */
-    public static boolean setStartingUp(boolean isStartUp) {
+    public static boolean setIsStartingUp(boolean isStartUp) {
         return setObject(IS_FIRST_STARTING_UP, isStartUp);
     }
 
