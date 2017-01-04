@@ -7,8 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0px"
-        android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
                 layout="@layout/view_setting_card"
                 android:layout_width="210dp"
                 android:layout_height="290dp"
-                android:layout_marginRight="68dp"
+                android:layout_marginRight="98dp"
                 />
 
             <include
@@ -30,20 +30,15 @@
                 layout="@layout/view_setting_card"
                 android:layout_width="210dp"
                 android:layout_height="290dp"
-                android:layout_marginRight="68dp"/>
+                android:layout_marginRight="98dp"/>
 
             <include
                 android:id="@+id/layout_sport_params"
                 layout="@layout/view_setting_card"
                 android:layout_width="210dp"
                 android:layout_height="290dp"
-                android:layout_marginRight="68dp"/>
+                />
 
-            <include
-                android:id="@+id/layout_user_setting"
-                layout="@layout/view_setting_card"
-                android:layout_width="210dp"
-                android:layout_height="290dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -54,25 +49,18 @@
             android:orientation="horizontal">
 
             <include
-                android:id="@+id/layout_language_setting"
-                layout="@layout/view_setting_card"
-                android:layout_width="210dp"
-                android:layout_height="290dp"
-                android:layout_marginRight="68dp"/>
-
-            <include
                 android:id="@+id/layout_gym_binding"
                 layout="@layout/view_setting_card"
                 android:layout_width="210dp"
                 android:layout_height="290dp"
-                android:layout_marginRight="68dp"/>
+                android:layout_marginRight="98dp"/>
 
             <include
                 android:id="@+id/layout_network_connection"
                 layout="@layout/view_setting_card"
                 android:layout_width="210dp"
                 android:layout_height="290dp"
-                android:layout_marginRight="68dp"/>
+                android:layout_marginRight="98dp"/>
 
             <include
                 android:id="@+id/layout_update"

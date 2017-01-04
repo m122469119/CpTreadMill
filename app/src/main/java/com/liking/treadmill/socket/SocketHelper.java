@@ -7,9 +7,7 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.SecurityUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.base.BaseApplication;
-import com.aaron.android.framework.library.storage.DiskStorageManager;
 import com.aaron.android.framework.utils.DeviceUtils;
-import com.aaron.android.framework.utils.DiskStorageUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
 import com.liking.treadmill.app.ThreadMillConstant;
@@ -48,7 +46,7 @@ public class SocketHelper {
     private static final String TYPE_MEMBER_LIST = "member_list";
     private static final String TYPE_EXERCISE_DATA = "data";
 
-    private static final String mTcpVersion = "v1.1";
+    private static final String mTcpVersion = "v1.0";
 
     public static final String HEART_BEAT_STRING = "{\"type\":\"ping\",\"version\":\"" + mTcpVersion + "\",\"data\":{}, \"msg_id\":\"\"}\\r\\n";//心跳包内容
     public static final String HEART_BEAT_PONG_STRING = "{\"type\":\"pong\",\"data\":{}, \"msg_id\":\"\"}";//心跳包内容

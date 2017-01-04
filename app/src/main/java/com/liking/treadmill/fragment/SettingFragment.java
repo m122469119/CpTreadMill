@@ -1,6 +1,5 @@
 package com.liking.treadmill.fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
@@ -36,9 +35,9 @@ public class SettingFragment extends SerialPortFragment {
     private static final int INDEX_START = 0;
     private static final int INDEX_AWAIT_TIME = INDEX_START + 1;
     private static final int INDEX_SPORT_PARAMS = INDEX_AWAIT_TIME + 1;
-    private static final int INDEX_USER_SETTING = INDEX_SPORT_PARAMS + 1;
-    private static final int INDEX_LANGUAGE_SETTING = INDEX_USER_SETTING + 1;
-    private static final int INDEX_GYM_BINDING = INDEX_LANGUAGE_SETTING + 1;
+//    private static final int INDEX_USER_SETTING = INDEX_SPORT_PARAMS + 1;
+//    private static final int INDEX_LANGUAGE_SETTING = INDEX_USER_SETTING + 1;
+    private static final int INDEX_GYM_BINDING = INDEX_SPORT_PARAMS + 1;
     private static final int INDEX_NETWORK_CONNECTION = INDEX_GYM_BINDING + 1;
     private static final int INDEX_UPDATE = INDEX_NETWORK_CONNECTION + 1;
     @BindView(R.id.layout_start_mode)
@@ -47,10 +46,10 @@ public class SettingFragment extends SerialPortFragment {
     View mAwaitTimeView;
     @BindView(R.id.layout_sport_params)
     View mSportParamsView;
-    @BindView(R.id.layout_user_setting)
-    View mUserSettingView;
-    @BindView(R.id.layout_language_setting)
-    View mLanguageSettingView;
+//    @BindView(R.id.layout_user_setting)
+//    View mUserSettingView;
+//    @BindView(R.id.layout_language_setting)
+//    View mLanguageSettingView;
     @BindView(R.id.layout_gym_binding)
     View mGymBindingView;
     @BindView(R.id.layout_network_connection)
@@ -78,8 +77,8 @@ public class SettingFragment extends SerialPortFragment {
         initSettingCard(mSettingItemMap.get(INDEX_START), R.string.setting_start_mode, R.drawable.setting_start);
         initSettingCard(mSettingItemMap.get(INDEX_AWAIT_TIME), R.string.setting_await_time, R.drawable.setting_await);
         initSettingCard(mSettingItemMap.get(INDEX_SPORT_PARAMS), R.string.setting_sport_params, R.drawable.setting_sport);
-        initSettingCard(mSettingItemMap.get(INDEX_USER_SETTING), R.string.setting_user_setting, R.drawable.setting_user_param);
-        initSettingCard(mSettingItemMap.get(INDEX_LANGUAGE_SETTING), R.string.setting_language, R.drawable.setting_language);
+//        initSettingCard(mSettingItemMap.get(INDEX_USER_SETTING), R.string.setting_user_setting, R.drawable.setting_user_param);
+//        initSettingCard(mSettingItemMap.get(INDEX_LANGUAGE_SETTING), R.string.setting_language, R.drawable.setting_language);
         initSettingCard(mSettingItemMap.get(INDEX_GYM_BINDING), R.string.setting_gym_binding, R.drawable.setting_gym_bind);
         initSettingCard(mSettingItemMap.get(INDEX_NETWORK_CONNECTION), R.string.setting_network_connection, R.drawable.setting_network);
         initSettingCard(mSettingItemMap.get(INDEX_UPDATE), R.string.setting_update, R.drawable.setting_update);
@@ -96,8 +95,8 @@ public class SettingFragment extends SerialPortFragment {
         mSettingItemMap.put(INDEX_START, mStartModeView);
         mSettingItemMap.put(INDEX_AWAIT_TIME, mAwaitTimeView);
         mSettingItemMap.put(INDEX_SPORT_PARAMS, mSportParamsView);
-        mSettingItemMap.put(INDEX_USER_SETTING, mUserSettingView);
-        mSettingItemMap.put(INDEX_LANGUAGE_SETTING, mLanguageSettingView);
+//        mSettingItemMap.put(INDEX_USER_SETTING, mUserSettingView);
+//        mSettingItemMap.put(INDEX_LANGUAGE_SETTING, mLanguageSettingView);
         mSettingItemMap.put(INDEX_GYM_BINDING, mGymBindingView);
         mSettingItemMap.put(INDEX_NETWORK_CONNECTION, mNetworkConnectionView);
         mSettingItemMap.put(INDEX_UPDATE, mUpdateView);
@@ -108,9 +107,9 @@ public class SettingFragment extends SerialPortFragment {
         View iconView = settingCardView.findViewById(R.id.setting_card_icon);
         titleView.setText(settingTitle);
         iconView.setBackgroundResource(drawableId);
-        if (settingCardView == mLanguageSettingView || settingCardView == mUserSettingView) {
-            titleView.setTextColor(Color.parseColor("#759b9b9b"));
-        }
+//        if (settingCardView == mLanguageSettingView || settingCardView == mUserSettingView) {
+//            titleView.setTextColor(Color.parseColor("#759b9b9b"));
+//        }
     }
 
     private void setCurrentSettingItem(int index) {
@@ -143,8 +142,6 @@ public class SettingFragment extends SerialPortFragment {
             case INDEX_SPORT_PARAMS:
                 launchFragment(new MotionParamSettingFragment());
                 break;
-            case INDEX_USER_SETTING:
-                break;
             case INDEX_GYM_BINDING:
                 break;
             case INDEX_NETWORK_CONNECTION:
@@ -164,17 +161,7 @@ public class SettingFragment extends SerialPortFragment {
 
     private void selectNext() {
         int currentIndex = mCurrentSelectSettingIndex;
-        if (currentIndex == INDEX_UPDATE) {
-            currentIndex = INDEX_START;
-        } else {
-            currentIndex++;
-            if (currentIndex == INDEX_USER_SETTING) {
-                currentIndex++;
-            }
-            if (currentIndex == INDEX_LANGUAGE_SETTING) {
-                currentIndex++;
-            }
-        }
+        currentIndex = currentIndex == INDEX_UPDATE ? INDEX_START : currentIndex + 1;
         setCurrentSettingItem(currentIndex);
     }
 
