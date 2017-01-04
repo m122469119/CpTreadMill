@@ -16,7 +16,7 @@ public interface UserLoginView extends BaseNetworkLoadView {
     /**
      * 进入跑步界面
      */
-    void launchRunFragment();
+    void launchStartFragment();
     /**
      *刷卡登录失败
      */

@@ -16,17 +16,17 @@
         android:paddingTop="@dimen/spacing_24dp">
 
         <TextView
+            android:id="@+id/qrcode_hint1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="通过手机扫码,安全登录"
             android:textColor="@color/c596167"
             android:textSize="@dimen/textsize_20sp"/>
 
         <TextView
+            android:id="@+id/qrcode_hint2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="绑定健身房"
             android:textColor="@color/c596167"
             android:textSize="@dimen/textsize_18sp"/>
 
@@ -55,11 +55,12 @@
                 android:background="@mipmap/scanner"/>
 
             <TextView
+                android:id="@+id/qrcode_hint3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="@dimen/spacing_8dp"
-                android:text="打开手机微信\n扫一扫登录"
+                android:text="打开手机微信\n扫一扫"
                 android:textColor="@color/c596167"
                 android:textSize="@dimen/textsize_20sp"/>
 

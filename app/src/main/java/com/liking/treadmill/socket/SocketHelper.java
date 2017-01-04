@@ -14,6 +14,7 @@ import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.LoginUserInfoMessage;
+import com.liking.treadmill.message.QrCodeMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.socket.result.ApkUpdateResult;
 import com.liking.treadmill.socket.result.BaseSocketResult;
@@ -38,7 +39,8 @@ import de.greenrobot.event.EventBus;
 
 public class SocketHelper {
 
-    private static final String TYPE_QRCODE_SHOW = "qcode";
+    private static final String TYPE_QRCODE_BIND = "bind_qcode";
+    private static final String TYPE_QRCODE_UNBIND = "unbind_qcode";
     private static final String TYPE_UPDATE_NOTIFY = "update";
     private static final String TYPE_BIND = "bind";
     private static final String TYPE_UNBIND = "unbind";
@@ -60,7 +62,7 @@ public class SocketHelper {
         BaseSocketResult result = gson.fromJson(jsonText, BaseSocketResult.class);
         String type = result.getType();
         LogUtils.d("aaron", "result: " + result.getType());
-        if (TYPE_QRCODE_SHOW.equals(type)) {//二维码展示消息
+        if (TYPE_QRCODE_BIND.equals(type) || TYPE_QRCODE_UNBIND.equals(type)) {//二维码展示消息
             QrcodeResult qrcodeResult = gson.fromJson(jsonText, QrcodeResult.class);
             String codeUrl = qrcodeResult.getQrcodeData().getCodeUrl();
             LogUtils.d("codeUrl === ", codeUrl);
@@ -70,6 +72,7 @@ public class SocketHelper {
             } else {
                 LogUtils.d("aaron", "false");
             }
+            EventBus.getDefault().post(new QrCodeMessage());
         } else if (TYPE_UPDATE_NOTIFY.equals(type)) { //系统升级通知
             ApkUpdateResult updateResult = gson.fromJson(jsonText, ApkUpdateResult.class);
             ApkUpdateResult.ApkUpdateData updateData = updateResult.getApkUpdateData();
@@ -99,6 +102,7 @@ public class SocketHelper {
         } else if(TYPE_UNBIND.equals(type)) {//解绑场馆
             Preference.setIsStartingUp(true);
             Preference.setBindUserGymId("");
+            Preference.setMemberList("");
             EventBus.getDefault().post(new GymUnBindSuccessMessage());
         } else if (TYPE_MEMBER_LIST.equals(type)) {//当前用户所在场馆的所有会员id
             MemberListResult memberListResult = gson.fromJson(jsonText, MemberListResult.class);

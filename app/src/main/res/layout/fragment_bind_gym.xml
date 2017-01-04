@@ -3,43 +3,42 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@drawable/run_bg"
-              android:orientation="horizontal">
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2"/>
+              android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/bind_gym_hint_step3"
+        <LinearLayout
+            android:id="@+id/bind_gym_step_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginTop="100dp"
-            android:text="STEP 3"
-            android:textColor="@color/white"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            />
+            android:layout_marginLeft="80dp"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/bind_gym_hint_bind"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginBottom="30dp"
-            android:layout_marginTop="20dp"
-            android:text="绑定场馆"
-            android:textColor="@color/white"
-            android:textSize="28sp"
-            android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/bind_gym_hint_step3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginTop="100dp"
+                android:text="STEP 3"
+                android:textColor="@color/white"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/bind_gym_hint_bind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="20dp"
+                android:text="绑定场馆"
+                android:textColor="@color/white"
+                android:textSize="24sp"/>
+        </LinearLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -61,8 +60,7 @@
                 android:gravity="center"
                 android:text="@string/bind_gym_success_hint"
                 android:textColor="@color/white"
-                android:textSize="28sp"
-                android:textStyle="bold"/>
+                android:textSize="24sp"/>
 
         </FrameLayout>
 
@@ -71,16 +69,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="40dp"
             android:gravity="center"
-            android:text="完成绑定后，即可完成设置"
             android:textColor="@color/white"
-            android:textSize="28sp"
-            android:textStyle="bold"/>
+            android:textSize="20sp"/>
     </LinearLayout>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/network_setting_hint"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/c179B9B9B"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="80dp"
+        android:paddingTop="80dp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textsize_20sp"/>
+
 </LinearLayout>
