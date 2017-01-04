@@ -23,7 +23,7 @@
                 android:layout_marginTop="100dp"
                 android:text="STEP 1"
                 android:textColor="@color/white"
-                android:textSize="32sp"/>
+                android:textSize="24sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
                 android:layout_marginTop="20dp"
                 android:text="配置你的网络"
                 android:textColor="@color/white"
-                android:textSize="28sp"/>
+                android:textSize="20sp"/>
         </LinearLayout>
 
         <RelativeLayout
@@ -64,7 +64,7 @@
                 android:layout_height="3dp"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/view_network"
-                android:layout_toRightOf="@+id/view_running_machine"
+                android:layout_toRightOf="@+id/network_ImageView"
                 android:background="@drawable/shape_imagniary_line"/>
 
             <ImageView
@@ -74,6 +74,15 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/icon_connect_success"/>
+
+            <View
+                android:id="@+id/network_setting_line2"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/network_ImageView"
+                android:layout_toRightOf="@+id/view_running_machine"
+                android:background="@drawable/shape_imagniary_line"/>
 
             <TextView
                 android:id="@+id/network_connect_state"

@@ -130,8 +130,8 @@ public class RunFragment extends SerialPortFragment {
     private volatile boolean isStart = false; //跑步机是否计数
 
     private boolean isTargetCmp = false;
-    private float maxTotalTime;  //系统设置的最长跑步时间
-    private float totalTime;  //目标设置的总时间
+    private float maxTotalTime;  //系统设置的最长跑步时间 /min
+    private float totalTime;  //目标设置的总时间 /min
     private float totalKilometre;//目标设置的总距离
     private float totalKcal;//目标设置的总卡路里
     private String totalTarget = "";
@@ -461,11 +461,13 @@ public class RunFragment extends SerialPortFragment {
         mAvergHraetRateTextView.setText(SerialPortUtil.getTreadInstance().getHeartRate() + "");
         showRunResult(SerialPortUtil.getTreadInstance().getRunTime(), totalDistanceKm, SerialPortUtil.getTreadInstance().getKCAL());
 
-        try {
-            //上传锻炼数据
-            ((HomeActivity) getActivity()).iBackService.reportExerciseData(THREADMILL_MODE_SELECT, GOAL_TYPE, ACHIEVE_TYPE);
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        if(!Preference.isVisitorMode()) { //非访客模式
+            try {
+                //上传锻炼数据
+                ((HomeActivity) getActivity()).iBackService.reportExerciseData(THREADMILL_MODE_SELECT, GOAL_TYPE, ACHIEVE_TYPE);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
         completeCountdownTime = new CompleteCountdownTime(Preference.getStandbyTime() * 1000, 1000);
         completeCountdownTime.start();
@@ -590,6 +592,14 @@ public class RunFragment extends SerialPortFragment {
             IToast.show(String.format(ResourceUtils.getString(R.string.run_attainment_target_upcoming),"跑步0.5公里"));
         } else if(totalKcal > 50 && (int)(totalKcal - kcal)  == 50) {
             IToast.show(String.format(ResourceUtils.getString(R.string.run_attainment_target_upcoming),"消耗50卡路里"));
+        }
+
+        //如果为访客模式 超过五分钟结束跑步
+        if(Preference.isVisitorMode()) {
+            if(time >= 5 * 60) {
+                SerialPortUtil.stopTreadMill();
+                finishExercise();
+            }
         }
     }
 

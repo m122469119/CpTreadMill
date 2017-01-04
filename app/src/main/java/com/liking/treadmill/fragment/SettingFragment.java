@@ -25,6 +25,8 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.liking.treadmill.app.ThreadMillConstant.THREADMILL_SYSTEMSETTING;
+
 /**
  * Created on 16/12/27.
  *
@@ -146,7 +148,7 @@ public class SettingFragment extends SerialPortFragment {
                 break;
             case INDEX_NETWORK_CONNECTION:
                 Bundle bundle = new Bundle();
-                bundle.putBoolean("setting", true);
+                bundle.putBoolean(THREADMILL_SYSTEMSETTING, true);
                 NetworkSettingFragment settingFragment = new NetworkSettingFragment();
                 settingFragment.setArguments(bundle);
                 launchFragment(settingFragment);

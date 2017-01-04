@@ -30,7 +30,8 @@ public class Preference extends AbsPreference {
     public static final String QCODE_URL = "qcode_url";
     public static final String IS_FIRST_STARTING_UP = "isFirstStartingUp";
     public static final String STANDBY_TIME = "standbytime";//待机时间
-    public static final String MOTION_PARAM_MAX_RUNTIME = "motionparammaxruntime";
+    public static final String MOTION_PARAM_MAX_RUNTIME = "motionparammaxruntime";//运动最大时间
+    public static final String TREADMILL_SETUP_ISVISITOR = "treadmillsetupvisitor";
 
     public static final String APP_SERVER_VERSION = "setserverversion";//服务器版本
     public static final String APP_SERVER_VERSION_URL = "setserverversionurl";//服务器版本地址
@@ -264,6 +265,23 @@ public class Preference extends AbsPreference {
      */
     public static int getMotionParamMaxRunTime() {
         return (int) getObject(MOTION_PARAM_MAX_RUNTIME, 240);
+    }
+
+    /**
+     * 设置是否为访客模式
+     * @param isVisitor
+     * @return
+     */
+    public static boolean setIsVisitorMode(boolean isVisitor) {
+        return setObject(TREADMILL_SETUP_ISVISITOR, isVisitor);
+    }
+
+    /**
+     * 是否为访客模式
+     * @return
+     */
+    public static boolean isVisitorMode() {
+        return (boolean) getObject(TREADMILL_SETUP_ISVISITOR, false);
     }
 
 }

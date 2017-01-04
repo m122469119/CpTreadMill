@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/spacing_4dp"
                 android:layout_marginLeft="@dimen/spacing_20dp"
-                android:text="雷达"
+                android:text="LikingFans"
                 android:background="@drawable/textview_underline"
                 android:textColor="@color/white"
                 android:textSize="@dimen/textsize_20sp"/>

@@ -3,46 +3,48 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@drawable/run_bg"
-              android:orientation="horizontal">
+              android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/treadmill_setup_step_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginTop="100dp"
-            android:text="@string/step_2"
-            android:textColor="@color/white"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            />
+            android:layout_marginLeft="80dp"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginTop="24dp"
-            android:text="@string/run_start_setting"
-            android:textColor="@color/white"
-            android:textSize="28sp"
-            android:textStyle="bold"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginTop="100dp"
+                android:text="@string/step_2"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginTop="24dp"
+                android:text="@string/run_start_setting"
+                android:textColor="@color/white"
+                android:textSize="20sp"/>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="80dp"
+            android:layout_marginLeft="80dp"
+            android:layout_marginRight="80dp"
             android:orientation="horizontal">
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -54,7 +56,7 @@
                 <ImageView
                     android:layout_width="460dp"
                     android:layout_height="240dp"
-                    android:background="@mipmap/icon_bracelet"/>
+                    android:background="@drawable/icon_bracelet"/>
 
                 <TextView
                     android:layout_width="460dp"
@@ -62,7 +64,7 @@
                     android:layout_marginTop="20dp"
                     android:gravity="center"
                     android:text="手环刷卡（默认选定，不可取消）"
-                    android:textColor="@color/c7c7c8"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/textsize_16sp"
                     />
 
@@ -72,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
                     android:lineSpacingMultiplier="1.5"
-                    android:textColor="@color/c7c7c8"
+                    android:textColor="@color/white"
                     android:textSize="22sp"/>
             </LinearLayout>
 
@@ -87,7 +89,7 @@
                     android:id="@+id/treadmill_setup_visitor_ImageView"
                     android:layout_width="460dp"
                     android:layout_height="240dp"
-                    android:background="@mipmap/icon_visitor_no_checked"/>
+                    android:background="@drawable/icon_visitor_no_checked"/>
 
                 <TextView
                     android:layout_width="460dp"
@@ -95,7 +97,7 @@
                     android:layout_marginTop="20dp"
                     android:gravity="center"
                     android:text="访客启动（可选）"
-                    android:textColor="@color/c7c7c8"
+                    android:textColor="@color/white"
                     android:textSize="@dimen/textsize_16sp"
                     />
 
@@ -105,57 +107,39 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
                     android:lineSpacingMultiplier="1.5"
-                    android:textColor="@color/c7c7c8"
+                    android:textColor="@color/white"
                     android:textSize="22sp"/>
             </LinearLayout>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="120dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:gravity="center"
-                android:text="点击 MODE 选定或取消【访客启动】，"
-                android:textColor="@color/white"
-                android:textSize="32sp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="请按"
-                android:textColor="@color/white"
-                android:textSize="32sp"
-                android:textStyle="bold"/>
-
-            <ImageView
-                android:layout_width="@dimen/spacing_20dp"
-                android:layout_height="@dimen/spacing_20dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:background="@mipmap/icon_next"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="进入下一步"
-                android:textColor="@color/white"
-                android:textSize="32sp"
-                android:textStyle="bold"/>
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/c179B9B9B"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="80dp"
+        android:paddingTop="80dp">
+
+        <TextView
+            android:id="@+id/treadmill_setup_hint1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/treadmill_setup_hint2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_16dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
 </LinearLayout>

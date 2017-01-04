@@ -21,11 +21,12 @@ import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.message.SettingNextMessage;
 import com.liking.treadmill.message.WifiMessage;
-import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.liking.treadmill.app.ThreadMillConstant.THREADMILL_SYSTEMSETTING;
 
 /**
  * Created on 16/12/12.
@@ -49,6 +50,8 @@ public class NetworkSettingFragment extends SerialPortFragment {
     LinearLayout mLayoutNext;
     @BindView(R.id.network_setting_line)
     View mNetworkSettingLine;
+    @BindView(R.id.network_setting_line2)
+    View mNetworkSettingLine2;
     private boolean isNetwork;
     private boolean isSetting;
 
@@ -64,7 +67,7 @@ public class NetworkSettingFragment extends SerialPortFragment {
     private void initData() {
         Bundle bundle = getArguments();
         if(bundle !=null ) {
-            isSetting = bundle.getBoolean("setting", false);
+            isSetting = bundle.getBoolean(THREADMILL_SYSTEMSETTING, false);
         }
     }
 
@@ -90,6 +93,7 @@ public class NetworkSettingFragment extends SerialPortFragment {
     private void initView() {
         SpannableStringBuilder ssbh = null;
         mNetworkSettingLine.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        mNetworkSettingLine2.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         if(isSetting) {
             ((HomeActivity)getActivity()).setTitle("网络连接");
             mLayoutSettingStep.setVisibility(View.GONE);
@@ -97,7 +101,6 @@ public class NetworkSettingFragment extends SerialPortFragment {
             ImageSpan imageSpanBack = new ImageSpan(getActivity(), R.drawable.key_back);
             ssbh.setSpan(imageSpanBack, 3, 5, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         } else {
-            ((HomeActivity)getActivity()).setTitle("");
             mLayoutSettingStep.setVisibility(View.VISIBLE);
             ssbh = new SpannableStringBuilder(ResourceUtils.getString(R.string.threadmill_network_setting_operate_txt));
             ImageSpan imageSpanBack = new ImageSpan(getActivity(), R.drawable.key_next);

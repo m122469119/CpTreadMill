@@ -19,4 +19,6 @@ public class ThreadMillConstant {
     public static final String GOALSETTING_RUNTIME = "goalsettingruntime";
     public static final String GOALSETTING_KILOMETRE = "goalsettingkilometre";
     public static final String GOALSETTING_KCAL = "goalsettingkcal";
+
+    public static final String THREADMILL_SYSTEMSETTING = "systemsetting";
 }
