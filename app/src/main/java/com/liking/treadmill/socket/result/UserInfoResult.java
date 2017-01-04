@@ -57,6 +57,10 @@ public class UserInfoResult extends BaseSocketResult{
         }
 
         public static class UserInfoData {
+
+            @SerializedName("role")
+            private int role; //1管理员 2普通会员
+
             @SerializedName("username")
             private String mUserName;
 
@@ -68,6 +72,14 @@ public class UserInfoResult extends BaseSocketResult{
 
             @SerializedName("bracelet_id")
             private String mBraceletId;
+
+            public int getRole() {
+                return role;
+            }
+
+            public void setRole(int role) {
+                this.role = role;
+            }
 
             public String getUserName() {
                 return mUserName;

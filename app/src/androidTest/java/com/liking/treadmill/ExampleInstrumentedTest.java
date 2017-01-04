@@ -30,7 +30,7 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void getMemberList() throws Exception {
-        String memberlist = "{type:\"member_list\",msg_id:0,data:{\"bracelet_id\":{\"member\":[12345,54321],\"manger\":[12345,54321]}}}";
+        String memberlist = "{type:\"member_list\",msg_id:0,data:{\"bracelet_id\":{\"member\":[1111,1222],\"manger\":[0111,0222]}}}";
         Gson gson = new Gson();
         MemberListResult memberListResult = gson.fromJson(memberlist, MemberListResult.class);
         MemberListResult.MemberData memberData = memberListResult.getData();
@@ -41,7 +41,7 @@ public class ExampleInstrumentedTest {
             }catch (Exception e) {
             }
         }
-        MemberListResult.MemberData members = gson.fromJson(Preference.getMemberList(), MemberListResult.MemberData.class);
-        System.out.println();
+        MemberListResult.MemberData.MemberListData members = gson.fromJson(Preference.getMemberList(), MemberListResult.MemberData.MemberListData.class);
+        System.out.println("BraceletId_Member : "+ members.getMember() + "---- BraceletId_Manger" + members.getManger());
     }
 }

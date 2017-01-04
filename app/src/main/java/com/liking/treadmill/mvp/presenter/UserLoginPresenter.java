@@ -6,10 +6,13 @@ import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.base.mvp.BasePresenter;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
+import com.google.gson.Gson;
 import com.liking.treadmill.R;
 import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.mvp.view.UserLoginView;
+import com.liking.treadmill.socket.result.MemberListResult;
 import com.liking.treadmill.socket.result.UserInfoResult;
+import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.widget.IToast;
 
@@ -32,18 +35,51 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
      * 用户刷卡登录
      */
     public void userLogin() {
-        if(EnvironmentUtils.Network.isNetWorkAvailable()) {
-            String cardNo = SerialPortUtil.getTreadInstance().getCardNo();
-            if(!StringUtils.isEmpty(cardNo) && !isRepeatReadCard()) {//不为空并且1s内只允许发起一次刷卡请求
 
+        String cardNo = SerialPortUtil.getTreadInstance().getCardNo();
+        if(!StringUtils.isEmpty(cardNo) && !isRepeatReadCard()) {//不为空并且1s内只允许发起一次刷卡请求
+            if(EnvironmentUtils.Network.isNetWorkAvailable()) {
                 if(mView != null) {
                     mView.userLogin(cardNo);
                 }
+            } else {
+                //无网
+                if(!StringUtils.isEmpty(Preference.getBindUserGymId())) {//已绑定场馆
+                    Gson gson = new Gson();
+                    MemberListResult.MemberData.MemberListData members = gson.fromJson
+                            (Preference.getMemberList(), MemberListResult.MemberData.MemberListData.class);
+                    if(members != null) {
+                        if(members.getManger() != null && members.getManger().contains(cardNo)) {
+                            launchRunFragment(getDefaultUserInfo(1, cardNo));
+                        } else if(members.getMember() != null && members.getMember().contains(cardNo)) {
+                            launchRunFragment(getDefaultUserInfo(2, cardNo));
+                        } else {
+                            IToast.show(ResourceUtils.getString(R.string.network_no_connection));
+                        }
+                    } else {
+                        IToast.show(ResourceUtils.getString(R.string.network_no_connection));
+                    }
+                } else { //场馆未绑定
+                    IToast.show(ResourceUtils.getString(R.string.network_no_connection));
+                }
             }
-        } else {
-            //查询缓存
-            IToast.show(ResourceUtils.getString(R.string.network_no_connection));
         }
+    }
+
+    /**
+     * 设置默认的用户信息
+     * @param role
+     * @param braceletId
+     * @return
+     */
+    private UserInfoResult.UserData.UserInfoData getDefaultUserInfo(int role, String braceletId) {
+        UserInfoResult.UserData.UserInfoData userDefaultInfo = new UserInfoResult.UserData.UserInfoData();
+        userDefaultInfo.setRole(role); //1管理员 2普通会员
+        userDefaultInfo.setUserName("LikingFans");
+        userDefaultInfo.setAvatar("");
+        userDefaultInfo.setGender(1);
+        userDefaultInfo.setBraceletId(braceletId);
+        return userDefaultInfo;
     }
 
     /**
@@ -70,26 +106,11 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
         UserInfoResult.UserData mUserData = message.mUserData;
         if(mUserData.getErrcode() == 0) {
             UserInfoResult.UserData.UserInfoData userResult = message.mUserData.getUserInfoData();
-//            if(!mCurrCardNo.equals(userResult.getBraceletId())) { //返回的卡号与当前卡号不一致
-//            } else {
-//            }
-            SerialPortUtil.TreadData.UserInfo userInfo = new SerialPortUtil.TreadData.UserInfo();
-            userInfo.mUserName = userResult.getUserName();
-            userInfo.mAvatar = userResult.getAvatar();
-            userInfo.mGender = userResult.getGender();
-            userInfo.mBraceletId = userResult.getBraceletId();
-            SerialPortUtil.getTreadInstance().setCardNo(userInfo.mBraceletId);
-            SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
-            SerialPortUtil.setCardNoValid();
-            if(mView != null) {
-                mView.launchRunFragment();
-            }
+            launchRunFragment(userResult);
         } else {
             IToast.show(mUserData.getErrmsg());
             userLoginFail();
-
         }
-//        mCurrCardNo = "";
     }
 
     public void userLoginFail() {
@@ -97,6 +118,23 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
         SerialPortUtil.getTreadInstance().reset();
         if(mView != null) {
             mView.userLoginFail();
+        }
+    }
+
+    private void launchRunFragment(UserInfoResult.UserData.UserInfoData userResult) {
+        SerialPortUtil.TreadData.UserInfo userInfo = new SerialPortUtil.TreadData.UserInfo();
+        userInfo.mRole = userResult.getRole();
+        userInfo.mUserName = userResult.getUserName();
+        userInfo.mAvatar = userResult.getAvatar();
+        userInfo.mGender = userResult.getGender();
+        userInfo.mBraceletId = userResult.getBraceletId();
+
+        SerialPortUtil.getTreadInstance().setManager(userInfo.mRole == 1 ? true : false); //是否为管理员
+        SerialPortUtil.getTreadInstance().setCardNo(userInfo.mBraceletId);
+        SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
+        SerialPortUtil.setCardNoValid();
+        if(mView != null) {
+            mView.launchRunFragment();
         }
     }
 

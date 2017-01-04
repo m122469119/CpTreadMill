@@ -57,9 +57,19 @@ public class SerialPortUtil {
         private int runTime = 0;
         private int mStepNumber;//步数
 
+        private boolean isManager;//是否为管理员
+
         private UserInfo mUserInfo;
 
         private String mCardNo;
+
+        public boolean isManager() {
+            return isManager;
+        }
+
+        public void setManager(boolean manager) {
+            isManager = manager;
+        }
 
         public int isCardIsValid() {
             return mCardIsValid;
@@ -305,9 +315,12 @@ public class SerialPortUtil {
             mCardNo = "";
             mStepNumber = 0;
             mUserInfo = null;
+            isManager = false;
         }
 
         public static class UserInfo {
+
+            public int mRole;
 
             public String mUserName;
 
