@@ -57,7 +57,7 @@ public class SocketHelper {
 
     public static void handlerSocketReceive(Context context, String jsonStr) {
         Gson gson = new Gson();
-        String jsonText = jsonStr.substring(0, jsonStr.length() - 4);
+        String jsonText = jsonStr;//jsonStr.substring(0, jsonStr.length() - 4);
         LogUtils.d("aaron", "result: " + jsonText);
         BaseSocketResult result = gson.fromJson(jsonText, BaseSocketResult.class);
         String type = result.getType();
@@ -95,6 +95,7 @@ public class SocketHelper {
                 if (bindUserData.getErrCode() == 0) {
                     Preference.setIsStartingUp(false);
                     Preference.setBindUserGymId(bindUserData.getGymId());
+                    Preference.setBindUserGymName(bindUserData.getGymName());
                     LogUtils.d(SocketService.TAG, " gmyId =" + Preference.getBindUserGymId());
                     EventBus.getDefault().post(new GymBindSuccessMessage());
                 }
@@ -102,6 +103,7 @@ public class SocketHelper {
         } else if(TYPE_UNBIND.equals(type)) {//解绑场馆
             Preference.setIsStartingUp(true);
             Preference.setBindUserGymId("");
+            Preference.setBindUserGymName("");
             Preference.setMemberList("");
             EventBus.getDefault().post(new GymUnBindSuccessMessage());
         } else if (TYPE_MEMBER_LIST.equals(type)) {//当前用户所在场馆的所有会员id

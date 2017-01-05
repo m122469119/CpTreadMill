@@ -135,10 +135,6 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
         SerialPortUtil.setCardNoValid();
 
         if(mView != null) {
-            if(StringUtils.isEmpty(Preference.getBindUserGymId()) && !SerialPortUtil.getTreadInstance().isManager()) {//未绑定场馆,非管理员
-                IToast.show("场馆未绑定,请联系管理员!");
-                return;
-            }
             mView.launchStartFragment();
         }
     }

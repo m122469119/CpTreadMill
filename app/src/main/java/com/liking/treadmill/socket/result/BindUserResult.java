@@ -51,6 +51,16 @@ public class BindUserResult extends BaseSocketResult{
         private String errMsg;
         @SerializedName("gym_id")
         private String gymId;
+        @SerializedName("gym_name")
+        private String gymName;
+
+        public String getGymName() {
+            return gymName;
+        }
+
+        public void setGymName(String gymName) {
+            this.gymName = gymName;
+        }
 
         public int getErrCode() {
             return errCode;

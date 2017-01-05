@@ -11,6 +11,8 @@ import com.liking.treadmill.storge.Preference;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
 /**
@@ -43,5 +45,14 @@ public class ExampleInstrumentedTest {
         }
         MemberListResult.MemberData.MemberListData members = gson.fromJson(Preference.getMemberList(), MemberListResult.MemberData.MemberListData.class);
         System.out.println("BraceletId_Member : "+ members.getMember() + "---- BraceletId_Manger" + members.getManger());
+    }
+
+    @Test
+    public void getParseResult() throws Exception{
+        String jsonMessage = "{\"type\":\"update\",\"msg_id\":\"\",\"data\":{\"lastest_version\":\"1.0.1\",\"url\":\"http:\\/\\/testrun.likingfit.com\\/LikingTreadMill.apk\"}}\\r\\n";
+         String[] results = jsonMessage.split("\\\\r\\\\n");
+        for (String r: results) {
+            System.out.println("getParseResult:"+ r);
+        }
     }
 }

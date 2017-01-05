@@ -9,6 +9,6 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/spacing_12dp"
         android:text="@string/run_welcom_hint"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="@dimen/textsize_20sp"/>
 </LinearLayout>

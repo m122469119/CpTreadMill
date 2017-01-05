@@ -10,12 +10,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
+import com.liking.treadmill.widget.IToast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -68,11 +71,17 @@ public class StartFragment extends SerialPortFragment {
             ((HomeActivity) getActivity()).setTitle("");
             ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_START) {
+            if(StringUtils.isEmpty(Preference.getBindUserGymId())) {//未绑定场馆
+                IToast.show("场馆未绑定,请联系管理员!");
+                return;
+            }
             ((HomeActivity) getActivity()).launchFragment(new RunFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {
             cardLogin();
         } else if (keyCode == LikingTreadKeyEvent.KEY_PROGRAM) {
-            showSettingUI();
+            if(SerialPortUtil.getTreadInstance().isManager()) {
+                showSettingUI();
+            }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SET) {//参数设置
             ((HomeActivity) getActivity()).launchFragment(new GoalSettingFragment());
         }

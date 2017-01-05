@@ -60,4 +60,5 @@
     <string name="threadmill_network_setting_non_net_operate2_txt">跑步机连接网络，才能刷卡启动跑步机及同步运动数据，并为跑步机系统检查更新</string>
     <string name="threadmill_setup_operate1_txt">点击&#160;&#160;&#160;&#160;选定或取消【访客启动】</string>
     <string name="threadmill_setup_operate2_txt">点击&#160;&#160;&#160;&#160;进入下一步</string>
+    <string name="threadmill_bind_gym_operate_txt">点击&#160;&#160;&#160;&#160;返回上一页</string>
 </resources>

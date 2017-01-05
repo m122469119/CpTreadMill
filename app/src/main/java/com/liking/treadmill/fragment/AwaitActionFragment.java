@@ -15,6 +15,7 @@ import com.aaron.android.framework.base.widget.dialog.HBaseDialog;
 import com.aaron.android.framework.utils.PopupUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
 import butterknife.ButterKnife;
@@ -69,6 +70,10 @@ public class AwaitActionFragment extends SerialPortFragment {
                 }
             }).show();
 
+        } else if(keyCode == LikingTreadKeyEvent.KEY_PGR_START) {
+            if(Preference.isVisitorMode()) {//访客模式
+                ((HomeActivity)getActivity()).launchFragment(new RunFragment());
+            }
         }
     }
 

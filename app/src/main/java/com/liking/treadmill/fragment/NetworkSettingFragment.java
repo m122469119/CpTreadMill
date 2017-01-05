@@ -96,7 +96,7 @@ public class NetworkSettingFragment extends SerialPortFragment {
         mNetworkSettingLine2.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         if(isSetting) {
             ((HomeActivity)getActivity()).setTitle("网络连接");
-            mLayoutSettingStep.setVisibility(View.GONE);
+            mLayoutSettingStep.setVisibility(View.INVISIBLE);
             ssbh = new SpannableStringBuilder(ResourceUtils.getString(R.string.threadmill_system_update_operate_txt));
             ImageSpan imageSpanBack = new ImageSpan(getActivity(), R.drawable.key_back);
             ssbh.setSpan(imageSpanBack, 3, 5, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);

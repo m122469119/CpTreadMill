@@ -23,7 +23,7 @@
                 android:layout_marginTop="100dp"
                 android:text="STEP 1"
                 android:textColor="@color/white"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 android:textStyle="bold"/>
 
             <TextView
@@ -32,7 +32,7 @@
                 android:layout_marginTop="20dp"
                 android:text="配置你的网络"
                 android:textColor="@color/white"
-                android:textSize="20sp"/>
+                android:textSize="16sp"/>
         </LinearLayout>
 
         <RelativeLayout
@@ -96,7 +96,7 @@
                 android:layout_marginTop="70dp"
                 android:text="网络已连接"
                 android:textColor="@color/white"
-                android:textSize="24sp"/>
+                android:textSize="18sp"/>
 
         </RelativeLayout>
 
@@ -115,14 +115,14 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:padding="@dimen/spacing_8dp"
-                android:textSize="@dimen/textsize_20sp"
+                android:textSize="@dimen/textsize_18sp"
                 android:text="@string/threadmill_network_setting_non_net_operate1_txt"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/spacing_8dp"
                 android:textColor="@color/white"
-                android:textSize="@dimen/textsize_20sp"
+                android:textSize="@dimen/textsize_18sp"
                 android:text="@string/threadmill_network_setting_non_net_operate2_txt"/>
         </LinearLayout>
 

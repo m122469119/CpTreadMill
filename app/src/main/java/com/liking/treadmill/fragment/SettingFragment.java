@@ -126,7 +126,7 @@ public class SettingFragment extends SerialPortFragment {
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
-            ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
+            ((HomeActivity) getActivity()).launchFragment(new StartFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_NEXT) {
             selectNext();
         } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {
@@ -135,8 +135,13 @@ public class SettingFragment extends SerialPortFragment {
     }
 
     private void gotoSubSettingFragment() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(THREADMILL_SYSTEMSETTING, true);
         switch (mCurrentSelectSettingIndex) {
             case INDEX_START:
+                TreadmillSetupFragment treadmillSetupFragment = new TreadmillSetupFragment();
+                treadmillSetupFragment.setArguments(bundle);
+                launchFragment(treadmillSetupFragment);
                 break;
             case INDEX_AWAIT_TIME:
                 launchFragment(new StandbyTimeSettingFragment());
@@ -145,10 +150,11 @@ public class SettingFragment extends SerialPortFragment {
                 launchFragment(new MotionParamSettingFragment());
                 break;
             case INDEX_GYM_BINDING:
+                BindGymFragment bindGymFragment = new BindGymFragment();
+                bindGymFragment.setArguments(bundle);
+                launchFragment(bindGymFragment);
                 break;
             case INDEX_NETWORK_CONNECTION:
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(THREADMILL_SYSTEMSETTING, true);
                 NetworkSettingFragment settingFragment = new NetworkSettingFragment();
                 settingFragment.setArguments(bundle);
                 launchFragment(settingFragment);

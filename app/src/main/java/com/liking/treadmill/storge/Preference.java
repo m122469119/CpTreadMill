@@ -36,6 +36,7 @@ public class Preference extends AbsPreference {
     public static final String APP_SERVER_VERSION = "setserverversion";//服务器版本
     public static final String APP_SERVER_VERSION_URL = "setserverversionurl";//服务器版本地址
     public static final String USER_GYM_ID = "USER_GYM_ID";
+    public static final String USER_GYM_NAME = "USER_GYM_NAME";
     public static final String MEMBER_ID_LIST = new Date().getTime() + SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "";
 
     /**
@@ -212,6 +213,25 @@ public class Preference extends AbsPreference {
      */
     public static String getBindUserGymId() {
         return (String) getObject(USER_GYM_ID, "");
+    }
+
+    /**
+     * 用户所在场馆的gymName
+     *
+     * @param gymName 场馆NAME
+     * @return
+     */
+    public static boolean setBindUserGymName(String gymName) {
+        return setObject(USER_GYM_NAME, gymName);
+    }
+
+    /**
+     * 获取所在场馆的gymName
+     *
+     * @return gymName
+     */
+    public static String getBindUserGymName() {
+        return (String) getObject(USER_GYM_NAME, "");
     }
 
     /**

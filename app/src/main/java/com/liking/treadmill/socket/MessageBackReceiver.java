@@ -15,7 +15,10 @@ public class MessageBackReceiver extends BroadcastReceiver {
             } else if (action.equals(SocketService.MESSAGE_ACTION)) {
                 String jsonMessage = intent.getStringExtra("message");
                 LogUtils.d(SocketService.TAG, "receive a socket message : " + jsonMessage);
-                SocketHelper.handlerSocketReceive(context, jsonMessage);
+                String[] results = jsonMessage.split("\\\\r\\\\n");
+                for (String result : results) {
+                    SocketHelper.handlerSocketReceive(context, result);
+                }
             }
         }
     }

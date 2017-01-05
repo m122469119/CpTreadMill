@@ -51,7 +51,7 @@ public class TreadmillSetupFragment extends SerialPortFragment {
     TextView mTreadmillSetupHint2;
 
     private boolean isSelectModel = false;
-    private boolean isSetting = false; //是否从系统设置进入
+    private boolean isSetting ; //是否从系统设置进入
 
     @Nullable
     @Override
@@ -102,7 +102,7 @@ public class TreadmillSetupFragment extends SerialPortFragment {
         SpannableStringBuilder ssbh2 = null;
         if(isSetting) {
             ((HomeActivity)getActivity()).setTitle("启动方式设置");
-            mLayoutTreadmillSetupStep.setVisibility(View.GONE);
+            mLayoutTreadmillSetupStep.setVisibility(View.INVISIBLE);
 
             ssbh2 = new SpannableStringBuilder(ResourceUtils.getString(R.string.goalsetting_step_setting_hint2));
             ImageSpan imageSpanBack = new ImageSpan(getActivity(), R.drawable.key_back);
@@ -141,6 +141,11 @@ public class TreadmillSetupFragment extends SerialPortFragment {
                 mTreadmillSetupVisitorImageView.setBackgroundResource(R.drawable.icon_visitor_no_checked);
             }
             isSelectModel = !isSelectModel;
+        } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
+            if(isSetting) {
+                ((HomeActivity) getActivity()).setTitle("");
+                ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
+            }
         }
     }
 }
