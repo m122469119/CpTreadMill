@@ -1,5 +1,6 @@
 package com.liking.treadmill.fragment;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,6 +40,8 @@ import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.R.attr.animation;
 
 /**
  * Created on 16/12/15.
@@ -139,6 +144,8 @@ public class RunFragment extends SerialPortFragment {
     private int GOAL_TYPE = 0;//设定目标时的类型
     private int ACHIEVE_TYPE = 0;//设定目标时完成情况
     private PrepareCountdownTime mPrepareCountdownTime;
+    private Animation animation;
+//    private int countdown = 3;
 
     @Nullable
     @Override
@@ -160,6 +167,7 @@ public class RunFragment extends SerialPortFragment {
     }
 
     public void initData() {
+        animation = AnimationUtils.loadAnimation(getActivity(), R.anim.count_down_exit);
         maxTotalTime = Preference.getMotionParamMaxRunTime();
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -883,7 +891,14 @@ public class RunFragment extends SerialPortFragment {
 
         @Override
         public void onTick(long millisUntilFinished) {
-            mPrepareCountDownTextView.setText((millisUntilFinished - 1000)/ 1000 + "");
+            String value = "";
+            int second = (int) ((millisUntilFinished - 1000)/ 1000);
+            value = String.valueOf(second);
+            if(second == 0) {
+                value = "GO";
+            }
+            mPrepareCountDownTextView.setText(value);
+            bigAnimation();
         }
 
         @Override
@@ -893,5 +908,12 @@ public class RunFragment extends SerialPortFragment {
             RunFragment.this.start();
             mPrepareLayout.setVisibility(View.GONE);
         }
+    }
+
+    public void bigAnimation() {
+        animation.reset();
+        animation.setFillAfter(true);
+        animation.setRepeatCount(1);
+        mPrepareCountDownTextView.startAnimation(animation);
     }
 }

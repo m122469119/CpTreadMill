@@ -11,16 +11,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="3s"
         android:textColor="@color/c35EA81"
-        android:textSize="60sp"
+        android:textSize="80sp"
         android:textStyle="bold"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/spacing_8dp"
+        android:layout_marginTop="@dimen/spacing_30dp"
         android:gravity="center"
         android:text="即将开始运动"
         android:textSize="@dimen/spacing_30dp"
