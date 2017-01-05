@@ -85,6 +85,11 @@ public class TreadmillSetupFragment extends SerialPortFragment {
         Spanned visitorText = Html.fromHtml("允许所有用户通过" + "<font color=#25ff8c>PROG</font>" + "+" + "<font color=#25ff8c>QUICK START</font>" + "的组合按键启动锻炼，锻炼5分钟后将自动停止");
         mTreadmillSetupVisitorTextView.setText(visitorText);
 
+        if(Preference.isVisitorMode()) {
+            isSelectModel = true;
+            mTreadmillSetupVisitorImageView.setBackgroundResource(R.drawable.icon_visitor_checked);
+        }
+
     }
 
     private void initView() {
