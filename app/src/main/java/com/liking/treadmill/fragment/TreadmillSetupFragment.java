@@ -129,7 +129,10 @@ public class TreadmillSetupFragment extends SerialPortFragment {
     @Override
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
-        if (keyCode == LikingTreadKeyEvent.KEY_NEXT) {//下一步
+        if(keyCode == LikingTreadKeyEvent.KEY_LAST) {
+            if(isSetting) return;
+            postEvent(new SettingNextMessage(0));
+        } else if (keyCode == LikingTreadKeyEvent.KEY_NEXT) {//下一步
             if(isSetting) return;
             postEvent(new SettingNextMessage(2));
         } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {//选中访客模式

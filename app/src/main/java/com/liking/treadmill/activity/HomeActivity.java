@@ -34,6 +34,7 @@ import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
+import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.widget.IToast;
 
 public class HomeActivity extends LikingTreadmillBaseActivity implements UserLoginView {
@@ -186,6 +187,39 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         }
     }
 
+    /**
+     * 绑定成功
+     *
+     * @param message
+     */
+    public void onEvent(GymBindSuccessMessage message) {
+        if(mDelayedHandler != null) {
+            mDelayedHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    launchFragment(new AwaitActionFragment());
+                }
+            },delayedInterval);
+        }
+    }
+
+    /**
+     * 解绑成功
+     *
+     * @param message
+     */
+    public void onEvent(GymUnBindSuccessMessage message) {
+        if(mDelayedHandler != null) {
+            mDelayedHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    SerialPortUtil.setCardNoUnValid();//设置无效卡
+                    SerialPortUtil.getTreadInstance().reset();//清空数据
+                    launchFragment(new StartSettingFragment());
+                }
+            },delayedInterval);
+        }
+    }
 
     @Override
     public void userLogin(String cardno) {

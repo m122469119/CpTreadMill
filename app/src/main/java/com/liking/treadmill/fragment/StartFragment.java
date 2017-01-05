@@ -83,6 +83,10 @@ public class StartFragment extends SerialPortFragment {
                 showSettingUI();
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SET) {//参数设置
+            if(StringUtils.isEmpty(Preference.getBindUserGymId())) {//未绑定场馆
+                IToast.show("场馆未绑定,请联系管理员!");
+                return;
+            }
             ((HomeActivity) getActivity()).launchFragment(new GoalSettingFragment());
         }
     }

@@ -26,8 +26,10 @@ import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.QrCodeMessage;
+import com.liking.treadmill.message.SettingNextMessage;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
+import com.liking.treadmill.treadcontroller.SerialPortUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -173,6 +175,9 @@ public class BindGymFragment extends SerialPortFragment {
                 ((HomeActivity) getActivity()).setTitle("");
                 ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
             }
+        } else if(keyCode == LikingTreadKeyEvent.KEY_LAST) {
+            if(isSetting) return;
+            postEvent(new SettingNextMessage(1));
         }
     }
 
@@ -208,6 +213,7 @@ public class BindGymFragment extends SerialPortFragment {
         bindGymHit.setVisibility(View.INVISIBLE);
         mBindGymHint1.setVisibility(View.INVISIBLE);
         mBindGymHint2.setVisibility(View.INVISIBLE);
+        ((HomeActivity)getActivity()).setTitle("");
         Preference.setQcodeUrl("");
     }
 
@@ -218,19 +224,6 @@ public class BindGymFragment extends SerialPortFragment {
      */
     public void onEvent(GymBindSuccessMessage message) {
         showFinishView();
-        if(homeActivity.mDelayedHandler != null) {
-            homeActivity.mDelayedHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ((HomeActivity)getActivity()).setTitle("");
-                    if(isSetting) {
-                        homeActivity.launchFragment(new SettingFragment());
-                    } else {
-                        homeActivity.launchFragment(new AwaitActionFragment());
-                    }
-                }
-            },homeActivity.delayedInterval);
-        }
     }
 
     /**
@@ -240,15 +233,6 @@ public class BindGymFragment extends SerialPortFragment {
      */
     public void onEvent(GymUnBindSuccessMessage message) {
         showFinishView();
-        if(homeActivity.mDelayedHandler != null) {
-            homeActivity.mDelayedHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ((HomeActivity)getActivity()).setTitle("");
-                    homeActivity.launchFragment(new SettingFragment());
-                }
-            },homeActivity.delayedInterval);
-        }
     }
 
 }
