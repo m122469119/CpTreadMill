@@ -66,8 +66,9 @@ public class BindGymFragment extends SerialPortFragment {
     @BindView(R.id.qrcode_hint3)
     TextView mQrcodeHint3;
 
+    private HomeActivity homeActivity;
     private boolean isBindGym; //是否绑定场馆
-    private boolean isSetting = true; //系统设置进入
+    private boolean isSetting = false; //系统设置进入
 
     @Nullable
     @Override
@@ -97,6 +98,7 @@ public class BindGymFragment extends SerialPortFragment {
     }
 
     private void initData() {
+        homeActivity = (HomeActivity)getActivity();
         Bundle bundle = getArguments();
         if(bundle !=null ) {
             isSetting = bundle.getBoolean(THREADMILL_SYSTEMSETTING, false);
@@ -104,9 +106,9 @@ public class BindGymFragment extends SerialPortFragment {
 
         isBindGym = !StringUtils.isEmpty(Preference.getBindUserGymId());
 
-        HomeActivity homeActivity = (HomeActivity)getActivity();
         if(isBindGym) { //已绑定
             try {
+                LogUtils.d(TAG, "------onUnBind()");
                 if(homeActivity.iBackService != null) {
                     homeActivity.iBackService.unBind();
                 }
@@ -114,22 +116,15 @@ public class BindGymFragment extends SerialPortFragment {
                 e.printStackTrace();
             }
         } else { //未绑定
-            String url = Preference.getQCodeUrl();
-            LogUtils.d(TAG, url);
-            if(!StringUtils.isEmpty(url)) {
-                HImageLoaderSingleton.getInstance().loadImage(mQrcodeImageView, url);
-            } else {
-                try {
-                    if(homeActivity.iBackService != null) {
-                        homeActivity.iBackService.bind();
-                    }
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+            try {
+                LogUtils.d(TAG, "------onBind()");
+                if(homeActivity.iBackService != null) {
+                    homeActivity.iBackService.bind();
                 }
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
         }
-
-
     }
 
     private void initView() {
@@ -171,24 +166,14 @@ public class BindGymFragment extends SerialPortFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        Preference.setQcodeUrl("");
+        super.onDestroyView();
+    }
+
+    @Override
     protected boolean isEventTarget() {
         return true;
-    }
-
-    /**
-     * 绑定成功
-     * @param message
-     */
-    public void onEvent(GymBindSuccessMessage message) {
-        showFinishView();
-    }
-
-    /**
-     * 解绑成功
-     *  @param message
-     */
-    public void onEvent(GymUnBindSuccessMessage message) {
-        showFinishView();
     }
 
     /**
@@ -212,4 +197,45 @@ public class BindGymFragment extends SerialPortFragment {
         bindGymHit.setVisibility(View.INVISIBLE);
         Preference.setQcodeUrl("");
     }
+
+    /**
+     * 绑定成功
+     *
+     * @param message
+     */
+    public void onEvent(GymBindSuccessMessage message) {
+        showFinishView();
+        if(homeActivity.mDelayedHandler != null) {
+            homeActivity.mDelayedHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ((HomeActivity)getActivity()).setTitle("");
+                    if(isSetting) {
+                        homeActivity.launchFragment(new SettingFragment());
+                    } else {
+                        homeActivity.launchFragment(new AwaitActionFragment());
+                    }
+                }
+            },homeActivity.delayedInterval);
+        }
+    }
+
+    /**
+     * 解绑成功
+     *
+     * @param message
+     */
+    public void onEvent(GymUnBindSuccessMessage message) {
+        showFinishView();
+        if(homeActivity.mDelayedHandler != null) {
+            homeActivity.mDelayedHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ((HomeActivity)getActivity()).setTitle("");
+                    homeActivity.launchFragment(new SettingFragment());
+                }
+            },homeActivity.delayedInterval);
+        }
+    }
+
 }

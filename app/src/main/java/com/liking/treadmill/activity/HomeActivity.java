@@ -32,6 +32,7 @@ import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
 import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
+import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
 import com.liking.treadmill.widget.IToast;
 
@@ -45,8 +46,8 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     public IBackService iBackService;
     private Intent mServiceIntent;
 
-    private Handler mDelayedHandler = new Handler();
-    private long delayedInterval = 3000;
+    public Handler mDelayedHandler = new Handler();
+    public long delayedInterval = 3000;
     private boolean isUpdate = false;
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -54,13 +55,13 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             iBackService = IBackService.Stub.asInterface(iBinder);
             LogUtils.d(SocketService.TAG, "service is connected");
-            try {
-                LogUtils.d(SocketService.TAG, "上报设备信息start");
-                // iBackService.reportDevices();
-                iBackService.bind();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                LogUtils.d(SocketService.TAG, "上报设备信息start");
+//                // iBackService.reportDevices();
+//                iBackService.bind();
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
         }
 
         @Override
@@ -83,19 +84,19 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     }
 
     public void launchInit() {
-//        if (Preference.getIsStartingUp()) {  //首次开机
-//            launchFragment(new WelcomeFragment());
-//            mDelayedHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (!isUpdate) {
-//                        launchFragment(new StartSettingFragment());
-//                    }
-//                }
-//            }, delayedInterval);
-//        } else {
+        if (Preference.getIsStartingUp()) {  //首次开机
+            launchFragment(new WelcomeFragment());
+            mDelayedHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (!isUpdate) {
+                        launchFragment(new StartSettingFragment());
+                    }
+                }
+            }, delayedInterval);
+        } else {
             launchFragment(new AwaitActionFragment());
-//        }
+        }
     }
 
     private void initAdViews() {
@@ -141,38 +142,6 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     }
 
     /**
-     * 绑定成功
-     *
-     * @param message
-     */
-    public void onEvent(GymBindSuccessMessage message) {
-        if(mDelayedHandler != null) {
-            mDelayedHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    launchFragment(new AwaitActionFragment());
-                }
-            },delayedInterval);
-        }
-    }
-
-    /**
-     * 解绑成功
-     *
-     * @param message
-     */
-    public void onEvent(GymUnBindSuccessMessage message) {
-        if(mDelayedHandler != null) {
-            mDelayedHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    launchFragment(new SettingFragment());
-                }
-            },delayedInterval);
-        }
-    }
-
-    /**
      * 开启更新
      *
      * @param message
@@ -191,11 +160,11 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     public void onEvent(UpdateCompleteMessage message) {
         LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "Update Complete");
         isUpdate = false;
-//        if (Preference.getIsStartingUp()) {
-//            launchFragment(new StartSettingFragment());
-//        } else {
+        if (Preference.getIsStartingUp()) {
+            launchFragment(new StartSettingFragment());
+        } else {
             launchFragment(new AwaitActionFragment());
-//        }
+        }
     }
 
     /**

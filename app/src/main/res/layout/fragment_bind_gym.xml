@@ -26,7 +26,8 @@
                 android:layout_marginTop="100dp"
                 android:text="STEP 3"
                 android:textColor="@color/white"
-                android:textSize="20sp"/>
+                android:textSize="24sp"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/bind_gym_hint_bind"
