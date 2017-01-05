@@ -1,9 +1,12 @@
 package com.liking.treadmill.fragment;
 
+import android.app.Activity;
 import android.view.View;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.ui.BaseFragment;
+import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.activity.LikingTreadmillBaseActivity;
 import com.liking.treadmill.message.FanStateMessage;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
@@ -24,6 +27,15 @@ public abstract class SerialPortFragment extends BaseFragment implements SerialP
         LogUtils.d(TAG, "------onResume()");
         if (!isInViewPager()) {
             SerialPorManager.getInstance().setSerialPortCallback(this);
+        }
+        Activity activity = getActivity();
+        if(activity instanceof  LikingTreadmillBaseActivity) {
+            LikingTreadmillBaseActivity treadmillBaseActivity = (LikingTreadmillBaseActivity)activity;
+            if(SerialPortUtil.getTreadInstance().getUserInfo() != null) {
+                treadmillBaseActivity.setHeadImageView(SerialPortUtil.getTreadInstance().getUserInfo().mAvatar);
+            } else {
+                treadmillBaseActivity.setHeadImageView("");
+            }
         }
     }
 
