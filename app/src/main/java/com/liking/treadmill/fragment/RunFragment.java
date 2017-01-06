@@ -142,6 +142,7 @@ public class RunFragment extends SerialPortFragment {
     private String totalTarget = "";
     private int THREADMILL_MODE_SELECT = ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START;//启动方式
     private int GOAL_TYPE = 0;//设定目标时的类型
+    private float GOAL_VALUE = 0;
     private int ACHIEVE_TYPE = 0;//设定目标时完成情况
     private PrepareCountdownTime mPrepareCountdownTime;
     private Animation animation;
@@ -177,12 +178,15 @@ public class RunFragment extends SerialPortFragment {
 
             if (totalTime > 0) {
                 GOAL_TYPE = 1;
+                GOAL_VALUE = totalTime;
                 totalTarget = String.valueOf((int) totalTime) + "min";
             } else if (totalKilometre > 0) {
                 GOAL_TYPE = 2;
+                GOAL_VALUE = totalKilometre;
                 totalTarget = StringUtils.getDecimalString(totalKilometre, 1) + "Km";
             } else if (totalKcal > 0) {
                 GOAL_TYPE = 3;
+                GOAL_VALUE = totalKcal;
                 totalTarget = String.valueOf((int) totalKcal) + "Kcal";
             }
             setGoalSttingValue(totalTarget);
@@ -472,7 +476,7 @@ public class RunFragment extends SerialPortFragment {
         if(!Preference.isVisitorMode()) { //非访客模式
             try {
                 //上传锻炼数据
-                ((HomeActivity) getActivity()).iBackService.reportExerciseData(THREADMILL_MODE_SELECT, GOAL_TYPE, ACHIEVE_TYPE);
+                ((HomeActivity) getActivity()).iBackService.reportExerciseData(THREADMILL_MODE_SELECT, GOAL_TYPE, GOAL_VALUE, ACHIEVE_TYPE);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

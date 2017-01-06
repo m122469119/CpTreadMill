@@ -179,7 +179,7 @@ public class SocketHelper {
      * @return
      */
 
-    public static String reportExerciseData(int type, int aimType, int achieve) {
+    public static String reportExerciseData(int type, int aimType, float aim, int achieve) {
         String msgId = SerialPortUtil.getTreadInstance().getCardNo() + new Date().getTime();
         String data = "{\"type\":\"data\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"" + msgId + "\",\"data\":{\"bracelet_id\":\"" + SerialPortUtil.getTreadInstance().getCardNo() + "\"" +
                 ",\"gym_id\":\"" + Preference.getBindUserGymId() + "\",\"device_id\":\"" + SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"" +
@@ -188,6 +188,7 @@ public class SocketHelper {
                 ",\"cal\":\"" + SerialPortUtil.getTreadInstance().getKCAL() + "\"" +
                 ",\"type\":\"" + type + "\"" +
                 ",\"aim_type\":\"" + aimType + "\"" +
+                ",\"aim\":\"" + aim + "\"" +
                 ",\"achieve\":\"" + achieve + "\"" +
                 "}}\\r\\n";
         FileUtils.store(data, ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE + msgId);

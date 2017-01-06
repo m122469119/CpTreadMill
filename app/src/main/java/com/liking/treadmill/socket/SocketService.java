@@ -117,8 +117,8 @@ public class SocketService extends Service {
             sendUpStreamMessage(data);
         }
 
-        public void reportExerciseData(int type, int aimType, int achieve) throws RemoteException {
-            String result = SocketHelper.reportExerciseData(type, aimType, achieve);
+        public void reportExerciseData(int type, int aimType, float aim, int achieve) throws RemoteException {
+            String result = SocketHelper.reportExerciseData(type, aimType, aim, achieve);
             LogUtils.d(SocketService.TAG, "锻炼数据：" + result);
             sendUpStreamMessage(result);
         }
