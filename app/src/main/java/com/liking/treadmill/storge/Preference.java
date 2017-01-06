@@ -304,4 +304,17 @@ public class Preference extends AbsPreference {
         return (boolean) getObject(TREADMILL_SETUP_ISVISITOR, false);
     }
 
+    /**
+     * 解绑后重置操作
+     */
+    public static void setUnBindRest () {
+        Preference.setIsStartingUp(true);
+        Preference.setBindUserGymId("");
+        Preference.setBindUserGymName("");
+        Preference.setMemberList("");
+        Preference.setIsVisitorMode(false);
+        Preference.setStandbyTime(2 * 60);
+        Preference.setMotionParamMaxRunTime(240);
+    }
+
 }

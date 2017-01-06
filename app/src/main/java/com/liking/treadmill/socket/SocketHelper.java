@@ -100,11 +100,8 @@ public class SocketHelper {
                     EventBus.getDefault().post(new GymBindSuccessMessage());
                 }
             }
-        } else if(TYPE_UNBIND.equals(type)) {//解绑场馆
-            Preference.setIsStartingUp(true);
-            Preference.setBindUserGymId("");
-            Preference.setBindUserGymName("");
-            Preference.setMemberList("");
+        } else if(TYPE_UNBIND.equals(type)) {//成功解绑场馆
+            Preference.setUnBindRest();
             EventBus.getDefault().post(new GymUnBindSuccessMessage());
         } else if (TYPE_MEMBER_LIST.equals(type)) {//当前用户所在场馆的所有会员id
             MemberListResult memberListResult = gson.fromJson(jsonText, MemberListResult.class);
