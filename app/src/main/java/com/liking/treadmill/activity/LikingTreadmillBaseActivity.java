@@ -11,9 +11,13 @@ import com.aaron.android.framework.base.ui.actionbar.AppBarActivity;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
 import com.liking.treadmill.R;
+import com.liking.treadmill.message.ToolBarTimeMessage;
 import com.liking.treadmill.message.WifiMessage;
 import com.liking.treadmill.service.ThreadMillService;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +38,7 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
     private ImageView mWifiImageView;
     private ImageView mFanImageView;
     private ImageView mCooldownImageView;
+    private TextView mTimeTextView;
     private TextView mTitleView;
 
     @Override
@@ -55,6 +60,8 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
         mCooldownImageView = (ImageView) customToolBarView.findViewById(R.id.cooldown_imageView);
         mToolbarHeadImageView = (HImageView) customToolBarView.findViewById(R.id.toolbar_head_imageView);
         mTitleView = (TextView) customToolBarView.findViewById(R.id.title_textView);
+        mTimeTextView = (TextView) customToolBarView.findViewById(R.id.time_textView);
+        mTimeTextView.setText(getToolBarTime());
         setCustomToolBar(customToolBarView);
     }
 
@@ -95,12 +102,33 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
         return true;
     }
 
+    /**
+     * wifi状态
+     * @param message
+     */
     public void onEvent(WifiMessage message) {
         if (message != null && message.isHaveWifi()) {
             setHaveWifiView();
         } else {
             setNoWifiView();
         }
+    }
+
+    /**
+     * toolbar时间刷新
+     * @param message
+     */
+    public void onEvent(ToolBarTimeMessage message) {
+        mTimeTextView.setText(getToolBarTime());
+    }
+
+
+    /**
+     * 获取时间
+     * @return
+     */
+    public String getToolBarTime () {
+        return new SimpleDateFormat("HH:mm").format(new Date());
     }
 
     private void setHaveWifiView() {

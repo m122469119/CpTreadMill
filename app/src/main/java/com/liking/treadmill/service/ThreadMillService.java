@@ -11,7 +11,13 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.aaron.android.codelibrary.utils.DateUtils;
+import com.aaron.android.codelibrary.utils.LogUtils;
+import com.liking.treadmill.message.ToolBarTimeMessage;
 import com.liking.treadmill.message.WifiMessage;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import de.greenrobot.event.EventBus;
 
@@ -102,6 +108,7 @@ public class ThreadMillService extends Service{
                     EventBus.getDefault().post(new WifiMessage(false));
                 }
             } else if (action.equals(Intent.ACTION_TIME_TICK)) { //时间广播
+                EventBus.getDefault().post(new ToolBarTimeMessage());
             }
         }
     };
