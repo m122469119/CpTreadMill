@@ -91,10 +91,12 @@ public class SettingFragment extends SerialPortFragment {
         initSettingCard(mSettingItemMap.get(INDEX_NETWORK_CONNECTION), R.string.setting_network_connection, R.drawable.setting_network);
         initSettingCard(mSettingItemMap.get(INDEX_UPDATE), R.string.setting_update, R.drawable.setting_update);
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(ResourceUtils.getString(R.string.threadmill_setting_description_txt));
+        ImageSpan isSpeedLast = new ImageSpan(getActivity(), R.drawable.key_last);
         ImageSpan isSpeedAdd = new ImageSpan(getActivity(), R.drawable.key_next);
         ImageSpan isSpeedCut = new ImageSpan(getActivity(), R.drawable.key_mode);
-        spannableStringBuilder.setSpan(isSpeedAdd, 3, 5, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannableStringBuilder.setSpan(isSpeedCut, 16, 18, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannableStringBuilder.setSpan(isSpeedLast, 3, 5, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannableStringBuilder.setSpan(isSpeedAdd, 6, 8, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannableStringBuilder.setSpan(isSpeedCut, 19, 21, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         mSettingDescriptionTextView.setText(spannableStringBuilder);
         setCurrentSettingItem(INDEX_START);
     }
@@ -134,6 +136,8 @@ public class SettingFragment extends SerialPortFragment {
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
             ((HomeActivity) getActivity()).setTitle("");
             ((HomeActivity) getActivity()).launchFragment(new StartFragment());
+        } else if (keyCode == LikingTreadKeyEvent.KEY_LAST) {
+            selectLast();
         } else if (keyCode == LikingTreadKeyEvent.KEY_NEXT) {
             selectNext();
         } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {
@@ -172,6 +176,12 @@ public class SettingFragment extends SerialPortFragment {
             default:
                 break;
         }
+    }
+
+    private void selectLast() {
+        int currentIndex = mCurrentSelectSettingIndex;
+        currentIndex = currentIndex == INDEX_START ? INDEX_UPDATE : currentIndex - 1;
+        setCurrentSettingItem(currentIndex);
     }
 
     private void selectNext() {

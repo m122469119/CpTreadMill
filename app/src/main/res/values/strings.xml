@@ -45,7 +45,7 @@
     <string name="threadmill_system_update_title_txt">系统版本</string>
     <string name="threadmill_system_update_newest_txt">当前系统已是最新版本</string>
     <string name="threadmill_system_update_operate_txt">点击&#160;&#160;&#160;&#160;返回上一页</string>
-    <string name="threadmill_setting_description_txt">点击&#160;&#160;&#160;&#160;选择设置项，再点击&#160;&#160;&#160;&#160;两次确认选定</string>
+    <string name="threadmill_setting_description_txt">点击&#160;&#160;&#160;&#160;&#160;&#160;&#160;选择设置项，再点击&#160;&#160;&#160;&#160;确认选定</string>
     <string name="setting_start_mode">启动方式</string>
     <string name="setting_await_time">待机时间</string>
     <string name="setting_sport_params">运动参数</string>
