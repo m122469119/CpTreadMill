@@ -126,6 +126,7 @@ public class SettingFragment extends SerialPortFragment {
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
+            ((HomeActivity) getActivity()).setTitle("");
             ((HomeActivity) getActivity()).launchFragment(new StartFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_NEXT) {
             selectNext();
