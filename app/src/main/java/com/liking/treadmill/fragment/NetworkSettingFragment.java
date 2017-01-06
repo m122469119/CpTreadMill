@@ -152,7 +152,7 @@ public class NetworkSettingFragment extends SerialPortFragment {
         } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
             if(isSetting) {
                 ((HomeActivity) getActivity()).setTitle("");
-                ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
+                ((HomeActivity) getActivity()).launchFullFragment(new SettingFragment());
             }
         }
     }

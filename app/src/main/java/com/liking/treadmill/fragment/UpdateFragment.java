@@ -83,7 +83,7 @@ public class UpdateFragment extends SerialPortFragment implements AppUpdateView 
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
             if(!isUpdate) {
                 ((HomeActivity) getActivity()).setTitle("");
-                ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
+                ((HomeActivity) getActivity()).launchFullFragment(new SettingFragment());
             }
         }
     }

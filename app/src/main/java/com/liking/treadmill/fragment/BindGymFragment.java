@@ -173,7 +173,7 @@ public class BindGymFragment extends SerialPortFragment {
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
             if(isSetting) {
                 ((HomeActivity) getActivity()).setTitle("");
-                ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
+                ((HomeActivity) getActivity()).launchFullFragment(new SettingFragment());
             }
         } else if(keyCode == LikingTreadKeyEvent.KEY_LAST) {
             if(isSetting) return;

@@ -15,8 +15,6 @@ import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.fragment.AwaitActionFragment;
-import com.liking.treadmill.fragment.BindGymFragment;
-import com.liking.treadmill.fragment.SettingFragment;
 import com.liking.treadmill.fragment.StartFragment;
 import com.liking.treadmill.fragment.StartSettingFragment;
 import com.liking.treadmill.fragment.UpdateFragment;

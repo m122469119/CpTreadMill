@@ -119,7 +119,7 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
             ((HomeActivity) getActivity()).setTitle("");
-            ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
+            ((HomeActivity) getActivity()).launchFullFragment(new SettingFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {
             int index = mTimeWheelView.getCurrentItem();
             index ++ ;

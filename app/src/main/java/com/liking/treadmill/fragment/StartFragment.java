@@ -97,8 +97,7 @@ public class StartFragment extends SerialPortFragment {
     }
 
     private void showSettingUI() {
-        ((HomeActivity) getActivity()).setTitle("系统设置");
-        ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
+        ((HomeActivity) getActivity()).launchFullFragment(new SettingFragment());
     }
 
     /**

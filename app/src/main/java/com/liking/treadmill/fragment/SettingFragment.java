@@ -74,6 +74,12 @@ public class SettingFragment extends SerialPortFragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((HomeActivity) getActivity()).setTitle("系统设置");
+    }
+
     private void initViews() {
         initSettingViews();
         initSettingCard(mSettingItemMap.get(INDEX_START), R.string.setting_start_mode, R.drawable.setting_start);
@@ -180,6 +186,6 @@ public class SettingFragment extends SerialPortFragment {
     }
 
     public void launchFragment(Fragment fragment) {
-        ((HomeActivity)getActivity()).launchFragment(fragment);
+        ((HomeActivity)getActivity()).launchFullFragment(fragment);
     }
 }

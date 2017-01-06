@@ -93,7 +93,7 @@ public class MotionParamSettingFragment extends SerialPortFragment {
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
             Preference.setMotionParamMaxRunTime(maxRuntime);
             ((HomeActivity) getActivity()).setTitle("");
-            ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
+            ((HomeActivity) getActivity()).launchFullFragment(new SettingFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {
             maxRuntime = maxRuntime + 10;
             mMotionParamValue.setText(String.valueOf(maxRuntime));

@@ -73,11 +73,23 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
 
     @Override
     public void launchFragment(Fragment fragment) {
+        if(mLeftAdImageView.getVisibility() == View.GONE) {
+            mLeftAdImageView.setVisibility(View.VISIBLE);
+        }
+        if(mRightAdImageView.getVisibility() == View.GONE) {
+            mRightAdImageView.setVisibility(View.VISIBLE);
+        }
         launchFragment(R.id.treadmill_container_layout, fragment);
     }
 
     public void launchFullFragment(Fragment fragment) {
-        super.launchFragment(fragment);
+        launchFragment(fragment);
+        if(mLeftAdImageView.getVisibility() == View.VISIBLE) {
+            mLeftAdImageView.setVisibility(View.GONE);
+        }
+        if(mRightAdImageView.getVisibility() == View.VISIBLE) {
+            mRightAdImageView.setVisibility(View.GONE);
+        }
     }
 
     public void setFanViewVisibility(int visibility) {
