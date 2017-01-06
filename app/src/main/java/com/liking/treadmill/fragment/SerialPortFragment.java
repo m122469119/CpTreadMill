@@ -32,9 +32,9 @@ public abstract class SerialPortFragment extends BaseFragment implements SerialP
         if(activity instanceof  LikingTreadmillBaseActivity) {
             LikingTreadmillBaseActivity treadmillBaseActivity = (LikingTreadmillBaseActivity)activity;
             if(SerialPortUtil.getTreadInstance().getUserInfo() != null) {
-                treadmillBaseActivity.setHeadImageView(SerialPortUtil.getTreadInstance().getUserInfo().mAvatar);
+                treadmillBaseActivity.setHeadImageView(SerialPortUtil.getTreadInstance().getUserInfo().mAvatar, true);
             } else {
-                treadmillBaseActivity.setHeadImageView("");
+                treadmillBaseActivity.setHeadImageView("", false);
             }
         }
     }

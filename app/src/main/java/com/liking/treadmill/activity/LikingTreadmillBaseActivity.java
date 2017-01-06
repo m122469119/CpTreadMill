@@ -79,9 +79,9 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
         }
     }
 
-    public void setHeadImageView(String url) {
+    public void setHeadImageView(String url,boolean show) {
         if(mToolbarHeadImageView != null) {
-            if(!StringUtils.isEmpty(url)) {
+            if(show) {
                 mToolbarHeadImageView.setVisibility(View.VISIBLE);
                 HImageLoaderSingleton.getInstance().loadImage(mToolbarHeadImageView, url);
             } else {
