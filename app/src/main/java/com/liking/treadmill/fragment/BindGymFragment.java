@@ -58,8 +58,8 @@ public class BindGymFragment extends SerialPortFragment {
     RelativeLayout mlayoutQrcode;
     @BindView(R.id.bind_gym_hint_skip)
     TextView bindGymHintSkip;
-    @BindView(R.id.bind_gym_hint)
-    TextView bindGymHit;
+//    @BindView(R.id.bind_gym_hint)
+//    TextView bindGymHit;
     @BindView(R.id.network_setting_hint)
     TextView netWorkSettingHint;
 
@@ -146,7 +146,7 @@ public class BindGymFragment extends SerialPortFragment {
             mBindGymHint1.setText("当前未绑定健身房");
             mBindGymHint2.setText("扫码安全登录，进行健身房绑定");
         }
-        bindGymHit.setText("完成" + state + "后，即可完成设置");
+//        bindGymHit.setText("完成" + state + "后，即可完成设置");
 //        mQrcodeHint1.setText("通过手机扫码,安全" + state );
 //        mQrcodeHint2.setText(state + "健身房");
         Spanned h = Html.fromHtml("打开<font color=#25ff8c>手机微信</font><br>扫一扫" + state);
@@ -206,11 +206,10 @@ public class BindGymFragment extends SerialPortFragment {
 
     public void showFinishView() {
         bindGymHintStep.setVisibility(View.INVISIBLE);
-        bindGymHit.setVisibility(View.INVISIBLE);
+//        bindGymHit.setVisibility(View.INVISIBLE);
         bindGymHintBind.setVisibility(View.INVISIBLE);
         mlayoutQrcode.setVisibility(View.INVISIBLE);
         bindGymHintSkip.setVisibility(View.VISIBLE);
-        bindGymHit.setVisibility(View.INVISIBLE);
         mBindGymHint1.setVisibility(View.INVISIBLE);
         mBindGymHint2.setVisibility(View.INVISIBLE);
         ((HomeActivity)getActivity()).setTitle("");
