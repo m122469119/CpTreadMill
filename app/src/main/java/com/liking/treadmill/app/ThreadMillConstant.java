@@ -46,5 +46,5 @@ public class ThreadMillConstant {
     public static final int THREADMILL_MIN_RUNNING_TIME = 0;
 
     //默认待机时间 (120s)
-    public static final int THREADMILL_DEFAULT_SYSTEM_STANBYTIME = 2 * 60;
+    public static final int THREADMILL_DEFAULT_SYSTEM_STANBYTIME = 1 * 60;
 }

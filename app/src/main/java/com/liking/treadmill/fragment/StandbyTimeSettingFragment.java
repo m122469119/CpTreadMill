@@ -59,8 +59,6 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
         PLANETS.add("01");
         PLANETS.add("02");
         PLANETS.add("03");
-        PLANETS.add("04");
-        PLANETS.add("05");
     }
 
     private void initView() {
@@ -73,10 +71,6 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
             mTimeWheelView.setCurrentItem(1);
         } else if(standbyTime == 180) {
             mTimeWheelView.setCurrentItem(2);
-        } else if(standbyTime == 240) {
-            mTimeWheelView.setCurrentItem(3);
-        } else if(standbyTime == 300) {
-            mTimeWheelView.setCurrentItem(4);
         }
         mTimeWheelView.addChangingListener(new OnWheelChangedListener(){
             @Override
@@ -86,10 +80,6 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
                     time = 2;
                 } else if("03".equals(PLANETS.get(newValue))) {
                     time = 3;
-                } else if("04".equals(PLANETS.get(newValue))) {
-                    time = 4;
-                } else if("05".equals(PLANETS.get(newValue))) {
-                    time = 5;
                 }
                 Preference.setStandbyTime(time * 60);
             }

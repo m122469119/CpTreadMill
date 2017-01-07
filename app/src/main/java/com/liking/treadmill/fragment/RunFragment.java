@@ -146,7 +146,6 @@ public class RunFragment extends SerialPortFragment {
     private int ACHIEVE_TYPE = 0;//设定目标时完成情况
     private PrepareCountdownTime mPrepareCountdownTime;
     private Animation animation;
-//    private int countdown = 3;
 
     @Nullable
     @Override
@@ -155,7 +154,7 @@ public class RunFragment extends SerialPortFragment {
         ButterKnife.bind(this, mRootView);
         mTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/Impact.ttf");
         mPrepareCountdownTime = new PrepareCountdownTime(5000,1000);
-        mPauseCountdownTime = new PauseCountdownTime(60000, 1000);
+        mPauseCountdownTime = new PauseCountdownTime(Preference.getStandbyTime() * 1000, 1000);
         initData();
         initPauseView();
         setViewTypeFace();
@@ -298,6 +297,12 @@ public class RunFragment extends SerialPortFragment {
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(completeCountdownTime != null) completeCountdownTime.cancel();
+    }
+
     /**
      * 当前是否在跑步暂停界面
      *
@@ -361,7 +366,6 @@ public class RunFragment extends SerialPortFragment {
     }
 
     private void showSettingUI() {
-        ((HomeActivity) getActivity()).setTitle("系统设置");
         ((HomeActivity) getActivity()).launchFragment(new SettingFragment());
     }
 
@@ -473,7 +477,7 @@ public class RunFragment extends SerialPortFragment {
         mAvergHraetRateTextView.setText(SerialPortUtil.getTreadInstance().getHeartRate() + "");
         showRunResult(SerialPortUtil.getTreadInstance().getRunTime(), totalDistanceKm, SerialPortUtil.getTreadInstance().getKCAL());
 
-        if(!Preference.isVisitorMode()) { //非访客模式
+        if(!SerialPortUtil.getTreadInstance().isVisitor()) { //非访客模式
             try {
                 //上传锻炼数据
                 ((HomeActivity) getActivity()).iBackService.reportExerciseData(THREADMILL_MODE_SELECT, GOAL_TYPE, GOAL_VALUE, ACHIEVE_TYPE);
@@ -542,9 +546,6 @@ public class RunFragment extends SerialPortFragment {
      */
     public void ResetTreadmill() {
         isStart = false;
-        if (completeCountdownTime != null) {
-            completeCountdownTime.cancel();
-        }
         SerialPortUtil.setCardNoUnValid();//设置无效卡
         SerialPortUtil.getTreadInstance().reset();//清空数据
     }
@@ -607,7 +608,7 @@ public class RunFragment extends SerialPortFragment {
         }
 
         //如果为访客模式 超过五分钟结束跑步
-        if(Preference.isVisitorMode()) {
+        if(SerialPortUtil.getTreadInstance().isVisitor()) {
             if(time >= 5 * 60) {
                 SerialPortUtil.stopTreadMill();
                 finishExercise();
@@ -732,7 +733,7 @@ public class RunFragment extends SerialPortFragment {
         setupRunInfoCell(gradeCell, "坡度", R.drawable.icon_run_grade);
         setupRunInfoCell(speedCell, "速度(KM/H)", R.drawable.icon_run_speed);
         setupRunInfoCell(stepNumberCell, "步数", R.drawable.icon_run_step_number);
-        setupRunInfoCell(hotCell, "消耗热量(KCAL)", R.drawable.icon_run_kcal);
+        setupRunInfoCell(hotCell, "消耗卡路里(KCAL)", R.drawable.icon_run_kcal);
         setupRunInfoCell(heartRateCell, "心率(BPM)", R.drawable.icon_run_bpm);
         mGradeInfoTextView.setText("0");
         mSpeedInfoTextView.setText("0");
@@ -784,12 +785,12 @@ public class RunFragment extends SerialPortFragment {
         View consumeKcalView = mRootView.findViewById(R.id.layout_consume_kcal);
         View avergHraetRateView = mRootView.findViewById(R.id.layout_average_heart_rate);
 
-        setupRunFinishData(distanceView, "距离(KM)", 24f, 32f, R.drawable.icon_run_distance);
+        setupRunFinishData(distanceView, "公里(KM)", 24f, 32f, R.drawable.icon_run_distance);
         setupRunFinishData(useTimeView, "用时", 24f, 32f, R.drawable.icon_run_time);
 //        setupRunFinishData(averageGradientView, "平均坡度", 20f, 24f, R.drawable.icon_run_grade);
         setupRunFinishData(avergageSpeedView, "平均配速(KM/H)", 20f, 24f, R.drawable.icon_run_speed);
         setupRunFinishData(totalStepNumberView, "步数", 20f, 24f, R.drawable.icon_run_step_number);
-        setupRunFinishData(consumeKcalView, "消耗热量(KCAL)", 20f, 24f, R.drawable.icon_run_kcal);
+        setupRunFinishData(consumeKcalView, "消耗卡路里(KCAL)", 20f, 24f, R.drawable.icon_run_kcal);
         setupRunFinishData(avergHraetRateView, "平均心率(BPM)", 20f, 24f, R.drawable.icon_run_bpm);
         mRunTimeTextView.setText(DateUtils.formatDate("yyyy-MM-dd HH:mm", new Date()));
 
@@ -881,6 +882,7 @@ public class RunFragment extends SerialPortFragment {
         public void onFinish() {
             ((HomeActivity) getActivity()).setTitle("");
             ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
+
         }
     }
 

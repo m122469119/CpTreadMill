@@ -78,19 +78,19 @@ public class GoalSettingFragment extends SerialPortFragment {
     private int mode_runtime_speed_increment = 1 ;//设置跑步时间 速度以1分钟上下调整
 
     private String mode_runtime_grade_increment_str = "10分钟";
-    private String mode_runtime_speed_increment_str = "1分钟" ;
+    private String mode_runtime_speed_increment_str = "1分钟";
 
     private int mode_kilometre_grade_increment = 1 ;
     private float mode_kilometre_speed_increment = 0.1f;
 
-    private String mode_kilometre_grade_increment_str = "1公里" ;
+    private String mode_kilometre_grade_increment_str = "1公里";
     private String mode_kilometre_speed_increment_str = "0.1公里";
 
     private int mode_kcal_grade_increment = 100 ;
     private int mode_kcal_speed_increment = 10 ;
 
-    private String mode_kcal_grade_increment_str = "100卡路里" ;
-    private String mode_kcal_speed_increment_str = "10卡路里" ;
+    private String mode_kcal_grade_increment_str = "100卡路里";
+    private String mode_kcal_speed_increment_str = "10卡路里";
 
     @Nullable
     @Override
@@ -115,6 +115,7 @@ public class GoalSettingFragment extends SerialPortFragment {
                 showSettingView();
                 restSetting();
             } else {
+                ((HomeActivity) getActivity()).setTitle("");
                 ((HomeActivity) getActivity()).launchFragment(new StartFragment());
             }
         } else if(keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) { //双击mode
@@ -125,7 +126,12 @@ public class GoalSettingFragment extends SerialPortFragment {
                 showModeView();
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {
-
+//            if(isModeSelect) {
+//                //双击MODE 处理
+//                isModeSelect = false;
+//                isModeSetting = true;
+//                showModeView();
+//            }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS  //速度+
                 || keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE //速度-
                 || keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS  //坡度+
@@ -175,7 +181,6 @@ public class GoalSettingFragment extends SerialPortFragment {
     public void onResume() {
         super.onResume();
         LogUtils.d(TAG, "------onResume()");
-        ((HomeActivity)getActivity()).setTitle("设定目标");
     }
 
     @Override
@@ -194,6 +199,7 @@ public class GoalSettingFragment extends SerialPortFragment {
     private void initViews() {
         showSettingView();
         modeSelect();
+        ((HomeActivity)getActivity()).setTitle("设定目标");
     }
 
     private void showView(View view) {

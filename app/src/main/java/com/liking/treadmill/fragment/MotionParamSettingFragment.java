@@ -94,7 +94,7 @@ public class MotionParamSettingFragment extends SerialPortFragment {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
             if(maxRuntime <= 0) {
-                IToast.show("请设置运动参数!");
+                IToast.show("请设置运动参数！");
                 return;
             }
             Preference.setMotionParamMaxRunTime(maxRuntime);

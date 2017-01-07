@@ -139,7 +139,7 @@ public class BindGymFragment extends SerialPortFragment {
         String state = "";
         if(isBindGym) { //已绑定
             state = "解绑";
-            mBindGymHint1.setText("当前绑定健身房:" + Preference.getBindUserGymName());
+            mBindGymHint1.setText("当前绑定健身房：" + Preference.getBindUserGymName());
             mBindGymHint2.setText("通过手机扫码，解除当前绑定健身房");
         } else {
             state = "绑定";

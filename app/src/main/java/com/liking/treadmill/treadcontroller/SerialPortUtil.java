@@ -59,6 +59,8 @@ public class SerialPortUtil {
 
         private boolean isManager;//是否为管理员
 
+        private boolean isVisitor;//是否为访客
+
         private UserInfo mUserInfo;
 
         private String mCardNo;
@@ -69,6 +71,14 @@ public class SerialPortUtil {
 
         public void setManager(boolean manager) {
             isManager = manager;
+        }
+
+        public boolean isVisitor() {
+            return isVisitor;
+        }
+
+        public void setVisitor(boolean visitor) {
+            isVisitor = visitor;
         }
 
         public int isCardIsValid() {
@@ -316,6 +326,7 @@ public class SerialPortUtil {
             mStepNumber = 0;
             mUserInfo = null;
             isManager = false;
+            isVisitor = false;
         }
 
         public static class UserInfo {

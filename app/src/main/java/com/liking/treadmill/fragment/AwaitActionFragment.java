@@ -17,6 +17,7 @@ import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
+import com.liking.treadmill.treadcontroller.SerialPortUtil;
 
 import butterknife.ButterKnife;
 
@@ -72,6 +73,7 @@ public class AwaitActionFragment extends SerialPortFragment {
 
         } else if(keyCode == LikingTreadKeyEvent.KEY_PGR_START) {
             if(Preference.isVisitorMode()) {//访客模式
+                SerialPortUtil.getTreadInstance().setVisitor(true);
                 ((HomeActivity)getActivity()).launchFragment(new RunFragment());
             }
         }
