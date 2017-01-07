@@ -167,6 +167,7 @@ public class GoalSettingFragment extends SerialPortFragment {
     public void onResume() {
         super.onResume();
         LogUtils.d(TAG, "------onResume()");
+        ((HomeActivity)getActivity()).setTitle("设定目标");
     }
 
     @Override
