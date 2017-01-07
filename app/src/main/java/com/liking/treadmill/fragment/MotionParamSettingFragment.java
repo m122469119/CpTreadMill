@@ -14,9 +14,11 @@ import android.widget.TextView;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
+import com.liking.treadmill.widget.IToast;
 import com.liking.treadmill.widget.timewheelview.OnWheelChangedListener;
 import com.liking.treadmill.widget.timewheelview.WheelItemAdapter;
 import com.liking.treadmill.widget.timewheelview.WheelView;
@@ -91,14 +93,18 @@ public class MotionParamSettingFragment extends SerialPortFragment {
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
+            if(maxRuntime <= 0) {
+                IToast.show("请设置运动参数!");
+                return;
+            }
             Preference.setMotionParamMaxRunTime(maxRuntime);
             ((HomeActivity) getActivity()).setTitle("");
             ((HomeActivity) getActivity()).launchFullFragment(new SettingFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {
-            maxRuntime = maxRuntime >= 360 ? maxRuntime : maxRuntime + 10;
+            maxRuntime = maxRuntime >= ThreadMillConstant.THREADMILL_MAX_RUNNING_TIME ? ThreadMillConstant.THREADMILL_MAX_RUNNING_TIME : maxRuntime + 10;
             mMotionParamValue.setText(String.valueOf(maxRuntime));
         } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE) {
-            maxRuntime = maxRuntime <= 0 ? maxRuntime : maxRuntime - 10;
+            maxRuntime = maxRuntime <= ThreadMillConstant.THREADMILL_MIN_RUNNING_TIME ? ThreadMillConstant.THREADMILL_MIN_RUNNING_TIME : maxRuntime - 10;
             mMotionParamValue.setText(String.valueOf(maxRuntime));
         }
     }

@@ -30,7 +30,7 @@
     <string name="goalsetting_step_mode_hint1_part1">通过点击坡度&#160;&#160;&#160;&#160;&#160;&#160;&#160;以</string>
     <string name="goalsetting_step_mode_hint1_part2">上下调整,点击速度&#160;&#160;&#160;&#160;&#160;&#160;&#160;以</string>
     <string name="goalsetting_step_mode_hint1_part3">上下调整</string>
-    <string name="goalsetting_step_mode_hint2">设定完成后点击&#160;&#160;&#160;&#160;开始训练</string>
+    <string name="goalsetting_step_mode_hint2">设定完成后点击&#160;&#160;&#160;&#160;开始锻炼</string>
     <string name="goalsetting_step_mode_hint3">点击&#160;&#160;&#160;&#160;返回上一页重新选择目标</string>
     <string name="run_result_unfinished_txt_hint"><Data><![CDATA[完成目标<font color="#25ff8c"><b>%s</b></font>,下次继续挑战吧!]]></Data></string>
     <string name="run_thread_set_txt">即将为您将%1$s调整为%2$s</string>
@@ -61,4 +61,5 @@
     <string name="threadmill_setup_operate1_txt">点击&#160;&#160;&#160;&#160;选定或取消【访客启动】</string>
     <string name="threadmill_setup_operate2_txt">点击&#160;&#160;&#160;&#160;进入下一步</string>
     <string name="threadmill_bind_gym_operate_txt">点击&#160;&#160;&#160;&#160;返回上一页</string>
+    <string name="threadmill_default_parameter_txt">请设置目标参数!</string>
 </resources>

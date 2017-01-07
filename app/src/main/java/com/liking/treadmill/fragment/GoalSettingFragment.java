@@ -1,14 +1,10 @@
 package com.liking.treadmill.fragment;
 
-import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.SpannedString;
 import android.text.style.ImageSpan;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +19,12 @@ import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.app.ThreadMillConstant;
+import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
-import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.widget.IToast;
 
 import butterknife.ButterKnife;
 
-import static com.liking.treadmill.R.id.step1_mode_text;
 
 /**
  * 说明: 目标设定
@@ -72,9 +67,11 @@ public class GoalSettingFragment extends SerialPortFragment {
     private TextView modeSettingHint2;
     private TextView modeSettingHint3;
 
-    private float totalTime = 30;
-    private float totalKilometre = 5.0f;
-    private float totalKcal = 100;
+    /**默认目标时间不大于最长跑步时间*/
+    private float totalTime = checkMaxValue(ThreadMillConstant.GOALSETTING_DEFAULT_RUNNING_TIME, Preference.getMotionParamMaxRunTime());
+
+    private float totalKilometre = ThreadMillConstant.GOALSETTING_DEFAULT_KILOMETRE;
+    private float totalKcal = ThreadMillConstant.GOALSETTING_DEFAULT_KCAL;
     private String totalTarget = "";
 
     private int mode_runtime_grade_increment = 10 ;//设置跑步时间 坡度以10分钟上下调整
@@ -128,7 +125,12 @@ public class GoalSettingFragment extends SerialPortFragment {
                 showModeView();
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {
-            
+            if(isModeSelect) {
+                //双击MODE 处理
+                isModeSelect = false;
+                isModeSetting = true;
+                showModeView();
+            }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS  //速度+
                 || keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE //速度-
                 || keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS  //坡度+
@@ -141,18 +143,29 @@ public class GoalSettingFragment extends SerialPortFragment {
             if(isModeSetting) {
                 switch (mCurrMode) {
                     case GOAL_SETTING_MODE_RUNTIME:
+                        if (checkGoalSettingValue(totalTime)) return;
                         goToRun(ThreadMillConstant.GOALSETTING_RUNTIME, totalTime);
                         break;
                     case GOAL_SETTING_MODE_KILOMETRE:
+                        if (checkGoalSettingValue(totalKilometre)) return;
                         goToRun(ThreadMillConstant.GOALSETTING_KILOMETRE, totalKilometre);
                         break;
                     case GOAL_SETTING_MODE_KCAL:
+                        if (checkGoalSettingValue(totalKcal)) return;
                         goToRun(ThreadMillConstant.GOALSETTING_KCAL, totalKcal);
                         break;
                 }
                 restSetting();
             }
         }
+    }
+
+    public boolean checkGoalSettingValue(float value) {
+        if(value <= 0.0f) {
+            IToast.show(ResourceUtils.getString(R.string.threadmill_default_parameter_txt));
+            return true;
+        }
+        return false;
     }
 
     public void goToRun(String key, float value) {
@@ -187,16 +200,6 @@ public class GoalSettingFragment extends SerialPortFragment {
         showSettingView();
         modeSelect();
     }
-
-//    private Runnable mRunnable = new Runnable() {
-//        @Override
-//        public void run() {
-//            if(isModeSelect) {
-//                modeSelect();
-//            }
-//            mHandler.postDelayed(mRunnable,1500);
-//        }
-//    };
 
     private void showView(View view) {
         if(mRootView != null && view != null) {
@@ -284,7 +287,7 @@ public class GoalSettingFragment extends SerialPortFragment {
 
     public void setModeView(View view,int iconId, String modename) {
         ImageView modeImg = (ImageView) view.findViewById(R.id.step1_mode_img);
-        TextView modeName = (TextView) view.findViewById(step1_mode_text);
+        TextView modeName = (TextView) view.findViewById(R.id.step1_mode_text);
         modeImg.setImageResource(iconId);
         modeName.setText(modename);
     }
@@ -380,7 +383,7 @@ public class GoalSettingFragment extends SerialPortFragment {
             case GOAL_SETTING_MODE_RUNTIME:
                 switch (keyCode) {
                     case LikingTreadKeyEvent.KEY_SPEED_PLUS:
-                        value = mode_runtime_speed_increment;
+                        value = mode_runtime_speed_increment ;
                         break;
                     case LikingTreadKeyEvent.KEY_SPEED_REDUCE:
                         value = -mode_runtime_speed_increment;
@@ -393,7 +396,10 @@ public class GoalSettingFragment extends SerialPortFragment {
                         break;
                 }
                 totalTime +=value;
-                if(totalTime < 0) totalTime = 0;
+                //是否大于最大值
+                totalTime = checkMaxValue(totalTime, Preference.getMotionParamMaxRunTime());
+                //是否小于最小值
+                totalTime = checkMinValue(totalTime, ThreadMillConstant.GOALSETTING_MIN_RUNNING_TIME);
                 totalTarget = String.valueOf((int)totalTime);
                 break;
             case GOAL_SETTING_MODE_KILOMETRE:
@@ -412,7 +418,7 @@ public class GoalSettingFragment extends SerialPortFragment {
                         break;
                 }
                 totalKilometre += value;
-                if(totalKilometre < 0) totalKilometre = 0;
+                totalKilometre = checkMinValue(totalKilometre, ThreadMillConstant.GOALSETTING_MIN_KILOMETRE);
                 totalTarget = StringUtils.getDecimalString(totalKilometre,1);
                 break;
             case GOAL_SETTING_MODE_KCAL:
@@ -431,7 +437,7 @@ public class GoalSettingFragment extends SerialPortFragment {
                         break;
                 }
                 totalKcal += value;
-                if(totalKcal < 0) totalKcal = 0;
+                totalKcal = checkMinValue(totalKcal, ThreadMillConstant.GOALSETTING_MIN_KCAL);
                 totalTarget = String.valueOf((int) totalKcal);
                 break;
         }
@@ -439,10 +445,26 @@ public class GoalSettingFragment extends SerialPortFragment {
     }
 
     private void restSetting() {
-        totalTime = 30;
-        totalKilometre = 5.0f;
-        totalKcal = 80;
+        totalTime = checkMaxValue(ThreadMillConstant.GOALSETTING_DEFAULT_RUNNING_TIME, Preference.getMotionParamMaxRunTime());
+        totalKilometre = ThreadMillConstant.GOALSETTING_DEFAULT_KILOMETRE;
+        totalKcal = ThreadMillConstant.GOALSETTING_DEFAULT_KCAL;
         totalTarget = "";
+    }
+
+    /**
+     * 验证是否超过最大值
+     * @return
+     */
+    public float checkMaxValue(float value, float max) {
+        return value >= max ? max : value;
+    }
+
+    /**
+     * 验证是否超过最小值
+     * @return
+     */
+    public float checkMinValue(float value, float min) {
+        return value <= min ? min : value;
     }
 
 }

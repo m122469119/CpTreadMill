@@ -7,6 +7,7 @@ import com.aaron.android.framework.base.BaseApplication;
 import com.aaron.android.framework.library.storage.AbsPreference;
 import com.aaron.android.framework.utils.DeviceUtils;
 import com.google.gson.Gson;
+import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.socket.result.MemberListResult;
 
 import java.util.Date;
@@ -268,7 +269,7 @@ public class Preference extends AbsPreference {
      * @return
      */
     public static int getStandbyTime() {
-        return (int) getObject(STANDBY_TIME, 2 * 60);
+        return (int) getObject(STANDBY_TIME, ThreadMillConstant.THREADMILL_DEFAULT_SYSTEM_STANBYTIME);
     }
 
     /**
@@ -284,7 +285,7 @@ public class Preference extends AbsPreference {
      * 获取跑步的最长时间
      */
     public static int getMotionParamMaxRunTime() {
-        return (int) getObject(MOTION_PARAM_MAX_RUNTIME, 240);
+        return (int) getObject(MOTION_PARAM_MAX_RUNTIME, ThreadMillConstant.THREADMILL_DEFAULT_RUNNING_TIME);
     }
 
     /**
@@ -313,8 +314,8 @@ public class Preference extends AbsPreference {
         Preference.setBindUserGymName("");
         Preference.setMemberList("");
         Preference.setIsVisitorMode(false);
-        Preference.setStandbyTime(2 * 60);
-        Preference.setMotionParamMaxRunTime(240);
+        Preference.setStandbyTime(ThreadMillConstant.THREADMILL_DEFAULT_SYSTEM_STANBYTIME);
+        Preference.setMotionParamMaxRunTime(ThreadMillConstant.THREADMILL_DEFAULT_RUNNING_TIME);
     }
 
 }
