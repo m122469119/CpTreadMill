@@ -34,10 +34,10 @@
     <string name="goalsetting_step_mode_hint3">点击&#160;&#160;&#160;&#160;返回上一页重新选择目标</string>
     <string name="run_result_unfinished_txt_hint"><Data><![CDATA[完成目标<font color="#25ff8c"><b>%s</b></font>,下次继续挑战吧!]]></Data></string>
     <string name="run_thread_set_txt">即将为您将%1$s调整为%2$s</string>
-    <string name="threadmill_standby_time_hint_txt">在跑步机未运行（暂停、空跑等）情况下，超过设定时间，跑步机停止运行并返回待机状态</string>
+    <string name="threadmill_standby_time_hint_txt">在跑步机未运行（暂停、空跑等）情况下,超过设定时间,跑步机停止运行并返回待机状态</string>
     <string name="threadmill_standby_time_title_txt">待机时间设置</string>
     <string name="threadmill_standby_time_operate1_txt">点击坡度&#160;&#160;&#160;&#160;&#160;&#160;&#160;设定待机时间</string>
-    <string name="threadmill_standby_time_operate2_txt">设定完成后点击&#160;&#160;&#160;&#160;返回上一页</string>
+    <string name="threadmill_standby_time_operate2_txt">设定完成后,点击&#160;&#160;&#160;&#160;返回上一页</string>
     <string name="start_user_info_txt">您的运动消耗数据会依据您App中的个人数据进行分析</string>
     <string name="threadmill_motion_param_title_txt">运动参数设置</string>
     <string name="threadmill_motion_param_maxtime_txt">设定每次跑步的最长时间</string>
@@ -45,7 +45,7 @@
     <string name="threadmill_system_update_title_txt">系统版本</string>
     <string name="threadmill_system_update_newest_txt">当前系统已是最新版本</string>
     <string name="threadmill_system_update_operate_txt">点击&#160;&#160;&#160;&#160;返回上一页</string>
-    <string name="threadmill_setting_description_txt">点击&#160;&#160;&#160;&#160;&#160;&#160;&#160;选择设置项，再点击&#160;&#160;&#160;&#160;确认选定</string>
+    <string name="threadmill_setting_description_txt">点击&#160;&#160;&#160;&#160;&#160;&#160;&#160;选择设置项,再点击&#160;&#160;&#160;&#160;确认选定</string>
     <string name="setting_start_mode">启动方式</string>
     <string name="setting_await_time">待机时间</string>
     <string name="setting_sport_params">运动参数</string>
@@ -54,10 +54,10 @@
     <string name="setting_network_connection">网络连接</string>
     <string name="setting_update">系统更新</string>
     <string name="setting_language">语言</string>
-    <string name="run_attainment_target_upcoming">再%s就达成目标了，加油！</string>
+    <string name="run_attainment_target_upcoming">再%s就达成目标了,加油！</string>
     <string name="threadmill_network_setting_operate_txt">点击&#160;&#160;&#160;&#160;进入下一步</string>
     <string name="threadmill_network_setting_non_net_operate1_txt">请检查网线是否插好</string>
-    <string name="threadmill_network_setting_non_net_operate2_txt">跑步机连接网络，才能刷卡启动跑步机及同步运动数据，并为跑步机系统检查更新</string>
+    <string name="threadmill_network_setting_non_net_operate2_txt">跑步机连接网络,才能刷卡启动跑步机及同步运动数据,并为跑步机系统检查更新</string>
     <string name="threadmill_setup_operate1_txt">点击&#160;&#160;&#160;&#160;选定或取消【访客启动】</string>
     <string name="threadmill_setup_operate2_txt">点击&#160;&#160;&#160;&#160;进入下一步</string>
     <string name="threadmill_bind_gym_operate_txt">点击&#160;&#160;&#160;&#160;返回上一页</string>

@@ -104,7 +104,7 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
 
         SpannableStringBuilder ssbh2 = new SpannableStringBuilder(ResourceUtils.getString(R.string.threadmill_standby_time_operate2_txt));
         ImageSpan imageSpanBack = new ImageSpan(getActivity(), R.drawable.key_back);
-        ssbh2.setSpan(imageSpanBack, 8, 10, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        ssbh2.setSpan(imageSpanBack, 9, 11, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         mHint2TextView.setText(ssbh2);
     }
 

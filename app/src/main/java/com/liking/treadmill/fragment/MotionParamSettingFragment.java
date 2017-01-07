@@ -77,7 +77,7 @@ public class MotionParamSettingFragment extends SerialPortFragment {
 
         SpannableStringBuilder ssbh2 = new SpannableStringBuilder(ResourceUtils.getString(R.string.threadmill_standby_time_operate2_txt));
         ImageSpan imageSpanBack = new ImageSpan(getActivity(), R.drawable.key_back);
-        ssbh2.setSpan(imageSpanBack, 8, 10, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        ssbh2.setSpan(imageSpanBack, 9, 11, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         mHint2TextView.setText(ssbh2);
     }
 
@@ -95,13 +95,10 @@ public class MotionParamSettingFragment extends SerialPortFragment {
             ((HomeActivity) getActivity()).setTitle("");
             ((HomeActivity) getActivity()).launchFullFragment(new SettingFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {
-            maxRuntime = maxRuntime + 10;
+            maxRuntime = maxRuntime >= 360 ? maxRuntime : maxRuntime + 10;
             mMotionParamValue.setText(String.valueOf(maxRuntime));
         } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE) {
-            maxRuntime = maxRuntime - 10;
-            if(maxRuntime < 0) {
-                maxRuntime = 0;
-            }
+            maxRuntime = maxRuntime <= 0 ? maxRuntime : maxRuntime - 10;
             mMotionParamValue.setText(String.valueOf(maxRuntime));
         }
     }
