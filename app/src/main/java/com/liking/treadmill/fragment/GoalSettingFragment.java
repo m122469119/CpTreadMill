@@ -74,7 +74,7 @@ public class GoalSettingFragment extends SerialPortFragment {
 
     private float totalTime = 30;
     private float totalKilometre = 5.0f;
-    private float totalKcal = 80;
+    private float totalKcal = 100;
     private String totalTarget = "";
 
     private int mode_runtime_grade_increment = 10 ;//设置跑步时间 坡度以10分钟上下调整
