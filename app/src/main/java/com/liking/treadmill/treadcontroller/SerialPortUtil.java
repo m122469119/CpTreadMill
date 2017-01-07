@@ -49,7 +49,7 @@ public class SerialPortUtil {
         private int mVersion;
         private int mIcId;
         private int mStepCount;
-        private int mFanState;
+        private int mFanState = FanState.FAN_STATE_STOP;
         private float mDistance;
         private float mKCAL; //卡路里
         private int mTreadmillState;
