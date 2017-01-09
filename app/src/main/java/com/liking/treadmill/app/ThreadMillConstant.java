@@ -47,7 +47,7 @@ public class ThreadMillConstant {
     //最大跑步时间上限 (360min)
     public static final int THREADMILL_MAX_RUNNING_TIME = 360;
     //最小跑步时间
-    public static final int THREADMILL_MIN_RUNNING_TIME = 10;
+    public static final int THREADMILL_MIN_RUNNING_TIME = 120;
 
     //默认待机时间 (120s)
     public static final int THREADMILL_DEFAULT_SYSTEM_STANBYTIME = 1 * 60;
