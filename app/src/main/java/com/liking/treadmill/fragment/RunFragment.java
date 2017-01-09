@@ -146,6 +146,8 @@ public class RunFragment extends SerialPortFragment {
     private int ACHIEVE_TYPE = 0;//设定目标时完成情况
     private PrepareCountdownTime mPrepareCountdownTime;
     private Animation animation;
+    private int mCurrStepNumber = -1;//当前步数
+    private long mRunlastTime;
 
     @Nullable
     @Override
@@ -585,10 +587,12 @@ public class RunFragment extends SerialPortFragment {
      * 验证跑步结果
      */
     public void checkRunResult(float time, float distance, float kcal) {
+
         if(time >= maxTotalTime * 60) { //超过跑步的最长时间
             SerialPortUtil.stopTreadMill();
             finishExercise();
         }
+
         if(totalTime > 0 && time >= (totalTime * 60)
          ||totalKilometre > 0 && distance >= totalKilometre
          ||totalKcal > 0 && kcal >= totalKcal) {
@@ -613,6 +617,13 @@ public class RunFragment extends SerialPortFragment {
                 SerialPortUtil.stopTreadMill();
                 finishExercise();
             }
+        }
+
+        //判断是否空跑
+        if(!checkUserIsRunning()) {
+//            IToast.show("空跑...");
+            SerialPortUtil.stopTreadMill();
+            finishExercise();
         }
     }
 
@@ -887,7 +898,7 @@ public class RunFragment extends SerialPortFragment {
     }
 
     /**
-     * 3s 准备
+     * 倒计时 3s 准备
      */
     class PrepareCountdownTime extends CountDownTimer {
 
@@ -921,5 +932,21 @@ public class RunFragment extends SerialPortFragment {
         animation.setFillAfter(true);
         animation.setRepeatCount(1);
         mPrepareCountDownTextView.startAnimation(animation);
+    }
+
+    /**
+     * 判断用户是否空跑
+     */
+    public boolean checkUserIsRunning() {
+        int stepNumber = SerialPortUtil.getTreadInstance().getStepNumber();
+        long currentTime = System.currentTimeMillis();
+        boolean isRun = true;
+        if (mCurrStepNumber != stepNumber) {
+            mCurrStepNumber = stepNumber;
+            mRunlastTime = currentTime;
+        }  else if (mCurrStepNumber == stepNumber && currentTime - mRunlastTime > Preference.getStandbyTime() * 1000) {
+            isRun = false;
+        }
+        return isRun;
     }
 }
