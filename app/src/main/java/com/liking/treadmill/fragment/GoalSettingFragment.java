@@ -419,6 +419,7 @@ public class GoalSettingFragment extends SerialPortFragment {
                         break;
                 }
                 totalKilometre += value;
+                totalKilometre = checkMaxValue(totalKilometre, ThreadMillConstant.GOALSETTING_MAX_KILOMETRE);
                 totalKilometre = checkMinValue(totalKilometre, ThreadMillConstant.GOALSETTING_MIN_KILOMETRE);
                 totalTarget = StringUtils.getDecimalString(totalKilometre,1);
                 break;
@@ -438,6 +439,7 @@ public class GoalSettingFragment extends SerialPortFragment {
                         break;
                 }
                 totalKcal += value;
+                totalKcal = checkMaxValue(totalKcal, ThreadMillConstant.GOALSETTING_MAX_KCAL);
                 totalKcal = checkMinValue(totalKcal, ThreadMillConstant.GOALSETTING_MIN_KCAL);
                 totalTarget = String.valueOf((int) totalKcal);
                 break;
