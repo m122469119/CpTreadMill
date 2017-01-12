@@ -34,7 +34,6 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
     HImageView mLeftAdImageView;
     @BindView(R.id.right_ad_imageView)
     HImageView mRightAdImageView;
-    private HImageView mToolbarHeadImageView;
     private ImageView mWifiImageView;
     private ImageView mFanImageView;
     private ImageView mCooldownImageView;
@@ -58,7 +57,6 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
         mWifiImageView.setImageResource(drawStateId);
         mFanImageView = (ImageView) customToolBarView.findViewById(R.id.fan_imageView);
         mCooldownImageView = (ImageView) customToolBarView.findViewById(R.id.cooldown_imageView);
-        mToolbarHeadImageView = (HImageView) customToolBarView.findViewById(R.id.toolbar_head_imageView);
         mTitleView = (TextView) customToolBarView.findViewById(R.id.title_textView);
         mTimeTextView = (TextView) customToolBarView.findViewById(R.id.time_textView);
         mTimeTextView.setText(getToolBarTime());
@@ -95,17 +93,6 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
     public void setFanViewVisibility(int visibility) {
         if (mFanImageView != null) {
             mFanImageView.setVisibility(visibility);
-        }
-    }
-
-    public void setHeadImageView(String url,boolean show) {
-        if(mToolbarHeadImageView != null) {
-            if(show) {
-                mToolbarHeadImageView.setVisibility(View.VISIBLE);
-                HImageLoaderSingleton.getInstance().loadImage(mToolbarHeadImageView, url);
-            } else {
-                mToolbarHeadImageView.setVisibility(View.GONE);
-            }
         }
     }
 

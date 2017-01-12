@@ -80,8 +80,7 @@
                 android:paddingTop="@dimen/spacing_8dp"
                 android:text="@string/threadmill_system_update_newest_txt"
                 android:textColor="@color/white"
-                android:textSize="@dimen/textsize_24sp"
-                android:textStyle="bold"/>
+                android:textSize="@dimen/textsize_20sp"/>
         </LinearLayout>
     </FrameLayout>
 

@@ -81,20 +81,6 @@
                 android:layout_toLeftOf="@id/fan_imageView"
                 android:src="@drawable/main_cooldown"/>
 
-            <com.aaron.android.framework.library.imageloader.HImageView
-                android:id="@+id/toolbar_head_imageView"
-                android:layout_width="@dimen/main_toolbar_icon_size"
-                android:layout_height="@dimen/main_toolbar_icon_size"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="-8dp"
-                android:layout_toLeftOf="@id/cooldown_imageView"
-                fresco:failureImage="@drawable/icon_head_default"
-                fresco:failureImageScaleType="centerCrop"
-                fresco:placeholderImage="@drawable/icon_head_default"
-                fresco:placeholderImageScaleType="centerCrop"
-                fresco:roundAsCircle="true"/>
-
-
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 </android.support.design.widget.AppBarLayout>
