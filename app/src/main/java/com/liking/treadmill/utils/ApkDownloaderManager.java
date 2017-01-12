@@ -30,10 +30,8 @@ public class ApkDownloaderManager {
 
     public void downloadFile(String downloadUrl, String downloadPath) {
         LogUtils.d("socket", "FileDownloaderManager");
-        if(!Preference.getDownloadAppFile()){
-            registerDownloadNewApkBroadcast();
-            startDownloadApk(downloadUrl, downloadPath);
-        }
+        registerDownloadNewApkBroadcast();
+        startDownloadApk(downloadUrl, downloadPath);
     }
 
     private void startDownloadApk(String downloadUrl, String downloadPath) {
