@@ -302,6 +302,7 @@ public class RunFragment extends SerialPortFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        destroyPauseCountTime();
         if(completeCountdownTime != null) completeCountdownTime.cancel();
     }
 
@@ -360,11 +361,12 @@ public class RunFragment extends SerialPortFragment {
     private void pauseTreadmill() {
         startPauseCountTime();
         isPause = true;
+        LogUtils.e("zanting","----zanting-----");
+        SerialPortUtil.stopTreadMill();//暂停命令
         mPauseLayout.setVisibility(View.VISIBLE);
         mLayoutRun.setVisibility(View.GONE);
         mFinishLayout.setVisibility(View.GONE);
         mSettingLayout.setVisibility(View.GONE);
-        SerialPortUtil.stopTreadMill();//暂停命令
     }
 
     private void showSettingUI() {
@@ -548,7 +550,6 @@ public class RunFragment extends SerialPortFragment {
      */
     public void ResetTreadmill() {
         isStart = false;
-        SerialPortUtil.setCardNoUnValid();//设置无效卡
         SerialPortUtil.getTreadInstance().reset();//清空数据
     }
 
@@ -723,7 +724,7 @@ public class RunFragment extends SerialPortFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        destroyPauseCountTime();
+//        destroyPauseCountTime();
     }
 
     private void initViews() {

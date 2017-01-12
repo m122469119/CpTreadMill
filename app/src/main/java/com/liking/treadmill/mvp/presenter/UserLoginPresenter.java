@@ -114,7 +114,6 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
     }
 
     public void userLoginFail() {
-        SerialPortUtil.setCardNoUnValid();
         SerialPortUtil.getTreadInstance().reset();
         if(mView != null) {
             mView.userLoginFail();

@@ -211,7 +211,6 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             mDelayedHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    SerialPortUtil.setCardNoUnValid();//设置无效卡
                     SerialPortUtil.getTreadInstance().reset();//清空数据
                     launchFragment(new StartSettingFragment());
                 }

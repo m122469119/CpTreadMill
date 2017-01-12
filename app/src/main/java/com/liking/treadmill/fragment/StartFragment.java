@@ -66,7 +66,6 @@ public class StartFragment extends SerialPortFragment {
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
-            SerialPortUtil.setCardNoUnValid();//设置无效卡
             SerialPortUtil.getTreadInstance().reset();//清空数据
             ((HomeActivity) getActivity()).setTitle("");
             ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
