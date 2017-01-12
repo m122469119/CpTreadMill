@@ -590,7 +590,6 @@ public class RunFragment extends SerialPortFragment {
     public void checkRunResult(float time, float distance, float kcal) {
 
         if(time >= maxTotalTime * 60) { //超过跑步的最长时间
-            SerialPortUtil.stopTreadMill();
             finishExercise();
         }
 
@@ -615,7 +614,6 @@ public class RunFragment extends SerialPortFragment {
         //如果为访客模式 超过五分钟结束跑步
         if(SerialPortUtil.getTreadInstance().isVisitor()) {
             if(time >= 5 * 60) {
-                SerialPortUtil.stopTreadMill();
                 finishExercise();
             }
         }
@@ -623,7 +621,6 @@ public class RunFragment extends SerialPortFragment {
         //判断是否空跑
         if(!checkUserIsRunning()) {
 //            IToast.show("空跑...");
-            SerialPortUtil.stopTreadMill();
             finishExercise();
         }
     }
