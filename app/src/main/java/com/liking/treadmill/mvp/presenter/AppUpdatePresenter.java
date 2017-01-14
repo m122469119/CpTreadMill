@@ -38,8 +38,6 @@ public class AppUpdatePresenter extends BasePresenter<AppUpdateView> {
             if(mView != null) {
                 mView.updateFailView();
             }
-        } else {
-            mView.updateFailView();
         }
     }
 

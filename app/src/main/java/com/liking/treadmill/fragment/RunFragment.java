@@ -489,7 +489,7 @@ public class RunFragment extends SerialPortFragment {
                 e.printStackTrace();
             }
         }
-        completeCountdownTime = new CompleteCountdownTime(Preference.getStandbyTime() * 1000, 1000);
+        completeCountdownTime = new CompleteCountdownTime(12 * 1000, 1000);
         completeCountdownTime.start();
         ResetTreadmill();
     }
@@ -874,7 +874,7 @@ public class RunFragment extends SerialPortFragment {
     }
 
     /**
-     * 120s 结束页面  倒计时结束
+     * 10s 结束页面  倒计时结束
      */
     class CompleteCountdownTime extends CountDownTimer {
 

@@ -559,9 +559,10 @@ public class SerialPortUtil {
      */
     public static void stopTreadMill() {
         byte[] bytes = getControlBuffer();
+        bytes[1] = (byte) (0 & 0xFF);
         bytes[6] = BYTE_TREADMILL_STOP;
+        SerialPorManager.getInstance().sendMessage(bytes);
         sTreadData.setTreadmillState(BYTE_TREADMILL_STOP);
-        setSpeedInRunning(0);
     }
 
     /**
