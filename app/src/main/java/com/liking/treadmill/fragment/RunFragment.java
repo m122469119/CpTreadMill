@@ -9,7 +9,10 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,8 @@ import android.widget.TextView;
 import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
+import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
+import com.aaron.android.framework.library.imageloader.HImageView;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
@@ -73,12 +78,18 @@ public class RunFragment extends SerialPortFragment {
     @BindView(R.id.layout_pause)
     LinearLayout mPauseLayout;
 
+    @BindView(R.id.user_head_imageView)
+    HImageView mUserHeadImageView;
+    @BindView(R.id.user_name_TextView)
+    TextView mUserNameTextView;
     @BindView(R.id.layout_finish)
     RelativeLayout mFinishLayout;
     @BindView(R.id.this_run_finish_prompt)
     TextView mRunFinishPromptextView;
     @BindView(R.id.run_time_TextView)
     TextView mRunTimeTextView;
+    @BindView(R.id.run_finish_hint)
+    TextView mFinishHintTextView;
 
     @BindView(R.id.run_finish_ImageView)
     ImageView mRunCompleteImg;
@@ -345,6 +356,7 @@ public class RunFragment extends SerialPortFragment {
      * 开始跑步
      */
     public void startTreadMill(int speed, int grade) {
+        LogUtils.e(TAG,"speed : " + speed + ";;;grade : " + grade);
         SerialPortUtil.startTreadMill(speed, grade);
         isPause = false;
         destroyPauseCountTime();
@@ -378,9 +390,11 @@ public class RunFragment extends SerialPortFragment {
      */
     private void finishExercise() {
         destroyPauseCountTime();
+        destroyPrepareCountTime();
         isFinish = true;
         isPause = true;
         SerialPortUtil.stopTreadMill();
+        mPrepareLayout.setVisibility(View.GONE);
         mPauseLayout.setVisibility(View.GONE);
         mLayoutRun.setVisibility(View.GONE);
         mFinishLayout.setVisibility(View.VISIBLE);
@@ -491,6 +505,7 @@ public class RunFragment extends SerialPortFragment {
         }
         //安全锁打开时,会清除所有数据
         if(runTime == 0 || totalDistanceKm == 0.0f || kcal == 0.0f) {
+            LogUtils.e(TAG, "数据被清除.....");
             showRunResult(mCurrRunTime, mCurrKmDistance , mCurrKcal);
         } else {
             showRunResult(SerialPortUtil.getTreadInstance().getRunTime(), totalDistanceKm, SerialPortUtil.getTreadInstance().getKCAL());
@@ -536,28 +551,35 @@ public class RunFragment extends SerialPortFragment {
      */
     public void showfinishedView(float percentage) {
         if(percentage == -1) {
-            mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.c25ff8c));
+//            mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.c25ff8c));
             mRunFinishPromptextView.setText(ResourceUtils.getString(R.string.this_run_finish));
         } else if (percentage < 1) {
             int percent = Math.round(percentage * 100);
             mRunCompleteImg.setVisibility(View.GONE);
-            mRunTimeTextView.setVisibility(View.GONE);
             mRunProgressLayout.setVisibility(View.VISIBLE);
             mRunProgressView.setPercent(percent);
             String percents = percent + "%";
             mRunPrgressValue.setText(percents);
-            String promp = String.format(ResourceUtils.getString(R.string.run_result_unfinished_txt_hint),percents);
-            mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.white));
-            mRunFinishPromptextView.setText(Html.fromHtml(promp));
+//            String promp = String.format(ResourceUtils.getString(R.string.run_result_unfinished_txt_hint),percents);
+//            mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.white));
+//            Html.fromHtml(promp)
+            mRunFinishPromptextView.setText(ResourceUtils.getString(R.string.run_result_unfinished_txt_hint));
         } else  {
             ACHIEVE_TYPE = 1;
             mRunProgressLayout.setVisibility(View.GONE);
             mRunCompleteImg.setVisibility(View.VISIBLE);
-            mRunTimeTextView.setVisibility(View.VISIBLE);
-            mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.c25ff8c));
+//            mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.c25ff8c));
             mRunFinishPromptextView.setText(ResourceUtils.getString(R.string.this_run_attainment_target));
-            mRunTimeTextView.setText(DateUtils.formatDate("yyyy-MM-dd HH:mm", new Date()));
+            mRunTimeTextView.setText(DateUtils.formatDate("MM-dd HH:mm", new Date()));
         }
+        if (SerialPortUtil.getTreadInstance().getUserInfo() != null) {
+            mUserNameTextView.setText(SerialPortUtil.getTreadInstance().getUserInfo().mUserName);
+            HImageLoaderSingleton.getInstance().loadImage(mUserHeadImageView, SerialPortUtil.getTreadInstance().getUserInfo().mAvatar);
+        }
+        SpannableStringBuilder ssbh = new SpannableStringBuilder(ResourceUtils.getString(R.string.threadmill_run_complete_hint));
+        ImageSpan imageSpanBack = new ImageSpan(getActivity(), R.drawable.key_back);
+        ssbh.setSpan(imageSpanBack, 3, 5, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        mFinishHintTextView.setText(ssbh);
     }
 
 
@@ -699,6 +721,16 @@ public class RunFragment extends SerialPortFragment {
 
     }
 
+    /**
+     * 销毁动画倒计时
+     */
+    private void destroyPrepareCountTime() {
+        if (mPrepareCountdownTime != null) {
+            mPrepareCountdownTime.cancel();
+        }
+
+    }
+
     @Override
     public void handleTreadData(SerialPortUtil.TreadData treadData) {
         super.handleTreadData(treadData);
@@ -831,7 +863,7 @@ public class RunFragment extends SerialPortFragment {
         setupRunFinishData(totalStepNumberView, "步数", 20f, 24f, R.drawable.icon_run_step_number);
         setupRunFinishData(consumeKcalView, "消耗卡路里(KCAL)", 20f, 24f, R.drawable.icon_run_kcal);
         setupRunFinishData(avergHraetRateView, "平均心率(BPM)", 20f, 24f, R.drawable.icon_run_bpm);
-        mRunTimeTextView.setText(DateUtils.formatDate("yyyy-MM-dd HH:mm", new Date()));
+        mRunTimeTextView.setText(DateUtils.formatDate("MM-dd HH:mm", new Date()));
 
         mDistanceTextView.setText("0");
         mUseTimeTextView.setText("0");
@@ -948,9 +980,11 @@ public class RunFragment extends SerialPortFragment {
 
         @Override
         public void onFinish() {
-            mPrepareCountdownTime.cancel();
+            destroyPrepareCountTime();
             mPrepareCountdownTime = null;
-            RunFragment.this.start();
+            if(!isFinish) {
+                RunFragment.this.start();
+            }
             mPrepareLayout.setVisibility(View.GONE);
         }
     }

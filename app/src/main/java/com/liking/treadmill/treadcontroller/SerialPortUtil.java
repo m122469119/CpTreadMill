@@ -508,7 +508,7 @@ public class SerialPortUtil {
      * @param speed
      */
     public static void setSpeedInRunning(int speed) {
-        if (speed >= 0 && speed <= 200) {
+        if (speed > 0 && speed <= 200) {
             byte[] bytes = getControlBuffer();
             bytes[1] = (byte) (speed & 0xFF);
             bytes[6] = BYTE_TREADMILL_RUNNING;
@@ -523,7 +523,7 @@ public class SerialPortUtil {
      * @param grade
      */
     public static void setGradeInRunning(int grade) {
-        if (grade >= 0 && grade <= 25) {
+        if (grade > 0 && grade <= 25) {
             byte[] bytes = getControlBuffer();
             bytes[2] = (byte) grade;
             bytes[6] = BYTE_TREADMILL_RUNNING;
