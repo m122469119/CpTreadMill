@@ -416,8 +416,8 @@ public class SerialPortUtil {
     }
 
     public final static class SaveLock {
-        public final static String SAVE_LOCK_CLOSE = "00";
-        public final static String SAVE_LOCK_OPEN = "01";
+        public final static int SAVE_LOCK_CLOSE = 0x00;
+        public final static int SAVE_LOCK_OPEN = 0x01;
     }
 
     public final static class OilPump {
@@ -492,7 +492,7 @@ public class SerialPortUtil {
     private final static int BYTE_NONE = 0x00;
     private final static int BTYE_CONTROL = (byte) 0xE2;
 
-    private final static int BYTE_TREADMILL_STOP = 0x00;
+    public final static int BYTE_TREADMILL_STOP = 0x00;
     private final static int BYTE_TREADMILL_START = 0x01;
     private final static int BYTE_TREADMILL_RUNNING = 0x02;
 

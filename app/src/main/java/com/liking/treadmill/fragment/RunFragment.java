@@ -1,6 +1,5 @@
 package com.liking.treadmill.fragment;
 
-import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -41,7 +40,6 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.R.attr.animation;
 
 /**
  * Created on 16/12/15.
@@ -117,11 +115,8 @@ public class RunFragment extends SerialPortFragment {
     private int mSpeed = 0;
     private int mGrade = 0;
 
-//    private int totalGrade; //总坡度
-
     private TextView mDistanceTextView;//距离
     private TextView mUseTimeTextView; //用时
-//    private TextView mAverageGradientTextView; //平均坡度
     private TextView mAvergageSpeedTextView;   //平均速度
     private TextView mTotalStepNumberTextView; //总步数
     private TextView mConsumeKcalTextView;    //消耗热量
@@ -133,6 +128,7 @@ public class RunFragment extends SerialPortFragment {
     private boolean isPause;//是否暂停
     private long currentDateSecond;//当前时间
     private volatile boolean isStart = false; //跑步机是否计数
+    private volatile boolean isFinish = false; //跑步机结束
 
     private boolean isTargetCmp = false;
     private float maxTotalTime;  //系统设置的最长跑步时间 /min
@@ -148,6 +144,10 @@ public class RunFragment extends SerialPortFragment {
     private Animation animation;
     private int mCurrStepNumber = -1;//当前步数
     private long mRunlastTime;
+
+    private float mCurrKmDistance ;//当前已跑总距离
+    private int mCurrRunTime;//当前已跑总时间
+    private float mCurrKcal;//当前消耗总卡路里
 
     @Nullable
     @Override
@@ -374,10 +374,11 @@ public class RunFragment extends SerialPortFragment {
     }
 
     /**
-     * 结束锻炼
+     *  结束锻炼
      */
     private void finishExercise() {
         destroyPauseCountTime();
+        isFinish = true;
         isPause = true;
         SerialPortUtil.stopTreadMill();
         mPauseLayout.setVisibility(View.GONE);
@@ -457,29 +458,44 @@ public class RunFragment extends SerialPortFragment {
     private void statisticsRunData() {
         SerialPortUtil.TreadData TreadData = SerialPortUtil.getTreadInstance();
         //用时
-        String userTime = RunTimeUtil.secToTime(SerialPortUtil.getTreadInstance().getRunTime());
-        mUseTimeTextView.setText(userTime);
+        int runTime = SerialPortUtil.getTreadInstance().getRunTime();
+        if(runTime != 0) {
+            String userTime = RunTimeUtil.secToTime(runTime);
+            mUseTimeTextView.setText(userTime);
+        }
         float totalDistance = TreadData.getDistance();//米
         float totalDistanceKm = getKmDistance(totalDistance);
         //总距离
-        mDistanceTextView.setText(StringUtils.getDecimalString(totalDistanceKm, 2));
-        //平均坡度
-//        if (totalGrade > 0) {
-//            float averagerGrade = totalGrade / SerialPortUtil.getTreadInstance().getRunTime();
-//            mAverageGradientTextView.setText(StringUtils.getDecimalString(averagerGrade, 2));
-//        }
+        if(totalDistanceKm > 0.0f) {
+            mDistanceTextView.setText(StringUtils.getDecimalString(totalDistanceKm, 2));
+        }
         //平均速度
-        if (totalDistance > 0) {
+        if (totalDistance > 0.0f) {
             float h = (float) (SerialPortUtil.getTreadInstance().getRunTime() / 3600.0);
             float avergageSpeed = totalDistanceKm / h;
             mAvergageSpeedTextView.setText(StringUtils.getDecimalString(avergageSpeed, 2));
         }
-        mTotalStepNumberTextView.setText(String.valueOf(SerialPortUtil.getTreadInstance().getStepNumber()));
+        int stepNumber = SerialPortUtil.getTreadInstance().getStepNumber();
+        if(stepNumber != 0) {
+            mTotalStepNumberTextView.setText(String.valueOf(stepNumber));
+        }
         //消耗热量
-        mConsumeKcalTextView.setText(StringUtils.getDecimalString(SerialPortUtil.getTreadInstance().getKCAL(), 2));
+        float kcal = SerialPortUtil.getTreadInstance().getKCAL();
+        if(kcal > 0.0f) {
+            mConsumeKcalTextView.setText(StringUtils.getDecimalString(kcal, 2));
+        }
         //平均心率
-        mAvergHraetRateTextView.setText(SerialPortUtil.getTreadInstance().getHeartRate() + "");
-        showRunResult(SerialPortUtil.getTreadInstance().getRunTime(), totalDistanceKm, SerialPortUtil.getTreadInstance().getKCAL());
+        int heartRate = SerialPortUtil.getTreadInstance().getHeartRate();
+        if(heartRate != 0) {
+            mAvergHraetRateTextView.setText(heartRate + "");
+        }
+        //安全锁打开时,会清除所有数据
+        if(runTime == 0 || totalDistanceKm == 0.0f || kcal == 0.0f) {
+            showRunResult(mCurrRunTime, mCurrKmDistance , mCurrKcal);
+        } else {
+            showRunResult(SerialPortUtil.getTreadInstance().getRunTime(), totalDistanceKm, SerialPortUtil.getTreadInstance().getKCAL());
+
+        }
 
         if(!SerialPortUtil.getTreadInstance().isVisitor()) { //非访客模式
             try {
@@ -568,14 +584,23 @@ public class RunFragment extends SerialPortFragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 0) {
-                float kmDistance = getKmDistance(SerialPortUtil.getTreadInstance().getDistance());
-                mCurrentDistanceTextView.setText(StringUtils.getDecimalString(kmDistance, 2));
+                float distance = SerialPortUtil.getTreadInstance().getDistance();
+                if(distance > 0.0f) {
+                    mCurrKmDistance = getKmDistance(distance);
+                }
+                mCurrentDistanceTextView.setText(StringUtils.getDecimalString(mCurrKmDistance, 2));
                 int runTime = SerialPortUtil.getTreadInstance().getRunTime();
                 String time = RunTimeUtil.secToTime(runTime);
-                mCurrentUserTime.setText(time);
+                if(runTime > 0) {
+                    mCurrRunTime = runTime;
+                    mCurrentUserTime.setText(time);
+                }
                 float kcal = SerialPortUtil.getTreadInstance().getKCAL();
-                checkRunResult(runTime, kmDistance, kcal);
-                LogUtils.d("dddd", "distance: " + SerialPortUtil.getTreadInstance().getDistance() + " kcal: " + kcal);
+                if(kcal > 0.0f) {
+                    mCurrKcal = kcal;
+                }
+                checkRunResult(mCurrRunTime, mCurrKmDistance, mCurrKcal);
+                LogUtils.d("dddd", "distance: " + SerialPortUtil.getTreadInstance().getDistance() + " kcal: " + mCurrKcal);
             }
         }
     };
@@ -639,7 +664,6 @@ public class RunFragment extends SerialPortFragment {
                 }
                 if (!isPause) {
                     SerialPortUtil.getTreadInstance().setRunTime(SerialPortUtil.getTreadInstance().getRunTime() + 1);
-//                    totalGrade = totalGrade + SerialPortUtil.getTreadInstance().getCurrentGrade();
                     LogUtils.d(TAG, "increment: Speed: " + SerialPortUtil.getTreadInstance().getCurrentSpeed());
                     float mDistanceIncrement = SerialPortUtil.getTreadInstance().measureDistanceIncrement();
                     float mKcalIncrement = SerialPortUtil.getTreadInstance().measureKcalIncrement();
@@ -678,6 +702,12 @@ public class RunFragment extends SerialPortFragment {
     @Override
     public void handleTreadData(SerialPortUtil.TreadData treadData) {
         super.handleTreadData(treadData);
+        if(isFinish) return;
+        if(treadData.getSafeLock() == SerialPortUtil.SaveLock.SAVE_LOCK_OPEN) {
+            finishExercise();
+        } else if(treadData.getSafeLock() == SerialPortUtil.SaveLock.SAVE_LOCK_CLOSE){
+            LogUtils.e(TAG,"SAVE_LOCK_CLOSE");
+        }
         if (mGrade != treadData.getCurrentGrade()) {
             mGrade = treadData.getCurrentGrade();
             mGradeInfoTextView.setText(String.valueOf(mGrade));
