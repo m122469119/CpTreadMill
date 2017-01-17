@@ -73,7 +73,15 @@ public class AwaitActionFragment extends SerialPortFragment {
 
         } else if(keyCode == LikingTreadKeyEvent.KEY_PGR_START) {
             if(Preference.isVisitorMode()) {//访客模式
-                SerialPortUtil.getTreadInstance().setVisitor(true);
+                SerialPortUtil.TreadData.UserInfo userInfo = SerialPortUtil.getTreadInstance().getUserInfo();
+                if(userInfo == null) {
+                    userInfo = new SerialPortUtil.TreadData.UserInfo();
+                    userInfo.mUserName = "LikingFans";
+                    userInfo.mGender = 1;
+                    userInfo.mAvatar = "";
+                    userInfo.isVisitor = true;
+                }
+                SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
                 ((HomeActivity)getActivity()).launchFragment(new RunFragment());
             }
         }
@@ -84,6 +92,9 @@ public class AwaitActionFragment extends SerialPortFragment {
         super.onResume();
         LogUtils.d(TAG, "------onResume()");
         initViews();
+        if(SerialPortUtil.getTreadInstance().getUserInfo() != null) {
+            SerialPortUtil.getTreadInstance().resetUserInfo();
+        }
     }
 
     @Override

@@ -135,7 +135,6 @@ public class RunFragment extends SerialPortFragment {
 
     private Typeface mTypeFace;//字体
     private PauseCountdownTime mPauseCountdownTime;//60s 倒计时类
-    private CompleteCountdownTime completeCountdownTime;// 120s 倒计时
     private boolean isPause;//是否暂停
     private long currentDateSecond;//当前时间
     private volatile boolean isStart = false; //跑步机是否计数
@@ -283,7 +282,10 @@ public class RunFragment extends SerialPortFragment {
             } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {
                 cardLogin();
             } else if (keyCode == LikingTreadKeyEvent.KEY_PROGRAM) {
-                showSettingUI();
+                SerialPortUtil.TreadData.UserInfo userInfo = SerialPortUtil.getTreadInstance().getUserInfo();
+                if(userInfo != null && userInfo.isManager) {
+                    showSettingUI();
+                }
             }
         } else if (isInPauseUI()) {
             if (keyCode == LikingTreadKeyEvent.KEY_START) {
@@ -314,7 +316,6 @@ public class RunFragment extends SerialPortFragment {
     public void onDestroyView() {
         super.onDestroyView();
         destroyPauseCountTime();
-        if(completeCountdownTime != null) completeCountdownTime.cancel();
     }
 
     /**
@@ -512,7 +513,8 @@ public class RunFragment extends SerialPortFragment {
 
         }
 
-        if(!SerialPortUtil.getTreadInstance().isVisitor()) { //非访客模式
+        SerialPortUtil.TreadData.UserInfo userInfo = SerialPortUtil.getTreadInstance().getUserInfo();
+        if(userInfo != null && !userInfo.isVisitor) { //非访客模式
             try {
                 //上传锻炼数据
                 ((HomeActivity) getActivity()).iBackService.reportExerciseData(THREADMILL_MODE_SELECT, GOAL_TYPE, GOAL_VALUE, ACHIEVE_TYPE);
@@ -520,8 +522,7 @@ public class RunFragment extends SerialPortFragment {
                 e.printStackTrace();
             }
         }
-        completeCountdownTime = new CompleteCountdownTime(12 * 1000, 1000);
-        completeCountdownTime.start();
+        startActiveMonitor(12);
         ResetTreadmill();
     }
 
@@ -659,7 +660,8 @@ public class RunFragment extends SerialPortFragment {
         }
 
         //如果为访客模式 超过五分钟结束跑步
-        if(SerialPortUtil.getTreadInstance().isVisitor()) {
+        SerialPortUtil.TreadData.UserInfo userInfo = SerialPortUtil.getTreadInstance().getUserInfo();
+        if(userInfo != null && userInfo.isVisitor) {
             if(time >= 5 * 60) {
                 finishExercise();
             }
@@ -932,28 +934,6 @@ public class RunFragment extends SerialPortFragment {
         @Override
         public void onFinish() {
             finishExercise();
-        }
-    }
-
-    /**
-     * 10s 结束页面  倒计时结束
-     */
-    class CompleteCountdownTime extends CountDownTimer {
-
-        public CompleteCountdownTime(long millisInFuture, long countDownInterval) {
-            super(millisInFuture, countDownInterval);
-        }
-
-        @Override
-        public void onTick(long millisUntilFinished) {
-            LogUtils.e(TAG, "完成倒计时:" + millisUntilFinished);
-        }
-
-        @Override
-        public void onFinish() {
-            ((HomeActivity) getActivity()).setTitle("");
-            ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
-
         }
     }
 

@@ -127,8 +127,8 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
         userInfo.mAvatar = userResult.getAvatar();
         userInfo.mGender = userResult.getGender();
         userInfo.mBraceletId = userResult.getBraceletId();
+        userInfo.isManager = userInfo.mRole == 1 ? true : false;//是否为管理员
 
-        SerialPortUtil.getTreadInstance().setManager(userInfo.mRole == 1 ? true : false); //是否为管理员
         SerialPortUtil.getTreadInstance().setCardNo(userInfo.mBraceletId);
         SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
         SerialPortUtil.setCardNoValid();

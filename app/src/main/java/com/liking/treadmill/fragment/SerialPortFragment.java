@@ -8,8 +8,10 @@ import com.aaron.android.framework.base.ui.BaseFragment;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.activity.LikingTreadmillBaseActivity;
 import com.liking.treadmill.message.FanStateMessage;
+import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
+import com.liking.treadmill.utils.OperateActiveMonitor;
 
 import androidex.serialport.SerialPorManager;
 
@@ -20,7 +22,10 @@ import androidex.serialport.SerialPorManager;
  * @version 1.0.0
  */
 
-public abstract class SerialPortFragment extends BaseFragment implements SerialPorManager.SerialPortCallback {
+public abstract class SerialPortFragment extends BaseFragment implements SerialPorManager.SerialPortCallback, OperateActiveMonitor.OperateMonitorListener {
+
+    private OperateActiveMonitor mActiveMonitor;
+
     @Override
     public void onResume() {
         super.onResume();
@@ -104,5 +109,38 @@ public abstract class SerialPortFragment extends BaseFragment implements SerialP
                 postEvent(new FanStateMessage(View.VISIBLE));
                 break;
         }
+    }
+
+    /**
+     * 创建活动监听
+     */
+    public void startActiveMonitor(long second) {
+        if( mActiveMonitor == null) {
+            mActiveMonitor = new OperateActiveMonitor();
+            mActiveMonitor.setOperateMonitorListener(this);
+        }
+        mActiveMonitor.startMonitor(second);
+    }
+
+    public void startActiveMonitor() {
+        startActiveMonitor(Preference.getStandbyTime());
+    }
+
+    public void stopActiveMonitor() {
+        if(mActiveMonitor != null) {
+            mActiveMonitor.stopMonitor();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        stopActiveMonitor();
+    }
+
+    @Override
+    public void onNoneOperate() {
+        ((HomeActivity) getActivity()).setTitle("");
+        ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
     }
 }

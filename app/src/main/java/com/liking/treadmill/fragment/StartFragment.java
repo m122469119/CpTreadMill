@@ -58,8 +58,8 @@ public class StartFragment extends SerialPortFragment {
             }
             mUserNameTextView.setText(SerialPortUtil.getTreadInstance().getUserInfo().mUserName);
             HImageLoaderSingleton.getInstance().loadImage(mHeadImageView, SerialPortUtil.getTreadInstance().getUserInfo().mAvatar);
-
         }
+        startActiveMonitor();
     }
 
     @Override
@@ -71,18 +71,23 @@ public class StartFragment extends SerialPortFragment {
             ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_START) {
             if(StringUtils.isEmpty(Preference.getBindUserGymId())) {//未绑定场馆
+                startActiveMonitor();
                 IToast.show("场馆未绑定，请联系管理员!");
                 return;
             }
             ((HomeActivity) getActivity()).launchFragment(new RunFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {
+            stopActiveMonitor();
             cardLogin();
         } else if (keyCode == LikingTreadKeyEvent.KEY_PROGRAM) {
-            if(SerialPortUtil.getTreadInstance().isManager()) {
+            startActiveMonitor();
+            SerialPortUtil.TreadData.UserInfo userInfo = SerialPortUtil.getTreadInstance().getUserInfo();
+            if(userInfo != null && userInfo.isManager) {
                 showSettingUI();
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SET) {//参数设置
             if(StringUtils.isEmpty(Preference.getBindUserGymId())) {//未绑定场馆
+                startActiveMonitor();
                 IToast.show("场馆未绑定，请联系管理员!");
                 return;
             }

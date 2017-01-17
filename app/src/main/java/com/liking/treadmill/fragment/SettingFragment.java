@@ -78,6 +78,7 @@ public class SettingFragment extends SerialPortFragment {
     public void onResume() {
         super.onResume();
         ((HomeActivity) getActivity()).setTitle("系统设置");
+        startActiveMonitor();
     }
 
     private void initViews() {
@@ -137,8 +138,10 @@ public class SettingFragment extends SerialPortFragment {
             ((HomeActivity) getActivity()).setTitle("");
             ((HomeActivity) getActivity()).launchFragment(new StartFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_LAST) {
+            startActiveMonitor();
             selectLast();
         } else if (keyCode == LikingTreadKeyEvent.KEY_NEXT) {
+            startActiveMonitor();
             selectNext();
         } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {
             gotoSubSettingFragment();

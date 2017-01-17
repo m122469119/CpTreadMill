@@ -56,30 +56,8 @@ public class SerialPortUtil {
         private int mCardIsValid;
         private int runTime = 0;
         private int mStepNumber;//步数
-
-        private boolean isManager;//是否为管理员
-
-        private boolean isVisitor;//是否为访客
-
         private UserInfo mUserInfo;
-
         private String mCardNo;
-
-        public boolean isManager() {
-            return isManager;
-        }
-
-        public void setManager(boolean manager) {
-            isManager = manager;
-        }
-
-        public boolean isVisitor() {
-            return isVisitor;
-        }
-
-        public void setVisitor(boolean visitor) {
-            isVisitor = visitor;
-        }
 
         public int isCardIsValid() {
             return mCardIsValid;
@@ -324,10 +302,11 @@ public class SerialPortUtil {
             runTime = 0;
             mCardNo = "";
             mStepNumber = 0;
-            mUserInfo = null;
-            isManager = false;
-            isVisitor = false;
             SerialPortUtil.setCardNoUnValid();//设置无效卡
+        }
+
+        public void resetUserInfo() {
+            this.mUserInfo = null;
         }
 
         public static class UserInfo {
@@ -341,6 +320,10 @@ public class SerialPortUtil {
             public int mGender;
 
             public String mBraceletId;
+
+            public boolean isManager;//是否为管理员
+
+            public boolean isVisitor;//是否为访客
         }
 
     }
