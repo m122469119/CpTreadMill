@@ -86,8 +86,8 @@ public class RunFragment extends SerialPortFragment {
     RelativeLayout mFinishLayout;
     @BindView(R.id.this_run_finish_prompt)
     TextView mRunFinishPromptextView;
-    @BindView(R.id.run_time_TextView)
-    TextView mRunTimeTextView;
+//    @BindView(R.id.run_time_TextView)
+//    TextView mRunTimeTextView;
     @BindView(R.id.run_finish_hint)
     TextView mFinishHintTextView;
 
@@ -570,7 +570,7 @@ public class RunFragment extends SerialPortFragment {
             mRunCompleteImg.setVisibility(View.VISIBLE);
 //            mRunFinishPromptextView.setTextColor(ResourceUtils.getColor(R.color.c25ff8c));
             mRunFinishPromptextView.setText(ResourceUtils.getString(R.string.this_run_attainment_target));
-            mRunTimeTextView.setText(DateUtils.formatDate("MM-dd HH:mm", new Date()));
+//            mRunTimeTextView.setText(DateUtils.formatDate("MM-dd HH:mm", new Date()));
         }
         if (SerialPortUtil.getTreadInstance().getUserInfo() != null) {
             mUserNameTextView.setText(SerialPortUtil.getTreadInstance().getUserInfo().mUserName);
@@ -863,7 +863,7 @@ public class RunFragment extends SerialPortFragment {
         setupRunFinishData(totalStepNumberView, "步数", 20f, 24f, R.drawable.icon_run_step_number);
         setupRunFinishData(consumeKcalView, "消耗卡路里(KCAL)", 20f, 24f, R.drawable.icon_run_kcal);
         setupRunFinishData(avergHraetRateView, "平均心率(BPM)", 20f, 24f, R.drawable.icon_run_bpm);
-        mRunTimeTextView.setText(DateUtils.formatDate("MM-dd HH:mm", new Date()));
+//        mRunTimeTextView.setText(DateUtils.formatDate("MM-dd HH:mm", new Date()));
 
         mDistanceTextView.setText("0");
         mUseTimeTextView.setText("0");
