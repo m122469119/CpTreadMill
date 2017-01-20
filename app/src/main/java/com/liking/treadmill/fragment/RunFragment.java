@@ -742,8 +742,8 @@ public class RunFragment extends SerialPortFragment {
         } else if(treadData.getSafeLock() == SerialPortUtil.SaveLock.SAVE_LOCK_CLOSE){
             LogUtils.e(TAG,"SAVE_LOCK_CLOSE");
         }
-        if (mGrade != treadData.getCurrentGrade()) {
-//            mGrade = treadData.getCurrentGrade();
+        if (mGrade != treadData.getCurrentGrade() && treadData.getCurrentGrade() != 0) {
+            mGrade = treadData.getCurrentGrade();
             mGradeInfoTextView.setText(String.valueOf(mGrade));
         }
         if (mHeartRate != treadData.getHeartRate()) {
