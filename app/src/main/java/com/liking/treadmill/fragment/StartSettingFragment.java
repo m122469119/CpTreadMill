@@ -75,7 +75,7 @@ public class StartSettingFragment extends BaseFragment {
     private List<TabFragmentPagerAdapter.FragmentBinder> getMainFragmentList() {
         List<TabFragmentPagerAdapter.FragmentBinder> fragmentBinders = new ArrayList<>();
         fragmentBinders.add(buildNetworkSettingFragmentBinder());
-        fragmentBinders.add(buildTreadmillSetupSettingFragmentBinder());
+//        fragmentBinders.add(buildTreadmillSetupSettingFragmentBinder());
         fragmentBinders.add(buildBindGymSettingFragmentBinder());
         return fragmentBinders;
     }
@@ -86,11 +86,11 @@ public class StartSettingFragment extends BaseFragment {
                 BindGymFragment.instantiate(getActivity(), BindGymFragment.class.getName()));
     }
 
-    private TabFragmentPagerAdapter.FragmentBinder buildTreadmillSetupSettingFragmentBinder() {
-        return new TabFragmentPagerAdapter.FragmentBinder(INDEX_SETUP,
-                getString(R.string.tab_setup), 0,
-                TreadmillSetupFragment.instantiate(getActivity(), TreadmillSetupFragment.class.getName()));
-    }
+//    private TabFragmentPagerAdapter.FragmentBinder buildTreadmillSetupSettingFragmentBinder() {
+//        return new TabFragmentPagerAdapter.FragmentBinder(INDEX_SETUP,
+//                getString(R.string.tab_setup), 0,
+//                TreadmillSetupFragment.instantiate(getActivity(), TreadmillSetupFragment.class.getName()));
+//    }
 
     private TabFragmentPagerAdapter.FragmentBinder buildNetworkSettingFragmentBinder() {
         return new TabFragmentPagerAdapter.FragmentBinder(INDEX_NETWORK,

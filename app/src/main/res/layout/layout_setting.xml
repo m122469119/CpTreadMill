@@ -17,13 +17,13 @@
             android:layout_marginTop="68dp"
             android:orientation="horizontal">
 
-            <include
-                android:id="@+id/layout_start_mode"
-                layout="@layout/view_setting_card"
-                android:layout_width="210dp"
-                android:layout_height="290dp"
-                android:layout_marginRight="98dp"
-                />
+            <!--<include-->
+                <!--android:id="@+id/layout_start_mode"-->
+                <!--layout="@layout/view_setting_card"-->
+                <!--android:layout_width="210dp"-->
+                <!--android:layout_height="290dp"-->
+                <!--android:layout_marginRight="98dp"-->
+                <!--/>-->
 
             <include
                 android:id="@+id/layout_await_time"
@@ -37,7 +37,14 @@
                 layout="@layout/view_setting_card"
                 android:layout_width="210dp"
                 android:layout_height="290dp"
+                android:layout_marginRight="98dp"
                 />
+
+            <include
+                android:id="@+id/layout_gym_binding"
+                layout="@layout/view_setting_card"
+                android:layout_width="210dp"
+                android:layout_height="290dp"/>
 
         </LinearLayout>
 
@@ -47,13 +54,6 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="68dp"
             android:orientation="horizontal">
-
-            <include
-                android:id="@+id/layout_gym_binding"
-                layout="@layout/view_setting_card"
-                android:layout_width="210dp"
-                android:layout_height="290dp"
-                android:layout_marginRight="98dp"/>
 
             <include
                 android:id="@+id/layout_network_connection"

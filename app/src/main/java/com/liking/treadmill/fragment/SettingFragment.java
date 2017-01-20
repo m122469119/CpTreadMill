@@ -34,16 +34,16 @@ import static com.liking.treadmill.app.ThreadMillConstant.THREADMILL_SYSTEMSETTI
  * @version 1.0.0
  */
 public class SettingFragment extends SerialPortFragment {
-    private static final int INDEX_START = 0;
-    private static final int INDEX_AWAIT_TIME = INDEX_START + 1;
+//    private static final int INDEX_START = 0;
+    private static final int INDEX_AWAIT_TIME = 0 ;// INDEX_START + 1;
     private static final int INDEX_SPORT_PARAMS = INDEX_AWAIT_TIME + 1;
 //    private static final int INDEX_USER_SETTING = INDEX_SPORT_PARAMS + 1;
 //    private static final int INDEX_LANGUAGE_SETTING = INDEX_USER_SETTING + 1;
     private static final int INDEX_GYM_BINDING = INDEX_SPORT_PARAMS + 1;
     private static final int INDEX_NETWORK_CONNECTION = INDEX_GYM_BINDING + 1;
     private static final int INDEX_UPDATE = INDEX_NETWORK_CONNECTION + 1;
-    @BindView(R.id.layout_start_mode)
-    View mStartModeView;
+//    @BindView(R.id.layout_start_mode)
+//    View mStartModeView;
     @BindView(R.id.layout_await_time)
     View mAwaitTimeView;
     @BindView(R.id.layout_sport_params)
@@ -83,7 +83,7 @@ public class SettingFragment extends SerialPortFragment {
 
     private void initViews() {
         initSettingViews();
-        initSettingCard(mSettingItemMap.get(INDEX_START), R.string.setting_start_mode, R.drawable.setting_start);
+//        initSettingCard(mSettingItemMap.get(INDEX_START), R.string.setting_start_mode, R.drawable.setting_start);
         initSettingCard(mSettingItemMap.get(INDEX_AWAIT_TIME), R.string.setting_await_time, R.drawable.setting_await);
         initSettingCard(mSettingItemMap.get(INDEX_SPORT_PARAMS), R.string.setting_sport_params, R.drawable.setting_sport);
 //        initSettingCard(mSettingItemMap.get(INDEX_USER_SETTING), R.string.setting_user_setting, R.drawable.setting_user_param);
@@ -99,11 +99,12 @@ public class SettingFragment extends SerialPortFragment {
         spannableStringBuilder.setSpan(isSpeedAdd, 6, 8, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         spannableStringBuilder.setSpan(isSpeedCut, 19, 21, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         mSettingDescriptionTextView.setText(spannableStringBuilder);
-        setCurrentSettingItem(INDEX_START);
+//        setCurrentSettingItem(INDEX_START);
+        setCurrentSettingItem(INDEX_AWAIT_TIME);
     }
 
     private void initSettingViews() {
-        mSettingItemMap.put(INDEX_START, mStartModeView);
+//        mSettingItemMap.put(INDEX_START, mStartModeView);
         mSettingItemMap.put(INDEX_AWAIT_TIME, mAwaitTimeView);
         mSettingItemMap.put(INDEX_SPORT_PARAMS, mSportParamsView);
 //        mSettingItemMap.put(INDEX_USER_SETTING, mUserSettingView);
@@ -152,11 +153,11 @@ public class SettingFragment extends SerialPortFragment {
         Bundle bundle = new Bundle();
         bundle.putBoolean(THREADMILL_SYSTEMSETTING, true);
         switch (mCurrentSelectSettingIndex) {
-            case INDEX_START:
-                TreadmillSetupFragment treadmillSetupFragment = new TreadmillSetupFragment();
-                treadmillSetupFragment.setArguments(bundle);
-                launchFragment(treadmillSetupFragment);
-                break;
+//            case INDEX_START:
+//                TreadmillSetupFragment treadmillSetupFragment = new TreadmillSetupFragment();
+//                treadmillSetupFragment.setArguments(bundle);
+//                launchFragment(treadmillSetupFragment);
+//                break;
             case INDEX_AWAIT_TIME:
                 launchFragment(new StandbyTimeSettingFragment());
                 break;
@@ -183,13 +184,13 @@ public class SettingFragment extends SerialPortFragment {
 
     private void selectLast() {
         int currentIndex = mCurrentSelectSettingIndex;
-        currentIndex = currentIndex == INDEX_START ? INDEX_UPDATE : currentIndex - 1;
+        currentIndex = currentIndex == /**INDEX_START*/ INDEX_AWAIT_TIME ? INDEX_UPDATE : currentIndex - 1;
         setCurrentSettingItem(currentIndex);
     }
 
     private void selectNext() {
         int currentIndex = mCurrentSelectSettingIndex;
-        currentIndex = currentIndex == INDEX_UPDATE ? INDEX_START : currentIndex + 1;
+        currentIndex = currentIndex == INDEX_UPDATE ? /**INDEX_START*/ INDEX_AWAIT_TIME : currentIndex + 1;
         setCurrentSettingItem(currentIndex);
     }
 

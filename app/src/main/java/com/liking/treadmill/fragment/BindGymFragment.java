@@ -58,19 +58,12 @@ public class BindGymFragment extends SerialPortFragment {
     RelativeLayout mlayoutQrcode;
     @BindView(R.id.bind_gym_hint_skip)
     TextView bindGymHintSkip;
-//    @BindView(R.id.bind_gym_hint)
-//    TextView bindGymHit;
     @BindView(R.id.network_setting_hint)
     TextView netWorkSettingHint;
-
     @BindView(R.id.bind_gym_hint1)
     TextView mBindGymHint1;
     @BindView(R.id.bind_gym_hint2)
     TextView mBindGymHint2;
-//    @BindView(R.id.qrcode_hint1)
-//    TextView mQrcodeHint1;
-//    @BindView(R.id.qrcode_hint2)
-//    TextView mQrcodeHint2;
     @BindView(R.id.qrcode_hint3)
     TextView mQrcodeHint3;
 
@@ -96,13 +89,15 @@ public class BindGymFragment extends SerialPortFragment {
     @Override
     public void onResume() {
         super.onResume();
-        LogUtils.d(TAG, "------onResume()");
+        LogUtils.d(TAG, "BindGymFragment------onResume()");
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        LogUtils.d(TAG, "------setUserVisibleHint():" + isVisibleToUser);
+        if(isVisibleToUser) {
+            loadBindGymQrCode();
+        }
     }
 
     private void initData() {
@@ -114,6 +109,12 @@ public class BindGymFragment extends SerialPortFragment {
 
         isBindGym = !StringUtils.isEmpty(Preference.getBindUserGymId());
 
+        if(isSetting) {
+            loadBindGymQrCode();
+        }
+    }
+
+    public void loadBindGymQrCode() {
         if(isBindGym) { //已绑定
             try {
                 LogUtils.d(TAG, "------onUnBind()");
@@ -146,9 +147,6 @@ public class BindGymFragment extends SerialPortFragment {
             mBindGymHint1.setText("当前未绑定健身房");
             mBindGymHint2.setText("扫码安全登录，进行健身房绑定");
         }
-//        bindGymHit.setText("完成" + state + "后，即可完成设置");
-//        mQrcodeHint1.setText("通过手机扫码,安全" + state );
-//        mQrcodeHint2.setText(state + "健身房");
         Spanned h = Html.fromHtml("打开<font color=#25ff8c>手机微信</font><br>扫一扫" + state);
         mQrcodeHint3.setText(h);
 
@@ -177,7 +175,7 @@ public class BindGymFragment extends SerialPortFragment {
             }
         } else if(keyCode == LikingTreadKeyEvent.KEY_LAST) {
             if(isSetting) return;
-            postEvent(new SettingNextMessage(1));
+            postEvent(new SettingNextMessage(0));
         }
     }
 
@@ -206,7 +204,6 @@ public class BindGymFragment extends SerialPortFragment {
 
     public void showFinishView() {
         bindGymHintStep.setVisibility(View.INVISIBLE);
-//        bindGymHit.setVisibility(View.INVISIBLE);
         bindGymHintBind.setVisibility(View.INVISIBLE);
         mlayoutQrcode.setVisibility(View.INVISIBLE);
         bindGymHintSkip.setVisibility(View.VISIBLE);

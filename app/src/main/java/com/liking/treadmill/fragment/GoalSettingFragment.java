@@ -118,20 +118,14 @@ public class GoalSettingFragment extends SerialPortFragment {
                 ((HomeActivity) getActivity()).setTitle("");
                 ((HomeActivity) getActivity()).launchFragment(new StartFragment());
             }
-        } else if(keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) { //双击mode
+        } else if(keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) {
+        } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {
             if(isModeSelect) {
                 //双击MODE 处理
                 isModeSelect = false;
                 isModeSetting = true;
                 showModeView();
             }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {
-//            if(isModeSelect) {
-//                //双击MODE 处理
-//                isModeSelect = false;
-//                isModeSetting = true;
-//                showModeView();
-//            }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS  //速度+
                 || keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE //速度-
                 || keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS  //坡度+

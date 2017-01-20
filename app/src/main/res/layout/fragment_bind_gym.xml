@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginTop="100dp"
-                android:text="STEP 3"
+                android:text="STEP 2"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
