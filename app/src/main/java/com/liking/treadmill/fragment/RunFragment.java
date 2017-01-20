@@ -126,6 +126,9 @@ public class RunFragment extends SerialPortFragment {
     private int mSpeed = 0;
     private int mGrade = 0;
 
+    private int mTotalHeartRate = 0; //总心率
+    private int mHeartChangeCount = 0;//心里变化次数
+
     private TextView mDistanceTextView;//距离
     private TextView mUseTimeTextView; //用时
     private TextView mAvergageSpeedTextView;   //平均速度
@@ -500,10 +503,15 @@ public class RunFragment extends SerialPortFragment {
             mConsumeKcalTextView.setText(StringUtils.getDecimalString(kcal, 2));
         }
         //平均心率
-        int heartRate = SerialPortUtil.getTreadInstance().getHeartRate();
-        if(heartRate != 0) {
-            mAvergHraetRateTextView.setText(heartRate + "");
+        if(mTotalHeartRate != 0) {
+            int mAverageHeartRate  = mTotalHeartRate / mHeartChangeCount;
+            mAvergHraetRateTextView.setText(mAverageHeartRate + "");
         }
+//        int heartRate = SerialPortUtil.getTreadInstance().getHeartRate();
+//        if(heartRate != 0) {
+//            mAvergHraetRateTextView.setText(heartRate + "");
+//        }
+
         //安全锁打开时,会清除所有数据
         if(runTime == 0 || totalDistanceKm == 0.0f || kcal == 0.0f) {
             LogUtils.e(TAG, "数据被清除.....");
@@ -748,6 +756,10 @@ public class RunFragment extends SerialPortFragment {
         }
         if (mHeartRate != treadData.getHeartRate()) {
             mHeartRate = treadData.getHeartRate();
+            if(mHeartRate != 0) {
+                mTotalHeartRate += mHeartRate;
+                mHeartChangeCount ++;
+            }
             mHeartRateInfoTextView.setText(String.valueOf(mHeartRate));
         }
         if (mSpeed != treadData.getCurrentSpeed()) {
