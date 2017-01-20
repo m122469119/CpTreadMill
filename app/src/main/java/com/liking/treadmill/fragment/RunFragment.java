@@ -289,7 +289,7 @@ public class RunFragment extends SerialPortFragment {
             }
         } else if (isInPauseUI()) {
             if (keyCode == LikingTreadKeyEvent.KEY_START) {
-                startTreadMill(SerialPortUtil.DEFAULT_SPEED, SerialPortUtil.getTreadInstance().getCurrentGrade());
+                startTreadMill(SerialPortUtil.DEFAULT_SPEED, mGrade);
             } else if (keyCode == LikingTreadKeyEvent.KEY_STOP) {
                 finishExercise();
             }
@@ -743,7 +743,7 @@ public class RunFragment extends SerialPortFragment {
             LogUtils.e(TAG,"SAVE_LOCK_CLOSE");
         }
         if (mGrade != treadData.getCurrentGrade()) {
-            mGrade = treadData.getCurrentGrade();
+//            mGrade = treadData.getCurrentGrade();
             mGradeInfoTextView.setText(String.valueOf(mGrade));
         }
         if (mHeartRate != treadData.getHeartRate()) {
