@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.utils.ResourceUtils;
@@ -19,6 +20,7 @@ import com.liking.treadmill.fragment.StartFragment;
 import com.liking.treadmill.fragment.StartSettingFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
 import com.liking.treadmill.fragment.WelcomeFragment;
+import com.liking.treadmill.message.AdvertisementMessage;
 import com.liking.treadmill.message.FanStateMessage;
 import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.GymUnBindSuccessMessage;
@@ -29,11 +31,15 @@ import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
 import com.liking.treadmill.socket.MessageBackReceiver;
+import com.liking.treadmill.socket.SocketHelper;
 import com.liking.treadmill.socket.SocketService;
+import com.liking.treadmill.socket.result.AdvertisementResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.widget.IToast;
+
+import java.util.List;
 
 public class HomeActivity extends LikingTreadmillBaseActivity implements UserLoginView {
     public MessageBackReceiver mMessageBackReceiver = new MessageBackReceiver();
@@ -80,6 +86,8 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
         initAdViews();
+
+
     }
 
     public void launchInit() {
@@ -216,6 +224,59 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 }
             },delayedInterval);
         }
+    }
+
+    /**
+     * 广告下发
+     *
+     * @param message
+     */
+    public void onEvent(AdvertisementMessage message) {
+        if (message.mResources != null) {
+
+            AdvertisementResult.AdvUrlResource.Resource leftAdv = getAdvResource(0, message.mResources);
+            if(leftAdv != null) {
+                if(leftAdv.isOpen()) {
+                    HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, leftAdv.getUrl());
+                } else {
+                    showDefaultAdvLeftImg();
+                }
+            } else {
+                showDefaultAdvLeftImg();
+            }
+
+            AdvertisementResult.AdvUrlResource.Resource rightAdv = getAdvResource(1, message.mResources);
+            if(rightAdv != null) {
+                if(rightAdv.isOpen()) {
+                    HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, rightAdv.getUrl());
+                }else {
+                    showDefaultAdvRightImg();
+                }
+            } else {
+                showDefaultAdvRightImg();
+            }
+        }
+    }
+
+    /**
+     *  左边默认广告
+     */
+    public void showDefaultAdvLeftImg() {
+        HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.image_ad_run_left);
+    }
+
+    /**
+     * 右边默认广告
+     */
+    public void showDefaultAdvRightImg() {
+        HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, R.drawable.image_ad_run_right);
+    }
+
+    private AdvertisementResult.AdvUrlResource.Resource getAdvResource(int poistion, List<AdvertisementResult.AdvUrlResource.Resource> resources) {
+        if(poistion >= 0 && poistion < resources.size()) {
+            return resources.get(poistion);
+        }
+        return null;
     }
 
     @Override

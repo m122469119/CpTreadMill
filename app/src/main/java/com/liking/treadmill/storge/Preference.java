@@ -33,6 +33,7 @@ public class Preference extends AbsPreference {
     public static final String STANDBY_TIME = "standbytime";//待机时间
     public static final String MOTION_PARAM_MAX_RUNTIME = "motionparammaxruntime";//运动最大时间
     public static final String TREADMILL_SETUP_ISVISITOR = "treadmillsetupvisitor";
+    public static final String ADVERTISEMENT =  "advertisement";//广告
 
     public static final String APP_SERVER_VERSION = "setserverversion";//服务器版本
     public static final String APP_SERVER_VERSION_URL = "setserverversionurl";//服务器版本地址
@@ -316,6 +317,23 @@ public class Preference extends AbsPreference {
         Preference.setIsVisitorMode(false);
         Preference.setStandbyTime(ThreadMillConstant.THREADMILL_DEFAULT_SYSTEM_STANBYTIME);
         Preference.setMotionParamMaxRunTime(ThreadMillConstant.THREADMILL_DEFAULT_RUNNING_TIME);
+    }
+
+    /**
+     * 保存广告数据
+     * @param advs
+     */
+    public static boolean setAdvertisementResource(String advs) {
+        return setObject(ADVERTISEMENT, advs);
+    }
+
+    /**
+     * 获取广告
+     * @param
+     * @return
+     */
+    public static String getAdvertisementResource() {
+        return (String) getObject(ADVERTISEMENT, "");
     }
 
 }

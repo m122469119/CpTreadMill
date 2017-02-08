@@ -1,7 +1,13 @@
 package com.liking.treadmill.socket;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.SystemClock;
 
+import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.SecurityUtils;
@@ -11,22 +17,29 @@ import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
 import com.liking.treadmill.app.ThreadMillConstant;
+import com.liking.treadmill.message.AdvertisementMessage;
 import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.message.QrCodeMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
+import com.liking.treadmill.receiver.AdvertisementReceiver;
+import com.liking.treadmill.service.ApkDownloadService;
+import com.liking.treadmill.socket.result.AdvertisementResult;
 import com.liking.treadmill.socket.result.ApkUpdateResult;
 import com.liking.treadmill.socket.result.BaseSocketResult;
 import com.liking.treadmill.socket.result.BindUserResult;
 import com.liking.treadmill.socket.result.MemberListResult;
 import com.liking.treadmill.socket.result.QrcodeResult;
+import com.liking.treadmill.socket.result.ServiceTimeResult;
 import com.liking.treadmill.socket.result.UserInfoResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
+import com.liking.treadmill.utils.AlarmManagerUtils;
 import com.liking.treadmill.utils.ApkUpdateUtils;
 
 import java.util.Date;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -47,6 +60,8 @@ public class SocketHelper {
     private static final String TYPE_USERLOGIN = "login";
     private static final String TYPE_MEMBER_LIST = "member_list";
     private static final String TYPE_EXERCISE_DATA = "data";
+    private static final String TYPE_SERVICE_TIME = "time";
+    private static final String TYPE_ADVERTISMENT = "advertisement";
 
     private static final String mTcpVersion = "v1.1";
 
@@ -55,7 +70,10 @@ public class SocketHelper {
     public static final String REBIND_STRING = "{\"type\":\"bind\",\"version\":" + mTcpVersion + ",\"data\":{}}";//心跳包内容
     public static final String CONFIRM_STRING = "{\"type\":\"confirm\",\"data\":{}}";//心跳包内容
 
+    public static long sTimestampOffset = 0;
+
     public static void handlerSocketReceive(Context context, String jsonStr) {
+
         Gson gson = new Gson();
         String jsonText = jsonStr;//jsonStr.substring(0, jsonStr.length() - 4);
         LogUtils.d("aaron", "result: " + jsonText);
@@ -125,8 +143,63 @@ public class SocketHelper {
             if(!StringUtils.isEmpty(result.getMsgId()) && !"0".equals(result.getMsgId())) {
                 FileUtils.delete(ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE + result.getMsgId());
             }
+        } else if(TYPE_SERVICE_TIME.equals(type)) {//服务器时间差
+            long currentSystemSeconds = DateUtils.currentDataSeconds();
+            ServiceTimeResult timeResult = gson.fromJson(jsonText, ServiceTimeResult.class);
+            ServiceTimeResult.ServiceTime serviceTime = timeResult.getServiceTime();
+            if(serviceTime != null) {
+                sTimestampOffset = Long.parseLong(serviceTime.getTime()) - currentSystemSeconds;
+            }
+        } else if (TYPE_ADVERTISMENT.equals(type)) { //下发广告
+            LogUtils.d("aaron", "TYPE_ADVERTISMENT :" + jsonText);
+            AdvertisementResult advertisementResult = gson.fromJson(jsonText, AdvertisementResult.class);
+            AdvertisementResult.AdvUrlResource advUrlResource = advertisementResult.getUrlResources();
+            if(advUrlResource != null) {
+                int requestcode = 1000;
+
+                long serviceTime = DateUtils.currentDataSeconds() + sTimestampOffset;
+                List<AdvertisementResult.AdvUrlResource.Resource> resources = advUrlResource.getResources();
+                LogUtils.d("aaron", "request: " + resources.size());
+                for (AdvertisementResult.AdvUrlResource.Resource resource:resources) {
+                    LogUtils.d("aaron", "request: " + resource.getUrl());
+                    long advTime = DateUtils.parseString("yyyyMMdd", resource.getEndtime()).getTime();
+                    long timeOffset = advTime - serviceTime * 1000;
+                    if(timeOffset > 0) {
+                        //下载图片、设置本地路径
+                        Intent intent = new Intent(context, AdvertisementReceiver.class);
+                        intent.putExtra(AdvertisementReceiver.ADVERTISEMENT_URL, resource.getUrl());
+                        intent.putExtra(AdvertisementReceiver.ADVERTISEMENT_ENDTIME, resource.getEndtime());
+                        intent.putExtra(AlarmManagerUtils.REQUESTCODE, requestcode);
+                        if(requestcode == 1000) {
+                            LogUtils.d("aaron", "requestcode: 闹铃1");
+                            AlarmManagerUtils.addAdvertisementAlarm(context, intent, 120 * 1000);
+                        } else {
+                            LogUtils.d("aaron", "requestcode: 闹铃2");
+                            AlarmManagerUtils.addAdvertisementAlarm(context, intent, 25 * 1000);
+                        }
+//                      AlarmManagerUtils.addAdvertisementAlarm(context.getApplicationContext(), intent, timeOffset);
+                        requestcode = requestcode + 1;
+                    } else {
+                        resource.setOpen(false);
+                    }
+                    LogUtils.d("aaron", "serviceTime:" +serviceTime + ";; Advertisement: " + resource.getUrl() + ";;time:" + resource.getEndtime() + ";;timeOffset" + timeOffset);
+                }
+                //save Preference
+                Preference.setAdvertisementResource(gson.toJson(advertisementResult));
+                EventBus.getDefault().post(new AdvertisementMessage(resources));
+            }
         }
     }
+
+//    /**
+//     * 下载广告资源,用户离线使用
+//     */
+//    public void advertisementResDownload(Context context, String advUrl, String advPath) {
+//        Intent intent = new Intent(context, ApkDownloadService.class);
+//        intent.putExtra(ApkDownloadService.EXTRA_DOWNLOAD_URL, advUrl);
+//        intent.putExtra(ApkDownloadService.EXTRA_DOWNLOAD_PATH, advPath);
+//        context.startService(intent);
+//    }
 
     /**
      * 场馆绑定

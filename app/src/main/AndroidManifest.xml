@@ -28,6 +28,7 @@
         <service android:name=".service.ApkDownloadService" />
         <!--ThreadMill服务-->
         <service android:name=".service.ThreadMillService" />
+        <receiver android:name=".receiver.AdvertisementReceiver"/>
     </application>
 
 </manifest>
