@@ -170,14 +170,14 @@ public class SocketHelper {
                         intent.putExtra(AdvertisementReceiver.ADVERTISEMENT_URL, resource.getUrl());
                         intent.putExtra(AdvertisementReceiver.ADVERTISEMENT_ENDTIME, resource.getEndtime());
                         intent.putExtra(AlarmManagerUtils.REQUESTCODE, requestcode);
-                        if(requestcode == 1000) {
-                            LogUtils.d("aaron", "requestcode: 闹铃1");
-                            AlarmManagerUtils.addAdvertisementAlarm(context, intent, 120 * 1000);
-                        } else {
-                            LogUtils.d("aaron", "requestcode: 闹铃2");
-                            AlarmManagerUtils.addAdvertisementAlarm(context, intent, 25 * 1000);
-                        }
-//                      AlarmManagerUtils.addAdvertisementAlarm(context.getApplicationContext(), intent, timeOffset);
+//                        if(requestcode == 1000) {
+//                            LogUtils.d("aaron", "requestcode: 闹铃1");
+//                            AlarmManagerUtils.addAdvertisementAlarm(context, intent, 120 * 1000);
+//                        } else {
+//                            LogUtils.d("aaron", "requestcode: 闹铃2");
+//                            AlarmManagerUtils.addAdvertisementAlarm(context, intent, 25 * 1000);
+//                        }
+                        AlarmManagerUtils.addAdvertisementAlarm(context.getApplicationContext(), intent, timeOffset);
                         requestcode = requestcode + 1;
                     } else {
                         resource.setOpen(false);
