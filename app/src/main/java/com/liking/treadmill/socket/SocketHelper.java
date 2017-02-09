@@ -164,24 +164,19 @@ public class SocketHelper {
                     LogUtils.d("aaron", "request: " + resource.getUrl());
                     long advTime = DateUtils.parseString("yyyyMMdd", resource.getEndtime()).getTime();
                     long timeOffset = advTime - serviceTime * 1000;
+
+                    Intent intent = new Intent(context, AdvertisementReceiver.class);
+                    intent.putExtra(AdvertisementReceiver.ADVERTISEMENT_URL, resource.getUrl());
+                    intent.putExtra(AdvertisementReceiver.ADVERTISEMENT_ENDTIME, resource.getEndtime());
+                    intent.putExtra(AlarmManagerUtils.REQUESTCODE, requestcode);
+
                     if(timeOffset > 0) {
-                        //下载图片、设置本地路径
-                        Intent intent = new Intent(context, AdvertisementReceiver.class);
-                        intent.putExtra(AdvertisementReceiver.ADVERTISEMENT_URL, resource.getUrl());
-                        intent.putExtra(AdvertisementReceiver.ADVERTISEMENT_ENDTIME, resource.getEndtime());
-                        intent.putExtra(AlarmManagerUtils.REQUESTCODE, requestcode);
-//                        if(requestcode == 1000) {
-//                            LogUtils.d("aaron", "requestcode: 闹铃1");
-//                            AlarmManagerUtils.addAdvertisementAlarm(context, intent, 120 * 1000);
-//                        } else {
-//                            LogUtils.d("aaron", "requestcode: 闹铃2");
-//                            AlarmManagerUtils.addAdvertisementAlarm(context, intent, 25 * 1000);
-//                        }
                         AlarmManagerUtils.addAdvertisementAlarm(context.getApplicationContext(), intent, timeOffset);
-                        requestcode = requestcode + 1;
                     } else {
                         resource.setOpen(false);
+                        AlarmManagerUtils.removeAdvertisementAlarm(context.getApplicationContext(), intent);
                     }
+                    requestcode = requestcode + 1;
                     LogUtils.d("aaron", "serviceTime:" +serviceTime + ";; Advertisement: " + resource.getUrl() + ";;time:" + resource.getEndtime() + ";;timeOffset" + timeOffset);
                 }
                 //save Preference
@@ -190,16 +185,6 @@ public class SocketHelper {
             }
         }
     }
-
-//    /**
-//     * 下载广告资源,用户离线使用
-//     */
-//    public void advertisementResDownload(Context context, String advUrl, String advPath) {
-//        Intent intent = new Intent(context, ApkDownloadService.class);
-//        intent.putExtra(ApkDownloadService.EXTRA_DOWNLOAD_URL, advUrl);
-//        intent.putExtra(ApkDownloadService.EXTRA_DOWNLOAD_PATH, advPath);
-//        context.startService(intent);
-//    }
 
     /**
      * 场馆绑定
