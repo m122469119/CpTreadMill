@@ -38,6 +38,7 @@ import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.AlarmManagerUtils;
 import com.liking.treadmill.utils.ApkUpdateUtils;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -144,11 +145,21 @@ public class SocketHelper {
                 FileUtils.delete(ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE + result.getMsgId());
             }
         } else if(TYPE_SERVICE_TIME.equals(type)) {//服务器时间差
-            long currentSystemSeconds = DateUtils.currentDataSeconds();
+            LogUtils.d("aaron", "TYPE_SERVICE_TIME :" + jsonText);
             ServiceTimeResult timeResult = gson.fromJson(jsonText, ServiceTimeResult.class);
             ServiceTimeResult.ServiceTime serviceTime = timeResult.getServiceTime();
             if(serviceTime != null) {
-                sTimestampOffset = Long.parseLong(serviceTime.getTime()) - currentSystemSeconds;
+                String time = serviceTime.getTime();
+                LogUtils.d("aaron", "serviceTime :" + time);
+                if(!StringUtils.isEmpty(time)) {
+                    try {
+                        long t = Long.parseLong(time);
+                        LogUtils.d("aaron", "t:" + t);
+                        setSystemTime(context, t);
+                    }catch (Exception e) {
+                        LogUtils.d("aaron", e.getMessage());
+                    }
+                }
             }
         } else if (TYPE_ADVERTISMENT.equals(type)) { //下发广告
             LogUtils.d("aaron", "TYPE_ADVERTISMENT :" + jsonText);
@@ -157,13 +168,14 @@ public class SocketHelper {
             if(advUrlResource != null) {
                 int requestcode = 1000;
 
-                long serviceTime = DateUtils.currentDataSeconds() + sTimestampOffset;
+                long serviceTime = DateUtils.currentDateMilliseconds() + sTimestampOffset;
                 List<AdvertisementResult.AdvUrlResource.Resource> resources = advUrlResource.getResources();
                 LogUtils.d("aaron", "request: " + resources.size());
                 for (AdvertisementResult.AdvUrlResource.Resource resource:resources) {
                     LogUtils.d("aaron", "request: " + resource.getUrl());
                     long advTime = DateUtils.parseString("yyyyMMdd", resource.getEndtime()).getTime();
-                    long timeOffset = advTime - serviceTime * 1000;
+                    LogUtils.d("aaron", "request: advTime:" + advTime + "; serviceTime" + serviceTime);
+                    long timeOffset = advTime / 1000 - serviceTime ;
 
                     Intent intent = new Intent(context, AdvertisementReceiver.class);
                     intent.putExtra(AdvertisementReceiver.ADVERTISEMENT_URL, resource.getUrl());
@@ -186,6 +198,13 @@ public class SocketHelper {
         }
     }
 
+    public  static  void setSystemTime(Context context, long time) {
+        AlarmManager mAlarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        mAlarmManager.setTimeZone("GMT+08:00");
+
+        boolean ct = SystemClock.setCurrentTimeMillis(time);//系统同步服务器时间
+        LogUtils.d("aaron", ct == true ? "同步成功":"同步失败");
+    }
     /**
      * 场馆绑定
      * @return
