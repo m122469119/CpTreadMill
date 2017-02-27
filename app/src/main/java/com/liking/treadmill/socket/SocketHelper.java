@@ -202,7 +202,7 @@ public class SocketHelper {
         AlarmManager mAlarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         mAlarmManager.setTimeZone("GMT+08:00");
 
-        boolean ct = SystemClock.setCurrentTimeMillis(time);//系统同步服务器时间
+        boolean ct = SystemClock.setCurrentTimeMillis(time * 1000);//系统同步服务器时间
         LogUtils.d("aaron", ct == true ? "同步成功":"同步失败");
     }
     /**
