@@ -175,7 +175,7 @@ public class SocketHelper {
                     LogUtils.d("aaron", "request: " + resource.getUrl());
                     long advTime = DateUtils.parseString("yyyyMMdd", resource.getEndtime()).getTime();
                     LogUtils.d("aaron", "request: advTime:" + advTime + "; serviceTime" + serviceTime);
-                    long timeOffset = advTime / 1000 - serviceTime ;
+                    long timeOffset = advTime - serviceTime ;
 
                     Intent intent = new Intent(context, AdvertisementReceiver.class);
                     intent.putExtra(AdvertisementReceiver.ADVERTISEMENT_URL, resource.getUrl());
