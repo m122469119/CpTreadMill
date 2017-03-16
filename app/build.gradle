@@ -19,6 +19,15 @@ android {
         }
     }
 
+    signingConfigs {
+        myConfig {
+            storeFile file("haochushi")
+            storePassword "haochushi007"
+            keyAlias "haochushi"
+            keyPassword "haochushi"
+        }
+    }
+
     sourceSets {
         main {
             manifest.srcFile 'src/main/AndroidManifest.xml'
@@ -29,7 +38,7 @@ android {
             jniLibs.srcDirs = ['libs']
         }
         debug {
-//            Manifest.srcFile 'src/debug/AndroidManifest.xml'
+            manifest.srcFile 'src/debug/AndroidManifest.xml'
         }
         androidTest.setRoot('src/androidTest')
     }
@@ -49,7 +58,8 @@ android {
             buildConfigField STRING, HTTP_HOST, "\"http://room.likingfit.com/\""
             minifyEnabled true
             shrinkResources true
-            proguardFiles 'proguard-rules.pro'
+            signingConfig signingConfigs.myConfig
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
             buildConfigField BOOLEAN, TEST_MODE, TRUE
@@ -81,6 +91,4 @@ dependencies {
     compile project(':framework')
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
-    compile 'io.reactivex:rxjava:1.1.5'
-    compile 'io.reactivex:rxandroid:1.2.0'
 }

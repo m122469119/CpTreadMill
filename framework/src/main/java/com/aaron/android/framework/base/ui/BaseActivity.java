@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.R;
 import com.aaron.android.framework.base.eventbus.BaseMessage;
+import com.umeng.analytics.MobclickAgent;
 
 import de.greenrobot.event.EventBus;
 
@@ -44,12 +45,16 @@ public class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         LogUtils.d(TAG, TAG + "----onResume");
+        MobclickAgent.onPageStart(TAG);
+        MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         LogUtils.d(TAG, TAG + "----onPause");
+        MobclickAgent.onPageEnd(TAG);
+        MobclickAgent.onPause(this);
     }
 
     @Override
