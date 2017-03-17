@@ -55,7 +55,7 @@ android {
         release {
             buildConfigField BOOLEAN, TEST_MODE, FALSE
             buildConfigField STRING, APP_FLAG, appFlag
-            buildConfigField STRING, HTTP_HOST, "\"http://room.likingfit.com/\""
+            buildConfigField STRING, HTTP_HOST, "\"http://run.likingfit.com/\""
             minifyEnabled true
             shrinkResources true
             signingConfig signingConfigs.myConfig
@@ -64,7 +64,7 @@ android {
         debug {
             buildConfigField BOOLEAN, TEST_MODE, TRUE
             buildConfigField STRING, APP_FLAG, appFlag
-            buildConfigField STRING, HTTP_HOST, "\"http://testroom.likingfit.com/\""
+            buildConfigField STRING, HTTP_HOST, "\"http://testrun.likingfit.com/\""
             applicationIdSuffix ".test"
 //            versionNameSuffix ""
 //            proguardFiles 'proguard-rules.pro'

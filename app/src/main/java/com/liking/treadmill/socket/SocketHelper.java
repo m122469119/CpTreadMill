@@ -211,7 +211,7 @@ public class SocketHelper {
      */
     public static String bind() {
         return "{\"type\":\"bind_qcode\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
-                SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"}}\\r\\n";
+                DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\"}}\\r\\n";
     }
 
     /**
@@ -220,7 +220,7 @@ public class SocketHelper {
      */
     public static String unBind() {
         return "{\"type\":\"unbind_qcode\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
-                SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"}}\\r\\n";
+                DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\"}}\\r\\n";
     }
 
     public static String initString() {
@@ -229,8 +229,8 @@ public class SocketHelper {
 
     public static String reportDevicesString() {
         return "{\"type\":\"treadmill\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
-                SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"," +
-                "\"gym_id\":\"0\",\"mac\":\"" + EnvironmentUtils.Network.wifiMac() + "\",\"app_version\":\"" + EnvironmentUtils.Config.getAppVersionName() + "\"," +
+                DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\"," +
+                "\"gym_id\":\""+Preference.getBindUserGymId()+"\",\"mac\":\"" + EnvironmentUtils.Network.wifiMac() + "\",\"app_version\":\"" + EnvironmentUtils.Config.getAppVersionName() + "\"," +
                 "\"total_distance\":\"0\",\"total_time\":\"0\",\"power_times\":\"0\"}}\\r\\n";
     }
 
@@ -241,7 +241,8 @@ public class SocketHelper {
      * @return
      */
     public static String userloginString(String cardno) {
-        return "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"bracelet_id\":" + cardno + ",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
+        String time = String.valueOf(DateUtils.currentDataSeconds());
+        return "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + ",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
 
     }
 
@@ -254,9 +255,10 @@ public class SocketHelper {
      */
 
     public static String reportExerciseData(int type, int aimType, float aim, int achieve) {
+        String time = String.valueOf(DateUtils.currentDataSeconds());
         String msgId = SerialPortUtil.getTreadInstance().getCardNo() + new Date().getTime();
         String data = "{\"type\":\"data\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"" + msgId + "\",\"data\":{\"bracelet_id\":\"" + SerialPortUtil.getTreadInstance().getCardNo() + "\"" +
-                ",\"gym_id\":\"" + Preference.getBindUserGymId() + "\",\"device_id\":\"" + SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "\"" +
+                ",\"gym_id\":\"" + Preference.getBindUserGymId() + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\"" +
                 ",\"period\":\"" + SerialPortUtil.getTreadInstance().getRunTime() + "\"" +
                 ",\"distance\":\"" + SerialPortUtil.getTreadInstance().getDistance() + "\"" +
                 ",\"cal\":\"" + SerialPortUtil.getTreadInstance().getKCAL() + "\"" +
@@ -264,6 +266,7 @@ public class SocketHelper {
                 ",\"aim_type\":\"" + aimType + "\"" +
                 ",\"aim\":\"" + aim + "\"" +
                 ",\"achieve\":\"" + achieve + "\"" +
+                ",\"timestamp\":\"" + time + "\"" +
                 "}}\\r\\n";
         FileUtils.store(data, ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE + msgId);
         return data;

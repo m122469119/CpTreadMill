@@ -34,8 +34,8 @@ public class SocketService extends Service {
     public static final String TAG = "LikingSocket";
     //心跳包频率
     private static final long HEART_BEAT_RATE = 10 * 1000;
-    //测试环境地址：120.24.177.134   正式环境地址：218.244.135.8
-    public static final String HOST = EnvironmentUtils.Config.isDebugMode() ? "120.24.177.134" : "218.244.135.8";
+    //测试环境地址：120.24.177.134   正式环境地址：112.74.27.162
+    public static final String HOST = EnvironmentUtils.Config.isDebugMode() ? "120.24.177.134" : "112.74.27.162";
     public static final int PORT = 8192;
 
     public static final String MESSAGE_ACTION = "com.liking.threadmill.socket";

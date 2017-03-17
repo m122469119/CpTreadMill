@@ -1,7 +1,11 @@
 package com.aaron.android.framework.utils;
 
 import android.content.Context;
+import android.os.Build;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 
+import com.aaron.android.codelibrary.utils.SecurityUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 
 /**
@@ -19,27 +23,27 @@ public class DeviceUtils {
      */
     public static String getDeviceInfo(Context context) {
         try{
-            org.json.JSONObject json = new org.json.JSONObject();
-            android.telephony.TelephonyManager tm = (android.telephony.TelephonyManager) context
-                    .getSystemService(Context.TELEPHONY_SERVICE);
+            TelephonyManager TelephonyMgr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+            String m_szImei = TelephonyMgr.getDeviceId();
+            String m_szDevIDShort = "35" + //we make this look like a valid IMEI
+                    Build.BOARD.length()%10 +
+                    Build.BRAND.length()%10 +
+                    Build.CPU_ABI.length()%10 +
+                    Build.DEVICE.length()%10 +
+                    Build.DISPLAY.length()%10 +
+                    Build.HOST.length()%10 +
+                    Build.ID.length()%10 +
+                    Build.MANUFACTURER.length()%10 +
+                    Build.MODEL.length()%10 +
+                    Build.PRODUCT.length()%10 +
+                    Build.TAGS.length()%10 +
+                    Build.TYPE.length()%10 +
+                    Build.USER.length()%10 ; //13 digits
+            String m_szAndroidID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+            String m_szLongID = m_szImei + m_szDevIDShort
+                    + m_szAndroidID;
+            return SecurityUtils.MD5.get32MD5String(m_szLongID);
 
-            String device_id = tm.getDeviceId();
-
-            android.net.wifi.WifiManager wifi = (android.net.wifi.WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-
-            String mac = wifi.getConnectionInfo().getMacAddress();
-            json.put("mac", mac);
-
-            if(StringUtils.isEmpty(device_id) ){
-                device_id = mac;
-            }
-
-            if(StringUtils.isEmpty(device_id) ){
-                device_id = android.provider.Settings.Secure.getString(context.getContentResolver(),android.provider.Settings.Secure.ANDROID_ID);
-            }
-
-            json.put("device_id", device_id);
-            return json.toString();
         }catch(Exception e){
             e.printStackTrace();
         }

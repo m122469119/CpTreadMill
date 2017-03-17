@@ -219,6 +219,9 @@ public class BindGymFragment extends SerialPortFragment {
      * @param message
      */
     public void onEvent(GymBindSuccessMessage message) {
+        try {
+            ((HomeActivity)getActivity()).iBackService.reportDevices();
+        }catch (Exception e) {}
         showFinishView();
     }
 

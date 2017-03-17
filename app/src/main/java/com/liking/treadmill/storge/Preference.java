@@ -39,7 +39,7 @@ public class Preference extends AbsPreference {
     public static final String APP_SERVER_VERSION_URL = "setserverversionurl";//服务器版本地址
     public static final String USER_GYM_ID = "USER_GYM_ID";
     public static final String USER_GYM_NAME = "USER_GYM_NAME";
-    public static final String MEMBER_ID_LIST = new Date().getTime() + SecurityUtils.MD5.get16MD5String(DeviceUtils.getDeviceInfo(BaseApplication.getInstance())) + "";
+    public static final String MEMBER_ID_LIST = new Date().getTime() + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "";
 
     /**
      * 清空SharedPreferences
