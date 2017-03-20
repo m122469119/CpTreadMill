@@ -619,7 +619,7 @@ public class RunFragment extends SerialPortFragment {
                 if(distance > 0.0f) {
                     mCurrKmDistance = getKmDistance(distance);
                 }
-                mCurrentDistanceTextView.setText(StringUtils.getDecimalString(mCurrKmDistance, 2));
+                mCurrentDistanceTextView.setText(StringUtils.getDecimalString(mCurrKmDistance, 2) + "/km");
                 int runTime = SerialPortUtil.getTreadInstance().getRunTime();
                 String time = RunTimeUtil.secToTime(runTime);
                 if(runTime > 0) {

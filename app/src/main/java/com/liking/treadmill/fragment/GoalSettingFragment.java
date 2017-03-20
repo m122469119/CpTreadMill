@@ -105,11 +105,13 @@ public class GoalSettingFragment extends SerialPortFragment {
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_NEXT) {//模式选择:下一步
+            onRefreshBehavior();
             if(isModeSelect) {
                 modeSelect();
             }
         } else if(keyCode == LikingTreadKeyEvent.KEY_RETURN) { //返回
             if(isModeSetting) {
+                onRefreshBehavior();
                 isModeSelect = true;
                 isModeSetting = false;
                 showSettingView();
@@ -121,7 +123,7 @@ public class GoalSettingFragment extends SerialPortFragment {
         } else if(keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) {
         } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {
             if(isModeSelect) {
-                //双击MODE 处理
+                onRefreshBehavior();
                 isModeSelect = false;
                 isModeSetting = true;
                 showModeView();
@@ -132,6 +134,7 @@ public class GoalSettingFragment extends SerialPortFragment {
                 || keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE //坡度-
                 ) {
             if(isModeSetting) {
+                onRefreshBehavior();
                 setNumerical(keyCode);
             }
         } else if(keyCode == LikingTreadKeyEvent.KEY_START) {
@@ -155,6 +158,10 @@ public class GoalSettingFragment extends SerialPortFragment {
         }
     }
 
+    public void onRefreshBehavior() {
+        startActiveMonitor();
+    }
+
     public boolean checkGoalSettingValue(float value) {
         if(value <= 0.0f) {
             IToast.show(ResourceUtils.getString(R.string.threadmill_default_parameter_txt));
@@ -175,6 +182,7 @@ public class GoalSettingFragment extends SerialPortFragment {
     public void onResume() {
         super.onResume();
         LogUtils.d(TAG, "------onResume()");
+        onRefreshBehavior();
     }
 
     @Override

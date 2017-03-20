@@ -77,7 +77,7 @@ public class StartFragment extends SerialPortFragment {
             }
             ((HomeActivity) getActivity()).launchFragment(new RunFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {
-            stopActiveMonitor();
+            startActiveMonitor();
             cardLogin();
         } else if (keyCode == LikingTreadKeyEvent.KEY_PROGRAM) {
             startActiveMonitor();

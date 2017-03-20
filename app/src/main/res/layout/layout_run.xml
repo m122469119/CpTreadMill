@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="118dp"
-                android:text="距离(km)"
+                android:text="距离"
                 android:textColor="@color/white"
                 android:textSize="@dimen/textsize_20sp"/>
 
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
-                android:text="用时(h:m:s)"
+                android:text="用时"
                 android:textColor="@color/white"
                 android:textSize="@dimen/textsize_20sp"/>
 
