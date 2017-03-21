@@ -242,7 +242,7 @@ public class SocketHelper {
      */
     public static String userloginString(String cardno) {
         String time = String.valueOf(DateUtils.currentDataSeconds());
-        return "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + ",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
+        return "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
 
     }
 

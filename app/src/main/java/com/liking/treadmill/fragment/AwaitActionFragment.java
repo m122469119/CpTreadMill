@@ -1,7 +1,9 @@
 package com.liking.treadmill.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,8 +48,8 @@ public class AwaitActionFragment extends SerialPortFragment {
                 homeActivity.mUserLoginPresenter.userLogin();
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SET) {
-//            Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
-//            startActivity(intent);
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
+            startActivity(intent);
         } else if (keyCode == LikingTreadKeyEvent.KEY_PGR_PGR_SPEED_REDUCE) {
             View customView =  getLayoutInflater(null).inflate(R.layout.layout_visit_validate, null, false);
             final EditText inputPasswordEditText = (EditText) customView.findViewById(R.id.visit_password_editText);
