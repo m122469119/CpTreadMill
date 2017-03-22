@@ -1,8 +1,10 @@
 package com.liking.treadmill.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.Spannable;
@@ -176,6 +178,11 @@ public class BindGymFragment extends SerialPortFragment {
         } else if(keyCode == LikingTreadKeyEvent.KEY_LAST) {
             if(isSetting) return;
             postEvent(new SettingNextMessage(0));
+        } else if(keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) {
+            if(!isSetting) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
+                startActivity(intent);
+            }
         }
     }
 
