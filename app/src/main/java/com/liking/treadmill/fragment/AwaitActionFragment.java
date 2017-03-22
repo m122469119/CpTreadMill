@@ -47,7 +47,7 @@ public class AwaitActionFragment extends SerialPortFragment {
             if (homeActivity.mUserLoginPresenter != null) {
                 homeActivity.mUserLoginPresenter.userLogin();
             }
-        } else if (keyCode == LikingTreadKeyEvent.KEY_SET) {
+        } else if (keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
             startActivity(intent);
         } else if (keyCode == LikingTreadKeyEvent.KEY_PGR_PGR_SPEED_REDUCE) {

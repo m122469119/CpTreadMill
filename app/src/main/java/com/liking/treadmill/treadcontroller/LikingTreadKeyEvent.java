@@ -62,11 +62,11 @@ public class LikingTreadKeyEvent {
     public final static byte KEY_PGR_PGR_SPEED_REDUCE = 0x50; //PGR+ PGR+SPEED-
     public final static String KEY_SPEED_PLUS_SPEED_REDUCE = "51"; //PGR+ SPEED++ SPEED-
     public final static String KEY_PGR_SPEED_COOLDOWN = "52"; //PGR+ SPEED++ COOLDWON
-    public final static String KEY_PGR_PAUSE_STOP = "53"; //PGR+ PAUSE+ STOP
+    public final static byte KEY_PGR_PAUSE_STOP = 0x53; //PGR+ PAUSE+ STOP
     public final static byte KEY_PGR_START = 0x54; //PGR+ START
 //    public final static String KEY_MODE_MODE = "55"; //MODE+ MODE
     public final static String KEY_INCLINE_INCLINE_REDUCE_INCLINE_PLUS = "56"; //INCLINE++INCLINE-+ INCLINE+
     public final static String KEY_SPEED_SPEED_REDUCE_SPEED_PLUS = "57"; //SPEED++ SPEED-+ SPEED+
-    public final static String KEY_VOL_VOL_REDUCE_VOL_PLUS = "58"; //VOL+ +  VOL- +  VOL+
+    public final static byte KEY_VOL_VOL_REDUCE_VOL_PLUS = 0x58; //VOL+ +  VOL- +  VOL+
 
 }

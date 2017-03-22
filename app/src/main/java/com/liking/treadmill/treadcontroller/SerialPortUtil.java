@@ -149,7 +149,7 @@ public class SerialPortUtil {
         }
 
         public int getHeartRate() {
-            return mHeartRate;
+            return mHeartRate & 0xff;
         }
 
         public void setHeartRate(byte heartRate) {

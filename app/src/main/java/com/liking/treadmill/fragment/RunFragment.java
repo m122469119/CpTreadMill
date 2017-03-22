@@ -760,8 +760,9 @@ public class RunFragment extends SerialPortFragment {
                 mTotalHeartRate += mHeartRate;
                 mHeartChangeCount ++;
             }
-            mHeartRateInfoTextView.setText(String.valueOf(mHeartRate));
         }
+        mHeartRateInfoTextView.setText(String.valueOf(treadData.getHeartRate()));
+
         if (mSpeed != treadData.getCurrentSpeed()) {
             mSpeed = treadData.getCurrentSpeed();
             mSpeedInfoTextView.setText(StringUtils.getDecimalString((float) (mSpeed / 10.0), 2));
