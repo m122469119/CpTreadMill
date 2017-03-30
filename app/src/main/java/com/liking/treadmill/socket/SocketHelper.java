@@ -59,6 +59,7 @@ public class SocketHelper {
     private static final String TYPE_BIND = "bind";
     private static final String TYPE_UNBIND = "unbind";
     private static final String TYPE_USERLOGIN = "login";
+    private static final String TYPE_USERLOGIN_OUT = "logout";
     private static final String TYPE_MEMBER_LIST = "member_list";
     private static final String TYPE_EXERCISE_DATA = "data";
     private static final String TYPE_SERVICE_TIME = "time";
@@ -246,6 +247,11 @@ public class SocketHelper {
 
     }
 
+    public static String userlogoutString(String cardno) {
+        String time = String.valueOf(DateUtils.currentDataSeconds());
+        return "{\"type\":\"logout\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
+
+    }
     /**
      *  上报跑步数据
      * @param type //1=>快速启动， 2=>设定目标， 3=>预设课程

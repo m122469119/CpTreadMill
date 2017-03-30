@@ -36,6 +36,14 @@ public class AwaitActionFragment extends SerialPortFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_awaitaction, container, false);
         ButterKnife.bind(this, mRootView);
+        if(SerialPortUtil.getTreadInstance().getUserInfo() != null) {
+            final HomeActivity homeActivity = (HomeActivity) getActivity();
+            if(homeActivity.isLogin) {
+                homeActivity.userLogout(SerialPortUtil.getTreadInstance().getUserInfo().mBraceletId);
+                homeActivity.isLogin = false;
+            }
+            SerialPortUtil.getTreadInstance().resetUserInfo();
+        }
         return mRootView;
     }
 
@@ -92,9 +100,6 @@ public class AwaitActionFragment extends SerialPortFragment {
         super.onResume();
         LogUtils.d(TAG, "------onResume()");
         initViews();
-        if(SerialPortUtil.getTreadInstance().getUserInfo() != null) {
-            SerialPortUtil.getTreadInstance().resetUserInfo();
-        }
     }
 
     @Override

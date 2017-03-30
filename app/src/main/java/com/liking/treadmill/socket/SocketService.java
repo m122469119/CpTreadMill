@@ -112,6 +112,11 @@ public class SocketService extends Service {
         }
 
         @Override
+        public void userLogOut(String cardno) throws RemoteException {
+            sendUpStreamMessage(SocketHelper.userlogoutString(cardno));
+        }
+
+        @Override
         public void reportExerciseCacheData(String data) throws RemoteException {
             LogUtils.d(SocketService.TAG, "缓存锻炼数据：" + data);
             sendUpStreamMessage(data);

@@ -55,6 +55,8 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     public long delayedInterval = 3000;
     private boolean isUpdate = false;
 
+    public boolean isLogin = false;//是否登录
+
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -180,6 +182,9 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      */
     public void onEvent(LoginUserInfoMessage loginUserInfoMessage) {
         if(mUserLoginPresenter != null) {
+            if(loginUserInfoMessage.mUserData != null && loginUserInfoMessage.mUserData.getErrcode() == 0) {
+                isLogin = true;
+            }
             mUserLoginPresenter.userLoginResult(loginUserInfoMessage);
         }
     }
@@ -305,6 +310,20 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     @Override
     public void handleNetworkFailure() {
 
+    }
+
+    /**
+     * 会员退出
+     * @param cardNo
+     */
+    public void userLogout(String cardNo) {
+        if(iBackService != null) {
+            try {
+                iBackService.userLogOut(cardNo);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

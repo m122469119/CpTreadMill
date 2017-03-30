@@ -526,6 +526,7 @@ public class RunFragment extends SerialPortFragment {
             try {
                 //上传锻炼数据
                 ((HomeActivity) getActivity()).iBackService.reportExerciseData(THREADMILL_MODE_SELECT, GOAL_TYPE, GOAL_VALUE, ACHIEVE_TYPE);
+                ((HomeActivity) getActivity()).isLogin = false;
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
