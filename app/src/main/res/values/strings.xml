@@ -35,7 +35,8 @@
     <!--<![CDATA[完成目标<font color="#25ff8c"><b>%s</b></font>，]]>-->
     <string name="run_result_unfinished_txt_hint"><Data>下次继续挑战吧!</Data></string>
     <string name="run_thread_set_txt">即将为您将%1$s调整为%2$s</string>
-    <string name="threadmill_standby_time_hint_txt">在跑步机未运行暂停画面或者跑步机运行中空跑的情况下</string>
+    <!--<string name="threadmill_standby_time_hint_txt">在跑步机未运行暂停画面或者跑步机运行中空跑的情况下</string>-->
+    <string name="threadmill_standby_time_hint_txt">在跑步机未运行暂停画面的情况下</string>
     <string name="threadmill_standby_time_title_txt">待机时间设置</string>
     <string name="threadmill_standby_time_operate1_txt">点击坡度&#160;&#160;&#160;&#160;&#160;&#160;&#160;设定待机时间</string>
     <string name="threadmill_standby_time_operate2_txt">设定完成后，点击&#160;&#160;&#160;&#160;返回上一页</string>

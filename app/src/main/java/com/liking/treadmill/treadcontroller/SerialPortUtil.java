@@ -55,7 +55,7 @@ public class SerialPortUtil {
         private int mTreadmillState;
         private int mCardIsValid;
         private int runTime = 0;
-        private int mStepNumber;//步数
+//        private int mStepNumber;//步数
         private UserInfo mUserInfo;
         private String mCardNo;
 
@@ -107,13 +107,13 @@ public class SerialPortUtil {
             mCheck = check;
         }
 
-        public int getStepNumber() {
-            return mStepNumber;
-        }
+//        public int getStepNumber() {
+//            return mStepNumber;
+//        }
 
-        public void setStepNumber(int stepNumber) {
-            mStepNumber = stepNumber;
-        }
+//        public void setStepNumber(int stepNumber) {
+//            mStepNumber = stepNumber;
+//        }
 
         public int getCurrentSpeed() {
             LogUtils.d("data", "speed: " + (mCurrentSpeed & 0xFF));
@@ -301,7 +301,7 @@ public class SerialPortUtil {
             mKCAL = 0; //卡路里
             runTime = 0;
             mCardNo = "";
-            mStepNumber = 0;
+//            mStepNumber = 0;
             SerialPortUtil.setCardNoUnValid();//设置无效卡
         }
 
@@ -600,8 +600,8 @@ public class SerialPortUtil {
             if (((byte) PROTOCOL_HEAD_CARDNO) == getKeyCodeFromSerialPort(serialPortData)) {//刷卡
                 setValidCardNo(serialPortData);
             } else { //步数  其他情况下P14~P15为步数
-                int stepNumber = ((serialPortData[INDEX_KEY + 14] << 8) & 0xff00) | (serialPortData[INDEX_KEY + 15] & 0xff);
-                sTreadData.setStepNumber(stepNumber);
+//                int stepNumber = ((serialPortData[INDEX_KEY + 14] << 8) & 0xff00) | (serialPortData[INDEX_KEY + 15] & 0xff);
+//                sTreadData.setStepNumber(stepNumber);
             }
         }
     }

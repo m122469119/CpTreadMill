@@ -118,7 +118,7 @@ public class RunFragment extends SerialPortFragment {
     private View mRootView;
     private TextView mGradeInfoTextView;
     private TextView mSpeedInfoTextView;
-    private TextView mStepNumberInfoTextView;
+//    private TextView mStepNumberInfoTextView;
     private TextView mHotInfoTextView;
     private TextView mHeartRateInfoTextView;
     private float mHotInfo = 0;
@@ -132,7 +132,7 @@ public class RunFragment extends SerialPortFragment {
     private TextView mDistanceTextView;//距离
     private TextView mUseTimeTextView; //用时
     private TextView mAvergageSpeedTextView;   //平均速度
-    private TextView mTotalStepNumberTextView; //总步数
+//    private TextView mTotalStepNumberTextView; //总步数
     private TextView mConsumeKcalTextView;    //消耗热量
     private TextView mAvergHraetRateTextView; //平均心率
 
@@ -155,7 +155,7 @@ public class RunFragment extends SerialPortFragment {
     private int ACHIEVE_TYPE = 0;//设定目标时完成情况
     private PrepareCountdownTime mPrepareCountdownTime;
     private Animation animation;
-    private int mCurrStepNumber = -1;//当前步数
+//    private int mCurrStepNumber = -1;//当前步数
     private long mRunlastTime;
 
     private float mCurrKmDistance ;//当前已跑总距离
@@ -493,10 +493,10 @@ public class RunFragment extends SerialPortFragment {
             float avergageSpeed = totalDistanceKm / h;
             mAvergageSpeedTextView.setText(StringUtils.getDecimalString(avergageSpeed, 2));
         }
-        int stepNumber = SerialPortUtil.getTreadInstance().getStepNumber();
-        if(stepNumber != 0) {
-            mTotalStepNumberTextView.setText(String.valueOf(stepNumber));
-        }
+//        int stepNumber = SerialPortUtil.getTreadInstance().getStepNumber();
+//        if(stepNumber != 0) {
+//            mTotalStepNumberTextView.setText(String.valueOf(stepNumber));
+//        }
         //消耗热量
         float kcal = SerialPortUtil.getTreadInstance().getKCAL();
         if(kcal > 0.0f) {
@@ -677,10 +677,10 @@ public class RunFragment extends SerialPortFragment {
         }
 
         //判断是否空跑
-        if(!checkUserIsRunning()) {
-//            IToast.show("空跑...");
-            finishExercise();
-        }
+//        if(!checkUserIsRunning()) {
+////            IToast.show("空跑...");
+//            finishExercise();
+//        }
     }
 
     /**
@@ -772,7 +772,7 @@ public class RunFragment extends SerialPortFragment {
             mHotInfo = treadData.getKCAL();
             mHotInfoTextView.setText(StringUtils.getDecimalString(mHotInfo, 1));
         }
-        mStepNumberInfoTextView.setText(String.valueOf(treadData.getStepNumber()));
+//        mStepNumberInfoTextView.setText(String.valueOf(treadData.getStepNumber()));
         setSpeedBack(mSpeed);
     }
 
@@ -814,17 +814,17 @@ public class RunFragment extends SerialPortFragment {
     private void initRunInfoViews() {
         View gradeCell = mRootView.findViewById(R.id.cell_grade);
         View speedCell = mRootView.findViewById(R.id.cell_speed);
-        View stepNumberCell = mRootView.findViewById(R.id.cell_step_number);
+//        View stepNumberCell = mRootView.findViewById(R.id.cell_step_number);
         View hotCell = mRootView.findViewById(R.id.cell_hot);
         View heartRateCell = mRootView.findViewById(R.id.cell_heart_rate);
         setupRunInfoCell(gradeCell, "坡度", R.drawable.icon_run_grade);
         setupRunInfoCell(speedCell, "速度(KM/H)", R.drawable.icon_run_speed);
-        setupRunInfoCell(stepNumberCell, "步数", R.drawable.icon_run_step_number);
+//        setupRunInfoCell(stepNumberCell, "步数", R.drawable.icon_run_step_number);
         setupRunInfoCell(hotCell, "消耗卡路里(KCAL)", R.drawable.icon_run_kcal);
         setupRunInfoCell(heartRateCell, "心率(BPM)", R.drawable.icon_run_bpm);
         mGradeInfoTextView.setText("0");
         mSpeedInfoTextView.setText("0");
-        mStepNumberInfoTextView.setText("0");
+//        mStepNumberInfoTextView.setText("0");
         mHotInfoTextView.setText("0.0");
         mHeartRateInfoTextView.setText("0");
     }
@@ -844,9 +844,9 @@ public class RunFragment extends SerialPortFragment {
             case R.id.cell_speed:
                 mSpeedInfoTextView = contentTextView;
                 break;
-            case R.id.cell_step_number:
-                mStepNumberInfoTextView = contentTextView;
-                break;
+//            case R.id.cell_step_number:
+//                mStepNumberInfoTextView = contentTextView;
+//                break;
             case R.id.cell_hot:
                 mHotInfoTextView = contentTextView;
                 break;
@@ -867,8 +867,8 @@ public class RunFragment extends SerialPortFragment {
         View useTimeView = mRootView.findViewById(R.id.layout_user_time);
 //        View averageGradientView = mRootView.findViewById(R.id.layout_average_gradient);
         View avergageSpeedView = mRootView.findViewById(R.id.layout_average_speed);
-        View totalStepNumberView = mRootView.findViewById(R.id.layout_total_step_number);
-        View stepNumberCell = mRootView.findViewById(R.id.cell_step_number);
+//        View totalStepNumberView = mRootView.findViewById(R.id.layout_total_step_number);
+//        View stepNumberCell = mRootView.findViewById(R.id.cell_step_number);
         View consumeKcalView = mRootView.findViewById(R.id.layout_consume_kcal);
         View avergHraetRateView = mRootView.findViewById(R.id.layout_average_heart_rate);
 
@@ -876,7 +876,7 @@ public class RunFragment extends SerialPortFragment {
         setupRunFinishData(useTimeView, "用时", 24f, 32f, R.drawable.icon_run_time);
 //        setupRunFinishData(averageGradientView, "平均坡度", 20f, 24f, R.drawable.icon_run_grade);
         setupRunFinishData(avergageSpeedView, "平均配速(KM/H)", 20f, 24f, R.drawable.icon_run_speed);
-        setupRunFinishData(totalStepNumberView, "步数", 20f, 24f, R.drawable.icon_run_step_number);
+//        setupRunFinishData(totalStepNumberView, "步数", 20f, 24f, R.drawable.icon_run_step_number);
         setupRunFinishData(consumeKcalView, "消耗卡路里(KCAL)", 20f, 24f, R.drawable.icon_run_kcal);
         setupRunFinishData(avergHraetRateView, "平均心率(BPM)", 20f, 24f, R.drawable.icon_run_bpm);
 //        mRunTimeTextView.setText(DateUtils.formatDate("MM-dd HH:mm", new Date()));
@@ -885,7 +885,7 @@ public class RunFragment extends SerialPortFragment {
         mUseTimeTextView.setText("0");
 //        mAverageGradientTextView.setText("0");
         mAvergageSpeedTextView.setText("0");
-        mTotalStepNumberTextView.setText("0");
+//        mTotalStepNumberTextView.setText("0");
         mConsumeKcalTextView.setText("0");
         mAvergHraetRateTextView.setText("0");
     }
@@ -913,9 +913,9 @@ public class RunFragment extends SerialPortFragment {
             case R.id.layout_average_speed:
                 mAvergageSpeedTextView = contentTextView;
                 break;
-            case R.id.layout_total_step_number:
-                mTotalStepNumberTextView = contentTextView;
-                break;
+//            case R.id.layout_total_step_number:
+//                mTotalStepNumberTextView = contentTextView;
+//                break;
             case R.id.layout_consume_kcal:
                 mConsumeKcalTextView = contentTextView;
                 break;
@@ -990,19 +990,19 @@ public class RunFragment extends SerialPortFragment {
         mPrepareCountDownTextView.startAnimation(animation);
     }
 
-    /**
-     * 判断用户是否空跑
-     */
-    public boolean checkUserIsRunning() {
-        int stepNumber = SerialPortUtil.getTreadInstance().getStepNumber();
-        long currentTime = System.currentTimeMillis();
-        boolean isRun = true;
-        if (mCurrStepNumber != stepNumber) {
-            mCurrStepNumber = stepNumber;
-            mRunlastTime = currentTime;
-        }  else if (mCurrStepNumber == stepNumber && currentTime - mRunlastTime > Preference.getStandbyTime() * 1000) {
-            isRun = false;
-        }
-        return isRun;
-    }
+//    /**
+//     * 判断用户是否空跑
+//     */
+//    public boolean checkUserIsRunning() {
+//        int stepNumber = SerialPortUtil.getTreadInstance().getStepNumber();
+//        long currentTime = System.currentTimeMillis();
+//        boolean isRun = true;
+//        if (mCurrStepNumber != stepNumber) {
+//            mCurrStepNumber = stepNumber;
+//            mRunlastTime = currentTime;
+//        }  else if (mCurrStepNumber == stepNumber && currentTime - mRunlastTime > Preference.getStandbyTime() * 1000) {
+//            isRun = false;
+//        }
+//        return isRun;
+//    }
 }
