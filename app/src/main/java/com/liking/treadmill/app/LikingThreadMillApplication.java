@@ -3,6 +3,7 @@ package com.liking.treadmill.app;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.BaseApplication;
 import com.aaron.android.framework.utils.EnvironmentUtils;
+import com.facebook.stetho.Stetho;
 import com.liking.treadmill.BuildConfig;
 
 
@@ -18,6 +19,7 @@ public class LikingThreadMillApplication extends BaseApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        Stetho.initializeWithDefaults(this);
     }
 
     @Override

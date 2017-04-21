@@ -4,17 +4,20 @@ import android.content.Context;
 
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.base.mvp.BasePresenter;
+import com.aaron.android.framework.library.thread.TaskScheduler;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
-import com.google.gson.Gson;
 import com.liking.treadmill.R;
+import com.liking.treadmill.db.LikingLocalDataSource;
+import com.liking.treadmill.db.entity.Member;
 import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.mvp.view.UserLoginView;
-import com.liking.treadmill.socket.result.MemberListResult;
 import com.liking.treadmill.socket.result.UserInfoResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.widget.IToast;
+
+import java.util.List;
 
 /**
  * 说明: 用户刷卡登录
@@ -26,9 +29,15 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
 
     private static long lastTime;
     private final static int SPACE_TIME = 1000;
+    private LikingLocalDataSource mDataSource;
+    private List<Member> mMemberCache;
 
-    public UserLoginPresenter(Context context, UserLoginView mainView) {
+    private Member member = null;
+
+    public UserLoginPresenter(Context context, UserLoginView mainView, LikingLocalDataSource dataSource, List<Member> memberCache) {
         super(context, mainView);
+        this.mDataSource = dataSource;
+        this.mMemberCache = memberCache;
     }
 
     /**
@@ -36,7 +45,7 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
      */
     public void userLogin() {
 
-        String cardNo = SerialPortUtil.getTreadInstance().getCardNo();
+        final String cardNo = SerialPortUtil.getTreadInstance().getCardNo();
         if(!StringUtils.isEmpty(cardNo) && !isRepeatReadCard()) {//不为空并且1s内只允许发起一次刷卡请求
             if(EnvironmentUtils.Network.isNetWorkAvailable()) {
                 if(mView != null) {
@@ -44,21 +53,34 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
                 }
             } else {
                 //无网
-                if(!StringUtils.isEmpty(Preference.getBindUserGymId())) {//已绑定场馆
-                    Gson gson = new Gson();
-                    MemberListResult.MemberData.MemberListData members = gson.fromJson
-                            (Preference.getMemberList(), MemberListResult.MemberData.MemberListData.class);
-                    if(members != null) {
-                        if(members.getManger() != null && members.getManger().contains(cardNo)) {
-                            launchRunFragment(getDefaultUserInfo(1, cardNo));
-                        } else if(members.getMember() != null && members.getMember().contains(cardNo)) {
-                            launchRunFragment(getDefaultUserInfo(2, cardNo));
-                        } else {
-                            IToast.show(ResourceUtils.getString(R.string.network_no_connection));
+                if(!StringUtils.isEmpty(Preference.getBindUserGymId()) && mDataSource != null) {//已绑定场馆
+
+                    TaskScheduler.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            member = mDataSource.queryMemberInfo(cardNo);
                         }
-                    } else {
-                        IToast.show(ResourceUtils.getString(R.string.network_no_connection));
-                    }
+                    }, new Runnable() {
+                        @Override
+                        public void run() {
+                            if(member != null) {
+                                launchRunFragment(getDefaultUserInfo(member.getMemberType(), cardNo));
+                            } else {
+                                //缓存中查询(未缓存到数据库)
+                                if(mMemberCache != null && !mMemberCache.isEmpty()) {
+                                    for (Member m:mMemberCache) {
+                                        if(cardNo.equals(m.getBraceletId())) {
+                                            launchRunFragment(getDefaultUserInfo(member.getMemberType(), cardNo));
+                                        }
+                                        break;
+                                    }
+                                } else {
+                                    IToast.show(ResourceUtils.getString(R.string.network_no_connection));
+                                }
+                            }
+                        }
+                    });
+
                 } else { //场馆未绑定
                     IToast.show(ResourceUtils.getString(R.string.network_no_connection));
                 }

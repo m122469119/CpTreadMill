@@ -13,8 +13,12 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
+import com.aaron.android.framework.library.thread.TaskScheduler;
 import com.aaron.android.framework.utils.ResourceUtils;
+import com.google.gson.Gson;
 import com.liking.treadmill.R;
+import com.liking.treadmill.db.LikingLocalDataSource;
+import com.liking.treadmill.db.entity.Member;
 import com.liking.treadmill.fragment.AwaitActionFragment;
 import com.liking.treadmill.fragment.StartFragment;
 import com.liking.treadmill.fragment.StartSettingFragment;
@@ -25,13 +29,15 @@ import com.liking.treadmill.message.FanStateMessage;
 import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.LoginUserInfoMessage;
+import com.liking.treadmill.message.MemberListMessage;
+import com.liking.treadmill.message.MemberNoneMessage;
+import com.liking.treadmill.message.RequestMembersMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.message.UpdateCompleteMessage;
 import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
 import com.liking.treadmill.socket.MessageBackReceiver;
-import com.liking.treadmill.socket.SocketHelper;
 import com.liking.treadmill.socket.SocketService;
 import com.liking.treadmill.socket.result.AdvertisementResult;
 import com.liking.treadmill.storge.Preference;
@@ -39,6 +45,7 @@ import com.liking.treadmill.test.IBackService;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.widget.IToast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends LikingTreadmillBaseActivity implements UserLoginView {
@@ -57,18 +64,13 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     public boolean isLogin = false;//是否登录
 
+    public List<Member> mMemberListCache = new ArrayList<>();//成员列表缓存
+
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             iBackService = IBackService.Stub.asInterface(iBinder);
             LogUtils.d(SocketService.TAG, "service is connected");
-//            try {
-//                LogUtils.d(SocketService.TAG, "上报设备信息start");
-//                // iBackService.reportDevices();
-//                iBackService.bind();
-//            } catch (RemoteException e) {
-//                e.printStackTrace();
-//            }
         }
 
         @Override
@@ -80,15 +82,17 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     public UserLoginPresenter mUserLoginPresenter = null;
 
+    private LikingLocalDataSource mDataSource = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         launchInit();
+        mDataSource = new LikingLocalDataSource(this);
         if(mUserLoginPresenter == null) {
-            mUserLoginPresenter = new UserLoginPresenter(this, this);
+            mUserLoginPresenter = new UserLoginPresenter(this, this, mDataSource, mMemberListCache);
         }
         initAdViews();
-
 
     }
 
@@ -225,6 +229,14 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 @Override
                 public void run() {
                     SerialPortUtil.getTreadInstance().reset();//清空数据
+                    TaskScheduler.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(mDataSource != null) {
+                                mDataSource.deleteAllMembers();
+                            }
+                        }
+                    });
                     launchFragment(new StartSettingFragment());
                 }
             },delayedInterval);
@@ -324,6 +336,78 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 服务端下发会员列表请求命令
+     *
+     * @param message
+     */
+    public void onEvent(RequestMembersMessage message) {
+        if(iBackService != null) {
+            try {
+                int mMCacheSize = mMemberListCache.size();
+                if(mMCacheSize > 0) {
+                    Member member = mMemberListCache.get(mMCacheSize - 1);
+                    Preference.setLastMemberId(member.getMemberId());
+                    iBackService.requestMembersCommand();
+                } else {
+                    TaskScheduler.execute(new Runnable() {
+                        @Override
+                        public void run() { //
+                            String memberId = mDataSource.queryLastMemberId();
+                            Preference.setLastMemberId(memberId);
+                        }
+                    }, new Runnable() { //请求会员列表
+                        @Override
+                        public void run() {
+                            try {
+                                iBackService.requestMembersCommand();
+                            }catch (Exception e) {}
+                        }
+                    });
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 下发的成员列表 -> Memory Caching
+     * @param message
+     */
+    public void onEvent(MemberListMessage message) {
+        List<Member> members = message.mMemberList;
+        if(members !=null && !members.isEmpty()) {
+            for (Member m:members) {
+                if(!mMemberListCache.contains(m)) {
+                    mMemberListCache.add(m);
+                }
+            }
+        }
+    }
+
+    /**
+     * 下发结束 Memory cache -> DB Caching
+     * @param message
+     */
+    public void onEvent(MemberNoneMessage message) {
+        TaskScheduler.execute(new Runnable() { // 往数据库添加数据
+            @Override
+            public void run() {
+                if(!mMemberListCache.isEmpty() && mDataSource !=null) {
+                    LogUtils.e("sql", "addAllMembers");
+                    mDataSource.updateMemberList(mMemberListCache);
+                }
+            }
+        }, new Runnable() { //数据库添加完成回调
+            @Override
+            public void run() {
+                LogUtils.e("sql", "MemberListCache clear");
+                mMemberListCache.clear();
+            }
+        });
     }
 
 }

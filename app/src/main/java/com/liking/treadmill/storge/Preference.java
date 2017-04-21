@@ -34,6 +34,7 @@ public class Preference extends AbsPreference {
     public static final String MOTION_PARAM_MAX_RUNTIME = "motionparammaxruntime";//运动最大时间
     public static final String TREADMILL_SETUP_ISVISITOR = "treadmillsetupvisitor";
     public static final String ADVERTISEMENT =  "advertisement";//广告
+    public static final String LASTMEMBERID = "lastmemberid";//最后的成员ID
 
     public static final String APP_SERVER_VERSION = "setserverversion";//服务器版本
     public static final String APP_SERVER_VERSION_URL = "setserverversionurl";//服务器版本地址
@@ -236,25 +237,25 @@ public class Preference extends AbsPreference {
         return (String) getObject(USER_GYM_NAME, "");
     }
 
-    /**
-     * 保存当前场馆所有会员id
-     *
-     * @param memberList
-     * @return
-     */
-    public static boolean setMemberList(String memberList) {
-        return setObject(MEMBER_ID_LIST, memberList);
-    }
-
-    /**
-     * 获取当前场馆所有会员id
-     *
-     * @return
-     */
-    public static String getMemberList() {
-        String jsonString = (String) getObject(MEMBER_ID_LIST, "");
-        return jsonString;
-    }
+//    /**
+//     * 保存当前场馆所有会员id
+//     *
+//     * @param memberList
+//     * @return
+//     */
+//    public static boolean setMemberList(String memberList) {
+//        return setObject(MEMBER_ID_LIST, memberList);
+//    }
+//
+//    /**
+//     * 获取当前场馆所有会员id
+//     *
+//     * @return
+//     */
+//    public static String getMemberList() {
+//        String jsonString = (String) getObject(MEMBER_ID_LIST, "");
+//        return jsonString;
+//    }
 
     /**
      * 设置待机时间 s为单位
@@ -313,7 +314,7 @@ public class Preference extends AbsPreference {
         Preference.setIsStartingUp(true);
         Preference.setBindUserGymId("");
         Preference.setBindUserGymName("");
-        Preference.setMemberList("");
+//        Preference.setMemberList("");
         Preference.setIsVisitorMode(false);
         Preference.setStandbyTime(ThreadMillConstant.THREADMILL_DEFAULT_SYSTEM_STANBYTIME);
         Preference.setMotionParamMaxRunTime(ThreadMillConstant.THREADMILL_DEFAULT_RUNNING_TIME);
@@ -336,4 +337,19 @@ public class Preference extends AbsPreference {
         return (String) getObject(ADVERTISEMENT, "");
     }
 
+    /**
+     * 设置获取到的最后成员Id
+     * @return
+     */
+    public static boolean setLastMemberId(String memberId) {
+        return setObject(LASTMEMBERID, memberId);
+    }
+
+    /**
+     * 获取最后的成员Id
+     * @return
+     */
+    public static String getLastMemberId() {
+        return (String) getObject(LASTMEMBERID, "0");
+    }
 }

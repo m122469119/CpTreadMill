@@ -1,30 +1,30 @@
 package com.liking.treadmill.socket;
 
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.SystemClock;
 
 import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
-import com.aaron.android.codelibrary.utils.SecurityUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.base.BaseApplication;
 import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
 import com.liking.treadmill.app.ThreadMillConstant;
+import com.liking.treadmill.db.entity.Member;
 import com.liking.treadmill.message.AdvertisementMessage;
 import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.LoginUserInfoMessage;
+import com.liking.treadmill.message.MemberListMessage;
+import com.liking.treadmill.message.MemberNoneMessage;
 import com.liking.treadmill.message.QrCodeMessage;
+import com.liking.treadmill.message.RequestMembersMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.receiver.AdvertisementReceiver;
-import com.liking.treadmill.service.ApkDownloadService;
 import com.liking.treadmill.socket.result.AdvertisementResult;
 import com.liking.treadmill.socket.result.ApkUpdateResult;
 import com.liking.treadmill.socket.result.BaseSocketResult;
@@ -38,6 +38,7 @@ import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.AlarmManagerUtils;
 import com.liking.treadmill.utils.ApkUpdateUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -64,8 +65,9 @@ public class SocketHelper {
     private static final String TYPE_EXERCISE_DATA = "data";
     private static final String TYPE_SERVICE_TIME = "time";
     private static final String TYPE_ADVERTISMENT = "advertisement";
+    private static final String TYPE_REQUEST_MEMBER = "request_member";
 
-    private static final String mTcpVersion = "v1.1";
+    private static final String mTcpVersion = "v1.2";
 
     public static final String HEART_BEAT_STRING = "{\"type\":\"ping\",\"version\":\"" + mTcpVersion + "\",\"data\":{}, \"msg_id\":\"\"}\\r\\n";//心跳包内容
     public static final String HEART_BEAT_PONG_STRING = "{\"type\":\"pong\",\"data\":{}, \"msg_id\":\"\"}";//心跳包内容
@@ -73,6 +75,7 @@ public class SocketHelper {
     public static final String CONFIRM_STRING = "{\"type\":\"confirm\",\"data\":{}}";//心跳包内容
 
     public static long sTimestampOffset = 0;
+
 
     public static void handlerSocketReceive(Context context, String jsonStr) {
 
@@ -123,16 +126,6 @@ public class SocketHelper {
         } else if(TYPE_UNBIND.equals(type)) {//成功解绑场馆
             Preference.setUnBindRest();
             EventBus.getDefault().post(new GymUnBindSuccessMessage());
-        } else if (TYPE_MEMBER_LIST.equals(type)) {//当前用户所在场馆的所有会员id
-            MemberListResult memberListResult = gson.fromJson(jsonText, MemberListResult.class);
-            MemberListResult.MemberData memberData = memberListResult.getData();
-            if (memberData != null) {
-                MemberListResult.MemberData.MemberListData memberList = memberData.getBraceletId();
-                try {
-                    Preference.setMemberList(gson.toJson(memberList));
-                }catch (Exception e) {
-                }
-            }
         } else if (TYPE_USERLOGIN.equals(type)) {//刷卡用户登录成功返回
             LoginUserInfoMessage loginUserInfoMessage = new LoginUserInfoMessage();
             UserInfoResult userInfoResult = gson.fromJson(jsonText, UserInfoResult.class);
@@ -196,6 +189,33 @@ public class SocketHelper {
                 Preference.setAdvertisementResource(gson.toJson(advertisementResult));
                 EventBus.getDefault().post(new AdvertisementMessage(resources));
             }
+        } else if (TYPE_REQUEST_MEMBER.equals(type)) { //服务端下发会员列表请求命令
+            makeRequestMemberList();
+        } else if (TYPE_MEMBER_LIST.equals(type)) {//当前场馆会员id、手环
+            LogUtils.d("aaron", "TYPE_MEMBER_LIST :" + jsonText);
+            MemberListResult memberListResult = gson.fromJson(jsonText, MemberListResult.class);
+            MemberListResult.MembersData datas = memberListResult.getData();
+            if(datas != null) {
+                List<Member> members = datas.getMember();
+                if(members != null && !members.isEmpty()) {
+                    EventBus.getDefault().post(new MemberListMessage(members)); //下发的成员列表 事件
+                }
+                if(datas.isNextPage()) {
+                    makeRequestMemberList();
+                } else {
+                    EventBus.getDefault().post(new MemberNoneMessage());//下发结束 事件
+                }
+            }
+        }
+    }
+
+    /**
+     * 获取成员列表
+     */
+    public static void makeRequestMemberList() {
+        String gymId = Preference.getBindUserGymId();
+        if(!StringUtils.isEmpty(gymId) && !"0".equals(gymId)) {
+            EventBus.getDefault().post(new RequestMembersMessage());
         }
     }
 
@@ -278,4 +298,19 @@ public class SocketHelper {
         return data;
     }
 
+    /**
+     * 客户端发起请求会员列表命令
+     * @return
+     */
+
+    public static String buildRequestMemberParam() {
+        String lastMemberId = Preference.getLastMemberId();
+        String gymId = Preference.getBindUserGymId();
+
+        String data = "{\"type\":\"member_list\",\"version\":\"" + mTcpVersion + "\",\"data\":{ " +
+                "\"id\":\"" + lastMemberId + "\"" +
+                ",\"gym_id\":\"" + gymId + "\"" +
+                " }}\\r\\n";
+        return data;
+    }
 }

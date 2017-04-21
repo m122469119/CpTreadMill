@@ -18,4 +18,5 @@ interface IBackService {
    void userLogOut(String cardno);
    void reportExerciseCacheData(String data);
    void reportExerciseData(int type, int aimType, float aim, int achieve);
+   void requestMembersCommand();
 }

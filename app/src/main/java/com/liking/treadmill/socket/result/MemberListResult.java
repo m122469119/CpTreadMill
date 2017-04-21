@@ -1,6 +1,7 @@
 package com.liking.treadmill.socket.result;
 
 import com.google.gson.annotations.SerializedName;
+import com.liking.treadmill.db.entity.Member;
 
 import java.util.List;
 
@@ -13,54 +14,51 @@ import java.util.List;
 
 public class MemberListResult extends BaseSocketResult {
 
+
     /**
-     * data : {"bracelet_id":[123456,654321]}
+     * member : [{"id":"1","bracelet_id":"123456","bracelet_operate":"1","member_type":"1"}]
+     * next_page : true
      */
 
     @SerializedName("data")
-    private MemberData data;
+    private MembersData mData;
 
-    public MemberData getData() {
-        return data;
+    public MembersData getData() {
+        return mData;
     }
 
-    public void setData(MemberData data) {
-        this.data = data;
+    public void setData(MembersData data) {
+        mData = data;
     }
 
-    public static class MemberData {
-        @SerializedName("bracelet_id")
-        private MemberListData braceletId;
+    public static class MembersData {
+        @SerializedName("next_page")
+        private boolean mNextPage;
+        /**
+         * id : 1
+         * bracelet_id : 123456
+         * bracelet_operate : 1
+         * member_type : 1
+         */
 
-        public MemberListData getBraceletId() {
-            return braceletId;
+        @SerializedName("member")
+        private List<Member> mMember;
+
+        public boolean isNextPage() {
+            return mNextPage;
         }
 
-        public void setBraceletId(MemberListData braceletId) {
-            this.braceletId = braceletId;
+        public void setNextPage(boolean nextPage) {
+            mNextPage = nextPage;
         }
 
-        public static class MemberListData {
-            @SerializedName("member")
-            private List<String> mMember;
-            @SerializedName("manger")
-            private List<String> mManger;
-
-            public List<String> getMember() {
-                return mMember;
-            }
-
-            public void setMember(List<String> member) {
-                mMember = member;
-            }
-
-            public List<String> getManger() {
-                return mManger;
-            }
-
-            public void setManger(List<String> manger) {
-                mManger = manger;
-            }
+        public List<Member> getMember() {
+            return mMember;
         }
+
+        public void setMember(List<Member> member) {
+            mMember = member;
+        }
+
     }
 }

@@ -32,27 +32,10 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void getMemberList() throws Exception {
-        String memberlist = "{type:\"member_list\",msg_id:0,data:{\"bracelet_id\":{\"member\":[1111,1222],\"manger\":[0111,0222]}}}";
-        Gson gson = new Gson();
-        MemberListResult memberListResult = gson.fromJson(memberlist, MemberListResult.class);
-        MemberListResult.MemberData memberData = memberListResult.getData();
-        if (memberData != null) {
-            MemberListResult.MemberData.MemberListData memberList = memberData.getBraceletId();
-            try {
-                Preference.setMemberList(gson.toJson(memberList));
-            }catch (Exception e) {
-            }
-        }
-        MemberListResult.MemberData.MemberListData members = gson.fromJson(Preference.getMemberList(), MemberListResult.MemberData.MemberListData.class);
-        System.out.println("BraceletId_Member : "+ members.getMember() + "---- BraceletId_Manger" + members.getManger());
-    }
+       }
 
     @Test
     public void getParseResult() throws Exception{
-        String jsonMessage = "{\"type\":\"update\",\"msg_id\":\"\",\"data\":{\"lastest_version\":\"1.0.1\",\"url\":\"http:\\/\\/testrun.likingfit.com\\/LikingTreadMill.apk\"}}\\r\\n";
-         String[] results = jsonMessage.split("\\\\r\\\\n");
-        for (String r: results) {
-            System.out.println("getParseResult:"+ r);
-        }
+
     }
 }

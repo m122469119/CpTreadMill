@@ -127,6 +127,13 @@ public class SocketService extends Service {
             LogUtils.d(SocketService.TAG, "锻炼数据：" + result);
             sendUpStreamMessage(result);
         }
+
+        @Override
+        public void requestMembersCommand() throws RemoteException {
+            String result = SocketHelper.buildRequestMemberParam();
+            LogUtils.d(SocketService.TAG, "成员分页请求：" + result);
+            sendUpStreamMessage(result);
+        }
     };
 
     @Override
