@@ -37,6 +37,7 @@ import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.AlarmManagerUtils;
 import com.liking.treadmill.utils.ApkUpdateUtils;
+import com.liking.treadmill.utils.MemberUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -198,7 +199,7 @@ public class SocketHelper {
             if(datas != null) {
                 List<Member> members = datas.getMember();
                 if(members != null && !members.isEmpty()) {
-                    EventBus.getDefault().post(new MemberListMessage(members)); //下发的成员列表 事件
+                    EventBus.getDefault().post(new MemberListMessage(members)); //下发的成员列表事件
                 }
                 if(datas.isNextPage()) {
                     makeRequestMemberList();
@@ -304,7 +305,7 @@ public class SocketHelper {
      */
 
     public static String buildRequestMemberParam() {
-        String lastMemberId = Preference.getLastMemberId();
+        String lastMemberId = MemberUtils.getInstance().getLastMemberId();;
         String gymId = Preference.getBindUserGymId();
 
         String data = "{\"type\":\"member_list\",\"version\":\"" + mTcpVersion + "\",\"data\":{ " +

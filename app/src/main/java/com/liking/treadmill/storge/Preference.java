@@ -315,6 +315,7 @@ public class Preference extends AbsPreference {
         Preference.setBindUserGymId("");
         Preference.setBindUserGymName("");
 //        Preference.setMemberList("");
+        Preference.setLastMemberId("0");
         Preference.setIsVisitorMode(false);
         Preference.setStandbyTime(ThreadMillConstant.THREADMILL_DEFAULT_SYSTEM_STANBYTIME);
         Preference.setMotionParamMaxRunTime(ThreadMillConstant.THREADMILL_DEFAULT_RUNNING_TIME);

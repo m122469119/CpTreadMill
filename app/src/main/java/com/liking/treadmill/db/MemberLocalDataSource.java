@@ -14,11 +14,11 @@ import java.util.List;
  * Time: 下午3:46
  */
 
-public class LikingLocalDataSource {
+public class MemberLocalDataSource {
 
     private DatabaseManager mDatabaseManager;
 
-    public LikingLocalDataSource(Context context) {
+    public MemberLocalDataSource(Context context) {
         mDatabaseManager = DatabaseManager.getInstance(new LikingDbHelper(context));
     }
 
@@ -118,7 +118,8 @@ public class LikingLocalDataSource {
      *
      * @param members
      */
-    public void updateMemberList(List<Member> members) {
+    public boolean updateMemberList(List<Member> members) {
+        boolean isSuccess = false;
         SQLiteDatabase db = null;
         try {
             db = mDatabaseManager.getWritableDatabase();
@@ -141,6 +142,7 @@ public class LikingLocalDataSource {
             }
             db.setTransactionSuccessful();
             db.endTransaction();
+            isSuccess = true;
         }catch (Exception e) {
 
         } finally {
@@ -150,16 +152,19 @@ public class LikingLocalDataSource {
                 }
             }catch (Exception e){}
         }
+        return isSuccess;
     }
 
     /**
      * 删除所有场馆会员
      */
-    public void deleteAllMembers() {
+    public boolean deleteAllMembers() {
+        boolean isSuccess = false;
         SQLiteDatabase db = null;
         try {
             db = mDatabaseManager.getWritableDatabase();
             db.delete(LikingPersistenceContract.TreadmillMember.TABLE_NAME, null, null);
+            isSuccess = true;
         }catch (Exception e) {
         }finally {
             try {
@@ -168,6 +173,7 @@ public class LikingLocalDataSource {
                 }
             }catch (Exception c) {}
         }
+        return isSuccess;
     }
 
     public interface LoadDatasCallback {
