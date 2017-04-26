@@ -414,7 +414,7 @@ public class RunFragment extends SerialPortFragment {
      * @param speed
      */
     private void setSpeed(int speed) {
-        if (speed > 0 && speed <= 200) {
+        if (speed > 0 && speed <= 150) {
             mSpeed = speed;
             SerialPortUtil.setSpeedInRunning(mSpeed);
             showToast("速度", StringUtils.getDecimalString(mSpeed / 10.0f, 1));
@@ -427,7 +427,7 @@ public class RunFragment extends SerialPortFragment {
      * @param grade
      */
     private void setGrade(int grade) {
-        if (grade > 0 && grade <= 25) {
+        if (grade > 0 && grade <= 15) {
             mGrade = grade;
             SerialPortUtil.setGradeInRunning(mGrade);
             showToast("坡度", String.valueOf(mGrade));
