@@ -17,7 +17,11 @@ public class MessageBackReceiver extends BroadcastReceiver {
                 LogUtils.d(SocketService.TAG, "receive a socket message : " + jsonMessage);
                 String[] results = jsonMessage.split("\\\\r\\\\n");
                 for (String result : results) {
-                    SocketHelper.handlerSocketReceive(context, result);
+                    try {
+                        SocketHelper.handlerSocketReceive(context, result);
+                    }catch (Exception e) {
+                        LogUtils.d(SocketService.TAG, "receive a socket message error: " + jsonMessage);
+                    }
                 }
             }
         }

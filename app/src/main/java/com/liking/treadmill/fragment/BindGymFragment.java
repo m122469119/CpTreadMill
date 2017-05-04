@@ -35,6 +35,7 @@ import com.liking.treadmill.treadcontroller.SerialPortUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 import static com.liking.treadmill.app.ThreadMillConstant.THREADMILL_SYSTEMSETTING;
 
@@ -227,7 +228,11 @@ public class BindGymFragment extends SerialPortFragment {
      */
     public void onEvent(GymBindSuccessMessage message) {
         try {
+            LogUtils.e(TAG, "GymBindSuccessMessage --- ");
             ((HomeActivity)getActivity()).iBackService.reportDevices();
+            if(isEventTarget()) {
+                EventBus.getDefault().unregister(this);
+            }
         }catch (Exception e) {}
         showFinishView();
     }
@@ -238,6 +243,9 @@ public class BindGymFragment extends SerialPortFragment {
      * @param message
      */
     public void onEvent(GymUnBindSuccessMessage message) {
+        if(isEventTarget()) {
+            EventBus.getDefault().unregister(this);
+        }
         showFinishView();
     }
 

@@ -11,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.test.IBackService;
@@ -54,6 +55,10 @@ public class SocketService extends Service {
 
     // For heart Beat
     private Handler mHandler;
+
+    private StringBuilder cacheSb = new StringBuilder();
+    String sTag = "{\"type\":";
+    String eTag = "\\r\\n";
 
     private void sendHeartMessageDelayed() {
         Message message = mHandler.obtainMessage(HEART_BEAT_MESSAGE);
@@ -272,7 +277,7 @@ public class SocketService extends Service {
             if (null != socket) {
                 try {
                     InputStream is = socket.getInputStream();
-                    byte[] buffer = new byte[1024 * 4];
+                    byte[] buffer = new byte[1024 * 8];
                     int length = 0;
                     LogUtils.d(TAG, "read socket1111111 : " + socket.hashCode());
                     while (!socket.isClosed() && !socket.isInputShutdown()
@@ -289,10 +294,11 @@ public class SocketService extends Service {
                                 mLocalBroadcastManager.sendBroadcast(intent);
                             } else {
                                 //其他消息回复
-                                Intent intent = new Intent(MESSAGE_ACTION);
-                                intent.putExtra("message", message);
-                                mLocalBroadcastManager.sendBroadcast(intent);
+                                LogUtils.d(TAG, "其他消息回复 : " + message);
+                                handleSocketResult(message);
                             }
+                            buffer = null;
+                            buffer = new byte[1024 * 8];
                         }
                     }
                     sendReConnectMesasage(0);
@@ -324,5 +330,36 @@ public class SocketService extends Service {
                 }
             }
         }
+    }
+
+    private void sendMessage(String message) {
+        Intent intent = new Intent(MESSAGE_ACTION);
+        intent.putExtra("message", message);
+        mLocalBroadcastManager.sendBroadcast(intent);
+    }
+
+    private void handleSocketResult(String message) {
+        if(StringUtils.isEmpty(message)) {
+            return;
+        }
+        int eIndex = message.length() - eTag.length();
+        if(checkSocketResult(message, eIndex)) {
+            sendMessage(message);
+            cacheSb.setLength(0);
+        } else {
+            cacheSb.append(message);
+            message = cacheSb.toString();
+            eIndex = message.length() - eTag.length();
+            if(checkSocketResult(cacheSb.toString(), eIndex)) {
+                cacheSb.setLength(0);
+                sendMessage(message);
+            }
+        }
+    }
+
+    private boolean checkSocketResult(String message, int endIndex) {
+        int start = message.indexOf(sTag);
+        int end = message.lastIndexOf(eTag);
+        return start == 0 && (end == endIndex);
     }
 }

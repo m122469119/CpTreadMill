@@ -116,7 +116,8 @@ public class SocketHelper {
             BindUserResult bindUserResult = gson.fromJson(jsonText, BindUserResult.class);
             BindUserResult.BindUserData bindUserData = bindUserResult.getData();
             if (bindUserData != null) {
-                if (bindUserData.getErrCode() == 0) {
+                String gymId = Preference.getBindUserGymId();
+                if (bindUserData.getErrCode() == 0 && StringUtils.isEmpty(gymId) || bindUserData.getErrCode() == 0 && "0".equals(gymId)) {
                     Preference.setIsStartingUp(false);
                     Preference.setBindUserGymId(bindUserData.getGymId());
                     Preference.setBindUserGymName(bindUserData.getGymName());
