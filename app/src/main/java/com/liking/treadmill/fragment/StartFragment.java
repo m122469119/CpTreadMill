@@ -111,17 +111,24 @@ public class StartFragment extends SerialPortFragment {
         HomeActivity homeActivity = (HomeActivity) getActivity();
         homeActivity.setTitle("");
 
-        //Logout
-        if(SerialPortUtil.getTreadInstance().getUserInfo() != null) {
+        final String cardNo = SerialPortUtil.getTreadInstance().getCardNo();
+
+        if(SerialPortUtil.getTreadInstance().getUserInfo() != null
+                && !StringUtils.isEmpty(cardNo)
+                && !cardNo.equals(SerialPortUtil.getTreadInstance().getUserInfo().mBraceletId)) {
+
+            //Logout
             if(homeActivity.isLogin) {
                 homeActivity.userLogout(SerialPortUtil.getTreadInstance().getUserInfo().mBraceletId);
                 homeActivity.isLogin = false;
             }
+
+            //Login
+            if (homeActivity.mUserLoginPresenter != null) {
+                homeActivity.mUserLoginPresenter.userLogin();
+            }
         }
 
-        //Login
-        if (homeActivity.mUserLoginPresenter != null) {
-            homeActivity.mUserLoginPresenter.userLogin();
-        }
+
     }
 }
