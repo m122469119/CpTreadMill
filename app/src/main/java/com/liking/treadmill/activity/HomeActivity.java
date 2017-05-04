@@ -216,6 +216,15 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      */
     public void onEvent(GymUnBindSuccessMessage message) {
         if(mDelayedHandler != null) {
+            //Logout
+            if(SerialPortUtil.getTreadInstance().getUserInfo() != null) {
+                if(isLogin) {
+                    userLogout(SerialPortUtil.getTreadInstance().getUserInfo().mBraceletId);
+                    isLogin = false;
+                }
+                SerialPortUtil.getTreadInstance().resetUserInfo();
+            }
+
             mDelayedHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
