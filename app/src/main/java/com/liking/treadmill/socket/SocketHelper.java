@@ -33,6 +33,7 @@ import com.liking.treadmill.socket.result.MemberListResult;
 import com.liking.treadmill.socket.result.QrcodeResult;
 import com.liking.treadmill.socket.result.ServiceTimeResult;
 import com.liking.treadmill.socket.result.UserInfoResult;
+import com.liking.treadmill.socket.result.UserLogOutResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.AlarmManagerUtils;
@@ -134,8 +135,27 @@ public class SocketHelper {
             UserInfoResult.UserData userData = userInfoResult.getUserInfoData();
             if (userData != null) {
                 loginUserInfoMessage.mUserData = userData;
+                if(userData.getUserInfoData() != null) {
+                    //缓存一条登录状态
+                    String time = String.valueOf(DateUtils.currentDataSeconds());
+                    String bid = userData.getUserInfoData().getBraceletId();
+                    String msgId = bid + new Date().getTime();
+                    String data_logout = "{\"type\":\"logout\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\""+ msgId + "\",\"data\":{\"bracelet_id\":" + bid + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
+                    FileUtils.store(data_logout, ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE + bid);
+                }
             }
             EventBus.getDefault().post(loginUserInfoMessage);
+
+        } else if(TYPE_USERLOGIN_OUT.equals(type)) {
+
+            UserLogOutResult logOutResult = gson.fromJson(jsonText, UserLogOutResult.class);
+            if(logOutResult != null && logOutResult.getData() != null) {
+                String bid = logOutResult.getData().getBraceletId();
+                if(!StringUtils.isEmpty(bid)) {
+                    FileUtils.delete(ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE + bid);
+                }
+            }
+
         } else if (TYPE_EXERCISE_DATA.equals(type)) {//上传训练数据成功
             if(!StringUtils.isEmpty(result.getMsgId()) && !"0".equals(result.getMsgId())) {
                 FileUtils.delete(ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE + result.getMsgId());
@@ -265,15 +285,21 @@ public class SocketHelper {
      */
     public static String userloginString(String cardno) {
         String time = String.valueOf(DateUtils.currentDataSeconds());
-        return "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
-
+        String msgId = SerialPortUtil.getTreadInstance().getCardNo() + new Date().getTime();
+        String data = "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\""+ msgId +"\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
+        return data;
     }
 
     public static String userlogoutString(String cardno) {
         String time = String.valueOf(DateUtils.currentDataSeconds());
-        return "{\"type\":\"logout\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
+        String msgId = SerialPortUtil.getTreadInstance().getCardNo() + new Date().getTime();
 
+        String data = "{\"type\":\"logout\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\""+ msgId + "\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
+        FileUtils.store(data, ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE + cardno);
+
+        return data;
     }
+
     /**
      *  上报跑步数据
      * @param type //1=>快速启动， 2=>设定目标， 3=>预设课程

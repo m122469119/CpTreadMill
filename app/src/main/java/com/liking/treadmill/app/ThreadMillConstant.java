@@ -16,6 +16,8 @@ public class ThreadMillConstant {
 
     //跑步数据缓存目录
     public static final String THREADMILL_PATH_STORAGE_DATA_CACHE = DiskStorageManager.getInstance().getFilePath() + "data/";
+    //用户登录状态缓存
+    public static final String THREADMILL_PATH_STORAGE_LOGINOUT_CACHE = DiskStorageManager.getInstance().getFilePath() + "loginout/";
 
     public static final String GOALSETTING_RUNTIME = "goalsettingruntime";
     public static final String GOALSETTING_KILOMETRE = "goalsettingkilometre";

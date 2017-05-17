@@ -223,6 +223,7 @@ public class SocketService extends Service {
             if (mIBackService != null) {
                 mIBackService.reportDevices();
                 reportedData(new File(ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE));
+                reportedData(new File(ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE));
             }
         } catch (Exception e) {
             LogUtils.d(TAG, "server socket is disconnect....." + e.getMessage());
