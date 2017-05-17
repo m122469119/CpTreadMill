@@ -51,9 +51,11 @@ android {
         def HTTP_HOST = "HTTP_HOST"
         def TRUE = "true"
         def FALSE = "false"
+        def LOGGER = "LOGGER"
         def appFlag = "\"LikingThreadMill\""
         release {
             buildConfigField BOOLEAN, TEST_MODE, FALSE
+            buildConfigField BOOLEAN, LOGGER, FALSE
             buildConfigField STRING, APP_FLAG, appFlag
             buildConfigField STRING, HTTP_HOST, "\"http://run.likingfit.com/\""
             minifyEnabled true
@@ -63,6 +65,7 @@ android {
         }
         debug {
             buildConfigField BOOLEAN, TEST_MODE, TRUE
+            buildConfigField BOOLEAN, LOGGER, TRUE
             buildConfigField STRING, APP_FLAG, appFlag
             buildConfigField STRING, HTTP_HOST, "\"http://testrun.likingfit.com/\""
             applicationIdSuffix ".test"

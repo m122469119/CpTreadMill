@@ -14,6 +14,7 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
+import com.liking.treadmill.app.LikingThreadMillApplication;
 import com.liking.treadmill.db.entity.Member;
 import com.liking.treadmill.fragment.AwaitActionFragment;
 import com.liking.treadmill.fragment.StartFragment;
@@ -43,6 +44,8 @@ import com.liking.treadmill.utils.MemberUtils;
 import com.liking.treadmill.widget.IToast;
 
 import java.util.List;
+
+import static com.liking.treadmill.app.LikingThreadMillApplication.mLKAppSocketLogQueue;
 
 public class HomeActivity extends LikingTreadmillBaseActivity implements UserLoginView {
     public MessageBackReceiver mMessageBackReceiver = new MessageBackReceiver();
@@ -84,7 +87,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
         initAdViews();
-
+        mLKAppSocketLogQueue.put(TAG, "onCreate(), 初始化主界面");
     }
 
     public void launchInit() {
@@ -129,6 +132,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             unbindService(mServiceConnection);
             localBroadcastManager.unregisterReceiver(mMessageBackReceiver);
         }
+        mLKAppSocketLogQueue.put(TAG, "onDestroy(), 主界面回收，应用关闭");
         super.onDestroy();
     }
 
@@ -151,6 +155,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param message
      */
     public void onEvent(UpdateAppMessage message) {
+        mLKAppSocketLogQueue.put(TAG, "app开始更新");
         LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "get updateMessage");
         isUpdate = true;
         launchFragment(new UpdateFragment());
@@ -162,6 +167,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param message
      */
     public void onEvent(UpdateCompleteMessage message) {
+        mLKAppSocketLogQueue.put(TAG, "app更新完成");
         LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "Update Complete");
         isUpdate = false;
         if (Preference.getIsStartingUp()) {
@@ -176,6 +182,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param loginUserInfoMessage
      */
     public void onEvent(LoginUserInfoMessage loginUserInfoMessage) {
+        mLKAppSocketLogQueue.put(TAG, "会员刷卡登录成功");
         if(mUserLoginPresenter != null) {
             if(loginUserInfoMessage.mUserData != null && loginUserInfoMessage.mUserData.getErrcode() == 0) {
                 isLogin = true;
@@ -199,6 +206,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param message
      */
     public void onEvent(GymBindSuccessMessage message) {
+        mLKAppSocketLogQueue.put(TAG, "场馆绑定成功");
         if(mDelayedHandler != null) {
             mDelayedHandler.postDelayed(new Runnable() {
                 @Override
@@ -215,6 +223,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param message
      */
     public void onEvent(GymUnBindSuccessMessage message) {
+        mLKAppSocketLogQueue.put(TAG, "场馆解除绑定");
         if(mDelayedHandler != null) {
             //Logout
             if(SerialPortUtil.getTreadInstance().getUserInfo() != null) {
@@ -292,6 +301,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     @Override
     public void userLogin(String cardno) {
         try {
+            mLKAppSocketLogQueue.put(TAG, "会员登录");
             iBackService.userLogin(cardno);
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -324,6 +334,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     public void userLogout(String cardNo) {
         if(iBackService != null) {
             try {
+                mLKAppSocketLogQueue.put(TAG, "会员退出");
                 iBackService.userLogOut(cardNo);
             } catch (RemoteException e) {
                 e.printStackTrace();

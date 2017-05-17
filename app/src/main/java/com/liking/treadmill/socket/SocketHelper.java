@@ -13,6 +13,7 @@ import com.aaron.android.framework.base.BaseApplication;
 import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
+import com.liking.treadmill.app.LikingThreadMillApplication;
 import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.db.entity.Member;
 import com.liking.treadmill.message.AdvertisementMessage;
@@ -68,6 +69,7 @@ public class SocketHelper {
     private static final String TYPE_SERVICE_TIME = "time";
     private static final String TYPE_ADVERTISMENT = "advertisement";
     private static final String TYPE_REQUEST_MEMBER = "request_member";
+    private static final String REPORT_LOG_CMD = "report_log";
 
     private static final String mTcpVersion = "v1.2";
 
@@ -228,6 +230,10 @@ public class SocketHelper {
                     EventBus.getDefault().post(new MemberNoneMessage());//下发结束 事件
                 }
             }
+        } else if (REPORT_LOG_CMD.equals(type)) {
+            LikingThreadMillApplication.mLKAppSocketLogQueue.put("aaron","REPORT_LOG, 上报log操作");
+            LikingThreadMillApplication.mLKSocketLogQueue.putOnce();
+            LikingThreadMillApplication.mLKAppSocketLogQueue.putOnce();
         }
     }
 

@@ -13,6 +13,7 @@ import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
+import com.liking.treadmill.app.LikingThreadMillApplication;
 import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.test.IBackService;
 
@@ -23,6 +24,8 @@ import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.Socket;
 import java.util.Arrays;
+
+import static com.liking.treadmill.app.LikingThreadMillApplication.mLKSocketLogQueue;
 
 /**
  * Created on 16/11/15.
@@ -72,6 +75,7 @@ public class SocketService extends Service {
     }
 
     private void sendReConnectMesasage(long delay) {
+        mLKSocketLogQueue.put("reconnecting...");
         Message message = mHandler.obtainMessage(RE_CONNECT_MESSAGE);
         mHandler.sendMessageDelayed(message, delay);
     }
@@ -197,6 +201,8 @@ public class SocketService extends Service {
                 os.write(message.getBytes());
                 os.flush();
                 LogUtils.d(TAG, "sendMsg: " + msg);
+                mLKSocketLogQueue.put("send:" , msg);
+                mLKSocketLogQueue.put("sendMsg: " + soc.toString() + " - " + soc.hashCode());
                 sendTime = System.currentTimeMillis();//每次发送成数据，就改一下最后成功发送的时间，节省心跳间隔时间
             } else {
                 return false;
@@ -211,6 +217,7 @@ public class SocketService extends Service {
 
     private void initSocket() {//初始化Socket
         try {
+            mLKSocketLogQueue.put("connecting...");
             Socket so = new Socket(HOST, PORT);
             mSocket = new WeakReference<>(so);
             mReadThread = new ReadThread(so);
@@ -219,6 +226,7 @@ public class SocketService extends Service {
 //                    mIBackService.init();
 //            }
             LogUtils.d(TAG, "initSocket");
+            mLKSocketLogQueue.put("connected, socket=", so.toString());
             sendHeartMessageDelayed();//初始化成功后，就准备发送心跳包
             if (mIBackService != null) {
                 mIBackService.reportDevices();
@@ -239,6 +247,7 @@ public class SocketService extends Service {
                     return;
                 }
                 if (!sk.isClosed()) {
+                    mLKSocketLogQueue.put(TAG, "socket is close" + sk.toString());
                     sk.close();
                 }
                 sk = null;
@@ -289,6 +298,7 @@ public class SocketService extends Service {
 //                            LogUtils.d(TAG, message);
                             LogUtils.d(TAG, "read socket : " + socket.hashCode());
 
+                            mLKSocketLogQueue.put("result(before):", message, "-", socket.toString() + "-" + socket.hashCode());
                             //收到服务器过来的消息，就通过Broadcast发送出去
                             if (message.equals(SocketHelper.HEART_BEAT_PONG_STRING)) {//处理心跳回复
                                 Intent intent = new Intent(HEART_BEAT_ACTION);

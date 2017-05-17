@@ -6,6 +6,8 @@ import android.content.Intent;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 
+import static com.liking.treadmill.app.LikingThreadMillApplication.mLKSocketLogQueue;
+
 public class MessageBackReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -17,6 +19,7 @@ public class MessageBackReceiver extends BroadcastReceiver {
                 LogUtils.d(SocketService.TAG, "receive a socket message : " + jsonMessage);
                 String[] results = jsonMessage.split("\\\\r\\\\n");
                 for (String result : results) {
+                    mLKSocketLogQueue.put("result(later):", result);
                     try {
                         SocketHelper.handlerSocketReceive(context, result);
                     }catch (Exception e) {

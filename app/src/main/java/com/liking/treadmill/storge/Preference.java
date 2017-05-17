@@ -42,6 +42,8 @@ public class Preference extends AbsPreference {
     public static final String USER_GYM_NAME = "USER_GYM_NAME";
     public static final String MEMBER_ID_LIST = new Date().getTime() + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "";
 
+    public static final String CURRENT_TIME_DIFF = "current_time_diff";
+
     /**
      * 清空SharedPreferences
      */
@@ -352,5 +354,13 @@ public class Preference extends AbsPreference {
      */
     public static String getLastMemberId() {
         return (String) getObject(LASTMEMBERID, "0");
+    }
+
+    public static long getCurrentTimeDiff(){
+        return Long.parseLong((String) getObject(CURRENT_TIME_DIFF, "0"));
+    }
+
+    public static void setCurrentTimeDiff(long diff){
+        setObject(CURRENT_TIME_DIFF, String.valueOf(diff));
     }
 }

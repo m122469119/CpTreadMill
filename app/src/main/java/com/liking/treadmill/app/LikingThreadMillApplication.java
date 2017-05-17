@@ -2,7 +2,9 @@ package com.liking.treadmill.app;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.BaseApplication;
+import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
+import com.alibaba.sdk.android.oss.sample.LKLogQueue;
 import com.liking.treadmill.BuildConfig;
 
 
@@ -13,11 +15,24 @@ import com.liking.treadmill.BuildConfig;
  */
 public class LikingThreadMillApplication extends BaseApplication {
 
-    public static String APP_KEY = "ccfdec3a9fb849bdb252b2ca37960dc0"; // 2015/10/29
+    public static String ANDROID_ID = "LikingThreadMill";
+    public static LKLogQueue mLKSocketLogQueue, mLKAppSocketLogQueue;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        ANDROID_ID = DeviceUtils.getDeviceInfo(this);
+        mLKSocketLogQueue = new LKLogQueue.LKLogQueueBuilder()
+                .setApplicationContext(this)
+                .setFileDir("threadmill_logs")
+                .setQueueCount(20)
+                .build();
+        mLKAppSocketLogQueue = new LKLogQueue.LKLogQueueBuilder()
+                .setApplicationContext(this)
+                .setFileDir("threadmill_app")
+                .setQueueCount(20)
+                .build();
+        LogUtils.setEnable(BuildConfig.LOGGER);
     }
 
     @Override
