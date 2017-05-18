@@ -298,10 +298,13 @@ public class SocketHelper {
 
     public static String userlogoutString(String cardno) {
         String time = String.valueOf(DateUtils.currentDataSeconds());
-        String msgId = SerialPortUtil.getTreadInstance().getCardNo() + new Date().getTime();
-
+        String msgId = cardno + new Date().getTime();
         String data = "{\"type\":\"logout\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\""+ msgId + "\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
-        FileUtils.store(data, ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE + cardno);
+
+        String dataCache = FileUtils.load(ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE + cardno);
+        if(!StringUtils.isEmpty(dataCache)) {
+            FileUtils.store(data, ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE + cardno);
+        }
 
         return data;
     }
