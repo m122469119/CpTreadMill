@@ -107,8 +107,8 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     }
 
     private void initAdViews() {
-        HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.image_ad_run_left);
-        HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, R.drawable.image_ad_run_right);
+        HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.run_bg_ad);
+        HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, R.drawable.run_bg_ad);
     }
 
     @Override
@@ -281,14 +281,14 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      *  左边默认广告
      */
     public void showDefaultAdvLeftImg() {
-        HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.image_ad_run_left);
+        HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.run_bg_ad);
     }
 
     /**
      * 右边默认广告
      */
     public void showDefaultAdvRightImg() {
-        HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, R.drawable.image_ad_run_right);
+        HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, R.drawable.run_bg_ad);
     }
 
     private AdvertisementResult.AdvUrlResource.Resource getAdvResource(int poistion, List<AdvertisementResult.AdvUrlResource.Resource> resources) {
