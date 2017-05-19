@@ -27,18 +27,6 @@ import java.util.Date;
 
 public class FileHelper {
 
-    private static final String TAG = "FileHelper";
-
-    public static final String ACTION_DOWNLOADING = "download_progress";
-    public static final String ACTION_START_DOWNLOAD = "download_start";
-    public static final String ACTION_DOWNLOAD_COMPLETE = "downloadcomplete";
-    public static final String EXTRA_INSTALL_APK_PATH = "apkpath";
-    public static final String EXTRA_DOWNLOAD_URL = "downloadUrl";
-    public static final String EXTRA_DOWNLOAD_PATH = "downloadPath";
-    public static final String EXTRA_PROGRESS = "downloadprogress";
-    public static final String EXTRA_APK_LENGTH = "apkLength";
-    public static final String EXTRA_APK_MD5 = "apkmd5";
-
     private final Object LOCK = new Object();
 
     private String mFirDir;
@@ -127,10 +115,8 @@ public class FileHelper {
 
     public String getFilePath() {
         String time = DateUtils.formatDate("yyyy.MM.dd", new Date(TimeUtils.currentTime() * 1000));
-        return getDefaultFile() + "/" + mFirDir + "-" + time + "-" + LikingThreadMillApplication.ANDROID_ID + ".log";
+        return getDefaultFile() + File.separator + mFirDir + "-" + time + "-" + LikingThreadMillApplication.ANDROID_ID + ".log";
     }
-
-
 
 
     private String getDownloadFileName(String mDirectoryPath) {

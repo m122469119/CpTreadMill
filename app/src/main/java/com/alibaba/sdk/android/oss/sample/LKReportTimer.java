@@ -19,7 +19,7 @@ public class LKReportTimer {
     private static final String TAG = "LKReportTimer";
 
     //时间间隔(一天)
-    private static final long PERIOD_DAY = 24 * 60 * 60 * 1000;
+    private static final long PERIOD_DAY =  24 * 60 * 60 * 1000;
     private Timer mTimer;
     private Calendar mCalendar;
     private Date mDate;
@@ -59,7 +59,7 @@ public class LKReportTimer {
         if (isStart) {
             return;
         }
-        mTimer.schedule(mTask, mDate, PERIOD_DAY);
+        mTimer.schedule(mTask, new Date(mDate.getTime() + PERIOD_DAY), PERIOD_DAY);
         isStart = true;
     }
 

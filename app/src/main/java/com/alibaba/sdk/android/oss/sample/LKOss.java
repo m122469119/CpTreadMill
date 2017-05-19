@@ -36,7 +36,7 @@ public class LKOss {
 
     private static final String TAG = "LKOss";
     private OSS oss;
-    private static Executor mExecutor = Executors.newFixedThreadPool(10);
+    private static Executor mExecutor = Executors.newFixedThreadPool(5);
 
     // 运行sample前需要配置以下字段为有效的值
     private static final String endpoint = "http://oss-cn-hangzhou.aliyuncs.com";
@@ -93,8 +93,8 @@ public class LKOss {
                                     LogUtils.d("ETag", result.getETag());
                                     LogUtils.d("RequestId", result.getRequestId());
                                     //上传完成删除源文件 如果当前文件没有过期，就不删除
-                                    if (!fileHelper.getDefaultFile().equals(filePath)) {
-                                        fileHelper.deleteFile(uploadObject);
+                                    if (!fileHelper.getFilePath().equals(filePath)) {
+                                        fileHelper.deleteFile(filePath);
                                     }
                                 }
 
@@ -159,7 +159,6 @@ public class LKOss {
                     LogUtils.e("HostId", serviceException.getHostId());
                     LogUtils.e("RawMessage", serviceException.getRawMessage());
                 }
-
                 callback.onFailed();
             }
         });

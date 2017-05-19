@@ -25,12 +25,12 @@ public class LikingThreadMillApplication extends BaseApplication {
         mLKSocketLogQueue = new LKLogQueue.LKLogQueueBuilder()
                 .setApplicationContext(this)
                 .setFileDir("threadmill_logs")
-                .setQueueCount(20)
+                .setQueueCount(10)
                 .build();
         mLKAppSocketLogQueue = new LKLogQueue.LKLogQueueBuilder()
                 .setApplicationContext(this)
                 .setFileDir("threadmill_app")
-                .setQueueCount(20)
+                .setQueueCount(10)
                 .build();
         LogUtils.setEnable(BuildConfig.LOGGER);
     }

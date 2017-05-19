@@ -2,6 +2,7 @@ package com.alibaba.sdk.android.oss.sample;
 
 import android.util.Log;
 
+import com.aaron.android.codelibrary.utils.LogUtils;
 import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.OSS;
 import com.alibaba.sdk.android.oss.ServiceException;
@@ -39,7 +40,7 @@ public class GetObjectSamples {
             // 同步执行下载请求，返回结果
             GetObjectResult getResult = oss.getObject(get);
 
-            Log.d("Content-Length", "" + getResult.getContentLength());
+            LogUtils.d("Content-Length", "" + getResult.getContentLength());
 
             // 获取文件输入流
             InputStream inputStream = getResult.getObjectContent();
@@ -51,11 +52,11 @@ public class GetObjectSamples {
                 // 处理下载的数据，比如图片展示或者写入文件等
                 Log.d("asyncGetObjectSample", "read length: " + len);
             }
-            Log.d("asyncGetObjectSample", "download success.");
+            LogUtils.d("asyncGetObjectSample", "download success.");
 
             // 下载后可以查看文件元信息
             ObjectMetadata metadata = getResult.getMetadata();
-            Log.d("ContentType", metadata.getContentType());
+            LogUtils.d("ContentType", metadata.getContentType());
 
 
         } catch (ClientException e) {
@@ -63,10 +64,10 @@ public class GetObjectSamples {
             e.printStackTrace();
         } catch (ServiceException e) {
             // 服务异常
-            Log.e("RequestId", e.getRequestId());
-            Log.e("ErrorCode", e.getErrorCode());
-            Log.e("HostId", e.getHostId());
-            Log.e("RawMessage", e.getRawMessage());
+            LogUtils.e("RequestId", e.getRequestId());
+            LogUtils.e("ErrorCode", e.getErrorCode());
+            LogUtils.e("HostId", e.getHostId());
+            LogUtils.e("RawMessage", e.getRawMessage());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -96,9 +97,9 @@ public class GetObjectSamples {
                 try {
                     while ((len = inputStream.read(buffer)) != -1) {
                         // 处理下载的数据
-                        Log.d("asyncGetObjectSample", "read length: " + len);
+                        LogUtils.d("asyncGetObjectSample", "read length: " + len);
                     }
-                    Log.d("asyncGetObjectSample", "download success.");
+                    LogUtils.d("asyncGetObjectSample", "download success.");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -113,10 +114,10 @@ public class GetObjectSamples {
                 }
                 if (serviceException != null) {
                     // 服务异常
-                    Log.e("ErrorCode", serviceException.getErrorCode());
-                    Log.e("RequestId", serviceException.getRequestId());
-                    Log.e("HostId", serviceException.getHostId());
-                    Log.e("RawMessage", serviceException.getRawMessage());
+                    LogUtils.e("ErrorCode", serviceException.getErrorCode());
+                    LogUtils.e("RequestId", serviceException.getRequestId());
+                    LogUtils.e("HostId", serviceException.getHostId());
+                    LogUtils.e("RawMessage", serviceException.getRawMessage());
                 }
             }
         });
