@@ -311,7 +311,22 @@ public class RunFragment extends SerialPortFragment {
         HomeActivity homeActivity = (HomeActivity) getActivity();
         homeActivity.setTitle("");
         if (homeActivity.mUserLoginPresenter != null) {
-            homeActivity.mUserLoginPresenter.userLogin();
+
+            String cardNo = SerialPortUtil.getTreadInstance().getCardNo();
+
+            if(SerialPortUtil.getTreadInstance().getUserInfo() != null
+                    && !StringUtils.isEmpty(cardNo)
+                    && !cardNo.equals(SerialPortUtil.getTreadInstance().getUserInfo().mBraceletId)) {
+                //Logout  //刷卡切换
+                if(homeActivity.isLogin) {
+                    homeActivity.userLogout(SerialPortUtil.getTreadInstance().getUserInfo().mBraceletId);
+                    homeActivity.isLogin = false;
+                }
+                //Login
+                homeActivity.mUserLoginPresenter.userLogin();
+            } else {
+                homeActivity.launchFragment(new StartFragment());
+            }
         }
     }
 
