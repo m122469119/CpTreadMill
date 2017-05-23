@@ -70,6 +70,7 @@ public class SocketHelper {
     private static final String TYPE_ADVERTISMENT = "advertisement";
     private static final String TYPE_REQUEST_MEMBER = "request_member";
     private static final String REPORT_LOG_CMD = "report_log";
+    private static final String REPORT_CLEAR_MEMBER_LIST_CMD = "member_list_clear";
 
     private static final String mTcpVersion = "v1.2";
 
@@ -234,6 +235,8 @@ public class SocketHelper {
             LikingThreadMillApplication.mLKAppSocketLogQueue.put("aaron","REPORT_LOG, 上报log操作");
             LikingThreadMillApplication.mLKSocketLogQueue.putOnce();
             LikingThreadMillApplication.mLKAppSocketLogQueue.putOnce();
+        } else if(REPORT_CLEAR_MEMBER_LIST_CMD.equals(type)) {
+            MemberUtils.getInstance().deleteMembersFromLocal();
         }
     }
 
