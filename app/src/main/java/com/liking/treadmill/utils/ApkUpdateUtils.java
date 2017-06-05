@@ -77,8 +77,13 @@ public class ApkUpdateUtils {
             }
             for (int i = 0; i < currentVersionList.size(); i++) {
                 int number = Integer.parseInt(lastVersionList.get(i)) - Integer.parseInt(currentVersionList.get(i));
+                if(number == 0) {
+                    continue;
+                }
                 if (number > 0) {
                     return true;
+                } else {
+                    return false;
                 }
             }
         }

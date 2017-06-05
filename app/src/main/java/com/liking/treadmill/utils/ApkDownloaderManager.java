@@ -10,6 +10,11 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.liking.treadmill.service.ApkDownloadService;
 import com.liking.treadmill.storge.Preference;
+import com.liking.treadmill.widget.IToast;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  *
@@ -65,21 +70,25 @@ public class ApkDownloaderManager {
                     unregisterDownloadNewApkBroadcast();
                     String path = intent.getStringExtra(ApkDownloadService.EXTRA_INSTALL_APK_PATH);
                     if(FileUtils.fileExists(path)) {
-                        Intent intentauto = new Intent("fst.autowork.linnezons");
-                        mContext.sendBroadcast(intentauto);
+//                        Intent intentauto = new Intent("fst.autowork.linnezons");
+//                        mContext.sendBroadcast(intentauto);
+                        ApkController.execCommand("pm","install","-r",path);
+                        makeDownloadFail();
                     } else {
-                        if(mDownloadListener != null) {
-                            mDownloadListener.ononDownloadFail();
-                        }
+                        makeDownloadFail();
                     }
 
                 } else if(action.equals(ApkDownloadService.ACTION_DOWNLOAD_FAIL)) {
-                    if(mDownloadListener != null) {
-                        mDownloadListener.ononDownloadFail();
-                    }
+                    makeDownloadFail();
                     unregisterDownloadNewApkBroadcast();
                 }
             }
+        }
+    }
+
+    public void makeDownloadFail() {
+        if(mDownloadListener != null) {
+            mDownloadListener.ononDownloadFail();
         }
     }
 

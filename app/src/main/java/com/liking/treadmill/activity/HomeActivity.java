@@ -167,6 +167,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param message
      */
     public void onEvent(UpdateCompleteMessage message) {
+        setTitle("");
         mLKAppSocketLogQueue.put(TAG, "app更新完成");
         LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "Update Complete");
         isUpdate = false;
