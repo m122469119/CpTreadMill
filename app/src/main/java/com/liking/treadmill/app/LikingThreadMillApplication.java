@@ -1,11 +1,15 @@
 package com.liking.treadmill.app;
 
+import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.BaseApplication;
+import com.aaron.android.framework.library.storage.DiskStorageManager;
 import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.alibaba.sdk.android.oss.sample.LKLogQueue;
 import com.liking.treadmill.BuildConfig;
+
+import java.io.File;
 
 
 /**
@@ -43,6 +47,9 @@ public class LikingThreadMillApplication extends BaseApplication {
     @Override
     protected void backgroundInitialize() {
         LogUtils.i(TAG, "backgroundInitialize---");
+        String apkPath = DiskStorageManager.getInstance().getApkFileStoragePath();
+        int s = FileUtils.clearFolder(new File(apkPath));
+        LogUtils.i(TAG, "clearFolder -> ApkFile path:" + apkPath + " size:" + s);
     }
 
     @Override
