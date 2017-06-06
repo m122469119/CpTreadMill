@@ -183,11 +183,11 @@ public class ApkController {
 
     public static boolean execCommand(String... command) {
         boolean result;
-        String message = "";
+        String message;
         try {
             Process process = new ProcessBuilder().command(command).start();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            int read = -1;
+            int read;
             InputStream errIs = process.getErrorStream();
             while ((read = errIs.read()) != -1) {
                 baos.write(read);
@@ -197,10 +197,8 @@ public class ApkController {
                 baos.write(read);
             }
             message = new String(baos.toByteArray());
-            if (inIs != null)
-                inIs.close();
-            if (errIs != null)
-                errIs.close();
+            inIs.close();
+            errIs.close();
             process.destroy();
             result = true;
         } catch (IOException e) {
