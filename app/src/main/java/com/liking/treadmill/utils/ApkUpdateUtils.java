@@ -45,7 +45,11 @@ public class ApkUpdateUtils {
     public static boolean startDownloadApk(Context context, ApkDownloaderManager.ApkDownloadListener listener) {
         if (EnvironmentUtils.Network.isNetWorkAvailable()) {//升级
             ApkDownloaderManager mFileDownloaderManager = new ApkDownloaderManager(context,listener);
-            mFileDownloaderManager.downloadFile(Preference.getServerVersionUrl(), DiskStorageManager.getInstance().getApkFileStoragePath());
+            mFileDownloaderManager.downloadFile(
+                    Preference.getServerVersionUrl(),
+                    DiskStorageManager.getInstance().getApkFileStoragePath(),
+                    Preference.getApkMd5(),
+                    Preference.getApkSize());
             return true;
         }
         return false;

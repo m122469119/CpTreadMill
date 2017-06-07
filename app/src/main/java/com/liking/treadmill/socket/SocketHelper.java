@@ -41,8 +41,6 @@ import com.liking.treadmill.utils.AlarmManagerUtils;
 import com.liking.treadmill.utils.ApkUpdateUtils;
 import com.liking.treadmill.utils.MemberUtils;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -110,6 +108,12 @@ public class SocketHelper {
                 }
                 if (!StringUtils.isEmpty(updateData.getUrl())) {
                     Preference.setServerVersionUrl(updateData.getUrl());
+                }
+                if (!StringUtils.isEmpty(updateData.getMd5())) {
+                    Preference.setApkMd5(updateData.getMd5());
+                }
+                if(!StringUtils.isEmpty(updateData.getSize())) {
+                    Preference.setApkSize(updateData.getSize());
                 }
             }
             LogUtils.d(SocketService.TAG, "send updateMessage");

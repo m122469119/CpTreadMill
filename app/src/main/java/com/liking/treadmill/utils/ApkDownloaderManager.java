@@ -9,12 +9,6 @@ import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.liking.treadmill.service.ApkDownloadService;
-import com.liking.treadmill.storge.Preference;
-import com.liking.treadmill.widget.IToast;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  *
@@ -33,16 +27,18 @@ public class ApkDownloaderManager {
         mDownloadListener = listener;
     }
 
-    public void downloadFile(String downloadUrl, String downloadPath) {
+    public void downloadFile(String downloadUrl, String downloadPath, String md5, long size) {
         LogUtils.d("socket", "FileDownloaderManager");
         registerDownloadNewApkBroadcast();
-        startDownloadApk(downloadUrl, downloadPath);
+        startDownloadApk(downloadUrl, downloadPath, md5, size);
     }
 
-    private void startDownloadApk(String downloadUrl, String downloadPath) {
+    private void startDownloadApk(String downloadUrl, String downloadPath, String md5, long size) {
         Intent intent = new Intent(mContext, ApkDownloadService.class);
         intent.putExtra(ApkDownloadService.EXTRA_DOWNLOAD_URL, downloadUrl);
         intent.putExtra(ApkDownloadService.EXTRA_DOWNLOAD_PATH, downloadPath);
+        intent.putExtra(ApkDownloadService.EXTRA_INSTALL_APK_MD5, md5);
+        intent.putExtra(ApkDownloadService.EXTRA_INSTALL_APK_SIZE, size);
         mContext.startService(intent);
     }
 
@@ -69,11 +65,19 @@ public class ApkDownloaderManager {
                     }
                     unregisterDownloadNewApkBroadcast();
                     String path = intent.getStringExtra(ApkDownloadService.EXTRA_INSTALL_APK_PATH);
+                    String md5 = intent.getStringExtra(ApkDownloadService.EXTRA_INSTALL_APK_MD5);
+                    long size = intent.getLongExtra(ApkDownloadService.EXTRA_INSTALL_APK_SIZE, 0);
                     if(FileUtils.fileExists(path)) {
 //                        Intent intentauto = new Intent("fst.autowork.linnezons");
 //                        mContext.sendBroadcast(intentauto);
-                        ApkController.execCommand("pm","install","-r",path);
-                        makeDownloadFail();
+                        try {
+                            if(md5.equals(ApkFileSVUtils.getMD5Checksum(path)) && size == ApkFileSVUtils.getFileSize(path)) {
+                                ApkController.execCommand("pm","install","-r",path);
+                            }
+                        } catch (Exception e) {
+                        } finally {
+                            makeDownloadFail();
+                        }
                     } else {
                         makeDownloadFail();
                     }

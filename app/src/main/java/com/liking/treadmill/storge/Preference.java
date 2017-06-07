@@ -35,6 +35,8 @@ public class Preference extends AbsPreference {
     public static final String TREADMILL_SETUP_ISVISITOR = "treadmillsetupvisitor";
     public static final String ADVERTISEMENT =  "advertisement";//广告
     public static final String LASTMEMBERID = "lastmemberid";//最后的成员ID
+    public static final String APP_UPDATE_MD5 = "appupdatemd5";
+    public static final String APP_UPDATE_APK_SIZE = "appupdateapksize";
 
     public static final String APP_SERVER_VERSION = "setserverversion";//服务器版本
     public static final String APP_SERVER_VERSION_URL = "setserverversionurl";//服务器版本地址
@@ -362,5 +364,29 @@ public class Preference extends AbsPreference {
 
     public static void setCurrentTimeDiff(long diff){
         setObject(CURRENT_TIME_DIFF, String.valueOf(diff));
+    }
+
+    /**
+     * 服务器最新 apk md5值
+     * @param apkMd5
+     */
+    public static void setApkMd5(String apkMd5) {
+        setObject(APP_UPDATE_MD5, apkMd5);
+    }
+
+    public static String getApkMd5(){
+        return (String) getObject(APP_UPDATE_MD5,"");
+    }
+
+    /**
+     * 服务器最新 apk 大小
+     * @param apkSize
+     */
+    public static void setApkSize(String apkSize) {
+        setObject(APP_UPDATE_APK_SIZE, apkSize);
+    }
+
+    public static long getApkSize() {
+        return Long.parseLong((String) getObject(APP_UPDATE_APK_SIZE, "0"));
     }
 }

@@ -33,6 +33,12 @@ public class ApkUpdateResult extends BaseSocketResult{
         @SerializedName("url")
         private String mUrl;
 
+        @SerializedName("size")
+        private String mSize;
+
+        @SerializedName("md5")
+        private String mMd5;
+
         public String getVersion() {
             return mVersion;
         }
@@ -47,6 +53,22 @@ public class ApkUpdateResult extends BaseSocketResult{
 
         public void setUrl(String url) {
             mUrl = url;
+        }
+
+        public String getSize() {
+            return mSize;
+        }
+
+        public void setSize(String size) {
+            mSize = size;
+        }
+
+        public String getMd5() {
+            return mMd5;
+        }
+
+        public void setMd5(String md5) {
+            mMd5 = md5;
         }
     }
 }

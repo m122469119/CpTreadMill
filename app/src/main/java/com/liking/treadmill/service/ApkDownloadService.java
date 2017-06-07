@@ -31,6 +31,8 @@ public class ApkDownloadService extends Service {
     public static final String ACTION_DOWNLOAD_COMPLETE = "downloadcomplete";
     public static final String ACTION_DOWNLOAD_FAIL = "downloadfail";
     public static final String EXTRA_INSTALL_APK_PATH = "apkpath";
+    public static final String EXTRA_INSTALL_APK_MD5 = "apkmd5";
+    public static final String EXTRA_INSTALL_APK_SIZE = "apksize";
     public static final String EXTRA_DOWNLOAD_URL = "downloadUrl";
     public static final String EXTRA_DOWNLOAD_PATH = "downloadPath";
     public static final String EXTRA_PROGRESS = "downloadprogress";
@@ -50,12 +52,14 @@ public class ApkDownloadService extends Service {
         }
         String url = intent.getStringExtra(EXTRA_DOWNLOAD_URL);
         String path = intent.getStringExtra(EXTRA_DOWNLOAD_PATH);
+        String md5 = intent.getStringExtra(EXTRA_INSTALL_APK_MD5);
+        long size = intent.getLongExtra(EXTRA_INSTALL_APK_SIZE, 0);
         if (StringUtils.isEmpty(url)) {
             return super.onStartCommand(intent, flags, startId);
         }
         if(mDownloadThread == null) {
             Preference.setDownloadAppFile(true);
-            mDownloadThread = new DownloadThread(url, path);
+            mDownloadThread = new DownloadThread(url, path, md5, size);
             mDownloadThread.start();
         }
         return super.onStartCommand(intent, flags, startId);
@@ -66,10 +70,14 @@ public class ApkDownloadService extends Service {
         private String mDirectoryPath;
         private String mTempFilePath;
         private String mFilePath;
+        private String mMd5;
+        private long mSize;
 
-        public DownloadThread(String url, String directoryPath) {
+        public DownloadThread(String url, String directoryPath, String md5, long size) {
             mUrl = url;
             mDirectoryPath = directoryPath;
+            mMd5 = md5;
+            mSize = size;
             createDownloadFilePath();
         }
 
@@ -138,6 +146,8 @@ public class ApkDownloadService extends Service {
                     FileUtils.rename(mTempFilePath, mFilePath);
                     intent = new Intent(ACTION_DOWNLOAD_COMPLETE);
                     intent.putExtra(EXTRA_INSTALL_APK_PATH, mFilePath);
+                    intent.putExtra(EXTRA_INSTALL_APK_MD5, mMd5);
+                    intent.putExtra(EXTRA_INSTALL_APK_SIZE, mSize);
                     sendBroadcast(intent);
                 }
             } catch (Exception e) {
