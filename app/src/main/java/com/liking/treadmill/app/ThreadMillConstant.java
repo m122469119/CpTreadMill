@@ -10,6 +10,13 @@ import com.aaron.android.framework.library.storage.DiskStorageManager;
 
 public class ThreadMillConstant {
 
+    /**
+     * U盘目录
+     */
+    private static String USB_FILE_PATH = "/mnt/usb_storage";
+
+    public static String USB_FILE_PATH_APK =  USB_FILE_PATH + "/lk/LikingTreadMill.apk";
+
     //1=>快速启动， 2=>设定目标， 3=>预设课程
     public static final int THREADMILL_MODE_SELECT_QUICK_START = 1;//快速启动
     public static final int THREADMILL_MODE_SELECT_GOAL_SETTING = 2;//目标设置

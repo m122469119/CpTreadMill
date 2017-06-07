@@ -1,6 +1,12 @@
 package com.liking.treadmill.utils;
 
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+
 import com.aaron.android.codelibrary.utils.FileUtils;
+import com.aaron.android.codelibrary.utils.LogUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,5 +53,29 @@ public class ApkFileSVUtils {
             result += Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring(1);//加0x100是因为有的b[i]的十六进制只有1位
         }
         return result;
+    }
+
+    public static boolean checkPackageSV(Context context, String apkPath) {
+        try {
+            PackageManager pm = context.getPackageManager();
+            //当前apk版本信息
+            String currPackageName = context.getPackageName();
+            int currVersionCode = pm.getPackageInfo(currPackageName, 0).versionCode;
+
+            LogUtils.i("LikingThreadMillApplication", "curr :" + currPackageName + "---" + currVersionCode);
+
+            PackageInfo info = pm.getPackageArchiveInfo(apkPath, PackageManager.GET_ACTIVITIES);
+            ApplicationInfo appInfo;
+            if (info != null) {
+                appInfo = info.applicationInfo;
+                String packageName = appInfo.packageName;
+                int versionCode = info.versionCode;
+                LogUtils.i("LikingThreadMillApplication", "u盘 :" + packageName + "---" + versionCode);
+                return currPackageName.equals(packageName) && versionCode > currVersionCode;
+            }
+        }catch (Exception e) {
+            LogUtils.i("LikingThreadMillApplication", e.getMessage());
+        }
+        return false;
     }
 }

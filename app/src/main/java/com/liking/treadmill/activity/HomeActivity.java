@@ -1,5 +1,6 @@
 package com.liking.treadmill.activity;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -41,6 +42,7 @@ import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.MemberUtils;
+import com.liking.treadmill.utils.UsbUpdateUtils;
 import com.liking.treadmill.widget.IToast;
 
 import java.util.List;
@@ -83,11 +85,31 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         launchInit();
-        if(mUserLoginPresenter == null) {
+        if (mUserLoginPresenter == null) {
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
         initAdViews();
         mLKAppSocketLogQueue.put(TAG, "onCreate(), 初始化主界面");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //检测是否是U盘更新
+        if (UsbUpdateUtils.isNeedUSBUpdate()) {
+            final ProgressDialog dialog = new ProgressDialog(this);
+            dialog.setMessage("升级中,请勿刷卡...");
+            dialog.show();
+            mDelayedHandler.postDelayed(new Runnable() { //需等待Apk完全显示才能进行更新
+                @Override
+                public void run() {
+                    if (dialog != null && !HomeActivity.this.isFinishing() && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                    UsbUpdateUtils.checkUSBUpdate(HomeActivity.this);
+                }
+            }, 3000);
+        }
     }
 
     public void launchInit() {
@@ -180,12 +202,13 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     /**
      * 刷卡登录成功监听
+     *
      * @param loginUserInfoMessage
      */
     public void onEvent(LoginUserInfoMessage loginUserInfoMessage) {
         mLKAppSocketLogQueue.put(TAG, "会员刷卡登录成功");
-        if(mUserLoginPresenter != null) {
-            if(loginUserInfoMessage.mUserData != null && loginUserInfoMessage.mUserData.getErrcode() == 0) {
+        if (mUserLoginPresenter != null) {
+            if (loginUserInfoMessage.mUserData != null && loginUserInfoMessage.mUserData.getErrcode() == 0) {
                 isLogin = true;
             }
             mUserLoginPresenter.userLoginResult(loginUserInfoMessage);
@@ -196,7 +219,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * 风扇显示
      */
     public void onEvent(FanStateMessage fanStateMessage) {
-        if(fanStateMessage != null) {
+        if (fanStateMessage != null) {
             setFanViewVisibility(fanStateMessage.visibility);
         }
     }
@@ -208,13 +231,13 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      */
     public void onEvent(GymBindSuccessMessage message) {
         mLKAppSocketLogQueue.put(TAG, "场馆绑定成功");
-        if(mDelayedHandler != null) {
+        if (mDelayedHandler != null) {
             mDelayedHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     launchFragment(new AwaitActionFragment());
                 }
-            },delayedInterval);
+            }, delayedInterval);
         }
     }
 
@@ -225,10 +248,10 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      */
     public void onEvent(GymUnBindSuccessMessage message) {
         mLKAppSocketLogQueue.put(TAG, "场馆解除绑定");
-        if(mDelayedHandler != null) {
+        if (mDelayedHandler != null) {
             //Logout
-            if(SerialPortUtil.getTreadInstance().getUserInfo() != null) {
-                if(isLogin) {
+            if (SerialPortUtil.getTreadInstance().getUserInfo() != null) {
+                if (isLogin) {
                     userLogout(SerialPortUtil.getTreadInstance().getUserInfo().mBraceletId);
                     isLogin = false;
                 }
@@ -242,7 +265,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                     MemberUtils.getInstance().deleteMembersFromLocal();
                     launchFragment(new StartSettingFragment());
                 }
-            },delayedInterval);
+            }, delayedInterval);
         }
     }
 
@@ -255,8 +278,8 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         if (message.mResources != null) {
 
             AdvertisementResult.AdvUrlResource.Resource leftAdv = getAdvResource(0, message.mResources);
-            if(leftAdv != null) {
-                if(leftAdv.isOpen()) {
+            if (leftAdv != null) {
+                if (leftAdv.isOpen()) {
                     HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, leftAdv.getUrl());
                 } else {
                     showDefaultAdvLeftImg();
@@ -266,10 +289,10 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             }
 
             AdvertisementResult.AdvUrlResource.Resource rightAdv = getAdvResource(1, message.mResources);
-            if(rightAdv != null) {
-                if(rightAdv.isOpen()) {
+            if (rightAdv != null) {
+                if (rightAdv.isOpen()) {
                     HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, rightAdv.getUrl());
-                }else {
+                } else {
                     showDefaultAdvRightImg();
                 }
             } else {
@@ -279,7 +302,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     }
 
     /**
-     *  左边默认广告
+     * 左边默认广告
      */
     public void showDefaultAdvLeftImg() {
         HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.run_bg_ad);
@@ -293,7 +316,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     }
 
     private AdvertisementResult.AdvUrlResource.Resource getAdvResource(int poistion, List<AdvertisementResult.AdvUrlResource.Resource> resources) {
-        if(poistion >= 0 && poistion < resources.size()) {
+        if (poistion >= 0 && poistion < resources.size()) {
             return resources.get(poistion);
         }
         return null;
@@ -306,7 +329,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             iBackService.userLogin(cardno);
         } catch (RemoteException e) {
             e.printStackTrace();
-            if(mUserLoginPresenter != null) {
+            if (mUserLoginPresenter != null) {
                 mUserLoginPresenter.userLoginFail();
             }
             IToast.show(ResourceUtils.getString(R.string.read_card_error));
@@ -330,10 +353,11 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     /**
      * 会员退出
+     *
      * @param cardNo
      */
     public void userLogout(String cardNo) {
-        if(iBackService != null) {
+        if (iBackService != null) {
             try {
                 mLKAppSocketLogQueue.put(TAG, "会员退出");
                 iBackService.userLogOut(cardNo);
@@ -349,7 +373,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param message
      */
     public void onEvent(RequestMembersMessage message) {
-        if(iBackService != null) {
+        if (iBackService != null) {
             try {
                 iBackService.requestMembersCommand();
             } catch (RemoteException e) {
@@ -360,12 +384,13 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     /**
      * 下发的成员列表 -> Memory Caching
+     *
      * @param message
      */
     public void onEvent(MemberListMessage message) {
         List<Member> members = message.mMemberList;
-        if(members !=null && !members.isEmpty()) {
-            for (Member m:members) {
+        if (members != null && !members.isEmpty()) {
+            for (Member m : members) {
                 MemberUtils.getInstance().updateMembersFromMemory(m);
             }
         }
@@ -373,6 +398,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     /**
      * 下发结束 Memory cache -> DB Caching
+     *
      * @param message
      */
     public void onEvent(MemberNoneMessage message) {
