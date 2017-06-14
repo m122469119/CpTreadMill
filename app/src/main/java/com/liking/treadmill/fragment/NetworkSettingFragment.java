@@ -150,10 +150,10 @@ public class NetworkSettingFragment extends SerialPortFragment {
                 ((HomeActivity) getActivity()).launchFullFragment(new SettingFragment());
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) {
-            if(!isSetting) {
-                Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
-                startActivity(intent);
-            }
+//            if(!isSetting) {
+//                Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
+//                startActivity(intent);
+//            }
         }
     }
 

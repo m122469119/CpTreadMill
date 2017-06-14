@@ -60,7 +60,7 @@ public class LikingTreadKeyEvent {
      * 以下是产品定义的组合键
      */
     public final static byte KEY_PGR_PGR_SPEED_REDUCE = 0x50; //PGR+ PGR+SPEED-
-    public final static String KEY_SPEED_PLUS_SPEED_REDUCE = "51"; //PGR+ SPEED++ SPEED-
+    public final static byte KEY_SPEED_PLUS_SPEED_REDUCE = 0x51; //PGR+ SPEED++ SPEED-
     public final static String KEY_PGR_SPEED_COOLDOWN = "52"; //PGR+ SPEED++ COOLDWON
     public final static byte KEY_PGR_PAUSE_STOP = 0x53; //PGR+ PAUSE+ STOP
     public final static byte KEY_PGR_START = 0x54; //PGR+ START

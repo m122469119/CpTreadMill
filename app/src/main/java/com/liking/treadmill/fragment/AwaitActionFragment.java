@@ -11,15 +11,19 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.base.widget.dialog.HBaseDialog;
 import com.aaron.android.framework.utils.PopupUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
+import com.liking.treadmill.widget.IToast;
 
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 
 /**
  * Created on 16/12/15.
@@ -36,9 +40,9 @@ public class AwaitActionFragment extends SerialPortFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_awaitaction, container, false);
         ButterKnife.bind(this, mRootView);
-        if(SerialPortUtil.getTreadInstance().getUserInfo() != null) {
+        if (SerialPortUtil.getTreadInstance().getUserInfo() != null) {
             final HomeActivity homeActivity = (HomeActivity) getActivity();
-            if(homeActivity.isLogin) {
+            if (homeActivity.isLogin) {
                 homeActivity.userLogout(SerialPortUtil.getTreadInstance().getUserInfo().mBraceletId);
                 homeActivity.isLogin = false;
             }
@@ -56,22 +60,22 @@ public class AwaitActionFragment extends SerialPortFragment {
                 homeActivity.mUserLoginPresenter.userLogin();
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) {
-            Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
-            startActivity(intent);
+//            Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
+//            startActivity(intent);
         } else if (keyCode == LikingTreadKeyEvent.KEY_PGR_PGR_SPEED_REDUCE) {
-            View customView =  getLayoutInflater(null).inflate(R.layout.layout_visit_validate, null, false);
+            View customView = getLayoutInflater(null).inflate(R.layout.layout_visit_validate, null, false);
             final EditText inputPasswordEditText = (EditText) customView.findViewById(R.id.visit_password_editText);
             new HBaseDialog.Builder(homeActivity).setCustomView(customView).
-            setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if ("123456".equals(inputPasswordEditText.getText().toString())) {
-                        homeActivity.launchFragment(new StartFragment());
-                    } else {
-                        PopupUtils.showToast("密码不正确");
-                    }
-                }
-            }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if ("123456".equals(inputPasswordEditText.getText().toString())) {
+                                homeActivity.launchFragment(new StartFragment());
+                            } else {
+                                PopupUtils.showToast("密码不正确");
+                            }
+                        }
+                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
@@ -79,10 +83,10 @@ public class AwaitActionFragment extends SerialPortFragment {
                 }
             }).show();
 
-        } else if(keyCode == LikingTreadKeyEvent.KEY_PGR_START) {
-            if(Preference.isVisitorMode()) {//访客模式
+        } else if (keyCode == LikingTreadKeyEvent.KEY_PGR_START) {
+            if (Preference.isVisitorMode()) {//访客模式
                 SerialPortUtil.TreadData.UserInfo userInfo = SerialPortUtil.getTreadInstance().getUserInfo();
-                if(userInfo == null) {
+                if (userInfo == null) {
                     userInfo = new SerialPortUtil.TreadData.UserInfo();
                     userInfo.mUserName = "LikingFans";
                     userInfo.mGender = 1;
@@ -90,7 +94,14 @@ public class AwaitActionFragment extends SerialPortFragment {
                     userInfo.isVisitor = true;
                 }
                 SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
-                ((HomeActivity)getActivity()).launchFragment(new RunFragment());
+                ((HomeActivity) getActivity()).launchFragment(new RunFragment());
+            }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS_SPEED_REDUCE) {
+            String gymId = Preference.getBindUserGymId();
+            if (!StringUtils.isEmpty(gymId) && "-1".equals(gymId)) {
+                Preference.setUnBindRest();
+                EventBus.getDefault().post(new GymUnBindSuccessMessage());
+                IToast.show("解绑中...");
             }
         }
     }
