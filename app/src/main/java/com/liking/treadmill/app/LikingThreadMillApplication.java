@@ -1,5 +1,7 @@
 package com.liking.treadmill.app;
 
+import android.net.wifi.WifiManager;
+
 import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.BaseApplication;
@@ -37,6 +39,14 @@ public class LikingThreadMillApplication extends BaseApplication {
                 .setQueueCount(10)
                 .build();
         LogUtils.setEnable(BuildConfig.LOGGER);
+        disableWifi();
+    }
+
+    private void disableWifi() {
+        WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+        if (wifiManager.isWifiEnabled()) {
+            wifiManager.setWifiEnabled(false);
+        }
     }
 
     @Override
