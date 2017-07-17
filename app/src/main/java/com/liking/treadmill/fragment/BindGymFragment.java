@@ -1,10 +1,7 @@
 package com.liking.treadmill.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.RemoteException;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.Spannable;
@@ -25,13 +22,13 @@ import com.aaron.android.framework.library.imageloader.HImageView;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.fragment.base.SerialPortFragment;
 import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.QrCodeMessage;
 import com.liking.treadmill.message.SettingNextMessage;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
-import com.liking.treadmill.treadcontroller.SerialPortUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

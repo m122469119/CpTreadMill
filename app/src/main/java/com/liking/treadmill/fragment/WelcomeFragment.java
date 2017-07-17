@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.liking.treadmill.R;
+import com.liking.treadmill.fragment.base.SerialPortFragment;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 
 import butterknife.ButterKnife;
