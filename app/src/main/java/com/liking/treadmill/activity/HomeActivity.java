@@ -22,6 +22,7 @@ import com.liking.treadmill.fragment.StartFragment;
 import com.liking.treadmill.fragment.StartSettingFragment;
 import com.liking.treadmill.fragment.UpdateFragment;
 import com.liking.treadmill.fragment.WelcomeFragment;
+import com.liking.treadmill.media.MediaFragment;
 import com.liking.treadmill.message.AdvertisementMessage;
 import com.liking.treadmill.message.FanStateMessage;
 import com.liking.treadmill.message.GymBindSuccessMessage;
@@ -45,6 +46,7 @@ import com.liking.treadmill.utils.MemberUtils;
 import com.liking.treadmill.utils.UsbUpdateUtils;
 import com.liking.treadmill.widget.IToast;
 
+import java.io.File;
 import java.util.List;
 
 import static com.liking.treadmill.app.LikingThreadMillApplication.mLKAppSocketLogQueue;
@@ -90,6 +92,13 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         }
         initAdViews();
         mLKAppSocketLogQueue.put(TAG, "onCreate(), 初始化主界面");
+
+        mDelayedHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                launchFragment(new MediaFragment());
+            }
+        }, 4000);
     }
 
     @Override

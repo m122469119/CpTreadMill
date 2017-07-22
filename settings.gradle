@@ -1,1 +1,1 @@
-include ':app', ':framework', ':codelibrary'
+include ':app', ':framework', ':codelibrary', ':iqiyimedia'
