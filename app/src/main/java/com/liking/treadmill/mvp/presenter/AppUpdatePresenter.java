@@ -5,8 +5,8 @@ import android.util.Log;
 
 import com.aaron.android.framework.base.mvp.BasePresenter;
 import com.liking.treadmill.mvp.view.AppUpdateView;
-import com.liking.treadmill.utils.ApkUpdateUtils;
-import com.liking.treadmill.utils.ApkDownloaderManager;
+import com.liking.treadmill.utils.ApkUpdateHelper;
+import com.liking.treadmill.apkupdate.ApkDownloaderTask;
 
 /**
  * 说明:更新
@@ -27,14 +27,14 @@ public class AppUpdatePresenter extends BasePresenter<AppUpdateView> {
      * @return
      */
     public boolean checkAppVersion() {
-        return ApkUpdateUtils.isApkUpdate();
+        return ApkUpdateHelper.isApkUpdate();
     }
 
     /**
      * 启动服务下载
      */
     public void startDownloadApk() {
-        if (!ApkUpdateUtils.startDownloadApk(mContext, mApkDownloadListener)) {
+        if (!ApkUpdateHelper.startDownloadApk(mContext, mApkDownloadListener)) {
             if(mView != null) {
                 mView.updateFailView();
             }
@@ -45,7 +45,7 @@ public class AppUpdatePresenter extends BasePresenter<AppUpdateView> {
      * 下载监听
      */
 
-    private ApkDownloaderManager.ApkDownloadListener mApkDownloadListener = new ApkDownloaderManager.ApkDownloadListener() {
+    private ApkDownloaderTask.ApkDownloadListener mApkDownloadListener = new ApkDownloaderTask.ApkDownloadListener() {
         @Override
         public void onStartDownload(int apklength) {
             if(mView != null) {
@@ -71,7 +71,7 @@ public class AppUpdatePresenter extends BasePresenter<AppUpdateView> {
         }
 
         @Override
-        public void ononDownloadFail() {
+        public void onDownloadFail() {
             if(mView != null) {
                 mView.updateFailView();
             }

@@ -38,7 +38,7 @@ import com.liking.treadmill.socket.result.UserLogOutResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.AlarmManagerUtils;
-import com.liking.treadmill.utils.ApkUpdateUtils;
+import com.liking.treadmill.utils.ApkUpdateHelper;
 import com.liking.treadmill.utils.MemberUtils;
 
 import java.util.Date;
@@ -117,9 +117,11 @@ public class SocketHelper {
                 }
             }
             LogUtils.d(SocketService.TAG, "send updateMessage");
-            if (ApkUpdateUtils.isApkUpdate() && !SerialPortUtil.getTreadInstance().isRunning()) {//需要更新并且跑步机没有运行
+            if (ApkUpdateHelper.isApkUpdate() && !SerialPortUtil.getTreadInstance().isRunning()) {//需要更新并且跑步机没有运行
                 EventBus.getDefault().post(new UpdateAppMessage());
             }
+            Preference.setAppDownloadFailCount(0);
+
         } else if (TYPE_BIND.equals(type)) {//绑定用户
             BindUserResult bindUserResult = gson.fromJson(jsonText, BindUserResult.class);
             BindUserResult.BindUserData bindUserData = bindUserResult.getData();

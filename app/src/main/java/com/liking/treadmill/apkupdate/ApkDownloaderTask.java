@@ -1,4 +1,4 @@
-package com.liking.treadmill.utils;
+package com.liking.treadmill.apkupdate;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,12 +9,16 @@ import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.liking.treadmill.service.ApkDownloadService;
+import com.liking.treadmill.storge.Preference;
+import com.liking.treadmill.utils.ApkController;
+import com.liking.treadmill.utils.ApkFileSVUtils;
+import com.liking.treadmill.utils.ApkUpdateHelper;
 
 /**
  *
  * @author chenlei
  */
-public class ApkDownloaderManager {
+public class ApkDownloaderTask {
 
     private DownloadNewApkBroadcast mDownloadNewApkBroadcast;
     private Context mContext;
@@ -22,23 +26,23 @@ public class ApkDownloaderManager {
     private ApkDownloadListener mDownloadListener = null;
 
 
-    public ApkDownloaderManager(Context context, ApkDownloadListener listener) {
+    public ApkDownloaderTask(Context context, ApkDownloadListener listener) {
         mContext = context;
         mDownloadListener = listener;
     }
 
-    public void downloadFile(String downloadUrl, String downloadPath, String md5, long size) {
+    public void downloadFile(String downloadUrl, String downloadPath) {
         LogUtils.d("socket", "FileDownloaderManager");
-        registerDownloadNewApkBroadcast();
-        startDownloadApk(downloadUrl, downloadPath, md5, size);
+        if(mContext != null) {
+            registerDownloadNewApkBroadcast();
+        }
+        startDownloadApk(downloadUrl, downloadPath);
     }
 
-    private void startDownloadApk(String downloadUrl, String downloadPath, String md5, long size) {
+    private void startDownloadApk(String downloadUrl, String downloadPath) {
         Intent intent = new Intent(mContext, ApkDownloadService.class);
         intent.putExtra(ApkDownloadService.EXTRA_DOWNLOAD_URL, downloadUrl);
         intent.putExtra(ApkDownloadService.EXTRA_DOWNLOAD_PATH, downloadPath);
-        intent.putExtra(ApkDownloadService.EXTRA_INSTALL_APK_MD5, md5);
-        intent.putExtra(ApkDownloadService.EXTRA_INSTALL_APK_SIZE, size);
         mContext.startService(intent);
     }
 
@@ -65,23 +69,9 @@ public class ApkDownloaderManager {
                     }
                     unregisterDownloadNewApkBroadcast();
                     String path = intent.getStringExtra(ApkDownloadService.EXTRA_INSTALL_APK_PATH);
-                    String md5 = intent.getStringExtra(ApkDownloadService.EXTRA_INSTALL_APK_MD5);
-                    long size = intent.getLongExtra(ApkDownloadService.EXTRA_INSTALL_APK_SIZE, 0);
-                    if(FileUtils.fileExists(path)) {
-//                        Intent intentauto = new Intent("fst.autowork.linnezons");
-//                        mContext.sendBroadcast(intentauto);
-                        try {
-                            if(md5.equals(ApkFileSVUtils.getMD5Checksum(path)) && size == ApkFileSVUtils.getFileSize(path)) {
-                                ApkController.execCommand("pm","install","-r",path);
-                            }
-                        } catch (Exception e) {
-                        } finally {
-                            makeDownloadFail();
-                        }
-                    } else {
+                    if(!ApkUpdateHelper.update(path)) {
                         makeDownloadFail();
                     }
-
                 } else if(action.equals(ApkDownloadService.ACTION_DOWNLOAD_FAIL)) {
                     makeDownloadFail();
                     unregisterDownloadNewApkBroadcast();
@@ -91,8 +81,12 @@ public class ApkDownloaderManager {
     }
 
     public void makeDownloadFail() {
+        //下载失败计数
+        int fc = Preference.getAppDownloadFailCount() + 1;
+        Preference.setAppDownloadFailCount(fc);
+
         if(mDownloadListener != null) {
-            mDownloadListener.ononDownloadFail();
+            mDownloadListener.onDownloadFail();
         }
     }
 
@@ -119,6 +113,6 @@ public class ApkDownloaderManager {
         void onStartDownload(int apklength);
         void onDownloading(int progress);
         void onDownloadComplete();
-        void ononDownloadFail();
+        void onDownloadFail();
     }
 }

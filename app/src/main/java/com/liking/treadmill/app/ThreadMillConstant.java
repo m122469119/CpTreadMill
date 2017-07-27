@@ -11,6 +11,11 @@ import com.aaron.android.framework.library.storage.DiskStorageManager;
 public class ThreadMillConstant {
 
     /**
+     * 下载失败，允许更新的次数
+     */
+    public static final int THREADMILL_UPDATE_FAIL_COUNT = 5;
+
+    /**
      * U盘目录
      */
     private static String USB_FILE_PATH = "/mnt/usb_storage";
