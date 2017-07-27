@@ -3,14 +3,14 @@ package liking.com.iqiyimedia.http;
 import android.support.v4.util.ArrayMap;
 
 import com.aaron.android.framework.library.http.retrofit.RetrofitRequest;
-import com.aaron.android.framework.library.http.retrofit.ServiceGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import liking.com.iqiyimedia.http.callback.BasePagerRequestCallback;
+import liking.com.iqiyimedia.http.callback.BaseRequestCallback;
 import liking.com.iqiyimedia.http.result.AlbumListResult;
 import liking.com.iqiyimedia.http.result.CategoryListResult;
+import liking.com.iqiyimedia.http.result.TopListResult;
 import retrofit2.Call;
 
 /**
@@ -34,34 +34,34 @@ public class IqiyiApiService {
         return mIqiyiApi;
     }
 
-    public static void getCategoryList(Object tag, BasePagerRequestCallback<CategoryListResult> callback) {
-        new RetrofitRequest<CategoryListResult>
-                (addRequestCalls(tag, getIqiyiApi().getCategoryList())).execute(callback);
-    }
-
-    public static void getAlbumList(Object tag, String categoryId, BasePagerRequestCallback<AlbumListResult> callback) {
-        new RetrofitRequest<AlbumListResult>
-                (addRequestCalls(tag, getIqiyiApi().getAlbumList(categoryId))).execute(callback);
-    }
-
     private static Call addRequestCalls(Object tag, Call call) {
-        if(tag == null) return call;
+        if (tag == null) return call;
 
-        if (requestCalls == null) {
-            requestCalls = new ArrayMap<>();
-        }
-        List<Call> calls = requestCalls.get(tag);
-        if (calls == null) {
-            calls = new ArrayList<>();
-            requestCalls.put(tag, calls);
-        }
+        List<Call> calls = register(tag);
+
         if (!calls.contains(call)) {
             calls.add(call);
         }
         return call;
     }
 
-    public static void removeRequestAllCalls(Object tag) {
+    public static List<Call> register(Object tag) {
+
+        if (tag == null) return null;
+
+        if (requestCalls == null) {
+            requestCalls = new ArrayMap<>();
+        }
+        List<Call> calls = requestCalls.get(tag);
+
+        if (calls == null) {
+            calls = new ArrayList<>();
+            requestCalls.put(tag, calls);
+        }
+        return calls;
+    }
+
+    public static void unregister(Object tag) {
         List<Call> calls = requestCalls.get(tag);
         if (calls != null) {
             calls.clear();
@@ -69,5 +69,18 @@ public class IqiyiApiService {
         }
     }
 
+    public static void getCategoryList(Object tag, BaseRequestCallback<CategoryListResult> callback) {
+        new RetrofitRequest<CategoryListResult>
+                (addRequestCalls(tag, getIqiyiApi().getCategoryList())).execute(callback);
+    }
 
+    public static void getAlbumList(Object tag, String categoryId, BaseRequestCallback<AlbumListResult> callback) {
+        new RetrofitRequest<AlbumListResult>
+                (addRequestCalls(tag, getIqiyiApi().getAlbumList(categoryId))).execute(callback);
+    }
+
+    public static void getTopList(Object tag, String categoryId, String topType, BaseRequestCallback<TopListResult> callback) {
+        new RetrofitRequest<TopListResult>
+                (addRequestCalls(tag, getIqiyiApi().getTopList(categoryId, topType))).execute(callback);
+    }
 }

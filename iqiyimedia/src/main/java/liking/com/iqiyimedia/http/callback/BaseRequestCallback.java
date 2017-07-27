@@ -15,7 +15,7 @@ import liking.com.iqiyimedia.http.IqiyiApiHelper;
 import liking.com.iqiyimedia.http.result.IqiyiResult;
 
 
-public abstract class BasePagerRequestCallback<T extends IqiyiResult> extends RequestCallback<T> {
+public abstract class BaseRequestCallback<T extends IqiyiResult> extends RequestCallback<T> {
 
     private static final String TAG = "BasePagerRequestCallback";
 
@@ -40,11 +40,14 @@ public abstract class BasePagerRequestCallback<T extends IqiyiResult> extends Re
 
             if(!StringUtils.isEmpty(errorCode)) {
                 serverError.setServerCode(errorCode);
+                serverError.setMessage(errorCode);
 //                serverError.setMessage(ResourceUtils.getString(IqiyiApiHelper.eCodeAndMess.get(errorCode)));
             } else {
+                serverError.setMessage("网络异常");
 //                serverError.setMessage(ResourceUtils.getString(R.string.network_anomaly_text));
             }
         } else {
+            serverError.setMessage("网络异常");
 //            serverError.setMessage(ResourceUtils.getString(R.string.network_anomaly_text));
         }
         onFailure(serverError);

@@ -5,22 +5,20 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Created on 2017/07/22
- * desc:
+ * Created on 2017/07/25
+ * desc: 排行榜
  *
  * @author: chenlei
  * @version:1.0
  */
 
-public class AlbumListResult extends IqiyiResult{
-
+public class TopListResult extends IqiyiResult {
 
     /**
-     * total : 265203
-     * data : [{"albumId":736923000,"qipuId":736923000,"ipLimit":0,"categoryId":7,"sets":1,"purchaseType":0,"isPurchase":0,"payMark":0,"copyrightId":8465,"tvYear":20170724,"albumStatus":1,"contentType":1,"isSD":0,"is3D":0,"sourceId":0,"isDubo":0,"isCoopAllowed":1,"downloadAllowed":1,"sourceQipuId":0,"playcnt":3728,"timeLength":46,"ownerAlbumId":-1,"albumName":"顽童瘦子挺《嘻哈》热狗：觉得没资格大可不看","desc":"顽童瘦子挺《嘻哈》热狗：觉得没资格大可不看","startDate":"2016-08-01 08:00:00","endDate":"2017-07-31 08:00:00","focus":"觉得没资格大可不看","albumUrl":"http://www.iqiyi.com/v_19rr7nomc4.html?vfm=newvfm","html5Url":"http://m.iqiyi.com/v_19rr7nomc4.html?vfm=newvfm","html5PlayUrl":"http://m.iqiyi.com/v_19rr7nomc4.html?vfm=newvfm","picUrl":"http://pic5.qiyipic.com/image/20170724/c8/dd/v_112913021_m_601.jpg","posterPicUrl":"http://pic5.qiyipic.com/image/20170724/c8/dd/v_112913021_m_601.jpg","leafctgs":"热点 八卦 内地 新闻 综艺 国语","producer":"","credits":" ","source":"","companyName":"东星（天津）视讯科技有限公司","keyword":"中国有嘻哈","subTitle":"","score":"9.4","actor":"","director":"","area":"内地","albumType":"综艺","playUrl":"http://www.iqiyi.com/v_19rr7nomc4.html?vfm=newvfm","createdTime":"2017-07-24 10:27:28","sysPlatform":"PHONE,PAD,PC,PC_APP,TV,PHONE_WEB_IQIYI,PAD_WEB_IQIYI","alias":"","tvIds":[736923000],"tvQipuIds":[736923000],"threeCtgs":[{"name":"热点","subType":2,"subCtgName":"内容类型","id":170},{"name":"八卦","subType":2,"subCtgName":"内容类型","id":175},{"name":"内地","subType":3,"subCtgName":"地区","id":184},{"name":"新闻","subType":4,"subCtgName":"节目分类","id":189},{"name":"综艺","subType":5,"subCtgName":"类型","id":1082},{"name":"国语","subType":0,"subCtgName":"配音语种","id":20131}],"creditList":[{"name":"热狗","roleName":"","type":21},{"name":"顽童MJ116","roleName":"","type":21},{"name":"张震岳","roleName":"","type":21},{"name":"潘玮柏","roleName":"","type":21},{"name":"吴亦凡","roleName":"","type":21}],"upDown":{"score":9.4,"voters":0,"up":0,"albumQipuId":736923000,"down":0},"season":0,"edition":"","subsites":[],"swf":""}]
+     * total : 150
      * pageNo : 1
-     * pagesize : 100
-     * foundNum : 100
+     * pagesize : 150
+     * foundNum : 94
      */
 
     @SerializedName("total")
@@ -76,59 +74,59 @@ public class AlbumListResult extends IqiyiResult{
 
     public static class DataBean {
         /**
-         * albumId : 736923000
-         * qipuId : 736923000
-         * ipLimit : 0
-         * categoryId : 7
+         * albumId : 264740100
+         * qipuId : 264740100
+         * ipLimit : 1
+         * categoryId : 1
          * sets : 1
          * purchaseType : 0
          * isPurchase : 0
          * payMark : 0
-         * copyrightId : 8465
-         * tvYear : 20170724
+         * copyrightId : 13397
+         * tvYear : 20120817
          * albumStatus : 1
          * contentType : 1
          * isSD : 0
          * is3D : 0
          * sourceId : 0
          * isDubo : 0
-         * isCoopAllowed : 1
+         * isCoopAllowed : 0
          * downloadAllowed : 1
          * sourceQipuId : 0
-         * playcnt : 3728
-         * timeLength : 46
+         * playcnt : 23089163
+         * timeLength : 6143
          * ownerAlbumId : -1
-         * albumName : 顽童瘦子挺《嘻哈》热狗：觉得没资格大可不看
-         * desc : 顽童瘦子挺《嘻哈》热狗：觉得没资格大可不看
-         * startDate : 2016-08-01 08:00:00
-         * endDate : 2017-07-31 08:00:00
-         * focus : 觉得没资格大可不看
-         * albumUrl : http://www.iqiyi.com/v_19rr7nomc4.html?vfm=newvfm
-         * html5Url : http://m.iqiyi.com/v_19rr7nomc4.html?vfm=newvfm
-         * html5PlayUrl : http://m.iqiyi.com/v_19rr7nomc4.html?vfm=newvfm
-         * picUrl : http://pic5.qiyipic.com/image/20170724/c8/dd/v_112913021_m_601.jpg
-         * posterPicUrl : http://pic5.qiyipic.com/image/20170724/c8/dd/v_112913021_m_601.jpg
-         * leafctgs : 热点 八卦 内地 新闻 综艺 国语
-         * producer :
-         * credits :
+         * albumName : 敢死队2
+         * desc : 再次经历了一番炮火密集的血雨腥风，巴尼、圣诞、贡纳、比利、收费公路和凯撒这几个敢死队的铁哥们正享受大战之后的难得惬意。可是好景不长，某晚教堂找上门来，迫令他前往阿尔巴尼亚噶扎克山区找一架被击落飞机上的保险箱，并确保箱子不会落入敌人之手，教堂还委派麦琪·张与这群硬汉同行。看似简单的任务实则充满凶险，比利被对手残忍杀害。这已不再是一项任务，而是一场关乎战士们友情与荣誉的战争。
+         * startDate : 2017-06-20 08:00:00
+         * endDate : 2020-03-31 08:00:00
+         * focus : 李连杰斯坦森火力全开
+         * albumUrl : http://www.iqiyi.com/v_19rrho97jc.html?vfm=newvfm
+         * html5Url : http://m.iqiyi.com/v_19rrho97jc.html?vfm=newvfm
+         * html5PlayUrl : http://m.iqiyi.com/v_19rrho97jc.html?vfm=newvfm
+         * picUrl : http://pic5.qiyipic.com/image/20170622/14/9c/v_62647401_m_601_m4.jpg
+         * posterPicUrl : http://pic4.qiyipic.com/image/20170622/79/eb/v_62647401_m_600_m2.jpg
+         * leafctgs : 美国 动作 1080P 英语 军事 暴力 当代 冒险 街道 好莱坞 片库
+         * producer : 巴兹尔·伊万尼克,艾威·勒纳,丹尼·伦纳
+         * credits : 西尔维斯特·史泰龙 杰森·斯坦森 布鲁斯·威利斯 西蒙·韦斯特
          * source :
-         * companyName : 东星（天津）视讯科技有限公司
-         * keyword : 中国有嘻哈
+         * companyName : 霍尔果斯捷成华视网聚文化传媒有限公司
+         * keyword : 敢死队
          * subTitle :
-         * score : 9.4
-         * actor :
-         * director :
-         * area : 内地
-         * albumType : 综艺
-         * playUrl : http://www.iqiyi.com/v_19rr7nomc4.html?vfm=newvfm
-         * createdTime : 2017-07-24 10:27:28
+         * score : 7.9
+         * actor : 西尔维斯特·史泰龙 杰森·斯坦森 布鲁斯·威利斯
+         * director : 西蒙·韦斯特
+         * area : 美国
+         * albumType : 动作|冒险
+         * playUrl : http://www.iqiyi.com/v_19rrho97jc.html?vfm=newvfm
+         * createdTime : 2017-06-23 20:01:07
          * sysPlatform : PHONE,PAD,PC,PC_APP,TV,PHONE_WEB_IQIYI,PAD_WEB_IQIYI
-         * alias :
-         * tvIds : [736923000]
-         * tvQipuIds : [736923000]
-         * threeCtgs : [{"name":"热点","subType":2,"subCtgName":"内容类型","id":170},{"name":"八卦","subType":2,"subCtgName":"内容类型","id":175},{"name":"内地","subType":3,"subCtgName":"地区","id":184},{"name":"新闻","subType":4,"subCtgName":"节目分类","id":189},{"name":"综艺","subType":5,"subCtgName":"类型","id":1082},{"name":"国语","subType":0,"subCtgName":"配音语种","id":20131}]
-         * creditList : [{"name":"热狗","roleName":"","type":21},{"name":"顽童MJ116","roleName":"","type":21},{"name":"张震岳","roleName":"","type":21},{"name":"潘玮柏","roleName":"","type":21},{"name":"吴亦凡","roleName":"","type":21}]
-         * upDown : {"score":9.4,"voters":0,"up":0,"albumQipuId":736923000,"down":0}
+         * alias : 浴血任务2
+         * tvIds : [264740100]
+         * tvQipuIds : [264740100]
+         * threeCtgs : [{"name":"美国","subType":1,"subCtgName":"地区","id":2},{"name":"动作","subType":2,"subCtgName":"类型","id":11},{"name":"1080P","subType":7,"subCtgName":"规格","id":999},{"name":"英语","subType":0,"subCtgName":"配音语种","id":20004},{"name":"军事","subType":3,"subCtgName":"题材","id":23682},{"name":"暴力","subType":4,"subCtgName":"风格","id":23741},{"name":"当代","subType":6,"subCtgName":"时代","id":23782},{"name":"冒险","subType":2,"subCtgName":"类型","id":27355},{"name":"街道","subType":5,"subCtgName":"地点场景","id":27826},{"name":"好莱坞","subType":3,"subCtgName":"流派","id":29735},{"name":"片库","subType":7,"subCtgName":"规格","id":30088}]
+         * creditList : [{"name":"西尔维斯特·史泰龙","roleName":"Barney Ross","type":8},{"name":"杰森·斯坦森","roleName":"Lee Christmas","type":8},{"name":"布鲁斯·威利斯","roleName":"Church","type":8},{"name":"尚格·云顿","roleName":"Vilain","type":11},{"name":"李连杰","roleName":"Yin Yang","type":11},{"name":"杜夫·龙格尔","roleName":"Gunnar Jensen","type":11},{"name":"查克·诺瑞斯","roleName":"Booker","type":11},{"name":"阿诺·施瓦辛格","roleName":"Trench","type":11},{"name":"泰瑞·克鲁斯","roleName":"Hale Caesar","type":11},{"name":"兰迪·库卓","roleName":"Toll Road","type":11},{"name":"利亚姆·海姆斯沃斯","roleName":"Bill The Kid","type":11},{"name":"斯科特·阿特金斯","roleName":"Hector","type":11},{"name":"余男","roleName":"Maggie","type":11},{"name":"阿曼达·奥慕斯","roleName":"Pilar","type":11},{"name":"查瑞丝玛·卡朋特","roleName":"Lacy","type":11},{"name":"诺瓦克·德约科维奇","roleName":"Himself (uncredited)","type":11}]
+         * upDown : {"score":7.9,"voters":3729,"up":3016,"albumQipuId":264740100,"down":713}
          * season : 0
          * edition :
          * subsites : []
@@ -708,11 +706,11 @@ public class AlbumListResult extends IqiyiResult{
 
         public static class UpDownBean {
             /**
-             * score : 9.4
-             * voters : 0
-             * up : 0
-             * albumQipuId : 736923000
-             * down : 0
+             * score : 7.9
+             * voters : 3729
+             * up : 3016
+             * albumQipuId : 264740100
+             * down : 713
              */
 
             @SerializedName("score")
@@ -769,10 +767,10 @@ public class AlbumListResult extends IqiyiResult{
 
         public static class ThreeCtgsBean {
             /**
-             * name : 热点
-             * subType : 2
-             * subCtgName : 内容类型
-             * id : 170
+             * name : 美国
+             * subType : 1
+             * subCtgName : 地区
+             * id : 2
              */
 
             @SerializedName("name")
@@ -819,9 +817,9 @@ public class AlbumListResult extends IqiyiResult{
 
         public static class CreditListBean {
             /**
-             * name : 热狗
-             * roleName :
-             * type : 21
+             * name : 西尔维斯特·史泰龙
+             * roleName : Barney Ross
+             * type : 8
              */
 
             @SerializedName("name")
