@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.aaron.android.codelibrary.utils.StringUtils;
 
 import static com.liking.treadmill.app.LikingThreadMillApplication.mLKSocketLogQueue;
 
@@ -21,7 +22,10 @@ public class MessageBackReceiver extends BroadcastReceiver {
                 for (String result : results) {
                     mLKSocketLogQueue.put("result(later):", result);
                     try {
-                        SocketHelper.handlerSocketReceive(context, result);
+                        result = SocketHelper.isResultSuccess(result);
+                        if(!StringUtils.isEmpty(result)) {
+                            SocketHelper.handlerSocketReceive(context, result);
+                        }
                     }catch (Exception e) {
                         LogUtils.d(SocketService.TAG, "receive a socket message error: " + jsonMessage);
                     }

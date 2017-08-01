@@ -13,6 +13,7 @@ import com.aaron.android.framework.base.BaseApplication;
 import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.google.gson.Gson;
+import com.liking.treadmill.BuildConfig;
 import com.liking.treadmill.app.LikingThreadMillApplication;
 import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.db.entity.Member;
@@ -37,6 +38,7 @@ import com.liking.treadmill.socket.result.UserInfoResult;
 import com.liking.treadmill.socket.result.UserLogOutResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
+import com.liking.treadmill.utils.AESUtils;
 import com.liking.treadmill.utils.AlarmManagerUtils;
 import com.liking.treadmill.utils.ApkUpdateUtils;
 import com.liking.treadmill.utils.MemberUtils;
@@ -68,12 +70,12 @@ public class SocketHelper {
     private static final String TYPE_ADVERTISMENT = "advertisement";
     private static final String TYPE_REQUEST_MEMBER = "request_member";
     private static final String REPORT_LOG_CMD = "report_log";
-    private static final String REPORT_CLEAR_MEMBER_LIST_CMD = "member_list_clear";
+    private static final String REPORT_CLEAR_MEMBER_LIST_CMD = "clean_member";
 
-    private static final String mTcpVersion = "v1.2";
+    private static final String mTcpVersion = "v1.3";
 
-    public static final String HEART_BEAT_STRING = "{\"type\":\"ping\",\"version\":\"" + mTcpVersion + "\",\"data\":{}, \"msg_id\":\"\"}\\r\\n";//心跳包内容
-    public static final String HEART_BEAT_PONG_STRING = "{\"type\":\"pong\",\"data\":{}, \"msg_id\":\"\"}";//心跳包内容
+    public static final String HEART_BEAT_STRING = "{\"type\":\"ping\",\"version\":\"" + mTcpVersion + "\",\"data\":{}, \"msg_id\":\"\"}";//心跳包内容
+    public static final String HEART_BEAT_PONG_STRING = toEncode("{\"type\":\"pong\",\"data\":{}, \"msg_id\":\"\"}") + "\\r\\n";//心跳包内容
     public static final String REBIND_STRING = "{\"type\":\"bind\",\"version\":" + mTcpVersion + ",\"data\":{}}";//心跳包内容
     public static final String CONFIRM_STRING = "{\"type\":\"confirm\",\"data\":{}}";//心跳包内容
 
@@ -147,7 +149,7 @@ public class SocketHelper {
                     String time = String.valueOf(DateUtils.currentDataSeconds());
                     String bid = userData.getUserInfoData().getBraceletId();
                     String msgId = bid + new Date().getTime();
-                    String data_logout = "{\"type\":\"logout\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\""+ msgId + "\",\"data\":{\"bracelet_id\":" + bid + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
+                    String data_logout = "{\"type\":\"logout\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\""+ msgId + "\",\"data\":{\"bracelet_id\":" + bid + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}";
                     FileUtils.store(data_logout, ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE + bid);
                 }
             }
@@ -266,8 +268,8 @@ public class SocketHelper {
      * @return
      */
     public static String bind() {
-        return "{\"type\":\"bind_qcode\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
-                DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\"}}\\r\\n";
+        return buildRequestData("{\"type\":\"bind_qcode\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
+                DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\"}}");
     }
 
     /**
@@ -275,19 +277,19 @@ public class SocketHelper {
      * @return
      */
     public static String unBind() {
-        return "{\"type\":\"unbind_qcode\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
-                DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\"}}\\r\\n";
+        return buildRequestData("{\"type\":\"unbind_qcode\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
+                DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\"}}");
     }
 
     public static String initString() {
-        return "{\"type\":\"init\",\"data\":{\"token\":\"" + Preference.getToken() + "\"}}\\r\\n";
+        return buildRequestData("{\"type\":\"init\",\"data\":{\"token\":\"" + Preference.getToken() + "\"}}");
     }
 
     public static String reportDevicesString() {
-        return "{\"type\":\"treadmill\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
+        return buildRequestData("{\"type\":\"treadmill\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
                 DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\"," +
                 "\"gym_id\":\""+Preference.getBindUserGymId()+"\",\"mac\":\"" + EnvironmentUtils.Network.wifiMac() + "\",\"app_version\":\"" + EnvironmentUtils.Config.getAppVersionName() + "\"," +
-                "\"total_distance\":\"0\",\"total_time\":\"0\",\"power_times\":\"0\"}}\\r\\n";
+                "\"total_distance\":\"0\",\"total_time\":\"0\",\"power_times\":\"0\"}}");
     }
 
     /**
@@ -299,21 +301,21 @@ public class SocketHelper {
     public static String userloginString(String cardno) {
         String time = String.valueOf(DateUtils.currentDataSeconds());
         String msgId = SerialPortUtil.getTreadInstance().getCardNo() + new Date().getTime();
-        String data = "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\""+ msgId +"\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
-        return data;
+        String data = "{\"type\":\"login\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\""+ msgId +"\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}";
+        return buildRequestData(data);
     }
 
     public static String userlogoutString(String cardno) {
         String time = String.valueOf(DateUtils.currentDataSeconds());
         String msgId = cardno + new Date().getTime();
-        String data = "{\"type\":\"logout\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\""+ msgId + "\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}\\r\\n";
+        String data = "{\"type\":\"logout\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\""+ msgId + "\",\"data\":{\"bracelet_id\":" + cardno + ",\"timestamp\":\"" + time + "\",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\",\"gym_id\":\"" + Preference.getBindUserGymId() + "\"}}";
 
         String dataCache = FileUtils.load(ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE + cardno);
         if(!StringUtils.isEmpty(dataCache)) {
             FileUtils.store(data, ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE + cardno);
         }
 
-        return data;
+        return buildRequestData(data);
     }
 
     /**
@@ -337,9 +339,9 @@ public class SocketHelper {
                 ",\"aim\":\"" + aim + "\"" +
                 ",\"achieve\":\"" + achieve + "\"" +
                 ",\"timestamp\":\"" + time + "\"" +
-                "}}\\r\\n";
+                "}}";
         FileUtils.store(data, ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE + msgId);
-        return data;
+        return buildRequestData(data);
     }
 
     /**
@@ -354,7 +356,33 @@ public class SocketHelper {
         String data = "{\"type\":\"member_list\",\"version\":\"" + mTcpVersion + "\",\"data\":{ " +
                 "\"id\":\"" + lastMemberId + "\"" +
                 ",\"gym_id\":\"" + gymId + "\"" +
-                " }}\\r\\n";
-        return data;
+                " }}";
+        return buildRequestData(data);
+    }
+
+    public static String buildRequestData(String data) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"data\":\"");
+        sb.append(toEncode(data));
+        sb.append("\",\"app_version\":\"");
+        sb.append(BuildConfig.VERSION_NAME);
+        sb.append("\",\"version\":\"");
+        sb.append(mTcpVersion);
+        sb.append("\"}\\r\\n");
+        return sb.toString();
+    }
+
+    public static String toEncode(String json) {
+        return AESUtils.encode(json, AESUtils.DEFAULT_KEY);
+    }
+
+    /**
+     * 验证加密文件是否正确，并别解析成出来
+     */
+    public static String isResultSuccess(String json) {
+        if (StringUtils.isEmpty(json)) {
+            return null;
+        }
+        return AESUtils.decode(json, AESUtils.DEFAULT_KEY);
     }
 }

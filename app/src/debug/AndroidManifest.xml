@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          android:sharedUserId= "android.uid.system"
           package="com.liking.treadmill"
           android:versionCode="124"
-          android:versionName="1.2.4">
+          android:versionName="1.2.5">
+
+    <!--android:sharedUserId= "android.uid.system"-->
 
     <uses-permission android:name="android.permission.SET_TIME_ZONE" />
     <uses-permission android:name="android.permission.INTERNET" />

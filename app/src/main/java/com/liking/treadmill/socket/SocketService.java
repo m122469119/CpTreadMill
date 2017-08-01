@@ -16,6 +16,7 @@ import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.liking.treadmill.app.LikingThreadMillApplication;
 import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.test.IBackService;
+import com.liking.treadmill.utils.AESUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.logging.SocketHandler;
 
 import static com.liking.treadmill.app.LikingThreadMillApplication.mLKSocketLogQueue;
 
@@ -37,7 +39,10 @@ import static com.liking.treadmill.app.LikingThreadMillApplication.mLKSocketLogQ
 public class SocketService extends Service {
     public static final String TAG = "LikingSocket";
     //心跳包频率
-    private static final long HEART_BEAT_RATE = 2 * 60 * 1000;
+//    private static final long HEART_BEAT_RATE = 2 * 60 * 1000;
+
+    private static final long HEART_BEAT_RATE = 8 * 1000;
+
     //测试环境地址：120.24.177.134   正式环境地址：112.74.27.162
     public static final String HOST = EnvironmentUtils.Config.isDebugMode() ? "120.24.177.134" : "112.74.27.162";
     public static final int PORT = 8192;
@@ -85,7 +90,7 @@ public class SocketService extends Service {
 
         @Override
         public void rebind() throws RemoteException {
-            sendUpStreamMessage(SocketHelper.REBIND_STRING);
+            sendUpStreamMessage(SocketHelper.buildRequestData(SocketHelper.REBIND_STRING));
             sendUpStreamMessage(SocketHelper.reportDevicesString());
         }
 
@@ -106,7 +111,7 @@ public class SocketService extends Service {
 
         @Override
         public void confirm() throws RemoteException {
-            sendUpStreamMessage(SocketHelper.CONFIRM_STRING);
+            sendUpStreamMessage(SocketHelper.buildRequestData(SocketHelper.CONFIRM_STRING));
         }
 
         @Override
@@ -163,7 +168,7 @@ public class SocketService extends Service {
                 super.handleMessage(msg);
                 if (msg.what == HEART_BEAT_MESSAGE) {
                     if (System.currentTimeMillis() - sendTime >= HEART_BEAT_RATE) {
-                        boolean isSuccess = sendMsg(SocketHelper.HEART_BEAT_STRING);//就发送一个HEART_BEAT_STRING过去 如果发送失败，就重新初始化一个socket
+                        boolean isSuccess = sendMsg(SocketHelper.buildRequestData(SocketHelper.HEART_BEAT_STRING));//就发送一个HEART_BEAT_STRING过去 如果发送失败，就重新初始化一个socket
                         LogUtils.d(TAG, "send heart beat success: " + isSuccess);
                         if (!isSuccess) {
                             reConnectSocket();
@@ -295,12 +300,12 @@ public class SocketService extends Service {
                         if (length > 0) {
                             String message = new String(Arrays.copyOf(buffer,
                                     length)).trim();
-//                            LogUtils.d(TAG, message);
                             LogUtils.d(TAG, "read socket : " + socket.hashCode());
 
                             mLKSocketLogQueue.put("result(before):", message, "-", socket.toString() + "-" + socket.hashCode());
                             //收到服务器过来的消息，就通过Broadcast发送出去
                             if (message.equals(SocketHelper.HEART_BEAT_PONG_STRING)) {//处理心跳回复
+                                LogUtils.d(TAG, "-心跳回复-");
                                 Intent intent = new Intent(HEART_BEAT_ACTION);
                                 mLocalBroadcastManager.sendBroadcast(intent);
                             } else {
