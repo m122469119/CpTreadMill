@@ -15,7 +15,6 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
-import com.liking.treadmill.app.LikingThreadMillApplication;
 import com.liking.treadmill.db.entity.Member;
 import com.liking.treadmill.fragment.AwaitActionFragment;
 import com.liking.treadmill.fragment.StartFragment;

@@ -13,9 +13,13 @@ import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
+import com.google.gson.Gson;
+import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.app.LikingThreadMillApplication;
 import com.liking.treadmill.app.ThreadMillConstant;
+import com.liking.treadmill.socket.result.UserLogOutResult;
 import com.liking.treadmill.test.IBackService;
+import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.AESUtils;
 
 import java.io.File;
@@ -65,7 +69,6 @@ public class SocketService extends Service {
     private Handler mHandler;
 
     private StringBuilder cacheSb = new StringBuilder();
-    String sTag = "{\"type\":";
     String eTag = "\\r\\n";
 
     private void sendHeartMessageDelayed() {
@@ -235,8 +238,8 @@ public class SocketService extends Service {
             sendHeartMessageDelayed();//初始化成功后，就准备发送心跳包
             if (mIBackService != null) {
                 mIBackService.reportDevices();
-                reportedData(new File(ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE));
-                reportedData(new File(ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE));
+                reportedData(new File(ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE),0);
+                reportedData(new File(ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE),1);
             }
         } catch (Exception e) {
             LogUtils.d(TAG, "server socket is disconnect....." + e.getMessage());
@@ -330,15 +333,31 @@ public class SocketService extends Service {
      * 提交未成功的数据
      * @param file
      */
-    public void reportedData(File file) {
+    public void reportedData(File file, int type) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (files != null) {
+                Gson gson = null;
+                if(type == 1) {
+                    gson = new Gson();
+                }
                 for (File f : files) {
                     String data = FileUtils.load(f.getAbsolutePath());
                     if(mIBackService != null) {
                         try {
-                            mIBackService.reportExerciseCacheData(data);
+                            if(type == 1) {
+                                if(!StringUtils.isEmpty(data)) {
+                                    try {
+                                        UserLogOutResult logOutResult =  gson.fromJson(data, UserLogOutResult.class);
+                                        if(SerialPortUtil.getTreadInstance().getUserInfo() != null
+                                                && logOutResult!= null
+                                                && SerialPortUtil.getTreadInstance().getUserInfo().mBraceletId.equals(logOutResult.getData().getBraceletId())) {
+                                            return;
+                                        }
+                                    }catch (Exception e){}
+                                }
+                            }
+                            mIBackService.reportExerciseCacheData(SocketHelper.buildRequestData(data));
                         } catch (RemoteException e) {
                         }
                     }
@@ -374,8 +393,7 @@ public class SocketService extends Service {
     }
 
     private boolean checkSocketResult(String message, int endIndex) {
-        int start = message.indexOf(sTag);
         int end = message.lastIndexOf(eTag);
-        return start == 0 && (end == endIndex);
+        return end == endIndex;
     }
 }
