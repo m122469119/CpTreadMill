@@ -43,9 +43,7 @@ import static com.liking.treadmill.app.LikingThreadMillApplication.mLKSocketLogQ
 public class SocketService extends Service {
     public static final String TAG = "LikingSocket";
     //心跳包频率
-//    private static final long HEART_BEAT_RATE = 2 * 60 * 1000;
-
-    private static final long HEART_BEAT_RATE = 8 * 1000;
+    private static final long HEART_BEAT_RATE = 2 * 60 * 1000;
 
     //测试环境地址：120.24.177.134   正式环境地址：112.74.27.162
     public static final String HOST = EnvironmentUtils.Config.isDebugMode() ? "120.24.177.134" : "112.74.27.162";

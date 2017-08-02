@@ -69,9 +69,10 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
                                     for (Member m:mMemberCache) {
                                         if(cardNo.equals(m.getBraceletId())) {
                                             launchRunFragment(getDefaultUserInfo(member.getMemberType(), cardNo));
+                                            return;
                                         }
-                                        break;
                                     }
+                                    IToast.show(ResourceUtils.getString(R.string.network_no_connection));
                                 } else {
                                     IToast.show(ResourceUtils.getString(R.string.network_no_connection));
                                 }
