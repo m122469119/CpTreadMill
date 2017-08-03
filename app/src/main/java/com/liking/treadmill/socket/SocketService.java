@@ -356,6 +356,9 @@ public class SocketService extends Service {
                                     }catch (Exception e){}
                                 }
                             }
+                            if(!StringUtils.isEmpty(data) && data.contains(eTag)) {
+                               data = data.replace(eTag, "");
+                            }
                             mIBackService.reportExerciseCacheData(SocketHelper.buildRequestData(data));
                         } catch (RemoteException e) {
                         }
