@@ -390,18 +390,6 @@ public class SocketService extends Service {
                 cacheSb.setLength(0);
             }
         }
-//        if(checkSocketResult(message, eIndex)) {
-//            sendMessage(message);
-//            cacheSb.setLength(0);
-//        } else {
-//            cacheSb.append(message);
-//            message = cacheSb.toString();
-//            eIndex = message.length() - eTag.length();
-//            if(checkSocketResult(cacheSb.toString(), eIndex)) {
-//                cacheSb.setLength(0);
-//                sendMessage(message);
-//            }
-//        }
     }
 
     private boolean checkSocketResult(String message, int endIndex) {
