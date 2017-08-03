@@ -68,6 +68,7 @@ public class SocketService extends Service {
 
     private StringBuilder cacheSb = new StringBuilder();
     String eTag = "\\r\\n";
+    boolean isAppend = false;
 
     private void sendHeartMessageDelayed() {
         Message message = mHandler.obtainMessage(HEART_BEAT_MESSAGE);
@@ -376,18 +377,31 @@ public class SocketService extends Service {
             return;
         }
         int eIndex = message.length() - eTag.length();
-        if(checkSocketResult(message, eIndex)) {
+        if(message.contains(eTag) && checkSocketResult(message, eIndex) && !isAppend) {
             sendMessage(message);
-            cacheSb.setLength(0);
         } else {
+            isAppend = true;
             cacheSb.append(message);
             message = cacheSb.toString();
             eIndex = message.length() - eTag.length();
-            if(checkSocketResult(cacheSb.toString(), eIndex)) {
-                cacheSb.setLength(0);
+            if(message.contains(eTag) && checkSocketResult(cacheSb.toString(), eIndex) && isAppend) {
+                isAppend = false;
                 sendMessage(message);
+                cacheSb.setLength(0);
             }
         }
+//        if(checkSocketResult(message, eIndex)) {
+//            sendMessage(message);
+//            cacheSb.setLength(0);
+//        } else {
+//            cacheSb.append(message);
+//            message = cacheSb.toString();
+//            eIndex = message.length() - eTag.length();
+//            if(checkSocketResult(cacheSb.toString(), eIndex)) {
+//                cacheSb.setLength(0);
+//                sendMessage(message);
+//            }
+//        }
     }
 
     private boolean checkSocketResult(String message, int endIndex) {
