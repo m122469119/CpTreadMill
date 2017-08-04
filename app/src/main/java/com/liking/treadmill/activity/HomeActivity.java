@@ -28,6 +28,7 @@ import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.message.MemberListMessage;
 import com.liking.treadmill.message.MemberNoneMessage;
+import com.liking.treadmill.message.MembersDeleteMessage;
 import com.liking.treadmill.message.RequestMembersMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.message.UpdateCompleteMessage;
@@ -261,7 +262,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 @Override
                 public void run() {
                     SerialPortUtil.getTreadInstance().reset();//清空数据
-                    MemberUtils.getInstance().deleteMembersFromLocal();
+                    MemberUtils.getInstance().deleteMembersFromLocal(null);
                     launchFragment(new StartSettingFragment());
                 }
             }, delayedInterval);
@@ -402,6 +403,26 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      */
     public void onEvent(MemberNoneMessage message) {
         MemberUtils.getInstance().updateMembersFromLocal();
+        if (iBackService != null) {
+            try {
+                iBackService.membersStateReplyCommand();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
+    /**
+     * 删除状态回复
+     * @param message
+     */
+    public void onEvent(MembersDeleteMessage message) {
+        if (iBackService != null) {
+            try {
+                iBackService.membersStateReplyCommand();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

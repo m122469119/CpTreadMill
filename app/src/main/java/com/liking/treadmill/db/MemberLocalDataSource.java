@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.liking.treadmill.db.entity.Member;
+
 import java.util.List;
 
 /**
@@ -23,7 +24,33 @@ public class MemberLocalDataSource {
     }
 
     /**
+     * 查询会员数量
+     *
+     * @return
+     */
+    public int queryMemberCount() {
+        SQLiteDatabase db = null;
+        int count = 0;
+        try {
+            db = mDatabaseManager.getReadableDatabase();
+            Cursor c = db.rawQuery("select * from " + LikingPersistenceContract.TreadmillMember.TABLE_NAME, null);
+            if (c != null) {
+                count = c.getCount();
+            }
+        } catch (Exception e) {
+        } finally {
+            try {
+                if (db != null) {
+                    mDatabaseManager.closeDatabase();
+                }
+            } catch (Exception e) {}
+        }
+        return count;
+    }
+
+    /**
      * 查询最后成员的MemberId
+     *
      * @return
      */
     public String queryLastMemberId() {
@@ -33,26 +60,28 @@ public class MemberLocalDataSource {
         try {
             db = mDatabaseManager.getReadableDatabase();
             Cursor c = db.rawQuery("select * from " + LikingPersistenceContract.TreadmillMember.TABLE_NAME, null);
-            if(c != null && c.getCount() > 0 && c.moveToLast()) {
+            if (c != null && c.getCount() > 0 && c.moveToLast()) {
                 member = loadMember(c);
             }
-            if(member != null) {
+            if (member != null) {
                 defaultMemberId = member.getMemberId();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
         } finally {
             try {
-                if(db != null) {
+                if (db != null) {
                     mDatabaseManager.closeDatabase();
                 }
-            }catch (Exception e){}
+            } catch (Exception e) {
+            }
         }
         return defaultMemberId;
     }
 
     /**
      * 查询是否存会员
-     *  @param braceletId
+     *
+     * @param braceletId
      */
     public Member queryMemberInfo(String braceletId) {
         Member member = null;
@@ -71,19 +100,19 @@ public class MemberLocalDataSource {
             Cursor c = db.query(
                     LikingPersistenceContract.TreadmillMember.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
             member = loadMemberDatas(db, c);
-        }catch (Exception e) {
+        } catch (Exception e) {
         } finally {
             try {
-                if(db != null) {
+                if (db != null) {
                     mDatabaseManager.closeDatabase();
                 }
-            }catch (Exception e){}
+            } catch (Exception e) {
+            }
         }
         return member;
     }
 
     /**
-     *
      * @param db
      * @param c
      */
@@ -93,9 +122,9 @@ public class MemberLocalDataSource {
             if (c != null && c.getCount() > 0 && c.moveToNext()) {
                 member = loadMember(c);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
         } finally {
-            if(c != null) {
+            if (c != null) {
                 c.close();
             }
         }
@@ -126,14 +155,14 @@ public class MemberLocalDataSource {
             db.beginTransaction();
 
             for (Member data : members) {
-                if(Member.BRACELET_OPERATE_NEW == data.getBraceletOperate()) { //新增
+                if (Member.BRACELET_OPERATE_NEW == data.getBraceletOperate()) { //新增
                     ContentValues values = new ContentValues();
                     values.put(LikingPersistenceContract.TreadmillMember.COLUMN_NAME_TREADMILL_MEMBER_ID, data.getMemberId());
                     values.put(LikingPersistenceContract.TreadmillMember.COLUMN_NAME_TREADMILL_BRACELET_ID, data.getBraceletId());
                     values.put(LikingPersistenceContract.TreadmillMember.COLUMN_NAME_TREADMILL_MEMBER_TYPE, data.getMemberType());
 
                     db.insert(LikingPersistenceContract.TreadmillMember.TABLE_NAME, null, values);
-                } else if(Member.BRACELET_OPERATE_DELETE == data.getBraceletOperate()) { //删除
+                } else if (Member.BRACELET_OPERATE_DELETE == data.getBraceletOperate()) { //删除
                     String selection = LikingPersistenceContract.TreadmillMember.COLUMN_NAME_TREADMILL_BRACELET_ID + " = ?";
                     String[] selectionArgs = {data.getBraceletId()};
 
@@ -143,14 +172,15 @@ public class MemberLocalDataSource {
             db.setTransactionSuccessful();
             db.endTransaction();
             isSuccess = true;
-        }catch (Exception e) {
+        } catch (Exception e) {
 
         } finally {
             try {
-                if(db != null) {
+                if (db != null) {
                     mDatabaseManager.closeDatabase();
                 }
-            }catch (Exception e){}
+            } catch (Exception e) {
+            }
         }
         return isSuccess;
     }
@@ -165,13 +195,14 @@ public class MemberLocalDataSource {
             db = mDatabaseManager.getWritableDatabase();
             db.delete(LikingPersistenceContract.TreadmillMember.TABLE_NAME, null, null);
             isSuccess = true;
-        }catch (Exception e) {
-        }finally {
+        } catch (Exception e) {
+        } finally {
             try {
-                if(db != null) {
+                if (db != null) {
                     mDatabaseManager.closeDatabase();
                 }
-            }catch (Exception c) {}
+            } catch (Exception c) {
+            }
         }
         return isSuccess;
     }

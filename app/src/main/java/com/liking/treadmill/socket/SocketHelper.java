@@ -23,6 +23,7 @@ import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.message.MemberListMessage;
 import com.liking.treadmill.message.MemberNoneMessage;
+import com.liking.treadmill.message.MembersDeleteMessage;
 import com.liking.treadmill.message.QrCodeMessage;
 import com.liking.treadmill.message.RequestMembersMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
@@ -234,6 +235,7 @@ public class SocketHelper {
                 if(datas.isNextPage()) {
                     makeRequestMemberList();
                 } else {
+                    Preference.setMemberSynTimestamp(DateUtils.currentDataSeconds());
                     EventBus.getDefault().post(new MemberNoneMessage());//下发结束 事件
                 }
             }
@@ -242,7 +244,17 @@ public class SocketHelper {
             LikingThreadMillApplication.mLKSocketLogQueue.putOnce();
             LikingThreadMillApplication.mLKAppSocketLogQueue.putOnce();
         } else if(REPORT_CLEAR_MEMBER_LIST_CMD.equals(type)) {
-            MemberUtils.getInstance().deleteMembersFromLocal();
+            MemberUtils.getInstance().deleteMembersFromLocal(new MemberUtils.DeleteMembersListener() {
+                @Override
+                public void onMembersDeleteResult(boolean result) {
+                    if(result) {
+                        LogUtils.d("aaron", "删除成功");
+                    } else {
+                        LogUtils.d("aaron", "删除失败");
+                    }
+                    EventBus.getDefault().post(new MembersDeleteMessage());
+                }
+            });
         }
     }
 
@@ -286,10 +298,14 @@ public class SocketHelper {
     }
 
     public static String reportDevicesString() {
-        return buildRequestData("{\"type\":\"treadmill\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
+        long msyntime = Preference.getMemberSynTimestamp();
+        int status  = MemberUtils.getInstance().getMemberCount() > 0 ? 1 : 0; //0=>无数据， 1=>有数据
+        String data = "{\"type\":\"treadmill\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
                 DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\"," +
                 "\"gym_id\":\""+Preference.getBindUserGymId()+"\",\"mac\":\"" + EnvironmentUtils.Network.wifiMac() + "\",\"app_version\":\"" + EnvironmentUtils.Config.getAppVersionName() + "\"," +
-                "\"total_distance\":\"0\",\"total_time\":\"0\",\"power_times\":\"0\"}}");
+                "\"total_distance\":\"0\",\"total_time\":\"0\",\"power_times\":\"0\",\"member_status\":\"" + status + "\", \"member_time\":"+ msyntime +"}}";
+        LogUtils.e("treadmill_init", data);
+        return buildRequestData(data);
     }
 
     /**
@@ -360,6 +376,22 @@ public class SocketHelper {
         return buildRequestData(data);
     }
 
+    /**
+     * 会员列状态回复
+     * @return
+     */
+    public static String buildMemberStateReplyParam() {
+        String gymId = Preference.getBindUserGymId();
+        long msyntime = Preference.getMemberSynTimestamp();
+        int status  = MemberUtils.getInstance().getMemberCount() > 0 ? 1 : 0; //0=>无数据， 1=>有数据
+
+        String data = "{\"type\":\"local_member\",\"version\":\"" +mTcpVersion+ "\",\"msg_id\":0,\"data\":{\"member_status\":" +status
+                + ",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance())
+                + "\",\"gym_id\":" + gymId + ",\"member_time\":"+ msyntime +"}}";
+        LogUtils.d(SocketService.TAG, "成员删除状态：" + data);
+        return buildRequestData(data);
+    }
+
     public static String buildRequestData(String data) {
         StringBuilder sb = new StringBuilder();
         sb.append("{\"data\":\"");
@@ -385,4 +417,5 @@ public class SocketHelper {
         }
         return AESUtils.decode(json, AESUtils.DEFAULT_KEY);
     }
+
 }

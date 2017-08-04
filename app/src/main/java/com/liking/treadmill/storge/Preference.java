@@ -2,6 +2,7 @@ package com.liking.treadmill.storge;
 
 import android.content.SharedPreferences;
 
+import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.SecurityUtils;
 import com.aaron.android.framework.base.BaseApplication;
 import com.aaron.android.framework.library.storage.AbsPreference;
@@ -45,6 +46,8 @@ public class Preference extends AbsPreference {
     public static final String MEMBER_ID_LIST = new Date().getTime() + DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "";
 
     public static final String CURRENT_TIME_DIFF = "current_time_diff";
+
+    public static final String MEMBER_SYN_TIMESTAMP = "membersyntimestamp";
 
     /**
      * 清空SharedPreferences
@@ -388,5 +391,21 @@ public class Preference extends AbsPreference {
 
     public static long getApkSize() {
         return Long.parseLong((String) getObject(APP_UPDATE_APK_SIZE, "0"));
+    }
+
+    /**
+     * 会员同步完成时间戳
+     * @param memberSynTimestamp
+     */
+    public static void setMemberSynTimestamp(long memberSynTimestamp) {
+        setObject(MEMBER_SYN_TIMESTAMP, memberSynTimestamp);
+    }
+
+    public static long getMemberSynTimestamp() {
+        long time = 0;
+        try {
+            time = (long) getObject(MEMBER_SYN_TIMESTAMP, 0L);
+        }catch (Exception e) {}
+        return time;
     }
 }

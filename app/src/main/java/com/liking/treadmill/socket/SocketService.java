@@ -150,6 +150,13 @@ public class SocketService extends Service {
             LogUtils.d(SocketService.TAG, "成员分页请求：" + result);
             sendUpStreamMessage(result);
         }
+
+        @Override
+        public void membersStateReplyCommand() throws RemoteException {
+            String result = SocketHelper.buildMemberStateReplyParam();
+            LogUtils.d(SocketService.TAG, "成员删除状态：" + result);
+            sendUpStreamMessage(result);
+        }
     };
 
     @Override

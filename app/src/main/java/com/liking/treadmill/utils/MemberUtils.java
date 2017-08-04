@@ -98,12 +98,15 @@ public class MemberUtils {
     /**
      * 删除本地场馆会员列表
      */
-    public void deleteMembersFromLocal() {
+    public void deleteMembersFromLocal(final DeleteMembersListener listener) {
         TaskScheduler.execute(new Runnable() {
             @Override
             public void run() { //child thread
                 if (mDataSource != null) {
-                    mDataSource.deleteAllMembers();
+                    boolean result = mDataSource.deleteAllMembers();
+                    if(listener != null) {
+                        listener.onMembersDeleteResult(result);
+                    }
                 }
             }
         }, new Runnable() {
@@ -112,5 +115,17 @@ public class MemberUtils {
                 Preference.setLastMemberId("0");
             }
         });
+    }
+
+    /**
+     * 场馆会员数量
+     * @return
+     */
+    public int getMemberCount() {
+        return mDataSource != null ? mDataSource.queryMemberCount() : 0;
+    }
+
+    public interface  DeleteMembersListener {
+       void onMembersDeleteResult(boolean result);
     }
 }
