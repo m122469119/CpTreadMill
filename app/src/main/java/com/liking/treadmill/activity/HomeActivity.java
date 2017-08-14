@@ -35,6 +35,7 @@ import com.liking.treadmill.message.UpdateCompleteMessage;
 import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
+import com.liking.treadmill.socket.LKSocketServiceKt;
 import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
 import com.liking.treadmill.socket.result.AdvertisementResult;
@@ -160,7 +161,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     public void initSocket() {
         localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        mServiceIntent = new Intent(this, SocketService.class);
+        mServiceIntent = new Intent(this, LKSocketServiceKt.class);
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(SocketService.HEART_BEAT_ACTION);
         mIntentFilter.addAction(SocketService.MESSAGE_ACTION);

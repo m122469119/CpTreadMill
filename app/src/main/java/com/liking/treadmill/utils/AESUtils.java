@@ -17,7 +17,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class AESUtils {
 
-    public static final String DEFAULT_KEY = "2oN6nODf74IKF3JQ";//"GmZgJ1990H6ds4yo";
+    public static final String DEFAULT_KEY = "GmZgJ1990H6ds4yo";//"2oN6nODf74IKF3JQ:GmZgJ1990H6ds4yo";
     private static final String TAG = "AESUtils";
 
     public static byte[] encrypt(byte[] data, byte[] key, byte[] ivkey) {
