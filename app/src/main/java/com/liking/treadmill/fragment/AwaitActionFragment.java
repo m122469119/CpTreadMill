@@ -1,9 +1,7 @@
 package com.liking.treadmill.fragment;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +11,18 @@ import android.widget.EditText;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.base.widget.dialog.HBaseDialog;
+import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.aaron.android.framework.utils.PopupUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.app.ThreadMillConstant;
+import com.liking.treadmill.fragment.base.SerialPortFragment;
 import com.liking.treadmill.message.GymUnBindSuccessMessage;
+import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
+import com.liking.treadmill.utils.ApkUpdateHelper;
 import com.liking.treadmill.widget.IToast;
 
 import butterknife.ButterKnife;
@@ -47,6 +50,12 @@ public class AwaitActionFragment extends SerialPortFragment {
                 homeActivity.isLogin = false;
             }
             SerialPortUtil.getTreadInstance().resetUserInfo();
+        }
+        //本地检测更新
+        if(ApkUpdateHelper.isApkUpdate()
+                && EnvironmentUtils.Network.isNetWorkAvailable()
+                && Preference.getAppDownloadFailCount() < ThreadMillConstant.THREADMILL_UPDATE_FAIL_COUNT) {
+            EventBus.getDefault().post(new UpdateAppMessage());
         }
         return mRootView;
     }

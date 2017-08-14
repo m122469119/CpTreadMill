@@ -16,17 +16,16 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.aaron.android.codelibrary.utils.EncodeUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.utils.DisplayUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.fragment.base.SerialPortFragment;
 import com.liking.treadmill.message.UpdateCompleteMessage;
 import com.liking.treadmill.mvp.presenter.AppUpdatePresenter;
 import com.liking.treadmill.mvp.view.AppUpdateView;
-import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.widget.ColorfulRingProgressView;
 

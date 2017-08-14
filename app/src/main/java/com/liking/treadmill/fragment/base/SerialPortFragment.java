@@ -1,4 +1,4 @@
-package com.liking.treadmill.fragment;
+package com.liking.treadmill.fragment.base;
 
 import android.app.Activity;
 import android.view.View;
@@ -7,6 +7,7 @@ import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.ui.BaseFragment;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.activity.LikingTreadmillBaseActivity;
+import com.liking.treadmill.fragment.AwaitActionFragment;
 import com.liking.treadmill.message.FanStateMessage;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;

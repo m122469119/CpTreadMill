@@ -2,10 +2,12 @@ package com.liking.treadmill.utils;
 
 import android.content.Context;
 
+import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.library.storage.DiskStorageManager;
 import com.aaron.android.framework.utils.EnvironmentUtils;
+import com.liking.treadmill.apkupdate.ApkDownloaderTask;
 import com.liking.treadmill.storge.Preference;
 
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ import java.util.ArrayList;
  * Time: 下午3:45
  */
 
-public class ApkUpdateUtils {
+public class ApkUpdateHelper {
 
 //    private static final String downloadPath = "/mnt/internal_sd/Download/";
     private static final String TAG = "ApkUpdateUtils";
@@ -35,21 +37,18 @@ public class ApkUpdateUtils {
     public static boolean isApkUpdate() {
         String serverVersion = Preference.getServerVersion();//服务器当前版本
         String currentVersion = EnvironmentUtils.Config.getAppVersionName();
-//        return !StringUtils.isEmpty(serverVersion) && !serverVersion.equals(currentVersion);
         return checkVersion(serverVersion, currentVersion);
     }
 
     /**
      * 开启下载
      */
-    public static boolean startDownloadApk(Context context, ApkDownloaderManager.ApkDownloadListener listener) {
+    public static boolean startDownloadApk(Context context, ApkDownloaderTask.ApkDownloadListener listener) {
         if (EnvironmentUtils.Network.isNetWorkAvailable()) {//升级
-            ApkDownloaderManager mFileDownloaderManager = new ApkDownloaderManager(context,listener);
+            ApkDownloaderTask mFileDownloaderManager = new ApkDownloaderTask(context,listener);
             mFileDownloaderManager.downloadFile(
                     Preference.getServerVersionUrl(),
-                    DiskStorageManager.getInstance().getApkFileStoragePath(),
-                    Preference.getApkMd5(),
-                    Preference.getApkSize());
+                    DiskStorageManager.getInstance().getApkFileStoragePath());
             return true;
         }
         return false;
@@ -94,4 +93,19 @@ public class ApkUpdateUtils {
         return false;
     }
 
+    public static boolean update(String apkFilePath) {
+        if(isApkUpdate() && FileUtils.fileExists(apkFilePath)) {
+            String md5 = Preference.getApkMd5();
+            long size = Preference.getApkSize();
+            try {
+                if(md5.equals(ApkFileSVUtils.getMD5Checksum(apkFilePath)) && size == ApkFileSVUtils.getFileSize(apkFilePath)) {
+                    //只要成功安装之后一定会重启app，这边无需返回true
+                    ApkController.execCommand("pm","install","-r", apkFilePath);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 }

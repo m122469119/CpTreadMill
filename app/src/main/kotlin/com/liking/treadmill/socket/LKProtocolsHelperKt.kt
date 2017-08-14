@@ -135,9 +135,10 @@ object LKProtocolsHelperKt {
                 Preference.setApkMd5(updateData?.md5)
                 Preference.setApkSize(updateData?.size)
                 //需要更新并且跑步机没有运行
-                if (ApkUpdateUtils.isApkUpdate() && !SerialPortUtil.getTreadInstance().isRunning) {
+                if (ApkUpdateHelper.isApkUpdate() && !SerialPortUtil.getTreadInstance().isRunning) {
                     postEvent(UpdateAppMessage())
                 }
+                Preference.setAppDownloadFailCount(0)
             }
 
         //场馆绑定推送

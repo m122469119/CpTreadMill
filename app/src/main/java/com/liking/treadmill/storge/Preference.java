@@ -38,6 +38,7 @@ public class Preference extends AbsPreference {
     public static final String LASTMEMBERID = "lastmemberid";//最后的成员ID
     public static final String APP_UPDATE_MD5 = "appupdatemd5";
     public static final String APP_UPDATE_APK_SIZE = "appupdateapksize";
+    public static final String APP_UPDATE_APK_FAIL_COUNT = "appupdateapkfailcount";
 
     public static final String APP_SERVER_VERSION = "setserverversion";//服务器版本
     public static final String APP_SERVER_VERSION_URL = "setserverversionurl";//服务器版本地址
@@ -408,4 +409,17 @@ public class Preference extends AbsPreference {
         }catch (Exception e) {}
         return time;
     }
+
+    /**
+     * 记录下载失败次数
+     * @param failCount
+     */
+    public static void setAppDownloadFailCount(int failCount) {
+        setObject(APP_UPDATE_APK_FAIL_COUNT, failCount);
+    }
+
+    public static int getAppDownloadFailCount() {
+        return (int) getObject(APP_UPDATE_APK_FAIL_COUNT, 0);
+    }
+
 }

@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.aaron.android.framework.utils.DisplayUtils;
 import com.liking.treadmill.R;
-import com.liking.treadmill.app.ThreadMillApplication;
+import com.liking.treadmill.app.LikingThreadMillApplication;
 
 /**
  * 说明:
@@ -59,7 +59,7 @@ public class IToast {
     }
 
     private static void show(String massage, int show_length) {
-        Context context = ThreadMillApplication.getInstance().getApplicationContext();
+        Context context = LikingThreadMillApplication.getInstance().getApplicationContext();
         //使用布局加载器，将编写的toast_layout布局加载进来
         View view = LayoutInflater.from(context).inflate(R.layout.toast_layout, null);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(DisplayUtils.getWidthPixels() - 700, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -83,7 +83,7 @@ public class IToast {
     }
 
     private static void show(int massage, int show_length) {
-        Context context = ThreadMillApplication.getInstance().getApplicationContext();
+        Context context = LikingThreadMillApplication.getInstance().getApplicationContext();
         //使用布局加载器，将编写的toast_layout布局加载进来
         View view = LayoutInflater.from(context).inflate(R.layout.toast_layout, null);
         //获取TextView

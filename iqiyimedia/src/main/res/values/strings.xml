@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">iqiyimedia</string>
+    <string name="network_anomaly_text">网络异常</string>
+    <string name="network_iqiyi_parameter_exception_text">参数错误</string>
+    <string name="network_iqiyi_unregister_exception_text">未注册</string>
+    <string name="network_iqiyi_unauthorized_exception_text">版权受限</string>
+    <string name="network_iqiyi_nodata_exception_text">没有数据</string>
+    <string name="network_iqiyi_update_exception_text">更新失败</string>
+    <string name="network_iqiyi_channel_restriction_exception_text">频道受限</string>
+    <string name="network_iqiyi_input_channel_exception_text">请输入频道</string>
+    <string name="network_iqiyi_data_invalid_exception_text">此来源数据已失效,请做下线</string>
+    <string name="network_iqiyi_key_invalid_exception_text">无效的 apikey,注册失败</string>
+    <string name="network_iqiyi_video_increment_exception_text">视频增量时间跨度不能超过3小时</string>
+    <string name="network_iqiyi_special_increment_exception_text">专辑增量时间跨度不能超过2天</string>
+</resources>

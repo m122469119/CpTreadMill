@@ -1,8 +1,6 @@
 package com.liking.treadmill.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -19,6 +17,7 @@ import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.fragment.base.SerialPortFragment;
 import com.liking.treadmill.message.SettingNextMessage;
 import com.liking.treadmill.message.WifiMessage;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
