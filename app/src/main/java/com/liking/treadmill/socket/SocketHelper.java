@@ -42,7 +42,7 @@ import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.AESUtils;
 import com.liking.treadmill.utils.AlarmManagerUtils;
 import com.liking.treadmill.utils.ApkUpdateHelper;
-import com.liking.treadmill.utils.MemberUtils;
+import com.liking.treadmill.utils.MemberHelper;
 
 import java.util.Date;
 import java.util.List;
@@ -246,7 +246,7 @@ public class SocketHelper {
             LikingThreadMillApplication.mLKSocketLogQueue.putOnce();
             LikingThreadMillApplication.mLKAppSocketLogQueue.putOnce();
         } else if(REPORT_CLEAR_MEMBER_LIST_CMD.equals(type)) {
-            MemberUtils.getInstance().deleteMembersFromLocal(new MemberUtils.DeleteMembersListener() {
+            MemberHelper.getInstance().deleteMembersFromLocal(new MemberHelper.DeleteMembersListener() {
                 @Override
                 public void onMembersDeleteResult(boolean result) {
                     if(result) {
@@ -301,7 +301,7 @@ public class SocketHelper {
 
     public static String reportDevicesString() {
         long msyntime = Preference.getMemberSynTimestamp();
-        int status  = MemberUtils.getInstance().getMemberCount() > 0 ? 1 : 0; //0=>无数据， 1=>有数据
+        int status  = MemberHelper.getInstance().getMemberCount() > 0 ? 1 : 0; //0=>无数据， 1=>有数据
         String data = "{\"type\":\"treadmill\",\"version\":\"" + mTcpVersion + "\",\"msg_id\":\"\",\"data\":{\"device_id\":\"" +
                 DeviceUtils.getDeviceInfo(BaseApplication.getInstance()) + "\"," +
                 "\"gym_id\":\""+Preference.getBindUserGymId()+"\",\"mac\":\"" + EnvironmentUtils.Network.wifiMac() + "\",\"app_version\":\"" + EnvironmentUtils.Config.getAppVersionName() + "\"," +
@@ -368,7 +368,7 @@ public class SocketHelper {
      */
 
     public static String buildRequestMemberParam() {
-        String lastMemberId = MemberUtils.getInstance().getLastMemberId();;
+        String lastMemberId = MemberHelper.getInstance().getLastMemberId();;
         String gymId = Preference.getBindUserGymId();
 
         String data = "{\"type\":\"member_list\",\"version\":\"" + mTcpVersion + "\",\"data\":{ " +
@@ -385,7 +385,7 @@ public class SocketHelper {
     public static String buildMemberStateReplyParam() {
         String gymId = Preference.getBindUserGymId();
         long msyntime = Preference.getMemberSynTimestamp();
-        int status  = MemberUtils.getInstance().getMemberCount() > 0 ? 1 : 0; //0=>无数据， 1=>有数据
+        int status  = MemberHelper.getInstance().getMemberCount() > 0 ? 1 : 0; //0=>无数据， 1=>有数据
 
         String data = "{\"type\":\"local_member\",\"version\":\"" +mTcpVersion+ "\",\"msg_id\":0,\"data\":{\"member_status\":" +status
                 + ",\"device_id\":\"" + DeviceUtils.getDeviceInfo(BaseApplication.getInstance())

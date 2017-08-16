@@ -3,13 +3,11 @@ package com.liking.treadmill.activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
@@ -36,13 +34,12 @@ import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
 import com.liking.treadmill.socket.LKSocketServiceKt;
-import com.liking.treadmill.socket.MessageBackReceiver;
 import com.liking.treadmill.socket.SocketService;
 import com.liking.treadmill.socket.result.AdvertisementResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
-import com.liking.treadmill.utils.MemberUtils;
+import com.liking.treadmill.utils.MemberHelper;
 import com.liking.treadmill.utils.UsbUpdateUtils;
 import com.liking.treadmill.widget.IToast;
 
@@ -51,18 +48,17 @@ import java.util.List;
 import static com.liking.treadmill.app.LikingThreadMillApplication.mLKAppSocketLogQueue;
 
 public class HomeActivity extends LikingTreadmillBaseActivity implements UserLoginView {
-    public MessageBackReceiver mMessageBackReceiver = new MessageBackReceiver();
-    private LocalBroadcastManager localBroadcastManager;
-    private IntentFilter mIntentFilter;
-    //标记是否已经进行了服务绑定与全局消息注册
-    private boolean mFlag;
+
     //通过调用该接口中的方法来实现数据发送
     public IBackService iBackService;
     private Intent mServiceIntent;
+    private boolean mBound;
 
-    public Handler mDelayedHandler = new Handler();
+    public Handler mHandler = new Handler();
+
     public long delayedInterval = 3000;
-    private boolean isUpdate = false;
+
+    private boolean isUpdate = false;//是否更新
 
     public boolean isLogin = false;//是否登录
 
@@ -70,12 +66,14 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             iBackService = IBackService.Stub.asInterface(iBinder);
+            mBound = true;
             LogUtils.d(SocketService.TAG, "service is connected");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             LogUtils.d(SocketService.TAG, "service is disconnected");
+            mBound = false;
             iBackService = null;
         }
     };
@@ -101,7 +99,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             final ProgressDialog dialog = new ProgressDialog(this);
             dialog.setMessage("升级中,请勿刷卡...");
             dialog.show();
-            mDelayedHandler.postDelayed(new Runnable() { //需等待Apk完全显示才能进行更新
+            mHandler.postDelayed(new Runnable() { //需等待Apk完全显示才能进行更新
                 @Override
                 public void run() {
                     if (dialog != null && !HomeActivity.this.isFinishing() && dialog.isShowing()) {
@@ -114,9 +112,10 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     }
 
     public void launchInit() {
-        if (Preference.getIsStartingUp()) {  //首次开机
+        if (Preference.getIsStartingUp()) {
+            //首次开机
             launchFragment(new WelcomeFragment());
-            mDelayedHandler.postDelayed(new Runnable() {
+            mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if (!isUpdate) {
@@ -136,14 +135,10 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     @Override
     public void onStart() {
-        mFlag = false;
-        if (mMessageBackReceiver != null || iBackService == null) {
-            mFlag = true;
+        if (iBackService == null) {
             initSocket();
-            localBroadcastManager.registerReceiver(mMessageBackReceiver, mIntentFilter);
             bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         }
-        //广播监听服务
         Intent intent = new Intent(this, ThreadMillService.class);
         startService(intent);
         super.onStart();
@@ -151,20 +146,15 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     @Override
     public void onDestroy() {
-        if (mFlag) {
+        if (mBound) {
             unbindService(mServiceConnection);
-            localBroadcastManager.unregisterReceiver(mMessageBackReceiver);
         }
         mLKAppSocketLogQueue.put(TAG, "onDestroy(), 主界面回收，应用关闭");
         super.onDestroy();
     }
 
     public void initSocket() {
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
         mServiceIntent = new Intent(this, LKSocketServiceKt.class);
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(SocketService.HEART_BEAT_ACTION);
-        mIntentFilter.addAction(SocketService.MESSAGE_ACTION);
     }
 
     @Override
@@ -178,10 +168,10 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param message
      */
     public void onEvent(UpdateAppMessage message) {
-        mLKAppSocketLogQueue.put(TAG, "app开始更新");
-        LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "get updateMessage");
         isUpdate = true;
+        LogUtils.d(TAG, HomeActivity.class.getSimpleName() + "get updateMessage");
         launchFragment(new UpdateFragment());
+        mLKAppSocketLogQueue.put(TAG, "app开始更新");
     }
 
     /**
@@ -190,30 +180,31 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param message
      */
     public void onEvent(UpdateCompleteMessage message) {
-        setTitle("");
-        mLKAppSocketLogQueue.put(TAG, "app更新完成");
-        LogUtils.d(SocketService.TAG, HomeActivity.class.getSimpleName() + "Update Complete");
         isUpdate = false;
+        setTitle("");
+        LogUtils.d(TAG, HomeActivity.class.getSimpleName() + "Update Complete");
         if (Preference.getIsStartingUp()) {
             launchFragment(new StartSettingFragment());
         } else {
             launchFragment(new AwaitActionFragment());
         }
+        mLKAppSocketLogQueue.put(TAG, "app更新完成");
     }
 
     /**
-     * 刷卡登录成功监听
+     * 用户刷卡登录成功
      *
      * @param loginUserInfoMessage
      */
     public void onEvent(LoginUserInfoMessage loginUserInfoMessage) {
-        mLKAppSocketLogQueue.put(TAG, "会员刷卡登录成功");
         if (mUserLoginPresenter != null) {
-            if (loginUserInfoMessage.mUserData != null && loginUserInfoMessage.mUserData.getErrcode() == 0) {
+            if (loginUserInfoMessage.mUserData != null
+                    && loginUserInfoMessage.mUserData.getErrcode() == 0) {
                 isLogin = true;
             }
             mUserLoginPresenter.userLoginResult(loginUserInfoMessage);
         }
+        mLKAppSocketLogQueue.put(TAG, "会员刷卡登录成功");
     }
 
     /**
@@ -226,31 +217,31 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     }
 
     /**
-     * 绑定成功
+     * 场馆绑定成功
      *
      * @param message
      */
     public void onEvent(GymBindSuccessMessage message) {
-        mLKAppSocketLogQueue.put(TAG, "场馆绑定成功");
-        if (mDelayedHandler != null) {
-            mDelayedHandler.postDelayed(new Runnable() {
+        if (mHandler != null) {
+            mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     launchFragment(new AwaitActionFragment());
                 }
             }, delayedInterval);
         }
+        mLKAppSocketLogQueue.put(TAG, "场馆绑定成功");
     }
 
     /**
-     * 解绑成功
+     * 场馆解绑成功
      *
      * @param message
      */
     public void onEvent(GymUnBindSuccessMessage message) {
-        mLKAppSocketLogQueue.put(TAG, "场馆解除绑定");
-        if (mDelayedHandler != null) {
-            //Logout
+
+        if (mHandler != null) {
+            //Logout  退出当前管理员登录状态
             if (SerialPortUtil.getTreadInstance().getUserInfo() != null) {
                 if (isLogin) {
                     userLogout(SerialPortUtil.getTreadInstance().getUserInfo().mBraceletId);
@@ -259,19 +250,21 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 SerialPortUtil.getTreadInstance().resetUserInfo();
             }
 
-            mDelayedHandler.postDelayed(new Runnable() {
+            //清空跑步机数据以及场馆数据
+            mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    SerialPortUtil.getTreadInstance().reset();//清空数据
-                    MemberUtils.getInstance().deleteMembersFromLocal(null);
+                    SerialPortUtil.getTreadInstance().reset();//清空跑步数据
+                    MemberHelper.getInstance().deleteMembersFromLocal(null);
                     launchFragment(new StartSettingFragment());
                 }
             }, delayedInterval);
         }
+        mLKAppSocketLogQueue.put(TAG, "场馆解除绑定");
     }
 
     /**
-     * 广告下发
+     * 广告下发事件
      *
      * @param message
      */
@@ -323,11 +316,15 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         return null;
     }
 
+    /**
+     * 用户刷卡登录登录
+     * @param cardno
+     */
     @Override
     public void userLogin(String cardno) {
         try {
-            mLKAppSocketLogQueue.put(TAG, "会员登录");
             iBackService.userLogin(cardno);
+            mLKAppSocketLogQueue.put(TAG, "会员登录");
         } catch (RemoteException e) {
             e.printStackTrace();
             if (mUserLoginPresenter != null) {
@@ -337,11 +334,17 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         }
     }
 
+    /**
+     * 刷卡成功页面
+     */
     @Override
     public void launchStartFragment() {
         launchFragment(new StartFragment());
     }
 
+    /**
+     * 刷卡失败
+     */
     @Override
     public void userLoginFail() {
         launchFragment(new AwaitActionFragment());
@@ -360,8 +363,8 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     public void userLogout(String cardNo) {
         if (iBackService != null) {
             try {
-                mLKAppSocketLogQueue.put(TAG, "会员退出");
                 iBackService.userLogOut(cardNo);
+                mLKAppSocketLogQueue.put(TAG, "会员退出");
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -392,18 +395,18 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         List<Member> members = message.mMemberList;
         if (members != null && !members.isEmpty()) {
             for (Member m : members) {
-                MemberUtils.getInstance().updateMembersFromMemory(m);
+                MemberHelper.getInstance().updateMembersFromMemory(m);
             }
         }
     }
 
     /**
-     * 下发结束 Memory cache -> DB Caching
+     * 下发结束事件 Memory cache -> DB Caching
      *
      * @param message
      */
     public void onEvent(MemberNoneMessage message) {
-        MemberUtils.getInstance().updateMembersFromLocal();
+        MemberHelper.getInstance().updateMembersFromLocal();
         if (iBackService != null) {
             try {
                 iBackService.membersStateReplyCommand();
@@ -415,6 +418,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     /**
      * 删除状态回复
+     *
      * @param message
      */
     public void onEvent(MembersDeleteMessage message) {

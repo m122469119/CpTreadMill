@@ -19,21 +19,21 @@ import java.util.List;
  * @version:1.0
  */
 
-public class MemberUtils {
+public class MemberHelper {
 
     private List<Member> mMemberListCache = new ArrayList<>();//成员列表内存缓存
 
     private MemberLocalDataSource mDataSource = null; //成员列表数据库缓存
 
-    private MemberUtils(){
+    private MemberHelper(){
         mDataSource = new MemberLocalDataSource(LikingThreadMillApplication.getInstance());
     }
 
     private static class MemberDataHelper {
-        public static MemberUtils INSTANCE = new MemberUtils();
+        public static MemberHelper INSTANCE = new MemberHelper();
     }
 
-    public static MemberUtils getInstance() {
+    public static MemberHelper getInstance() {
         return MemberDataHelper.INSTANCE;
     }
 

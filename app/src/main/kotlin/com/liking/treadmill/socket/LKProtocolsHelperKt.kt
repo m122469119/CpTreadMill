@@ -265,7 +265,7 @@ object LKProtocolsHelperKt {
 
             //场馆会员清除
             REPORT_CLEAR_MEMBER_LIST_CMD -> {
-                MemberUtils.getInstance().deleteMembersFromLocal { result ->
+                MemberHelper.getInstance().deleteMembersFromLocal { result ->
                     if (result) {
                         LogUtils.d("aaron", "删除成功")
                     } else {
@@ -379,7 +379,7 @@ object LKProtocolsHelperKt {
         //会员列表最后同步时间
         val msyntime = Preference.getMemberSynTimestamp()
         //本地会员列表状态
-        val status = if (MemberUtils.getInstance().memberCount > 0) 1 else 0 //0=>无数据， 1=>有数据
+        val status = if (MemberHelper.getInstance().memberCount > 0) 1 else 0 //0=>无数据， 1=>有数据
         return toJson(TreadmillData(deviceId, gymId,
                 Mac.getMacAddress(BaseApplication.getInstance()), appVersion, "0", "0", "0",
                 status.toString(), msyntime), TYPE_TREADMILL)
@@ -475,7 +475,7 @@ object LKProtocolsHelperKt {
      * 客户端发起请求会员列表命令
      */
     fun getRequestMembersCommandRequest(): String? {
-        val lastMemberId = MemberUtils.getInstance().lastMemberId
+        val lastMemberId = MemberHelper.getInstance().lastMemberId
         val gymId = Preference.getBindUserGymId()
         return toJson(MemberListData(lastMemberId, gymId), TYPE_MEMBER_LIST)
     }
@@ -487,7 +487,7 @@ object LKProtocolsHelperKt {
         val deviceId = DeviceUtils.getDeviceInfo(BaseApplication.getInstance())
         val gymId = Preference.getBindUserGymId()
         val msyntime = Preference.getMemberSynTimestamp()
-        val status = if (MemberUtils.getInstance().memberCount > 0) 1 else 0 //0=>无数据， 1=>有数据
+        val status = if (MemberHelper.getInstance().memberCount > 0) 1 else 0 //0=>无数据， 1=>有数据
 
         return toJson(LocalMemberData(status, deviceId, gymId, msyntime), TYPE_LOCAL_MEMBER)
     }

@@ -1003,19 +1003,4 @@ public class RunFragment extends SerialPortFragment {
         mPrepareCountDownTextView.startAnimation(animation);
     }
 
-//    /**
-//     * 判断用户是否空跑
-//     */
-//    public boolean checkUserIsRunning() {
-//        int stepNumber = SerialPortUtil.getTreadInstance().getStepNumber();
-//        long currentTime = System.currentTimeMillis();
-//        boolean isRun = true;
-//        if (mCurrStepNumber != stepNumber) {
-//            mCurrStepNumber = stepNumber;
-//            mRunlastTime = currentTime;
-//        }  else if (mCurrStepNumber == stepNumber && currentTime - mRunlastTime > Preference.getStandbyTime() * 1000) {
-//            isRun = false;
-//        }
-//        return isRun;
-//    }
 }

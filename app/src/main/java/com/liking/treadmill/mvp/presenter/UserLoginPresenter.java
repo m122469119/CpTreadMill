@@ -8,14 +8,13 @@ import com.aaron.android.framework.library.thread.TaskScheduler;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
-import com.liking.treadmill.db.MemberLocalDataSource;
 import com.liking.treadmill.db.entity.Member;
 import com.liking.treadmill.message.LoginUserInfoMessage;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.socket.result.UserInfoResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
-import com.liking.treadmill.utils.MemberUtils;
+import com.liking.treadmill.utils.MemberHelper;
 import com.liking.treadmill.widget.IToast;
 
 import java.util.List;
@@ -50,12 +49,12 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
                 }
             } else {
                 //无网
-                if(!StringUtils.isEmpty(Preference.getBindUserGymId()) && MemberUtils.getInstance().getMembersFromLocal() != null) {//已绑定场馆
+                if(!StringUtils.isEmpty(Preference.getBindUserGymId()) && MemberHelper.getInstance().getMembersFromLocal() != null) {//已绑定场馆
 
                     TaskScheduler.execute(new Runnable() {
                         @Override
                         public void run() {
-                            member = MemberUtils.getInstance().getMembersFromLocal().queryMemberInfo(cardNo);
+                            member = MemberHelper.getInstance().getMembersFromLocal().queryMemberInfo(cardNo);
                         }
                     }, new Runnable() {
                         @Override
@@ -64,7 +63,7 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
                                 launchRunFragment(getDefaultUserInfo(member.getMemberType(), cardNo));
                             } else {
                                 //缓存中查询(未缓存到数据库)
-                                List<Member> mMemberCache = MemberUtils.getInstance().getMembersFromMemory();
+                                List<Member> mMemberCache = MemberHelper.getInstance().getMembersFromMemory();
                                 if(mMemberCache != null && !mMemberCache.isEmpty()) {
                                     for (Member m:mMemberCache) {
                                         if(cardNo.equals(m.getBraceletId())) {
