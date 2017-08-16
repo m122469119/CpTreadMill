@@ -34,14 +34,10 @@ import de.greenrobot.event.EventBus;
 
 public class AwaitActionFragment extends SerialPortFragment {
 
-    private View mRootView;
-
-    private static final String KEY_CARDNO_VALUE = "cardno";
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_awaitaction, container, false);
+        View mRootView = inflater.inflate(R.layout.fragment_awaitaction, container, false);
         ButterKnife.bind(this, mRootView);
         if (SerialPortUtil.getTreadInstance().getUserInfo() != null) {
             final HomeActivity homeActivity = (HomeActivity) getActivity();
@@ -52,7 +48,7 @@ public class AwaitActionFragment extends SerialPortFragment {
             SerialPortUtil.getTreadInstance().resetUserInfo();
         }
         //本地检测更新
-        if(ApkUpdateHelper.isApkUpdate()
+        if (ApkUpdateHelper.isApkUpdate()
                 && EnvironmentUtils.Network.isNetWorkAvailable()
                 && Preference.getAppDownloadFailCount() < ThreadMillConstant.THREADMILL_UPDATE_FAIL_COUNT) {
             EventBus.getDefault().post(new UpdateAppMessage());
