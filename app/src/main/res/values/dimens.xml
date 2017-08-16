@@ -17,4 +17,7 @@
     <dimen name="spacing_40dp">40dp</dimen>
     <dimen name="spacing_50dp">50dp</dimen>
     <dimen name="spacing_60dp">60dp</dimen>
+
+    <dimen name="run_bottom_height">270dp</dimen>
+    <dimen name="run_head_height">270dp</dimen>
 </resources>
