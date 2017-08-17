@@ -30,7 +30,9 @@
     <color name="c60black">#60000000</color>
     <color name="c85878e">#85878e</color>
     <color name="cdbdde2">#dbdde2</color>
+    <color name="cAAACAF">#AAACAF</color>
 
     <color name="text_color_grey">@color/c85878e</color>
     <color name="text_color_green">@color/c34c86c</color>
+    <color name="text_color_dark">@color/cAAACAF</color>
 </resources>

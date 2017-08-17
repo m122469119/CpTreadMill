@@ -68,4 +68,5 @@
     <string name="text_await_below"><html><font color="#85878e">请</font><font color="#34c86c">在下方面板上刷手环处刷手环</font><font color="#85878e">开启跑步机</font></html></string>
     <string name="welcome_to">Welcome to</string>
     <string name="liking_fit">Liking Fit</string>
+    <string name="start"><font color="#AAACAF">请使用下方面板上的相应按钮</font><br></br><font color="#34c86c">快速开始</font><font color="#AAACAF">或</font><font color="#34c86c">设定目标</font></string>
 </resources>

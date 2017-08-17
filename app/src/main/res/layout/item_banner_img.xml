@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.aaron.imageloader.code.HImageView
+    android:id="@+id/imageview_banner"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="199dp"
+    android:scaleType="centerCrop"
+    fresco:failureImage="@mipmap/ic_launcher"
+    fresco:failureImageScaleType="centerCrop"
+    fresco:placeholderImage="@mipmap/ic_launcher"
+    fresco:placeholderImageScaleType="centerCrop"/>

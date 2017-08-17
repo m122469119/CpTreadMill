@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import butterknife.BindView;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.base.widget.dialog.HBaseDialog;
@@ -15,6 +16,7 @@ import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.aaron.android.framework.utils.PopupUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.adapter.BannerPagerAdapter;
 import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.fragment.base.SerialPortFragment;
 import com.liking.treadmill.message.GymUnBindSuccessMessage;
@@ -26,6 +28,8 @@ import com.liking.treadmill.utils.ApkUpdateHelper;
 import com.liking.treadmill.widget.IToast;
 
 import butterknife.ButterKnife;
+import com.liking.treadmill.widget.autoviewpager.InfiniteViewPager;
+import com.liking.treadmill.widget.autoviewpager.indicator.IconPageIndicator;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -33,6 +37,14 @@ import de.greenrobot.event.EventBus;
  */
 
 public class AwaitActionFragment extends SerialPortFragment {
+
+    public static final long AUTO_SCROLL = 8 * 1000;
+
+    @BindView(R.id.viewpager_await)
+    InfiniteViewPager mViewpager;
+    @BindView(R.id.indicator_await)
+    IconPageIndicator mIndicator;
+    BannerPagerAdapter mBannerPagerAdapter;
 
     @Nullable
     @Override
@@ -53,6 +65,7 @@ public class AwaitActionFragment extends SerialPortFragment {
                 && Preference.getAppDownloadFailCount() < ThreadMillConstant.THREADMILL_UPDATE_FAIL_COUNT) {
             EventBus.getDefault().post(new UpdateAppMessage());
         }
+        initViews();
         return mRootView;
     }
 
@@ -115,24 +128,27 @@ public class AwaitActionFragment extends SerialPortFragment {
     public void onResume() {
         super.onResume();
         LogUtils.d(TAG, "------onResume()");
-        initViews();
+        mViewpager.startAutoScroll();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         LogUtils.d(TAG, "------onPause()");
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
         LogUtils.d(TAG, "------onStop()");
+        mViewpager.stopAutoScroll();
     }
 
     private void initViews() {
-
+        mBannerPagerAdapter= new BannerPagerAdapter(getActivity());
+        mViewpager.setAdapter(mBannerPagerAdapter);
+        mViewpager.setAutoScrollTime(AUTO_SCROLL);
+        mIndicator.setViewPager(mViewpager);
     }
 
 }
