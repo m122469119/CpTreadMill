@@ -35,29 +35,34 @@ import butterknife.ButterKnife;
 
 public class GoalSettingFragment extends SerialPortFragment {
 
-    public static final int GOAL_SETTING_MODE_RUNTIME = 0 ;//运动时间
-    public static final int GOAL_SETTING_MODE_KILOMETRE = 1 ;//公里
-    public static final int GOAL_SETTING_MODE_KCAL = 2 ;//消耗卡路里
+    public static final int GOAL_SETTING_MODE_RUNTIME = 0;//运动时间
+    public static final int GOAL_SETTING_MODE_KILOMETRE = 1;//公里
+    public static final int GOAL_SETTING_MODE_KCAL = 2;//消耗卡路里
 
     private boolean isModeSelect = true;//选择模式
     private boolean isModeSetting = false;//模式设置
 
-    private int mCurrMode = GOAL_SETTING_MODE_KCAL ;//当前mode
+    private int mCurrMode = GOAL_SETTING_MODE_KCAL;//当前mode
 
     private FrameLayout mRootView;
 
-    /** step1 view*/
+    /**
+     * step1 view
+     */
     private View mViewSetting;
     private LinearLayout mRunTimeModeLayout;
-    private TextView runTimeLine;
     private LinearLayout mKilometreModeLayout;
-    private TextView kilometreLine;
     private LinearLayout mKcalModeLayout;
-    private TextView kcalLine;
     private TextView mStep1Hint;
     private TextView mStep1Hint2;
 
-    /** mode setting*/
+    private ImageView mRunTimeImageView;
+    private ImageView mKilometreImageView;
+    private ImageView mKcalImageView;
+
+    /**
+     * mode setting
+     */
     private View mViewModeSetting;
     private ImageView modeSettingIcon;
     private TextView modeSettingType;
@@ -68,27 +73,29 @@ public class GoalSettingFragment extends SerialPortFragment {
     private TextView modeSettingHint2;
     private TextView modeSettingHint3;
 
-    /**默认目标时间不大于最长跑步时间*/
+    /**
+     * 默认目标时间不大于最长跑步时间
+     */
     private float totalTime = checkMaxValue(ThreadMillConstant.GOALSETTING_DEFAULT_RUNNING_TIME, Preference.getMotionParamMaxRunTime());
 
     private float totalKilometre = ThreadMillConstant.GOALSETTING_DEFAULT_KILOMETRE;
     private float totalKcal = ThreadMillConstant.GOALSETTING_DEFAULT_KCAL;
     private String totalTarget = "";
 
-    private int mode_runtime_grade_increment = 10 ;//设置跑步时间 坡度以10分钟上下调整
-    private int mode_runtime_speed_increment = 1 ;//设置跑步时间 速度以1分钟上下调整
+    private int mode_runtime_grade_increment = 10;//设置跑步时间 坡度以10分钟上下调整
+    private int mode_runtime_speed_increment = 1;//设置跑步时间 速度以1分钟上下调整
 
     private String mode_runtime_grade_increment_str = "10分钟";
     private String mode_runtime_speed_increment_str = "1分钟";
 
-    private int mode_kilometre_grade_increment = 1 ;
+    private int mode_kilometre_grade_increment = 1;
     private float mode_kilometre_speed_increment = 0.1f;
 
     private String mode_kilometre_grade_increment_str = "1公里";
     private String mode_kilometre_speed_increment_str = "0.1公里";
 
-    private int mode_kcal_grade_increment = 100 ;
-    private int mode_kcal_speed_increment = 10 ;
+    private int mode_kcal_grade_increment = 100;
+    private int mode_kcal_speed_increment = 10;
 
     private String mode_kcal_grade_increment_str = "100卡路里";
     private String mode_kcal_speed_increment_str = "10卡路里";
@@ -107,11 +114,11 @@ public class GoalSettingFragment extends SerialPortFragment {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_NEXT) {//模式选择:下一步
             onRefreshBehavior();
-            if(isModeSelect) {
+            if (isModeSelect) {
                 modeSelect();
             }
-        } else if(keyCode == LikingTreadKeyEvent.KEY_RETURN) { //返回
-            if(isModeSetting) {
+        } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN) { //返回
+            if (isModeSetting) {
                 onRefreshBehavior();
                 isModeSelect = true;
                 isModeSetting = false;
@@ -121,9 +128,9 @@ public class GoalSettingFragment extends SerialPortFragment {
                 ((HomeActivity) getActivity()).setTitle("");
                 ((HomeActivity) getActivity()).launchFragment(new StartFragment());
             }
-        } else if(keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) {
+        } else if (keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) {
         } else if (keyCode == LikingTreadKeyEvent.KEY_MODE) {
-            if(isModeSelect) {
+            if (isModeSelect) {
                 onRefreshBehavior();
                 isModeSelect = false;
                 isModeSetting = true;
@@ -134,12 +141,12 @@ public class GoalSettingFragment extends SerialPortFragment {
                 || keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS  //坡度+
                 || keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE //坡度-
                 ) {
-            if(isModeSetting) {
+            if (isModeSetting) {
                 onRefreshBehavior();
                 setNumerical(keyCode);
             }
-        } else if(keyCode == LikingTreadKeyEvent.KEY_START) {
-            if(isModeSetting) {
+        } else if (keyCode == LikingTreadKeyEvent.KEY_START) {
+            if (isModeSetting) {
                 switch (mCurrMode) {
                     case GOAL_SETTING_MODE_RUNTIME:
                         if (checkGoalSettingValue(totalTime)) return;
@@ -164,7 +171,7 @@ public class GoalSettingFragment extends SerialPortFragment {
     }
 
     public boolean checkGoalSettingValue(float value) {
-        if(value <= 0.0f) {
+        if (value <= 0.0f) {
             IToast.show(ResourceUtils.getString(R.string.threadmill_default_parameter_txt));
             return true;
         }
@@ -176,7 +183,7 @@ public class GoalSettingFragment extends SerialPortFragment {
         Bundle bundle = new Bundle();
         bundle.putFloat(key, value);
         run.setArguments(bundle);
-        ((HomeActivity)getActivity()).launchFragment(run);
+        ((HomeActivity) getActivity()).launchFragment(run);
     }
 
     @Override
@@ -202,11 +209,11 @@ public class GoalSettingFragment extends SerialPortFragment {
     private void initViews() {
         showSettingView();
         modeSelect();
-        ((HomeActivity)getActivity()).setTitle("设定目标");
+        ((HomeActivity) getActivity()).setTitle("设定目标");
     }
 
     private void showView(View view) {
-        if(mRootView != null && view != null) {
+        if (mRootView != null && view != null) {
             mRootView.removeAllViews();
             mRootView.addView(view);
         }
@@ -214,65 +221,67 @@ public class GoalSettingFragment extends SerialPortFragment {
 
 
     public void modeSelect() {
-        if(!isModeSelect) return;
+        if (!isModeSelect) return;
         switch (mCurrMode) {
             case GOAL_SETTING_MODE_RUNTIME:
-                mRunTimeModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
-                mKilometreModeLayout.setBackgroundResource(R.drawable.setting_card_selected);
-                mKcalModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
+//                mRunTimeModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
+//                mKilometreModeLayout.setBackgroundResource(R.drawable.setting_card_selected);
+//                mKcalModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
 
-                runTimeLine.setBackgroundColor(ResourceUtils.getColor(R.color.c3a4d65));
-                kilometreLine.setBackgroundColor(ResourceUtils.getColor(R.color.c21554C));
-                kcalLine.setBackgroundColor(ResourceUtils.getColor(R.color.c3a4d65));
+                mRunTimeImageView.setImageResource(R.drawable.icon_goal_mode_time_select);
+                mKilometreImageView.setImageResource(R.drawable.icon_goal_mode_kilometre_normal);
+                mKcalImageView.setImageResource(R.drawable.icon_goal_mode_kcal_normal);
+
                 mCurrMode = GOAL_SETTING_MODE_KILOMETRE;
                 break;
             case GOAL_SETTING_MODE_KILOMETRE:
-                mRunTimeModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
-                mKilometreModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
-                mKcalModeLayout.setBackgroundResource(R.drawable.setting_card_selected);
+//                mRunTimeModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
+//                mKilometreModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
+//                mKcalModeLayout.setBackgroundResource(R.drawable.setting_card_selected);
 
-                runTimeLine.setBackgroundColor(ResourceUtils.getColor(R.color.c3a4d65));
-                kilometreLine.setBackgroundColor(ResourceUtils.getColor(R.color.c3a4d65));
-                kcalLine.setBackgroundColor(ResourceUtils.getColor(R.color.c21554C));
+                mRunTimeImageView.setImageResource(R.drawable.icon_goal_mode_time_normal);
+                mKilometreImageView.setImageResource(R.drawable.icon_goal_mode_kilometre_select);
+                mKcalImageView.setImageResource(R.drawable.icon_goal_mode_kcal_normal);
+
                 mCurrMode = GOAL_SETTING_MODE_KCAL;
                 break;
             case GOAL_SETTING_MODE_KCAL:
-                mRunTimeModeLayout.setBackgroundResource(R.drawable.setting_card_selected);
-                mKilometreModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
-                mKcalModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
+//                mRunTimeModeLayout.setBackgroundResource(R.drawable.setting_card_selected);
+//                mKilometreModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
+//                mKcalModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
 
-                runTimeLine.setBackgroundColor(ResourceUtils.getColor(R.color.c21554C));
-                kilometreLine.setBackgroundColor(ResourceUtils.getColor(R.color.c3a4d65));
-                kcalLine.setBackgroundColor(ResourceUtils.getColor(R.color.c3a4d65));
+                mRunTimeImageView.setImageResource(R.drawable.icon_goal_mode_time_normal);
+                mKilometreImageView.setImageResource(R.drawable.icon_goal_mode_kilometre_normal);
+                mKcalImageView.setImageResource(R.drawable.icon_goal_mode_kcal_select);
+
                 mCurrMode = GOAL_SETTING_MODE_RUNTIME;
                 break;
         }
     }
+
     /**
      * 设定目标step1
      */
-    private void showSettingView () {
-        if(mViewSetting == null) {
+    private void showSettingView() {
+        if (mViewSetting == null) {
             mViewSetting = LayoutInflater.from(getActivity()).inflate(R.layout.layout_goalsetting_step1, null);
             mStep1Hint = (TextView) mViewSetting.findViewById(R.id.goalsetting_step1_hint);
             mStep1Hint2 = (TextView) mViewSetting.findViewById(R.id.goalsetting_step1_hint2);
-            View viewModeTiem =  mViewSetting.findViewById(R.id.step1_mode_runtime);
-            mRunTimeModeLayout = (LinearLayout) viewModeTiem.findViewById(R.id.goal_setting_layout);
-            runTimeLine = (TextView) viewModeTiem.findViewById(R.id.goal_setting_line);
-            setModeView(viewModeTiem, R.drawable.icon_goal_mode_time,
+            View viewModeTiem = mViewSetting.findViewById(R.id.step1_mode_runtime);
+            //  mRunTimeModeLayout = (LinearLayout) viewModeTiem.findViewById(R.id.goal_setting_layout);
+            mRunTimeImageView = (ImageView) viewModeTiem.findViewById(R.id.step1_mode_img);
+            setModeView(viewModeTiem, R.drawable.icon_goal_mode_time_normal,
                     ResourceUtils.getString(R.string.goalsetting_step_run_time));
 
-            View viewModeKilometre =  mViewSetting.findViewById(R.id.step1_mode_kilometre);
-            mKilometreModeLayout = (LinearLayout) viewModeKilometre.findViewById(R.id.goal_setting_layout);
-            kilometreLine = (TextView) viewModeKilometre.findViewById(R.id.goal_setting_line);
-            setModeView(viewModeKilometre, R.drawable.icon_goal_mode_kilometre,
-                    ResourceUtils.getString(R.string.goalsetting_step_kilometre));
+            View viewModeKilometre = mViewSetting.findViewById(R.id.step1_mode_kilometre);
+            // mKilometreModeLayout = (LinearLayout) viewModeKilometre.findViewById(R.id.goal_setting_layout);
+            mKilometreImageView = (ImageView) viewModeKilometre.findViewById(R.id.step1_mode_img);
+            setModeView(viewModeKilometre, R.drawable.icon_goal_mode_kilometre_normal, ResourceUtils.getString(R.string.goalsetting_step_kilometre));
 
-            View viewModeKcal =  mViewSetting.findViewById(R.id.step1_mode_kcal);
-            mKcalModeLayout = (LinearLayout) viewModeKcal.findViewById(R.id.goal_setting_layout);
-            kcalLine = (TextView) viewModeKcal.findViewById(R.id.goal_setting_line);
-            setModeView(viewModeKcal, R.drawable.icon_goal_mode_kcal,
-                    ResourceUtils.getString(R.string.goalsetting_step_kcal));
+            View viewModeKcal = mViewSetting.findViewById(R.id.step1_mode_kcal);
+            //  mKcalModeLayout = (LinearLayout) viewModeKcal.findViewById(R.id.goal_setting_layout);
+            mKcalImageView = (ImageView) viewModeKcal.findViewById(R.id.step1_mode_img);
+            setModeView(viewModeKcal, R.drawable.icon_goal_mode_kcal_normal, ResourceUtils.getString(R.string.goalsetting_step_kcal));
 
             SpannableStringBuilder ssbh1 = new SpannableStringBuilder(ResourceUtils.getString(R.string.goalsetting_step_setting_hint1));
             ImageSpan imageSpanNext = new ImageSpan(getActivity(), R.drawable.key_next);
@@ -289,7 +298,7 @@ public class GoalSettingFragment extends SerialPortFragment {
         showView(mViewSetting);
     }
 
-    public void setModeView(View view,int iconId, String modename) {
+    public void setModeView(View view, int iconId, String modename) {
         ImageView modeImg = (ImageView) view.findViewById(R.id.step1_mode_img);
         TextView modeName = (TextView) view.findViewById(R.id.step1_mode_text);
         modeImg.setImageResource(iconId);
@@ -299,8 +308,8 @@ public class GoalSettingFragment extends SerialPortFragment {
     /**
      * 模式设置界面
      */
-    private void showModeSettingView () {
-        if(mViewModeSetting == null) {
+    private void showModeSettingView() {
+        if (mViewModeSetting == null) {
             mViewModeSetting = LayoutInflater.from(getActivity()).inflate(R.layout.layout_goalsetting_mode, null);
             modeSettingIcon = (ImageView) mViewModeSetting.findViewById(R.id.mode_setting_icon);
             modeSettingType = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_type);
@@ -325,7 +334,7 @@ public class GoalSettingFragment extends SerialPortFragment {
             case GOAL_SETTING_MODE_RUNTIME:
                 modeSettingType.setText(ResourceUtils.getString(R.string.goalsetting_step_mode_time));
                 modeSettingIcon.setImageResource(R.drawable.goal_mode_time_img);
-                totalTarget = String.valueOf((int)totalTime);
+                totalTarget = String.valueOf((int) totalTime);
                 modeSettingUnit.setText("min");
                 hint1 = mode_runtime_grade_increment_str;
                 hint2 = mode_runtime_speed_increment_str;
@@ -333,7 +342,7 @@ public class GoalSettingFragment extends SerialPortFragment {
             case GOAL_SETTING_MODE_KILOMETRE:
                 modeSettingType.setText(ResourceUtils.getString(R.string.goalsetting_step_mode_kilometre));
                 modeSettingIcon.setImageResource(R.drawable.goal_mode_kilometre_img);
-                totalTarget = StringUtils.getDecimalString(totalKilometre,1);
+                totalTarget = StringUtils.getDecimalString(totalKilometre, 1);
                 modeSettingUnit.setText("Km");
                 hint1 = mode_kilometre_grade_increment_str;
                 hint2 = mode_kilometre_speed_increment_str;
@@ -379,6 +388,7 @@ public class GoalSettingFragment extends SerialPortFragment {
 
     /**
      * 设置
+     *
      * @param keyCode
      */
     public void setNumerical(int keyCode) {
@@ -387,7 +397,7 @@ public class GoalSettingFragment extends SerialPortFragment {
             case GOAL_SETTING_MODE_RUNTIME:
                 switch (keyCode) {
                     case LikingTreadKeyEvent.KEY_SPEED_PLUS:
-                        value = mode_runtime_speed_increment ;
+                        value = mode_runtime_speed_increment;
                         break;
                     case LikingTreadKeyEvent.KEY_SPEED_REDUCE:
                         value = -mode_runtime_speed_increment;
@@ -399,12 +409,12 @@ public class GoalSettingFragment extends SerialPortFragment {
                         value = -mode_runtime_grade_increment;
                         break;
                 }
-                totalTime +=value;
+                totalTime += value;
                 //是否大于最大值
                 totalTime = checkMaxValue(totalTime, Preference.getMotionParamMaxRunTime());
                 //是否小于最小值
                 totalTime = checkMinValue(totalTime, ThreadMillConstant.GOALSETTING_MIN_RUNNING_TIME);
-                totalTarget = String.valueOf((int)totalTime);
+                totalTarget = String.valueOf((int) totalTime);
                 break;
             case GOAL_SETTING_MODE_KILOMETRE:
                 switch (keyCode) {
@@ -424,7 +434,7 @@ public class GoalSettingFragment extends SerialPortFragment {
                 totalKilometre += value;
                 totalKilometre = checkMaxValue(totalKilometre, ThreadMillConstant.GOALSETTING_MAX_KILOMETRE);
                 totalKilometre = checkMinValue(totalKilometre, ThreadMillConstant.GOALSETTING_MIN_KILOMETRE);
-                totalTarget = StringUtils.getDecimalString(totalKilometre,1);
+                totalTarget = StringUtils.getDecimalString(totalKilometre, 1);
                 break;
             case GOAL_SETTING_MODE_KCAL:
                 switch (keyCode) {
@@ -459,6 +469,7 @@ public class GoalSettingFragment extends SerialPortFragment {
 
     /**
      * 验证是否超过最大值
+     *
      * @return
      */
     public float checkMaxValue(float value, float max) {
@@ -467,6 +478,7 @@ public class GoalSettingFragment extends SerialPortFragment {
 
     /**
      * 验证是否超过最小值
+     *
      * @return
      */
     public float checkMinValue(float value, float min) {
