@@ -17,6 +17,7 @@
     <color name="c1A9B9B9B">#1A9B9B9B</color>
     <color name="cb4000000">#b4000000</color>
 
+
     <color name="colorfulringprogress_bgcolor">#2A2B2C</color>
     <color name="colorfulringprogress_run_progress_bgcolor">#265d46</color>
     <color name="colorfulringprogress_fgcolorstart">#2CFE8A</color>
@@ -29,4 +30,7 @@
     <color name="c60black">#60000000</color>
     <color name="c85878e">#85878e</color>
     <color name="cdbdde2">#dbdde2</color>
+
+    <color name="text_color_grey">@color/c85878e</color>
+    <color name="text_color_green">@color/c34c86c</color>
 </resources>
