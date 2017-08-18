@@ -1,7 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="@dimen/run_head_height">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="126dp"
+        android:layout_marginRight="126dp"
+        android:layout_marginTop="67dp"
+        android:orientation="horizontal">
+
+        <com.aaron.android.framework.library.imageloader.HImageView
+            xmlns:fresco="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/head_imageView"
+            android:layout_width="67dp"
+            android:layout_height="67dp"
+            android:layout_gravity="center"
+            fresco:failureImage="@drawable/icon_head_default_image"
+            fresco:failureImageScaleType="centerCrop"
+            fresco:placeholderImage="@drawable/icon_head_default_image"
+            fresco:placeholderImageScaleType="centerCrop"
+            fresco:roundAsCircle="true"/>
+
+
+        <TextView
+            android:id="@+id/user_name_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/spacing_4dp"
+            android:layout_marginLeft="@dimen/spacing_20dp"
+            android:text="LikingFans"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/textview_underline"
+            android:textColor="@color/text_color_dark"
+            android:textSize="35dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/text_gym_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="@dimen/spacing_20dp"
+                android:text="复兴SOHO店"
+                android:textColor="@color/text_color_dark"
+                android:textSize="@dimen/textsize_16sp"/>
+
+            <TextView
+                android:id="@+id/text_time"
+                android:layout_below="@+id/text_gym_name"
+                android:layout_marginTop="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="@dimen/spacing_20dp"
+                android:text="2017.07.21 17:45"
+                android:textColor="@color/text_color_dark"
+                android:textSize="@dimen/textsize_16sp"/>
+        </RelativeLayout>
+    </LinearLayout>
 </FrameLayout>

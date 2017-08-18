@@ -35,4 +35,11 @@
     <color name="text_color_grey">@color/c85878e</color>
     <color name="text_color_green">@color/c34c86c</color>
     <color name="text_color_dark">@color/cAAACAF</color>
+
+    <color name="c41B361">#41B361</color>
+    <color name="c3CBE96">#3CBE96</color>
+    <color name="c46C86E">#46C86E</color>
+
+    <color name="c94959C">#94959C</color>
+    <color name="c3CC860">#3CC860</color>
 </resources>
