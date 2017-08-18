@@ -51,8 +51,6 @@ public class StartFragment extends SerialPortFragment {
 
     AnimatorSet mQuickAnimator, mSetAnimator;
 
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
