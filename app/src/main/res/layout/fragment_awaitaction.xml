@@ -1,41 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="horizontal">
-
-    <FrameLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="2.0">
-    </FrameLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="3.0"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:src="@drawable/icon_awaitaction"/>
-
-        <TextView
+    <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/spacing_12dp"
-            android:text="@string/run_await_action"
-            android:textColor="@color/white"
-            android:textSize="@dimen/textsize_20sp"/>
-    </LinearLayout>
+            android:id="@+id/view_left"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="66.7dp">
 
-    <FrameLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="2.0">
-    </FrameLayout>
-</LinearLayout>
+        <RelativeLayout android:layout_width="wrap_content"
+                        android:id="@+id/view_welcome"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true">
+            <TextView
+                    android:text="@string/welcome_to"
+                    android:id="@+id/text_welcome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_color_grey"
+                    android:textSize="@dimen/spacing_24dp"
+            />
+
+            <TextView
+                    android:text="@string/liking_fit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_color_green"
+                    android:layout_toRightOf="@id/text_welcome"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="29.3dp"
+            />
+
+
+        </RelativeLayout>
+
+        <TextView
+                android:text="十五字十五字十五字十五字十五字"
+                android:id="@+id/text_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_color_green"
+                android:layout_below="@id/view_welcome"
+                android:layout_marginTop="15dp"
+                android:textSize="29.3dp"
+                android:layout_centerHorizontal="true"
+        />
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:src="@drawable/await_button"
+                android:layout_below="@id/text_title"
+                android:id="@+id/button_brace"
+        />
+
+        <TextView
+                android:text="@string/text_await_below"
+                android:layout_below="@id/button_brace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:textSize="15dp"
+                android:layout_centerHorizontal="true"
+        />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="80dp"
+            android:layout_marginRight="66.7dp"
+            android:layout_toRightOf="@id/view_left">
+
+
+        <com.liking.treadmill.widget.autoviewpager.InfiniteViewPager
+                android:id="@+id/viewpager_await"
+                android:layout_width="match_parent"
+                android:layout_height="380dp"
+                android:layout_centerInParent="true"
+        />
+
+        <com.liking.treadmill.widget.autoviewpager.indicator.IconPageIndicator
+                android:id="@+id/indicator_await"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/viewpager_await"
+                android:layout_marginTop="29dp"
+                android:layout_centerHorizontal="true"
+        />
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>
