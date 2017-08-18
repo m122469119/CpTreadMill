@@ -21,7 +21,7 @@
     <string name="start_mode_quick_start_txt">快速启动</string>
     <string name="goalsetting_step_run_time">时间</string>
     <string name="goalsetting_step_kilometre">公里</string>
-    <string name="goalsetting_step_kcal">消耗卡路里</string>
+    <string name="goalsetting_step_kcal">热量</string>
     <string name="goalsetting_step_mode_time">设定跑步总时间</string>
     <string name="goalsetting_step_mode_kcl">设定总消耗卡路里</string>
     <string name="goalsetting_step_mode_kilometre">设定跑步总距离</string>
