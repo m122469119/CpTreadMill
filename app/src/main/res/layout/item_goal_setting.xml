@@ -7,37 +7,29 @@
         android:id="@+id/goal_setting_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/setting_car_normal"
         android:gravity="center"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/step1_mode_img"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginBottom="66dp"
+            android:layout_width="280dp"
+            android:layout_height="280dp"
             android:layout_marginLeft="100dp"
-            android:layout_marginRight="100dp"
             android:layout_marginTop="66dp"
-            android:src="@drawable/icon_goal_mode_time"/>
+            android:layout_marginRight="100dp"/>
 
-        <TextView
-            android:id="@+id/goal_setting_line"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginLeft="14dp"
-            android:layout_marginRight="14dp"
-            android:layout_marginTop="@dimen/spacing_8dp"
-            android:background="@color/c3a4d65"/>
 
         <TextView
             android:id="@+id/step1_mode_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:padding="@dimen/spacing_24dp"
+            android:paddingLeft="@dimen/spacing_24dp"
+            android:paddingRight="@dimen/spacing_24dp"
+            android:paddingBottom="@dimen/spacing_24dp"
+            android:visibility="visible"
             android:text="@string/goalsetting_step_run_time"
-            android:textColor="@color/white"
+            android:textColor="@color/c85878e"
             android:textSize="@dimen/textsize_18sp"/>
     </LinearLayout>
 </FrameLayout>
