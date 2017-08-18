@@ -12,10 +12,9 @@
 
         <ImageView
             android:id="@+id/step1_mode_img"
-            android:layout_width="280dp"
-            android:layout_height="280dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:layout_marginLeft="100dp"
-            android:layout_marginTop="66dp"
             android:layout_marginRight="100dp"/>
 
 
@@ -26,10 +25,9 @@
             android:gravity="center"
             android:paddingLeft="@dimen/spacing_24dp"
             android:paddingRight="@dimen/spacing_24dp"
-            android:paddingBottom="@dimen/spacing_24dp"
             android:visibility="visible"
             android:text="@string/goalsetting_step_run_time"
             android:textColor="@color/c85878e"
-            android:textSize="@dimen/textsize_18sp"/>
+            android:textSize="28sp"/>
     </LinearLayout>
 </FrameLayout>

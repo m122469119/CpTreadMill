@@ -40,7 +40,7 @@
                     app:fgColorStart="@color/colorfulringprogress_fgcolorstart"
                     app:startTagImg="@drawable/progress_tag_point"
                     app:startAngle="50"
-                    app:strokeWidth="@dimen/colorfulringprogress_strokewidth"/>
+                    app:colorfulStrokeWidth="@dimen/colorfulringprogress_strokewidth"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
