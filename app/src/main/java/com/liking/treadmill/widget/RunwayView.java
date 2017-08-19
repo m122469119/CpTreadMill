@@ -20,6 +20,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 
 /**
@@ -37,36 +38,38 @@ public class RunwayView extends View {
     private Path mPathWay;
     private Path mPathDash;
 
-    int wayWidth;
-    int wayHeight;
+    private int wayWidth;
+    private int wayHeight;
 
-    int lineWayWidth = 60;
+    private int lineWayWidth = 24;
 
     private int bottomHeight = 30;
 
-    int phase = 0;
+    private int phase = 0;
 
-    Handler handler;
+    private Handler handler;
 
-    LinearGradient mLinearGradient;
+    private static final int MESSAGE_WHAT = 0x123;
 
-    DashPathEffect mDashPathEffect;
+    private LinearGradient mLinearGradient;
 
-    Matrix mMatrixDash;
+    private DashPathEffect mDashPathEffect;
 
-    float[] dashFloat;
+    private Matrix mMatrixDash;
 
-    float[] srcDash;
+    private float[] dashFloat;
 
-    float[] dstDash;
+    private float[] srcDash;
 
-    Matrix mMatrixAdv;
+    private float[] dstDash;
 
-    float[] dstAdv;
+    private Matrix mMatrixAdv;
+
+    private float[] dstAdv;
 
     private int leftImgH = 0;
 
-//    private Bitmap leftImgBitmap;
+    private Bitmap leftImgBitmap;
 
     private void init() {
 
@@ -77,39 +80,28 @@ public class RunwayView extends View {
         mPathDash = new Path();
 
         handler = new Handler() {
-
             public void handleMessage(Message msg) {
-                if (msg.what == 0x123) {
+                if (msg.what == MESSAGE_WHAT) {
                     // 改变偏移值
-                    phase = phase - 8;
+                    phase = phase - 6;
 
-                    if (phase < -(wayHeight + (40 * 10))) {
+                    if (phase < -(wayHeight + (14 * 30))) {
                         phase = 0;
                     }
 
-                    leftImgH = leftImgH + 8;
-                    if (leftImgH >= wayHeight) {
-                        leftImgH = 0;
-                    }
+//                    leftImgH = leftImgH + 8;
+//                    if (leftImgH >= wayHeight) {
+//                        leftImgH = 0;
+//                    }
+
+                    invalidate();
+                    startRun();
                 }
-                invalidate();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        handler.sendEmptyMessage(0x123);
-                    }
-                }, 40);
+
             }
         };
 
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                handler.sendEmptyMessage(0x123);
-//            }
-//        }, 40);
-
-
+//        startRun();
 //        leftImgBitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher);
 //        leftImgH = -leftImgBitmap.getHeight();
     }
@@ -136,7 +128,7 @@ public class RunwayView extends View {
         wayWidth = getWidth();
         wayHeight = getHeight();
 
-        dashFloat = new float[]{wayHeight / 10 , 40};
+        dashFloat = new float[]{wayHeight / 14, 30};
 
         wayHeight = wayHeight - bottomHeight;
 
@@ -149,17 +141,19 @@ public class RunwayView extends View {
         //渐变
         mLinearGradient = new LinearGradient(wayWidth, 0, wayWidth, wayHeight, getColor(R.color.c3CBE96), getColor(R.color.c46C86E), Shader.TileMode.CLAMP);
 
-//        //广告
-////        mMatrixAdv = new Matrix();
-////        dstAdv = new float[] { width * 0.25f, leftImgH, width - (width * 0.25f), leftImgH, width, wayHeight , 0, wayHeight };
+//        //广告logo
+//        mMatrixAdv = new Matrix();
+//        dstAdv = new float[] { wayWidth * 0.25f, leftImgH, wayWidth - (wayWidth * 0.25f), leftImgH, wayWidth, wayHeight , 0, wayHeight };
 
         //虚线
-        mPathDash.moveTo(wayWidth / 2 , 0);
-        mPathDash.lineTo(wayWidth / 2 , wayHeight);
+        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+        mPathDash.moveTo(wayWidth / 2, 0);
+        mPathDash.lineTo(wayWidth / 2, wayHeight);
 
         mMatrixDash = new Matrix();
-        srcDash = new float[] { 0, 0, wayWidth, 0, wayWidth, wayHeight, 0, wayHeight };
-        dstDash = new float[] { wayWidth * 0.35f, 0, wayWidth - (wayWidth * 0.35f), 0, wayWidth, wayHeight * 2f, 0, wayHeight * 2f};
+        srcDash = new float[]{0, 0, wayWidth, 0, wayWidth, wayHeight, 0, wayHeight};
+        dstDash = new float[]{wayWidth * 0.35f, 0, wayWidth - (wayWidth * 0.35f), 0, wayWidth, wayHeight , 0, wayHeight};
     }
 
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
@@ -173,10 +167,10 @@ public class RunwayView extends View {
         canvas.drawPath(mPathWay, mPaint);
         mPaint.setShader(null);
 
-//        //绘制log
+        //绘制log
 //        mMatrixAdv.setPolyToPoly(srcDash, 0, dstAdv, 0, srcDash.length >> 1);
 //        canvas.setMatrix(mMatrixAdv);
-//        canvas.drawBitmap(leftImgBitmap, width * 0.25f, leftImgH, mPaint);
+//        canvas.drawBitmap(leftImgBitmap, wayWidth * 0.25f, leftImgH, mPaint);
 //        canvas.setMatrix(null);
 
         /* 路线 */
@@ -189,18 +183,32 @@ public class RunwayView extends View {
         mMatrixDash.setPolyToPoly(srcDash, 0, dstDash, 0, srcDash.length >> 1);
         canvas.setMatrix(mMatrixDash);
         canvas.drawPath(mPathDash, mPaint);
+        mPaint.setPathEffect(null);
         canvas.setMatrix(null);
 
         //底部矩形
-        mPaint.reset();
+        mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(getColor(R.color.c41B361));
-        canvas.drawRect(0, wayHeight, wayWidth, wayHeight, mPaint);
+        canvas.drawRect(0, wayHeight, wayWidth, wayHeight + bottomHeight, mPaint);
 
         mDashPathEffect = null;
     }
 
 
-    public int getColor(int cid) {
-        return getResources().getColor(cid);
+    private void startRun() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                handler.sendEmptyMessage(MESSAGE_WHAT);
+            }
+        }, 40);
+    }
+
+    private void stopRun() {
+        handler.removeMessages(MESSAGE_WHAT);
+    }
+
+    private int getColor(int cid) {
+        return ResourceUtils.getColor(cid);
     }
 }
