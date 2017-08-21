@@ -30,6 +30,7 @@ import com.liking.treadmill.message.MembersDeleteMessage;
 import com.liking.treadmill.message.RequestMembersMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.message.UpdateCompleteMessage;
+import com.liking.treadmill.module.run.RunningFragment;
 import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;

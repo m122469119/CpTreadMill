@@ -24,6 +24,12 @@ import liking.com.iqiyimedia.http.result.TopListResult;
 
 public class IqiyiContract {
 
+    public final static int IQIYI_RESPONSE_FAIL_CATEGORYLIST = 1;
+
+    public final static int IQIYI_RESPONSE_FAIL_TOPLIST = 2;
+
+    public final static int IQIYI_RESPONSE_FAIL_ALBUMLIST = 3;
+
     public interface IqiyiView extends BaseView {
 
         void setCategoryListView(CategoryListResult categoryResult);
@@ -32,7 +38,7 @@ public class IqiyiContract {
 
         void setTopListView(TopListResult result);
 
-        void showFailView(String message);
+        void showFailView(String message, int failType);
     }
 
     public static class Presenter extends BasePresenter<IqiyiView> {
@@ -63,7 +69,7 @@ public class IqiyiContract {
 
                 @Override
                 public void onFailure(RequestError error) {
-                    mView.showFailView(error.getMessage());
+                    mView.showFailView(error.getMessage(), IQIYI_RESPONSE_FAIL_CATEGORYLIST);
                 }
             });
         }
@@ -77,7 +83,7 @@ public class IqiyiContract {
 
                 @Override
                 public void onFailure(RequestError error) {
-                    mView.showFailView(error.getMessage());
+                    mView.showFailView(error.getMessage(), IQIYI_RESPONSE_FAIL_ALBUMLIST);
                 }
             });
         }
@@ -91,7 +97,7 @@ public class IqiyiContract {
 
                 @Override
                 public void onFailure(RequestError error) {
-                    mView.showFailView(error.getMessage());
+                    mView.showFailView(error.getMessage(), IQIYI_RESPONSE_FAIL_TOPLIST);
                 }
             });
         }

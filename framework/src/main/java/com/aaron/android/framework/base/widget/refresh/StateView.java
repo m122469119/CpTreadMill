@@ -30,6 +30,8 @@ public class StateView extends FrameLayout {
 
     private OnRetryRequestListener mOnRetryRequestListener;
 
+    private State currState = State.LOADING;
+
     /**
      *
      */
@@ -238,6 +240,7 @@ public class StateView extends FrameLayout {
         } else {
             mAnimView.clearAnimation();
         }
+        currState = state;
     }
 
 
@@ -248,6 +251,14 @@ public class StateView extends FrameLayout {
      */
     public void setOnRetryRequestListener(OnRetryRequestListener onRetryRequestListener) {
         mOnRetryRequestListener = onRetryRequestListener;
+    }
+
+    public State getCurrState() {
+        return currState;
+    }
+
+    public void setCurrState(State currState) {
+        this.currState = currState;
     }
 
 }

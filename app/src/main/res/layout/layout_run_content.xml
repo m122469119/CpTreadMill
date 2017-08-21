@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
 
     <include
         android:id="@+id/layout_run_way"
         layout="@layout/layout_run_way"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible" />
+        android:visibility="visible"/>
 
-    <include
-        android:id="@+id/layout_run_video_category"
+    <com.aaron.android.framework.base.widget.refresh.StateView
+        android:id="@+id/layout_run_video_category_stateview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:failed_view="@layout/stateview_fail_view"
+        app:loading_view="@layout/stateview_loading_view"
+        app:success_view="@layout/layout_run_video_category"/>
 
-    <include
-        android:id="@+id/layout_run_video_list"
+    <com.aaron.android.framework.base.widget.refresh.StateView
+        android:id="@+id/layout_run_video_list_stateview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:failed_view="@layout/stateview_fail_view"
+        app:loading_view="@layout/stateview_loading_view"
+        app:success_view="@layout/layout_run_video_category"/>
 
 </FrameLayout>
