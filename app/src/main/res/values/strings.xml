@@ -69,4 +69,6 @@
     <string name="welcome_to">Welcome to</string>
     <string name="liking_fit">Liking Fit</string>
     <string name="start"><font color="#AAACAF">请使用下方面板上的相应按钮</font><br></br><font color="#34c86c">快速开始</font><font color="#AAACAF">或</font><font color="#34c86c">设定目标</font></string>
+    <string name="category_hint_txt">请在下方面板上按钮选择视频类型</string>
+    <string name="videolist_hint_txt">请在下方面板上按钮选择音乐或视频</string>
 </resources>

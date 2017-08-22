@@ -30,6 +30,6 @@
         android:visibility="gone"
         app:failed_view="@layout/stateview_fail_view"
         app:loading_view="@layout/stateview_loading_view"
-        app:success_view="@layout/layout_run_video_category"/>
+        app:success_view="@layout/layout_run_video_list"/>
 
 </FrameLayout>
