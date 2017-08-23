@@ -20,7 +20,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/text_color_grey"
-                    android:textSize="@dimen/spacing_24dp"
+                    android:textSize="36sp"
             />
 
             <TextView
@@ -29,8 +29,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/text_color_green"
                     android:layout_toRightOf="@id/text_welcome"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="29.3dp"
+                    android:layout_marginLeft="15dp"
+                    android:textSize="44sp"
             />
 
 
@@ -44,7 +44,7 @@
                 android:textColor="@color/text_color_green"
                 android:layout_below="@id/view_welcome"
                 android:layout_marginTop="15dp"
-                android:textSize="29.3dp"
+                android:textSize="36sp"
                 android:layout_centerHorizontal="true"
         />
 
@@ -63,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:textSize="15dp"
+                android:textSize="22sp"
                 android:layout_centerHorizontal="true"
         />
 
@@ -74,7 +74,7 @@
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_marginLeft="80dp"
-            android:layout_marginRight="66.7dp"
+            android:layout_marginRight="100dp"
             android:layout_toRightOf="@id/view_left">
 
 
@@ -90,7 +90,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/viewpager_await"
-                android:layout_marginTop="29dp"
+                android:layout_marginTop="44dp"
                 android:layout_centerHorizontal="true"
         />
 
