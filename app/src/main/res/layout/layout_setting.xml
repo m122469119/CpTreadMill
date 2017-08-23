@@ -5,77 +5,85 @@
               android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1"
-        android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="30sp"
+                android:text="系统设置"
+                android:textColor="@color/text_color_grey"
+        />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="68dp"
-            android:orientation="horizontal">
-
-            <!--<include-->
-                <!--android:id="@+id/layout_start_mode"-->
-                <!--layout="@layout/view_setting_card"-->
-                <!--android:layout_width="210dp"-->
-                <!--android:layout_height="290dp"-->
-                <!--android:layout_marginRight="98dp"-->
-                <!--/>-->
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal">
 
             <include
-                android:id="@+id/layout_await_time"
-                layout="@layout/view_setting_card"
-                android:layout_width="210dp"
-                android:layout_height="290dp"
-                android:layout_marginRight="98dp"/>
+                    android:id="@+id/layout_start_mode"
+                    layout="@layout/view_setting_card"
+                    android:layout_width="124dp"
+                    android:layout_height="250dp"
+            />
 
             <include
-                android:id="@+id/layout_sport_params"
-                layout="@layout/view_setting_card"
-                android:layout_width="210dp"
-                android:layout_height="290dp"/>
+                    android:id="@+id/layout_await_time"
+                    layout="@layout/view_setting_card"
+                    android:layout_width="124dp"
+                    android:layout_height="250dp"/>
+
+            <include
+                    android:id="@+id/layout_sport_params"
+                    layout="@layout/view_setting_card"
+                    android:layout_width="124dp"
+                    android:layout_height="250dp"/>
+
+            <include
+                    android:id="@+id/layout_gym_binding"
+                    layout="@layout/view_setting_card"
+                    android:layout_width="124dp"
+                    android:layout_height="250dp"
+            />
+
+            <include
+                    android:id="@+id/layout_network_connection"
+                    layout="@layout/view_setting_card"
+                    android:layout_width="124dp"
+                    android:layout_height="250dp"
+            />
+
+            <include
+                    android:id="@+id/layout_update"
+                    layout="@layout/view_setting_card"
+                    android:layout_width="124dp"
+                    android:layout_height="250dp"
+            />
 
         </LinearLayout>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/text_setting_below"
+                android:textSize="30sp"
+        />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="68dp"
-            android:orientation="horizontal">
-
-            <include
-                android:id="@+id/layout_gym_binding"
-                layout="@layout/view_setting_card"
-                android:layout_width="210dp"
-                android:layout_height="290dp"
-                android:layout_marginRight="98dp"/>
-
-            <include
-                android:id="@+id/layout_network_connection"
-                layout="@layout/view_setting_card"
-                android:layout_width="210dp"
-                android:layout_height="290dp"
-                android:layout_marginRight="98dp"/>
-
-            <include
-                android:id="@+id/layout_update"
-                layout="@layout/view_setting_card"
-                android:layout_width="210dp"
-                android:layout_height="290dp"/>
-        </LinearLayout>
     </LinearLayout>
 
     <TextView
-        android:id="@+id/setting_description_textView"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:background="@color/c179B9B9B"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="@dimen/textsize_20sp"/>
+            android:id="@+id/setting_description_textView"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:background="@color/c179B9B9B"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize_20sp"/>
 
 </LinearLayout>

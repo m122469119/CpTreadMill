@@ -80,8 +80,8 @@
 
         <com.liking.treadmill.widget.autoviewpager.InfiniteViewPager
                 android:id="@+id/viewpager_await"
-                android:layout_width="match_parent"
-                android:layout_height="380dp"
+                android:layout_width="1024dp"
+                android:layout_height="576dp"
                 android:layout_centerInParent="true"
         />
 
