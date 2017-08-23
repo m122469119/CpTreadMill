@@ -58,6 +58,7 @@
         />
 
         <TextView
+                android:id="@+id/text_please"
                 android:text="@string/text_await_below"
                 android:layout_below="@id/button_brace"
                 android:layout_width="wrap_content"

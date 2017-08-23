@@ -20,4 +20,8 @@
 
     <dimen name="run_bottom_height">270dp</dimen>
     <dimen name="run_head_height">270dp</dimen>
+
+    <item name="three_items" format="float" type="dimen">1.5</item>
+    <item name="five_items" format="float" type="dimen">1.25</item>
+    <item name="seven_items" format="float" type="dimen">1.16</item>
 </resources>

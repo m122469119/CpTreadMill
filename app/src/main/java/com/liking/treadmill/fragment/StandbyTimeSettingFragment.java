@@ -2,6 +2,7 @@ package com.liking.treadmill.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -17,6 +18,7 @@ import com.liking.treadmill.fragment.base.SerialPortFragment;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
+import com.liking.treadmill.widget.picker.CarouselPicker;
 import com.liking.treadmill.widget.timewheelview.OnWheelChangedListener;
 import com.liking.treadmill.widget.timewheelview.WheelItemAdapter;
 import com.liking.treadmill.widget.timewheelview.WheelView;
@@ -36,13 +38,14 @@ import butterknife.ButterKnife;
 public class StandbyTimeSettingFragment extends SerialPortFragment {
 
     @BindView(R.id.setting_standbytime_time)
-    WheelView mTimeWheelView;
+    CarouselPicker mTimePickerView;
     @BindView(R.id.setting_standbytime_hint1_TextView)
     TextView mHint1TextView;
     @BindView(R.id.setting_standbytime_hint2_TextView)
     TextView mHint2TextView;
 
-    private List<String> PLANETS = new ArrayList<String>();
+    CarouselPicker.CarouselViewAdapter mTextAdapter;
+    List<CarouselPicker.PickerItem> mTextItems = new ArrayList<>();
 
     @Nullable
     @Override
@@ -56,34 +59,40 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
 
 
     private void initData() {
-        PLANETS.add("01");
-        PLANETS.add("02");
-        PLANETS.add("03");
+        mTextItems.add(new CarouselPicker.TextItem("1", 20));
+        mTextItems.add(new CarouselPicker.TextItem("2", 20));
+        mTextItems.add(new CarouselPicker.TextItem("3", 20));
+        mTextAdapter = new CarouselPicker.CarouselViewAdapter(getActivity(), mTextItems, 0);
+        mTimePickerView.setAdapter(mTextAdapter);
     }
 
     private void initView() {
-        mTimeWheelView.setViewAdapter(new WheelItemAdapter(getActivity(), PLANETS));
-        mTimeWheelView.setCyclic(true);
         int standbyTime = Preference.getStandbyTime();
-        if(standbyTime == 60 ) {
-            mTimeWheelView.setCurrentItem(0);
-        } else if(standbyTime == 120) {
-            mTimeWheelView.setCurrentItem(1);
-        } else if(standbyTime == 180) {
-            mTimeWheelView.setCurrentItem(2);
+        if (standbyTime == 60) {
+            mTimePickerView.setCurrentItem(0);
+        } else if (standbyTime == 120) {
+            mTimePickerView.setCurrentItem(1);
+        } else if (standbyTime == 180) {
+            mTimePickerView.setCurrentItem(2);
         }
-        mTimeWheelView.addChangingListener(new OnWheelChangedListener(){
+        mTimePickerView.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onChanged(WheelView wheel, int oldValue, int newValue) {
-                int time = 1 ;
-                if("02".equals(PLANETS.get(newValue))) {
-                    time = 2;
-                } else if("03".equals(PLANETS.get(newValue))) {
-                    time = 3;
-                }
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                int time = Integer.parseInt(mTextItems.get(position).getText());
                 Preference.setStandbyTime(time * 60);
             }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
         });
+
 
         SpannableStringBuilder ssbh1 = new SpannableStringBuilder(ResourceUtils.getString(R.string.threadmill_standby_time_operate1_txt));
         ImageSpan isGradeUp = new ImageSpan(getActivity(), R.drawable.key_grade_up);
@@ -111,15 +120,15 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
             ((HomeActivity) getActivity()).setTitle("");
             ((HomeActivity) getActivity()).launchFullFragment(new SettingFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS) {
-            int index = mTimeWheelView.getCurrentItem();
-            index ++ ;
+            int index = mTimePickerView.getCurrentItem();
+            index++;
 //            if(index < PLANETS.size())index ++;
-            mTimeWheelView.setCurrentItem(index, true);
+            mTimePickerView.setCurrentItem(index, true);
         } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE) {
-            int index = mTimeWheelView.getCurrentItem();
-            index --;
+            int index = mTimePickerView.getCurrentItem();
+            index--;
 //            if(index < 0 )index = 0;
-            mTimeWheelView.setCurrentItem(index, true);
+            mTimePickerView.setCurrentItem(index, true);
         }
     }
 

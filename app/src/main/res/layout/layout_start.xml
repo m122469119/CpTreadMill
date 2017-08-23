@@ -2,14 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:gravity="center"
               android:orientation="vertical">
 
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
-            android:layout_marginRight="100dp"
+            android:layout_marginLeft="190dp"
+            android:layout_marginRight="190dp"
             android:layout_marginTop="100dp"
             android:orientation="horizontal">
 
@@ -66,11 +67,7 @@
                     android:textSize="22sp"/>
 
         </RelativeLayout>
-
-
     </LinearLayout>
-
-
     <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -83,6 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:paddingTop="20dp"
                 android:gravity="center"
         >
 
@@ -98,7 +96,7 @@
             />
 
             <TextView
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="20dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="OR"
@@ -110,7 +108,7 @@
 
             <TextView
                     android:id="@+id/text_set"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="20dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="SET"
@@ -123,6 +121,7 @@
 
             <RelativeLayout
                     android:layout_width="wrap_content"
+                    android:layout_marginTop="40dp"
                     android:layout_height="140dp">
 
                 <ImageView
@@ -152,10 +151,13 @@
             </RelativeLayout>
 
             <TextView
-                    android:layout_marginTop="35dp"
+                    android:id="@+id/text_please"
+                    android:layout_marginTop="20dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="22sp"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.8"
                     android:text="@string/start"/>
 
         </LinearLayout>
@@ -164,8 +166,8 @@
         <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="80dp">
-
+                android:layout_marginLeft="120dp"
+        >
 
             <com.liking.treadmill.widget.autoviewpager.InfiniteViewPager
                     android:id="@+id/viewpager_start"
@@ -178,7 +180,7 @@
                     android:id="@+id/indicator_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/viewpager_await"
+                    android:layout_below="@id/viewpager_start"
                     android:layout_marginTop="44dp"
                     android:layout_centerHorizontal="true"
             />
