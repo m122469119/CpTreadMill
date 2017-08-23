@@ -43,8 +43,10 @@ public class LikingThreadMillApplication extends BaseApplication {
     }
 
     private void disableWifi() {
-        WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
-        wifiManager.setWifiEnabled(false);
+        if(!EnvironmentUtils.Config.isDebugMode()) {
+            WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+            wifiManager.setWifiEnabled(false);
+        }
     }
 
     @Override

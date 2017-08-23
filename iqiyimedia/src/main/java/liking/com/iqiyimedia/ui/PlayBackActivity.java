@@ -1,3 +1,4 @@
+/*
 package liking.com.iqiyimedia.ui;
 
 import android.os.Bundle;
@@ -8,15 +9,16 @@ import com.aaron.android.framework.base.ui.BaseActivity;
 
 import liking.com.iqiyimedia.R;
 
-import static liking.com.iqiyimedia.ui.IqiyiVideoListFragment.IQIYI_VIDEO_DATATYPE;
 
+*/
 /**
  * Created on 2017/07/22
  * desc:
  *
  * @author: chenlei
  * @version:1.0
- */
+ *//*
+
 
 public class PlayBackActivity extends BaseActivity{
 
@@ -51,3 +53,4 @@ public class PlayBackActivity extends BaseActivity{
         fragmentTransaction.commit();
     }
 }
+*/

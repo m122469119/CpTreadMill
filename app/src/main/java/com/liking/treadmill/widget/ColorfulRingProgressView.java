@@ -4,17 +4,13 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.liking.treadmill.R;
 
@@ -53,7 +49,7 @@ public class ColorfulRingProgressView extends View {
             mFgColorStart = a.getColor(R.styleable.ColorfulRingProgressView_fgColorStart, 0xffffe400);
             mPercent = a.getFloat(R.styleable.ColorfulRingProgressView_percent, 75);
             mStartAngle = a.getFloat(R.styleable.ColorfulRingProgressView_startAngle, 0)+270;
-            mStrokeWidth = a.getDimensionPixelSize(R.styleable.ColorfulRingProgressView_strokeWidth, dp2px(21));
+            mStrokeWidth = a.getDimensionPixelSize(R.styleable.ColorfulRingProgressView_colorfulStrokeWidth, dp2px(21));
             mStartTagDrawable = (BitmapDrawable) a.getDrawable(R.styleable.ColorfulRingProgressView_startTagImg);
             System.out.println("**** m"+mStrokeWidth);
         } finally {

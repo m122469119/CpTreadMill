@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <com.aaron.android.framework.library.imageloader.HImageView
+        android:id="@+id/imageview_adv"
+        android:layout_width="515dp"
+        android:layout_height="279dp"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        fresco:failureImage="@drawable/run_adv"
+        fresco:failureImageScaleType="centerCrop"
+        fresco:placeholderImage="@drawable/run_adv"
+        fresco:placeholderImageScaleType="centerCrop"
+        android:visibility="invisible"/>
+
+    <com.liking.treadmill.widget.RunwayView
+        android:id="@+id/run_way_view"
+        android:layout_width="1020dp"
+        android:layout_height="376dp" />
+</LinearLayout>

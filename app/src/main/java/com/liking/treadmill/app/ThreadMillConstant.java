@@ -1,6 +1,10 @@
 package com.liking.treadmill.app;
 
+import android.support.v4.util.ArrayMap;
+
 import com.aaron.android.framework.library.storage.DiskStorageManager;
+import com.liking.treadmill.R;
+import com.liking.treadmill.entity.CategoryEntity;
 
 /**
  * 说明:
@@ -9,6 +13,21 @@ import com.aaron.android.framework.library.storage.DiskStorageManager;
  */
 
 public class ThreadMillConstant {
+
+    public static ArrayMap<Integer, CategoryEntity> CATEGORYRESOURCE = new ArrayMap<>();
+
+    static {
+        //电影
+        CATEGORYRESOURCE.put(1, new CategoryEntity(R.drawable.tab_category_movie_select, "电影"));
+        //动漫
+        CATEGORYRESOURCE.put(4, new CategoryEntity(R.drawable.tab_category_anime_select, "动漫"));
+        //电视剧
+        CATEGORYRESOURCE.put(2, new CategoryEntity(R.drawable.tab_category_tv_select, "电视剧"));
+        //综艺
+        CATEGORYRESOURCE.put(6, new CategoryEntity(R.drawable.tab_category_variety_select, "综艺"));
+        //脱口秀
+        CATEGORYRESOURCE.put(31, new CategoryEntity(R.drawable.tab_category_talkshow_select, "脱口秀"));
+    }
 
     /**
      * 下载失败，允许更新的次数
@@ -20,7 +39,7 @@ public class ThreadMillConstant {
      */
     private static String USB_FILE_PATH = "/mnt/usb_storage";
 
-    public static String USB_FILE_PATH_APK =  USB_FILE_PATH + "/lk/LikingTreadMill.apk";
+    public static String USB_FILE_PATH_APK = USB_FILE_PATH + "/lk/LikingTreadMill.apk";
 
     //1=>快速启动， 2=>设定目标， 3=>预设课程
     public static final int THREADMILL_MODE_SELECT_QUICK_START = 1;//快速启动

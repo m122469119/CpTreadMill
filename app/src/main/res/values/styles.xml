@@ -6,4 +6,10 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+    <style name="CustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@null</item>
+        <item name="tabIndicatorHeight">0dp</item>
+        <!--<item name="android:background">@color/tabs_bg</item>-->
+    </style>
+
 </resources>

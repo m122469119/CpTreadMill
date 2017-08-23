@@ -1,3 +1,4 @@
+/*
 package liking.com.iqiyimedia.ui;
 
 import android.app.ProgressDialog;
@@ -28,13 +29,15 @@ import static liking.com.iqiyimedia.IqiyiTestBean.DataType.ALBUMLIST;
 import static liking.com.iqiyimedia.IqiyiTestBean.DataType.CATEGORYLIST;
 import static liking.com.iqiyimedia.IqiyiTestBean.DataType.TOPLIST;
 
+*/
 /**
  * Created on 2017/07/24
  * desc:
  *
  * @author: chenlei
  * @version:1.0
- */
+ *//*
+
 
 public class IqiyiVideoListFragment extends BaseFragment implements IqiyiContract.IqiyiView{
 
@@ -150,10 +153,12 @@ public class IqiyiVideoListFragment extends BaseFragment implements IqiyiContrac
         mIqiyiPresenter.detachView(this);
     }
 
-    /**
+    */
+/**
      * 分类列表
      * @param categoryResult
-     */
+     *//*
+
     @Override
     public void setCategoryListView(CategoryListResult categoryResult) {
         dismissProgressDialog();
@@ -164,10 +169,12 @@ public class IqiyiVideoListFragment extends BaseFragment implements IqiyiContrac
         }
     }
 
-    /**
+    */
+/**
      * 专辑列表
      * @param result
-     */
+     *//*
+
     @Override
     public void setAlbumListView(AlbumListResult result) {
         dismissProgressDialog();
@@ -178,10 +185,12 @@ public class IqiyiVideoListFragment extends BaseFragment implements IqiyiContrac
         }
     }
 
-    /**
+    */
+/**
      * 排行榜列表
      * @param result
-     */
+     *//*
+
     @Override
     public void setTopListView(TopListResult result) {
         dismissProgressDialog();
@@ -200,11 +209,13 @@ public class IqiyiVideoListFragment extends BaseFragment implements IqiyiContrac
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    /**
+    */
+/**
      * 分类
      * @param data
      * @return
-     */
+     *//*
+
     private List<IqiyiTestBean> buildCategoryData(List<CategoryListResult.DataBean> data) {
         List<IqiyiTestBean> result = new ArrayList<>();
         for (CategoryListResult.DataBean crdb: data) {
@@ -217,11 +228,13 @@ public class IqiyiVideoListFragment extends BaseFragment implements IqiyiContrac
         return result;
     }
 
-    /**
+    */
+/**
      * 专辑
      * @param data
      * @return
-     */
+     *//*
+
     private List<IqiyiTestBean> buildAlbumListData(List<AlbumListResult.DataBean> data) {
         List<IqiyiTestBean> result = new ArrayList<>();
         for (AlbumListResult.DataBean album: data) {
@@ -234,11 +247,13 @@ public class IqiyiVideoListFragment extends BaseFragment implements IqiyiContrac
         return result;
     }
 
-    /**
+    */
+/**
      * 排行榜
      * @param data
      * @return
-     */
+     *//*
+
     private List<IqiyiTestBean> buildTopListData(List<TopListResult.DataBean> data) {
         List<IqiyiTestBean> result = new ArrayList<>();
         for (TopListResult.DataBean top: data) {
@@ -316,3 +331,4 @@ public class IqiyiVideoListFragment extends BaseFragment implements IqiyiContrac
         }
     }
 }
+*/
