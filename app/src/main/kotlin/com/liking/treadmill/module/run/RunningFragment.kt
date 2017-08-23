@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.aaron.android.framework.base.widget.refresh.StateView
+import com.aaron.android.framework.utils.DisplayUtils
 import com.aaron.android.framework.utils.ResourceUtils
 import com.liking.treadmill.R
 import com.liking.treadmill.R.id.layout_run_video_category_stateview
@@ -23,6 +24,7 @@ import com.liking.treadmill.widget.IToast
 import com.liking.treadmill.widget.ScrollSpeedLinearLayoutManger
 import kotlinx.android.synthetic.main.fragment_running.*
 import kotlinx.android.synthetic.main.layout_category_tablayout.view.*
+import kotlinx.android.synthetic.main.layout_run_bottom.*
 import kotlinx.android.synthetic.main.layout_run_content.view.*
 import kotlinx.android.synthetic.main.layout_run_head.view.*
 import kotlinx.android.synthetic.main.layout_run_video_category.*
@@ -55,6 +57,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     private lateinit var videoListAdapter: IqiyiVideoListAdapter
     private var videoTotal: Int = 1
     private var videoSelectedPosition: Int = 0
+
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater?.inflate(R.layout.fragment_running, container, false)
@@ -135,6 +138,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         super.onResume()
 
         layout_run_head.head_imageView.setOnClickListener {
+
             if (isInRunWayUI()) {
                 hiddenRunWayUI()
                 //显示catatory
@@ -143,25 +147,27 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 showRunWayUI()
                 hiddenVideoCategoryUI()
             }
+
         }
 
         layout_run_head.user_name_TextView.setOnClickListener {
             changeCategoryTab()
         }
+
         layout_run_head.text_gym_name.setOnClickListener {
 
             if (isInVideoCategoryUI()) {
                 hiddenVideoCategoryUI()
                 loadVideoList()
+            } else if (isInVideoListUI()) {
+                openVideoPlayBrowserUI()
             }
         }
         layout_run_head.text_time.setOnClickListener {
 
-            if(isInVideoListUI()) {
+            if (isInVideoListUI()) {
                 var currVideoSelectedPosition = videoSelectedPosition
                 var position = ++videoSelectedPosition
-                var smoothposition = position + 2
-//                video_list_recyclerView.scrollToPosition(smoothposition)
                 video_list_recyclerView.smoothScrollToPosition(position)
                 video_list_recyclerView.postDelayed({
                     if (video_list_recyclerView.findViewHolderForAdapterPosition(videoSelectedPosition) != null) {
@@ -278,42 +284,14 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * 跑道隐藏
      */
     fun showRunWayUI() {
-        //倒计时
-        //else
-        val y = layout_run_content.layout_run_way.translationY
-        var runWayAnimatorShow = ObjectAnimator.ofFloat(layout_run_content.layout_run_way,
-                "translationY", y, 0.0f)
-                .setDuration(animatorDuration)
-        runWayAnimatorShow.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {
-                layout_run_content.layout_run_way.visibility = View.VISIBLE
-            }
-
-            override fun onAnimationEnd(animation: Animator) {}
-            override fun onAnimationCancel(animation: Animator) {}
-            override fun onAnimationRepeat(animation: Animator) {}
-        })
-        runWayAnimatorShow.start()
+        showTranslationYUI(layout_run_content.layout_run_way, animatorDuration)
     }
 
     /**
      * 跑道隐藏
      */
     fun hiddenRunWayUI() {
-        val y = layout_run_content.layout_run_way.translationY
-        var runWayAnimatorHidden = ObjectAnimator.ofFloat(layout_run_content.layout_run_way,
-                "translationY", y, layout_run_content.layout_run_way.height.toFloat())
-                .setDuration(animatorDuration)
-        runWayAnimatorHidden.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {}
-            override fun onAnimationEnd(animation: Animator) {
-                layout_run_content.layout_run_way.visibility = View.INVISIBLE
-            }
-
-            override fun onAnimationCancel(animation: Animator) {}
-            override fun onAnimationRepeat(animation: Animator) {}
-        })
-        runWayAnimatorHidden.start()
+        hiddenTranslationYUI(layout_run_content.layout_run_way, animatorDuration)
     }
 
     /**
@@ -342,6 +320,90 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     fun hiddenVideoListUI() {
         hiddenScaleUI(layout_run_content.layout_run_video_list_stateview)
+    }
+
+    /**
+     * 打开播放页面
+     */
+    fun openVideoPlayBrowserUI() {
+        //hidden列表向下移
+        hiddenTranslationYUI(layout_run_content.layout_run_video_list_stateview, animatorDuration)
+
+        //hidden head left
+        ObjectAnimator.ofFloat(
+                layout_run_head.layout_run_head_left,
+                "translationX",
+                layout_run_head.layout_run_head_left.translationX,
+                -layout_run_head.layout_run_head_left.width.toFloat())
+                .setDuration(animatorDuration)
+                .start()
+
+        //hidden head right
+       var obj =  ObjectAnimator.ofFloat(
+                layout_run_head.layout_run_head_right,
+                "translationX",
+                layout_run_head.layout_run_head_right.translationX,
+                layout_run_head.layout_run_head_right.width.toFloat())
+                .setDuration(animatorDuration)
+        obj.addListener(object : Animator.AnimatorListener {
+                    override fun onAnimationRepeat(animation: Animator?) {}
+                    override fun onAnimationEnd(animation: Animator?) {
+                        layout_run_video_play.visibility = View.VISIBLE
+                        childFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.layout_run_video_play, VideoPlayBrowserFragment.newInstance())
+                                .commitAllowingStateLoss()
+                        showTranslationYUI(run_bottom_layout_bg, animatorDuration)
+                    }
+                    override fun onAnimationCancel(animation: Animator?) {}
+                    override fun onAnimationStart(animation: Animator?) {}
+                })
+        obj.start()
+    }
+
+    /**
+     * 关闭播放页面
+     */
+    fun closeVideoPlayBrowserUI() {
+
+        //        layout_run_video_play.visibility = View.GONE
+        hiddenTranslationYUI(run_bottom_layout_bg, animatorDuration)
+        //show 播放列表向上移
+        showTranslationYUI(layout_run_content.layout_run_video_list_stateview, animatorDuration)
+        //show head left
+        //show head right
+    }
+
+    /**
+     * Y位移动画显示
+     */
+    fun hiddenTranslationYUI(view: View, duration: Long) {
+        val y = view.translationY
+        var translationYAnimatorHidden = ObjectAnimator.ofFloat(view,
+                "translationY", y, view.height.toFloat())
+                .setDuration(duration)
+        translationYAnimatorHidden.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {}
+            override fun onAnimationEnd(animation: Animator) {
+                view.visibility = View.INVISIBLE
+            }
+
+            override fun onAnimationCancel(animation: Animator) {}
+            override fun onAnimationRepeat(animation: Animator) {}
+        })
+        translationYAnimatorHidden.start()
+    }
+
+    /**
+     * Y位移动画隐藏
+     */
+    fun showTranslationYUI(view: View, duration: Long) {
+        view.visibility = View.VISIBLE
+        val y = view.translationY
+        ObjectAnimator.ofFloat(view,
+                "translationY", y, 0.0f)
+                .setDuration(duration)
+                .start()
     }
 
     /**

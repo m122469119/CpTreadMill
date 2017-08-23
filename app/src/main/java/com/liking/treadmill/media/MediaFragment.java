@@ -25,7 +25,7 @@ public class MediaFragment extends SerialPortFragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_media, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_media_browser, null);
         webView = (WebView) view.findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setUseWideViewPort(true);
