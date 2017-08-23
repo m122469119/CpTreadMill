@@ -14,11 +14,7 @@ import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.db.entity.Member;
-import com.liking.treadmill.fragment.AwaitActionFragment;
-import com.liking.treadmill.fragment.StartFragment;
-import com.liking.treadmill.fragment.StartSettingFragment;
-import com.liking.treadmill.fragment.UpdateFragment;
-import com.liking.treadmill.fragment.WelcomeFragment;
+import com.liking.treadmill.fragment.*;
 import com.liking.treadmill.message.AdvertisementMessage;
 import com.liking.treadmill.message.FanStateMessage;
 import com.liking.treadmill.message.GymBindSuccessMessage;
@@ -84,12 +80,14 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        launchInit();
+       // launchInit();
+        launchFragment(new StartFragment());
         if (mUserLoginPresenter == null) {
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
         initAdViews();
         mLKAppSocketLogQueue.put(TAG, "onCreate(), 初始化主界面");
+
     }
 
     @Override

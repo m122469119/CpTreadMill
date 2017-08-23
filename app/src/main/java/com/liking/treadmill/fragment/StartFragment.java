@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
+import com.liking.treadmill.adapter.BannerPagerAdapter;
 import com.liking.treadmill.fragment.base.SerialPortFragment;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
@@ -25,6 +27,10 @@ import com.liking.treadmill.widget.IToast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.liking.treadmill.widget.autoviewpager.InfiniteViewPager;
+import com.liking.treadmill.widget.autoviewpager.indicator.IconPageIndicator;
+
+import java.util.LinkedList;
 
 /**
  * Created on 16/12/27.
@@ -34,6 +40,9 @@ import butterknife.ButterKnife;
  */
 
 public class StartFragment extends SerialPortFragment {
+
+    public static final long AUTO_SCROLL = 8 * 1000;
+
     @BindView(R.id.user_name_TextView)
     TextView mUserNameTextView;
     @BindView(R.id.head_imageView)
@@ -49,6 +58,16 @@ public class StartFragment extends SerialPortFragment {
     @BindView(R.id.image_set)
     ImageView mSetImageView;
 
+
+    @BindView(R.id.viewpager_start)
+    InfiniteViewPager mViewpager;
+    @BindView(R.id.indicator_start)
+    IconPageIndicator mIndicator;
+    BannerPagerAdapter mBannerPagerAdapter;
+
+    @BindView(R.id.text_please)
+    TextView mPleaseView;
+
     AnimatorSet mQuickAnimator, mSetAnimator;
 
     @Nullable
@@ -56,8 +75,23 @@ public class StartFragment extends SerialPortFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_start, container, false);
         ButterKnife.bind(this, rootView);
+        initView();
         initAnimation();
         return rootView;
+    }
+
+    private void initView() {
+
+        mBannerPagerAdapter= new BannerPagerAdapter(getActivity());
+        LinkedList<String> strings = new LinkedList<>();
+        strings.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3426174069,2716068976&fm=26&gp=0.jpg");
+        strings.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1015817196,3119022711&fm=26&gp=0.jpg");
+        mBannerPagerAdapter.setData(strings);
+        mViewpager.setAdapter(mBannerPagerAdapter);
+        mViewpager.setAutoScrollTime(AUTO_SCROLL);
+        mIndicator.setViewPager(mViewpager);
+        mViewpager.startAutoScroll();
+        mPleaseView.setText(Html.fromHtml("<font color=\"#AAACAF\">请使用下方面板上的相应按钮</font><br></br><font color=\"#34c86c\">快速开始</font><font color=\"#AAACAF\">或</font><font color=\"#34c86c\">设定目标</font>"));
     }
 
     @Override
@@ -150,18 +184,18 @@ public class StartFragment extends SerialPortFragment {
      * 动画
      */
     private void initAnimation() {
-        ObjectAnimator objectAnimatorX = ObjectAnimator.ofFloat(mQuickstartTextView, "scaleX", 1, 2, 1);
-        ObjectAnimator objectAnimatorY = ObjectAnimator.ofFloat(mQuickstartTextView, "scaleY", 1, 2, 1);
-        ObjectAnimator imageX = ObjectAnimator.ofFloat(mQuickImageView, "scaleX", 1, 2, 1);
-        ObjectAnimator imageY = ObjectAnimator.ofFloat(mQuickImageView, "scaleY", 1, 2, 1);
+        ObjectAnimator objectAnimatorX = ObjectAnimator.ofFloat(mQuickstartTextView, "scaleX", 1F, 1.5F, 1F);
+        ObjectAnimator objectAnimatorY = ObjectAnimator.ofFloat(mQuickstartTextView, "scaleY", 1F, 1.5F, 1F);
+        ObjectAnimator imageX = ObjectAnimator.ofFloat(mQuickImageView, "scaleX", 1F, 1.5F, 1F);
+        ObjectAnimator imageY = ObjectAnimator.ofFloat(mQuickImageView, "scaleY", 1F, 1.5F, 1F);
         mQuickAnimator = new AnimatorSet();
         mQuickAnimator.setDuration(2000);
         mQuickAnimator.playTogether(objectAnimatorX, objectAnimatorY, imageX, imageY);
 
-        ObjectAnimator setAnimatorX = ObjectAnimator.ofFloat(mSetTextView, "scaleX", 1, 2, 1);
-        ObjectAnimator setAnimatorY = ObjectAnimator.ofFloat(mSetTextView, "scaleY", 1, 2, 1);
-        ObjectAnimator setImageAnimatorX = ObjectAnimator.ofFloat(mSetImageView, "scaleX", 1, 2, 1);
-        ObjectAnimator setImageAnimatorY = ObjectAnimator.ofFloat(mSetImageView, "scaleY", 1, 2, 1);
+        ObjectAnimator setAnimatorX = ObjectAnimator.ofFloat(mSetTextView, "scaleX", 1F, 1.5F, 1F);
+        ObjectAnimator setAnimatorY = ObjectAnimator.ofFloat(mSetTextView, "scaleY", 1F, 1.5F, 1F);
+        ObjectAnimator setImageAnimatorX = ObjectAnimator.ofFloat(mSetImageView, "scaleX", 1F, 1.5F, 1F);
+        ObjectAnimator setImageAnimatorY = ObjectAnimator.ofFloat(mSetImageView, "scaleY", 1F, 1.5F, 1F);
         mSetAnimator = new AnimatorSet();
         mSetAnimator.setDuration(2000);
         mSetAnimator.playTogether(setAnimatorX, setAnimatorY, setImageAnimatorX, setImageAnimatorY);

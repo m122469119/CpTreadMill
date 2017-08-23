@@ -3,11 +3,13 @@ package com.liking.treadmill.fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import android.widget.TextView;
 import butterknife.BindView;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
@@ -32,6 +34,8 @@ import com.liking.treadmill.widget.autoviewpager.InfiniteViewPager;
 import com.liking.treadmill.widget.autoviewpager.indicator.IconPageIndicator;
 import de.greenrobot.event.EventBus;
 
+import java.util.LinkedList;
+
 /**
  * Created on 16/12/15.
  */
@@ -45,6 +49,8 @@ public class AwaitActionFragment extends SerialPortFragment {
     @BindView(R.id.indicator_await)
     IconPageIndicator mIndicator;
     BannerPagerAdapter mBannerPagerAdapter;
+    @BindView(R.id.text_please)
+    TextView mPleaseView;
 
     @Nullable
     @Override
@@ -146,9 +152,15 @@ public class AwaitActionFragment extends SerialPortFragment {
 
     private void initViews() {
         mBannerPagerAdapter= new BannerPagerAdapter(getActivity());
+        LinkedList<String> strings = new LinkedList<>();
+        strings.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3426174069,2716068976&fm=26&gp=0.jpg");
+        strings.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1015817196,3119022711&fm=26&gp=0.jpg");
+        mBannerPagerAdapter.setData(strings);
         mViewpager.setAdapter(mBannerPagerAdapter);
         mViewpager.setAutoScrollTime(AUTO_SCROLL);
         mIndicator.setViewPager(mViewpager);
+        mViewpager.startAutoScroll();
+        mPleaseView.setText(Html.fromHtml("<font color=\"#85878e\">请</font><font color=\"#34c86c\">在下方面板上刷手环处刷手环</font><font color=\"#85878e\">开启跑步机</font>"));
     }
 
 }

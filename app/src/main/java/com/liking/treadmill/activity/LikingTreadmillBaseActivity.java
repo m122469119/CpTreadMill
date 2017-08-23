@@ -121,7 +121,6 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
         mTimeTextView.setText(getToolBarTime());
     }
 
-
     /**
      * 获取时间
      * @return

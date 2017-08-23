@@ -5,6 +5,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -35,10 +36,10 @@ import static com.liking.treadmill.app.ThreadMillConstant.THREADMILL_SYSTEMSETTI
  * @version 1.0.0
  */
 public class SettingFragment extends SerialPortFragment {
-//    private static final int INDEX_START = 0;
-    private static final int INDEX_AWAIT_TIME = 0 ;// INDEX_START + 1;
+   // private static final int INDEX_START = 0;
+    private static final int INDEX_AWAIT_TIME = 0;
     private static final int INDEX_SPORT_PARAMS = INDEX_AWAIT_TIME + 1;
-//    private static final int INDEX_USER_SETTING = INDEX_SPORT_PARAMS + 1;
+    //    private static final int INDEX_USER_SETTING = INDEX_SPORT_PARAMS + 1;
 //    private static final int INDEX_LANGUAGE_SETTING = INDEX_USER_SETTING + 1;
     private static final int INDEX_GYM_BINDING = INDEX_SPORT_PARAMS + 1;
     private static final int INDEX_NETWORK_CONNECTION = INDEX_GYM_BINDING + 1;
@@ -49,7 +50,7 @@ public class SettingFragment extends SerialPortFragment {
     View mAwaitTimeView;
     @BindView(R.id.layout_sport_params)
     View mSportParamsView;
-//    @BindView(R.id.layout_user_setting)
+    //    @BindView(R.id.layout_user_setting)
 //    View mUserSettingView;
 //    @BindView(R.id.layout_language_setting)
 //    View mLanguageSettingView;
@@ -61,6 +62,9 @@ public class SettingFragment extends SerialPortFragment {
     View mUpdateView;
     @BindView(R.id.setting_description_textView)
     TextView mSettingDescriptionTextView;
+
+    @BindView(R.id.text_please)
+    TextView mPleaseText;
 
     private int mCurrentSelectSettingIndex = 0;
 
@@ -84,7 +88,7 @@ public class SettingFragment extends SerialPortFragment {
 
     private void initViews() {
         initSettingViews();
-//        initSettingCard(mSettingItemMap.get(INDEX_START), R.string.setting_start_mode, R.drawable.setting_start);
+   //     initSettingCard(mSettingItemMap.get(INDEX_START), R.string.setting_start_mode, R.drawable.setting_start);
         initSettingCard(mSettingItemMap.get(INDEX_AWAIT_TIME), R.string.setting_await_time, R.drawable.setting_await);
         initSettingCard(mSettingItemMap.get(INDEX_SPORT_PARAMS), R.string.setting_sport_params, R.drawable.setting_sport);
 //        initSettingCard(mSettingItemMap.get(INDEX_USER_SETTING), R.string.setting_user_setting, R.drawable.setting_user_param);
@@ -102,10 +106,11 @@ public class SettingFragment extends SerialPortFragment {
         mSettingDescriptionTextView.setText(spannableStringBuilder);
 //        setCurrentSettingItem(INDEX_START);
         setCurrentSettingItem(INDEX_AWAIT_TIME);
+        mPleaseText.setText(Html.fromHtml("<font color=\"#85878e\">请</font><font color=\"#34c86c\">在下方面板上按钮</font><font color=\"#85878e\">选择设置类别</font>"));
     }
 
     private void initSettingViews() {
-//        mSettingItemMap.put(INDEX_START, mStartModeView);
+      //  mSettingItemMap.put(INDEX_START, mStartModeView);
         mSettingItemMap.put(INDEX_AWAIT_TIME, mAwaitTimeView);
         mSettingItemMap.put(INDEX_SPORT_PARAMS, mSportParamsView);
 //        mSettingItemMap.put(INDEX_USER_SETTING, mUserSettingView);
@@ -127,9 +132,47 @@ public class SettingFragment extends SerialPortFragment {
 
     private void setCurrentSettingItem(int index) {
         View lastSelectedView = mSettingItemMap.get(mCurrentSelectSettingIndex);
-        lastSelectedView.setBackgroundResource(R.drawable.setting_car_normal);
+        View iconView = lastSelectedView.findViewById(R.id.setting_card_icon);
+
+        switch (mCurrentSelectSettingIndex) {
+
+            case INDEX_AWAIT_TIME:
+                iconView.setBackgroundResource(R.drawable.setting_await);
+                break;
+            case INDEX_SPORT_PARAMS:
+                iconView.setBackgroundResource(R.drawable.setting_sport);
+                break;
+            case INDEX_GYM_BINDING:
+                iconView.setBackgroundResource(R.drawable.setting_gym_bind);
+                break;
+            case INDEX_NETWORK_CONNECTION:
+                iconView.setBackgroundResource(R.drawable.setting_network);
+                break;
+            case INDEX_UPDATE:
+                iconView.setBackgroundResource(R.drawable.setting_update);
+                break;
+        }
+
         View currentView = mSettingItemMap.get(index);
-        currentView.setBackgroundResource(R.drawable.setting_card_selected);
+        View currentIconView = currentView.findViewById(R.id.setting_card_icon);
+
+        switch (index) {
+            case INDEX_AWAIT_TIME:
+                currentIconView.setBackgroundResource(R.drawable.setting_await_checked);
+                break;
+            case INDEX_SPORT_PARAMS:
+                currentIconView.setBackgroundResource(R.drawable.setting_sport_checked);
+                break;
+            case INDEX_GYM_BINDING:
+                currentIconView.setBackgroundResource(R.drawable.setting_gym_bind_checked);
+                break;
+            case INDEX_NETWORK_CONNECTION:
+                currentIconView.setBackgroundResource(R.drawable.setting_network_checked);
+                break;
+            case INDEX_UPDATE:
+                currentIconView.setBackgroundResource(R.drawable.setting_update_checked);
+                break;
+        }
         mCurrentSelectSettingIndex = index;
     }
 
@@ -185,13 +228,13 @@ public class SettingFragment extends SerialPortFragment {
 
     private void selectLast() {
         int currentIndex = mCurrentSelectSettingIndex;
-        currentIndex = currentIndex == /**INDEX_START*/ INDEX_AWAIT_TIME ? INDEX_UPDATE : currentIndex - 1;
+        currentIndex = currentIndex == /**INDEX_START*/INDEX_AWAIT_TIME ? INDEX_UPDATE : currentIndex - 1;
         setCurrentSettingItem(currentIndex);
     }
 
     private void selectNext() {
         int currentIndex = mCurrentSelectSettingIndex;
-        currentIndex = currentIndex == INDEX_UPDATE ? /**INDEX_START*/ INDEX_AWAIT_TIME : currentIndex + 1;
+        currentIndex = currentIndex == INDEX_UPDATE ? /**INDEX_START*/INDEX_AWAIT_TIME : currentIndex + 1;
         setCurrentSettingItem(currentIndex);
     }
 
@@ -201,6 +244,6 @@ public class SettingFragment extends SerialPortFragment {
     }
 
     public void launchFragment(Fragment fragment) {
-        ((HomeActivity)getActivity()).launchFullFragment(fragment);
+        ((HomeActivity) getActivity()).launchFullFragment(fragment);
     }
 }
