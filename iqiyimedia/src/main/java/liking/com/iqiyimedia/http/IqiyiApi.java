@@ -3,6 +3,7 @@ package liking.com.iqiyimedia.http;
 import liking.com.iqiyimedia.http.result.AlbumListResult;
 import liking.com.iqiyimedia.http.result.CategoryListResult;
 import liking.com.iqiyimedia.http.result.TopListResult;
+import liking.com.iqiyimedia.http.result.VideoInfoResult;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -17,8 +18,6 @@ import retrofit2.http.Query;
 
 public interface IqiyiApi {
 
-
-
     @GET(Urls.IQIYI_CATEGORY_LIST)
     Call<CategoryListResult> getCategoryList();
 
@@ -29,11 +28,16 @@ public interface IqiyiApi {
     Call<TopListResult> getTopList(@Query("categoryId") String categoryId,
                                    @Query("topType") String topType);
 
+    @GET(Urls.IQIYI_VIDEO_INFO)
+    Call<VideoInfoResult> getVideoInfo(@Query("qipuId") String tvQipuId);
+
     class Urls {
-        public static final String IQIYI_CATEGORY_LIST = "category/list.json" ;
+        static final String IQIYI_CATEGORY_LIST = "category/list.json";
 
-        public static final String IQIYI_ALBUM_LIST = "album/list.json" ;
+        static final String IQIYI_ALBUM_LIST = "album/list.json";
 
-        public static final String IQIYI_TOP_LIST = "top/list.json" ;
+        static final String IQIYI_TOP_LIST = "top/list.json";
+
+        static final String IQIYI_VIDEO_INFO = "video/info.json";
     }
 }

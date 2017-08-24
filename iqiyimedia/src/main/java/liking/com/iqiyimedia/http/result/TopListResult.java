@@ -172,7 +172,7 @@ public class TopListResult extends IqiyiResult {
         @SerializedName("sourceQipuId")
         private int sourceQipuId;
         @SerializedName("playcnt")
-        private int playcnt;
+        private String playcnt;
         @SerializedName("timeLength")
         private int timeLength;
         @SerializedName("ownerAlbumId")
@@ -238,9 +238,9 @@ public class TopListResult extends IqiyiResult {
         @SerializedName("swf")
         private String swf;
         @SerializedName("tvIds")
-        private List<Integer> tvIds;
+        private List<String> tvIds;
         @SerializedName("tvQipuIds")
-        private List<Integer> tvQipuIds;
+        private List<String> tvQipuIds;
         @SerializedName("threeCtgs")
         private List<ThreeCtgsBean> threeCtgs;
         @SerializedName("creditList")
@@ -400,11 +400,11 @@ public class TopListResult extends IqiyiResult {
             this.sourceQipuId = sourceQipuId;
         }
 
-        public int getPlaycnt() {
+        public String getPlaycnt() {
             return playcnt;
         }
 
-        public void setPlaycnt(int playcnt) {
+        public void setPlaycnt(String playcnt) {
             this.playcnt = playcnt;
         }
 
@@ -664,19 +664,19 @@ public class TopListResult extends IqiyiResult {
             this.swf = swf;
         }
 
-        public List<Integer> getTvIds() {
+        public List<String> getTvIds() {
             return tvIds;
         }
 
-        public void setTvIds(List<Integer> tvIds) {
+        public void setTvIds(List<String> tvIds) {
             this.tvIds = tvIds;
         }
 
-        public List<Integer> getTvQipuIds() {
+        public List<String> getTvQipuIds() {
             return tvQipuIds;
         }
 
-        public void setTvQipuIds(List<Integer> tvQipuIds) {
+        public void setTvQipuIds(List<String> tvQipuIds) {
             this.tvQipuIds = tvQipuIds;
         }
 

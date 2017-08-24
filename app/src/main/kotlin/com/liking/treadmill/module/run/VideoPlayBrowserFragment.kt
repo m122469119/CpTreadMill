@@ -29,7 +29,7 @@ import android.webkit.WebViewClient
 class VideoPlayBrowserFragment : BaseFragment() {
 
     private var mediaBrowserWebview: WebView? = null
-    private var h5url: String = "http://m.iqiyi.com/v_19rrolm54g.html?vfm=newvfm"
+    private var h5url: String = ""
 
     companion object {
         val H5URL_KEY = "h5url"

@@ -80,8 +80,8 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // launchInit();
-        launchFragment(new MotionParamSettingFragment());
+        launchInit();
+       // launchFragment(new StartFragment());
         if (mUserLoginPresenter == null) {
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }

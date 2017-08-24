@@ -11,6 +11,7 @@ import liking.com.iqiyimedia.http.callback.BaseRequestCallback;
 import liking.com.iqiyimedia.http.result.AlbumListResult;
 import liking.com.iqiyimedia.http.result.CategoryListResult;
 import liking.com.iqiyimedia.http.result.TopListResult;
+import liking.com.iqiyimedia.http.result.VideoInfoResult;
 import retrofit2.Call;
 
 /**
@@ -82,5 +83,10 @@ public class IqiyiApiService {
     public static void getTopList(Object tag, String categoryId, String topType, BaseRequestCallback<TopListResult> callback) {
         new RetrofitRequest<TopListResult>
                 (addRequestCalls(tag, getIqiyiApi().getTopList(categoryId, topType))).execute(callback);
+    }
+
+    public static void getVideoInfo(Object tag, String tvQipuId, BaseRequestCallback<VideoInfoResult> callback) {
+        new RetrofitRequest<VideoInfoResult>
+                (addRequestCalls(tag, getIqiyiApi().getVideoInfo(tvQipuId))).execute(callback);
     }
 }

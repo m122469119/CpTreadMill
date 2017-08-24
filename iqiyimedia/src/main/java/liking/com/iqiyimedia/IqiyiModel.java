@@ -5,6 +5,7 @@ import liking.com.iqiyimedia.http.callback.BaseRequestCallback;
 import liking.com.iqiyimedia.http.result.AlbumListResult;
 import liking.com.iqiyimedia.http.result.CategoryListResult;
 import liking.com.iqiyimedia.http.result.TopListResult;
+import liking.com.iqiyimedia.http.result.VideoInfoResult;
 
 /**
  * Created on 2017/07/24
@@ -28,4 +29,7 @@ public class IqiyiModel {
         IqiyiApiService.getTopList(tag, categoryId, topType, callback);
     }
 
+    public void getVideoInfo(Object tag, String tvQipuId, BaseRequestCallback<VideoInfoResult> baseRequestCallback) {
+        IqiyiApiService.getVideoInfo(tag, tvQipuId, baseRequestCallback);
+    }
 }

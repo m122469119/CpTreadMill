@@ -13,6 +13,7 @@ import liking.com.iqiyimedia.http.callback.BaseRequestCallback;
 import liking.com.iqiyimedia.http.result.AlbumListResult;
 import liking.com.iqiyimedia.http.result.CategoryListResult;
 import liking.com.iqiyimedia.http.result.TopListResult;
+import liking.com.iqiyimedia.http.result.VideoInfoResult;
 
 /**
  * Created on 2017/07/24
@@ -30,6 +31,8 @@ public class IqiyiContract {
 
     public final static int IQIYI_RESPONSE_FAIL_ALBUMLIST = 3;
 
+    public final static int IQIYI_RESPONSE_FAIL_VIDEOINFO = 4;
+
     public interface IqiyiView extends BaseView {
 
         void setCategoryListView(CategoryListResult categoryResult);
@@ -37,6 +40,8 @@ public class IqiyiContract {
         void setAlbumListView(AlbumListResult result);
 
         void setTopListView(TopListResult result);
+
+        void setVideoInfoView(VideoInfoResult result);
 
         void showFailView(String message, int failType);
     }
@@ -60,6 +65,10 @@ public class IqiyiContract {
             IqiyiApiService.unregister(tag);
         }
 
+        /**
+         * 获取分类列表
+         * @param tag
+         */
         public void getCategoryList(Object tag) {
             mIqiyiModel.getCategoryList(tag, new BaseRequestCallback<CategoryListResult>() {
                 @Override
@@ -74,6 +83,11 @@ public class IqiyiContract {
             });
         }
 
+        /**
+         * 获取专辑列表
+         * @param tag
+         * @param categoryId
+         */
         public void getAlbumList(Object tag, String categoryId) {
             mIqiyiModel.getAlbumList(tag, categoryId, new BaseRequestCallback<AlbumListResult>() {
                 @Override
@@ -88,6 +102,11 @@ public class IqiyiContract {
             });
         }
 
+        /**
+         * 获取排行榜列表
+         * @param tag
+         * @param categoryId
+         */
         public void getTopList(Object tag, String categoryId) {
             mIqiyiModel.getTopList(tag, categoryId, "4", new BaseRequestCallback<TopListResult>() {
                 @Override
@@ -98,6 +117,20 @@ public class IqiyiContract {
                 @Override
                 public void onFailure(RequestError error) {
                     mView.showFailView(error.getMessage(), IQIYI_RESPONSE_FAIL_TOPLIST);
+                }
+            });
+        }
+
+        public void getVideoInfo(Object tag, String tvQipuId) {
+            mIqiyiModel.getVideoInfo(tag, tvQipuId, new BaseRequestCallback<VideoInfoResult>() {
+                @Override
+                public void success(VideoInfoResult result) {
+                    mView.setVideoInfoView(result);
+                }
+
+                @Override
+                public void onFailure(RequestError error) {
+                    mView.showFailView(error.getMessage(), IQIYI_RESPONSE_FAIL_VIDEOINFO);
                 }
             });
         }
