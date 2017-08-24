@@ -2,6 +2,7 @@ package com.liking.treadmill.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -33,16 +34,15 @@ import butterknife.ButterKnife;
 public class MotionParamSettingFragment extends SerialPortFragment {
 
 
-    @BindView(R.id.motion_param_icon_ImageView)
-    ImageView mMotionParamIcon;
     @BindView(R.id.motion_param_value_TextView)
     TextView mMotionParamValue;
-    @BindView(R.id.motion_param_unit_TextView)
-    TextView mMotionParamUnit;
     @BindView(R.id.motion_param_hint1_TextView)
     TextView mHint1TextView;
     @BindView(R.id.motion_param_hint2_TextView)
     TextView mHint2TextView;
+
+    @BindView(R.id.text_please)
+    TextView mTextPlease;
     private int maxRuntime ;
 
     @Nullable
@@ -61,9 +61,9 @@ public class MotionParamSettingFragment extends SerialPortFragment {
     }
 
     private void initView() {
-        mMotionParamIcon.setImageResource(R.drawable.icon_motion_param_time);
+   //     mMotionParamIcon.setImageResource(R.drawable.icon_motion_param_time);
         mMotionParamValue.setText(String.valueOf(maxRuntime));
-        mMotionParamUnit.setText("min");
+     //   mMotionParamUnit.setText("min");
 
         SpannableStringBuilder ssbh1 = new SpannableStringBuilder(ResourceUtils.getString(R.string.threadmill_motion_param_maxtime_hint_txt));
         ImageSpan isGradeUp = new ImageSpan(getActivity(), R.drawable.key_grade_up);
@@ -76,6 +76,8 @@ public class MotionParamSettingFragment extends SerialPortFragment {
         ImageSpan imageSpanBack = new ImageSpan(getActivity(), R.drawable.key_back);
         ssbh2.setSpan(imageSpanBack, 9, 11, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         mHint2TextView.setText(ssbh2);
+
+        mTextPlease.setText(Html.fromHtml("<font color=\"#85878e\">请</font><font color=\"#34c86c\">在下方面板上按钮</font><font color=\"#85878e\">选择目标</font>"));
     }
 
     @Override

@@ -351,7 +351,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                         layout_run_video_play.visibility = View.VISIBLE
                         childFragmentManager
                                 .beginTransaction()
-                                .replace(R.id.layout_run_video_play, VideoPlayBrowserFragment.newInstance())
+                                .replace(R.id.layout_run_video_play, VideoPlayBrowserFragment.newInstance("http://m.iqiyi.com/v_19rrolm54g.html?vfm=newvfm"))
                                 .commitAllowingStateLoss()
                         showTranslationYUI(run_bottom_layout_bg, animatorDuration)
                     }
