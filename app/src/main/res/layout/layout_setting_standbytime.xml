@@ -38,11 +38,8 @@
 
         <com.liking.treadmill.widget.picker.CarouselPicker
                 android:id="@+id/setting_standbytime_time"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#CCC"
+                android:layout_width="1024dp"
+                android:layout_height="match_parent"
                 app:items_visible="three" />
     </LinearLayout>
 

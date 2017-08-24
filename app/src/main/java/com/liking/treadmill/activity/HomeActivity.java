@@ -81,7 +81,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
        // launchInit();
-        launchFragment(new StartFragment());
+        launchFragment(new StandbyTimeSettingFragment());
         if (mUserLoginPresenter == null) {
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
