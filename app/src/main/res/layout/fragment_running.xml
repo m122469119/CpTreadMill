@@ -25,10 +25,17 @@
                 layout="@layout/layout_run_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="87dp"/>
+                android:layout_marginTop="80dp"/>
 
             <FrameLayout
                 android:id="@+id/layout_run_video_play"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+
+            <include
+                android:id="@+id/layout_run_finish"
+                layout="@layout/layout_finish"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone"/>
@@ -38,10 +45,26 @@
         <include
             android:id="@+id/layout_run_bottom"
             layout="@layout/layout_run_bottom"
+            android:paddingLeft="126dp"
+            android:paddingRight="126dp"
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="1"/>
 
     </LinearLayout>
+
+    <include
+        android:id="@+id/layout_run_prepare"
+        layout="@layout/layout_prepare"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+    <include
+        android:id="@+id/layout_run_pause"
+        layout="@layout/layout_pause"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </FrameLayout>

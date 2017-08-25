@@ -26,7 +26,11 @@ public class IqiyiModel {
     }
 
     public void getTopList(Object tag, String categoryId, String topType, BaseRequestCallback<TopListResult> callback) {
-        IqiyiApiService.getTopList(tag, categoryId, topType, callback);
+        String limit = "";
+        if("31".equals(categoryId)) { //脱口秀
+            limit = "20";//显示数量大小，不限制会timeout
+        }
+        IqiyiApiService.getTopList(tag, categoryId, topType, limit, callback);
     }
 
     public void getVideoInfo(Object tag, String tvQipuId, BaseRequestCallback<VideoInfoResult> baseRequestCallback) {

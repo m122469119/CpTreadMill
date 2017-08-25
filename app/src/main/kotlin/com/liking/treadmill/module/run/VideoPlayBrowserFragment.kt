@@ -30,13 +30,22 @@ class VideoPlayBrowserFragment : BaseFragment() {
 
     private var mediaBrowserWebview: WebView? = null
     private var h5url: String = ""
+    private var category :String = ""
+
+    private var marginTop : Int = 0
+
+    private var margin1:Int = -116
+
+    private var margin2:Int = -256
 
     companion object {
         val H5URL_KEY = "h5url"
+        val CATEGORY_KEY = "category"
         val tag = "VideoPlayBrowserFragment"
-        fun newInstance(h5Url: String): VideoPlayBrowserFragment {
+        fun newInstance(category :String, h5Url: String): VideoPlayBrowserFragment {
             val fragment = VideoPlayBrowserFragment()
             val args = android.os.Bundle()
+            args.putString(CATEGORY_KEY, category)
             args.putString(H5URL_KEY, h5Url)
             fragment.arguments = args
             return fragment
@@ -124,6 +133,12 @@ class VideoPlayBrowserFragment : BaseFragment() {
     fun initData() {
         arguments.let {
             h5url = it.getString(H5URL_KEY,"")
+            category = it.getString(CATEGORY_KEY,"")
+            if("1".equals(category)) { //电影
+                marginTop = margin1
+            } else{
+                marginTop = margin2
+            }
         }
     }
 
@@ -182,8 +197,9 @@ class VideoPlayBrowserFragment : BaseFragment() {
     }
 
     fun playVideo() {
-        mediaBrowserWebview?.loadUrl("javascript:" + " document.getElementsByTagName('body')[0].style.setProperty('margin-top', '-116" +
-                "px', 'important'); " +
+        mediaBrowserWebview?.loadUrl(
+                "javascript:document.getElementsByTagName('body')[0].style.setProperty('margin-top', "
+                        +"'${marginTop}px', 'important'); " +
                 " var video = document.getElementsByTagName('video')[0]; video.play();")
     }
 

@@ -26,7 +26,8 @@ public interface IqiyiApi {
 
     @GET(Urls.IQIYI_TOP_LIST)
     Call<TopListResult> getTopList(@Query("categoryId") String categoryId,
-                                   @Query("topType") String topType);
+                                   @Query("topType") String topType,
+                                   @Query("limit") String limit);
 
     @GET(Urls.IQIYI_VIDEO_INFO)
     Call<VideoInfoResult> getVideoInfo(@Query("qipuId") String tvQipuId);

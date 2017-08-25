@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:background="@color/cb4000000"
               android:orientation="vertical">
 
     <TextView
@@ -49,7 +50,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginTop="30dp"
                     android:textColor="@color/white"
-                    android:textSize="26sp"/>
+                    android:textSize="26sp"
+                    android:text="@string/run_pause_click"/>
 
                 <TextView
                     android:id="@+id/go_on_prompt_TextView"
@@ -60,7 +62,8 @@
                     android:layout_toRightOf="@+id/go_on_left_prompt_TextView"
                     android:textColor="@color/c25ff8c"
                     android:textSize="26sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:text="@string/run_pause_quick_start"/>
 
 
                 <TextView
@@ -70,7 +73,8 @@
                     android:layout_marginTop="30dp"
                     android:layout_toRightOf="@+id/go_on_prompt_TextView"
                     android:textColor="@color/white"
-                    android:textSize="26sp"/>
+                    android:textSize="26sp"
+                    android:text="@string/run_pause_restart"/>
 
             </RelativeLayout>
 
@@ -99,9 +103,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:text=""
                 android:textColor="@color/white"
-                android:textSize="26sp"/>
+                android:textSize="26sp"
+                android:text="@string/run_pause_stop"/>
 
         </LinearLayout>
 

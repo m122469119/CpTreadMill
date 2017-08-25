@@ -1,4 +1,4 @@
-package com.liking.anthropometer.utils.countdownutils;
+package com.liking.treadmill.utils.countdownutils;
 
 import android.os.Handler;
 import android.os.Message;

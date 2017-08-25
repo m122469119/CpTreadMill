@@ -80,9 +80,9 @@ public class IqiyiApiService {
                 (addRequestCalls(tag, getIqiyiApi().getAlbumList(categoryId))).execute(callback);
     }
 
-    public static void getTopList(Object tag, String categoryId, String topType, BaseRequestCallback<TopListResult> callback) {
+    public static void getTopList(Object tag, String categoryId, String topType, String limit, BaseRequestCallback<TopListResult> callback) {
         new RetrofitRequest<TopListResult>
-                (addRequestCalls(tag, getIqiyiApi().getTopList(categoryId, topType))).execute(callback);
+                (addRequestCalls(tag, getIqiyiApi().getTopList(categoryId, topType, limit))).execute(callback);
     }
 
     public static void getVideoInfo(Object tag, String tvQipuId, BaseRequestCallback<VideoInfoResult> callback) {

@@ -5,7 +5,7 @@ package com.liking.treadmill.utils.countdownutils;
  * Created by chenlei on 16/11/27.
  */
 
-public class LikingCountDownWrapper {
+public class LikingCountDownHelper {
 
     private long mMillisInFuture;
     private long mCountdownInterval;

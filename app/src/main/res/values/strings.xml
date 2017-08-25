@@ -72,4 +72,8 @@
     <string name="category_hint_txt">请在下方面板上按钮选择视频类型</string>
     <string name="videolist_hint_txt">请在下方面板上按钮选择音乐或视频</string>
     <string name="text_setting_below"><font color="#85878e">请</font><font color="#34c86c">在下方面板上按钮</font><font color="#85878e">选择设置类别</font></string>
+    <string name="run_pause_click">点击 </string>
+    <string name="run_pause_quick_start">QUICK\nSTART</string>
+    <string name="run_pause_restart"> 继续运动</string>
+    <string name="run_pause_stop">点击 <font color="#25ff8c"><b>STOP</b></font>完成锻炼</string>
 </resources>

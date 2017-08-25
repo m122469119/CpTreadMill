@@ -22,7 +22,7 @@
         android:id="@+id/category_change_hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_40dp"
+        android:layout_marginTop="@dimen/spacing_20dp"
         android:textColor="@color/c84898F"
         android:textSize="20sp"/>
 
