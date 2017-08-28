@@ -72,6 +72,8 @@ public class SocketHelper {
     private static final String TYPE_REQUEST_MEMBER = "request_member";
     private static final String REPORT_LOG_CMD = "report_log";
     private static final String REPORT_CLEAR_MEMBER_LIST_CMD = "clean_member";
+    private static final String NEW_ADVERTISEMENT_CMD = "new_advertisement";
+    private static final String DEFAULT_ADVERTISEMENT_CMD = "default_advertisement";
 
     private static final String mTcpVersion = "v1.3";
 
@@ -91,6 +93,7 @@ public class SocketHelper {
         BaseSocketResult result = gson.fromJson(jsonText, BaseSocketResult.class);
         String type = result.getType();
         LogUtils.d("aaron", "result: " + result.getType());
+
         if (TYPE_QRCODE_BIND.equals(type) || TYPE_QRCODE_UNBIND.equals(type)) {//二维码展示消息
             QrcodeResult qrcodeResult = gson.fromJson(jsonText, QrcodeResult.class);
             String codeUrl = qrcodeResult.getQrcodeData().getCodeUrl();
@@ -257,6 +260,10 @@ public class SocketHelper {
                     EventBus.getDefault().post(new MembersDeleteMessage());
                 }
             });
+        } else if(NEW_ADVERTISEMENT_CMD.equals(type)) {
+
+        } else if (DEFAULT_ADVERTISEMENT_CMD.equals(type)) {
+
         }
     }
 

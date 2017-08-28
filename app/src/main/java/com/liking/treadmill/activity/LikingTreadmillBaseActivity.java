@@ -5,22 +5,17 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.aaron.android.codelibrary.utils.StringUtils;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.aaron.android.framework.base.ui.actionbar.AppBarActivity;
-import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
 import com.liking.treadmill.R;
 import com.liking.treadmill.message.ToolBarTimeMessage;
 import com.liking.treadmill.message.WifiMessage;
 import com.liking.treadmill.service.ThreadMillService;
-import com.liking.treadmill.treadcontroller.SerialPortUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created on 16/12/9.
