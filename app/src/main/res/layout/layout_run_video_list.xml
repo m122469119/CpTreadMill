@@ -26,19 +26,20 @@
 
         <FrameLayout
             android:layout_width="980dp"
-            android:layout_height="386dp"
-            android:background="@drawable/video_list_bg"
-            android:padding="6dp">
+            android:layout_height="430dp"
+            android:background="@drawable/video_list_bg">
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/video_list_recyclerView_episode"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:scrollbars="none"
                 android:visibility="gone"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/video_list_recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:scrollbars="none"/>
         </FrameLayout>
     </android.support.v7.widget.CardView>
 

@@ -3,6 +3,8 @@ package com.liking.treadmill.module.run
 import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.os.RemoteException
 import android.support.design.widget.TabLayout
 import android.support.v7.widget.RecyclerView
@@ -32,6 +34,7 @@ import com.liking.treadmill.fragment.base.SerialPortFragment
 import com.liking.treadmill.storge.Preference
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent
 import com.liking.treadmill.treadcontroller.SerialPortUtil
+import com.liking.treadmill.treadcontroller.SerialPortUtil.*
 import com.liking.treadmill.utils.RunTimeUtil
 import com.liking.treadmill.utils.TypefaceHelper
 import com.liking.treadmill.utils.countdownutils.CountDownListener
@@ -47,6 +50,7 @@ import kotlinx.android.synthetic.main.layout_run.*
 import kotlinx.android.synthetic.main.layout_run_bottom.*
 import kotlinx.android.synthetic.main.layout_run_bottom.view.*
 import kotlinx.android.synthetic.main.layout_run_content.view.*
+import kotlinx.android.synthetic.main.layout_run_finish.view.*
 import kotlinx.android.synthetic.main.layout_run_head.view.*
 import kotlinx.android.synthetic.main.layout_run_video_category.*
 import kotlinx.android.synthetic.main.layout_run_video_list.*
@@ -106,6 +110,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     private var mTotalRunTime: Int = 0//已跑总时间
     private var mTotalKcal: Float = 0.0f//消耗总卡路里
 
+    @Volatile private var isPause = false //跑步机结束
     @Volatile private var isFinish = false //跑步机结束
 
     /**目标设置start**/
@@ -120,6 +125,51 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     private var GOAL_VALUE = 0f
     private var ACHIEVE_TYPE = 0//设定目标时完成情况
     /**目标设置end**/
+
+    private val MESSAGE_RETAIN = 0x10
+    private val handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            if (msg.what == MESSAGE_RETAIN) {
+                /**
+                 * 跑步过程中计数,主要计算总距离和卡路里计数，以及验证目标设置
+                 */
+                getTreadInstance().runTime = getTreadInstance().runTime + (RUNNING_CALCULATE_INTERVAL_SECOND / 1000)
+                val mDistanceIncrement = getTreadInstance().measureDistanceIncrement()
+                val mKcalIncrement = getTreadInstance().measureKcalIncrement()
+                val distanceCalculate = getTreadInstance().distance + mDistanceIncrement
+                val kcalCalculate = getTreadInstance().kcal + mKcalIncrement
+
+                getTreadInstance().distance = distanceCalculate
+                getTreadInstance().kcal = kcalCalculate
+
+                val distance = getTreadInstance().distance
+                if (distance > 0.0f) {
+                    mTotalKmDistance = getKmDistance(distance)
+                }
+                setupRunContentCell(cell_distance, StringUtils.getDecimalString(mTotalKmDistance, 2).plus(UNIT_KM))
+                val runTime = getTreadInstance().runTime
+                val time = RunTimeUtil.secToTime(runTime)
+                if (runTime > 0) {
+                    mTotalRunTime = runTime
+                    setupRunContentCell(cell_time_used, time)
+                }
+                val kcal = getTreadInstance().kcal
+                if (kcal > 0.0f) {
+                    mTotalKcal = kcal
+                }
+                checkRunResult(mTotalRunTime.toFloat(), mTotalKmDistance, mTotalKcal)
+//                LogUtils.d("dddd", "distance: " + getTreadInstance().distance + " kcal: " + mTotalKcal)
+                if (!isPause && !isFinish) {
+                    sendEmptyMessageDelayed(MESSAGE_RETAIN, RUNNING_CALCULATE_INTERVAL_SECOND.toLong())
+                }
+            }
+        }
+    }
+
+    private val RUNNING_CALCULATE_INTERVAL_SECOND = 1000
+
+    private var isVideoPlayAnimator:Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater?.inflate(R.layout.fragment_running, container, false)
@@ -144,7 +194,6 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     fun initCountDowns() {
         mCountDownHelper = LikingCountDownHelper()
-
     }
 
     /**
@@ -169,9 +218,11 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 
                     override fun onFinish() {
                         if (!isFinish) {
-//                            this@RunFragment.start()
+                            //跑步动画
+                            layout_run_content.layout_run_way.run_way_view.startRun()
+                            this@RunningFragment.startRun()
                         }
-                        layout_prepare.visibility = View.GONE
+                        layout_run_prepare.visibility = View.GONE
                     }
                 })
     }
@@ -181,24 +232,33 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     fun startRunPauseUI() {
         layout_run_pause.visibility = View.VISIBLE
+        isPause = true
+        handler.removeMessages(MESSAGE_RETAIN)
         startCountDown(RUN_COUNTDOWN_TIME_PAUSE.toLong(),
                 RUN_COUNTDOWN_TIME_INTERVAL,
                 object : CountDownListener {
                     override fun onTick(millisUntilFinished: Long) {
                         count_down_TextView.text = (millisUntilFinished / 1000).toString().plus("s")
                     }
+
                     override fun onFinish() {
-                        //结束跑步
                         finishExercise()
                     }
                 })
     }
 
-
     fun initView() {
         initRunInfoView()
         initIqiyiMediaView()
-        setTypeFace()
+
+        //会员以及场馆信息显示
+        try {
+            layout_run_head.user_name_TextView.text = getTreadInstance().userInfo.mUserName
+            HImageLoaderSingleton.getInstance().loadImage(layout_run_head.head_imageView,
+                    SerialPortUtil.getTreadInstance().userInfo.mAvatar)
+            layout_run_head.text_gym_name.text = Preference.getBindUserGymName()
+        } catch (e: Exception) {
+        }
     }
 
     /**
@@ -206,11 +266,17 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     fun initRunInfoView() {
         setupRunInfoCell(layout_run_bottom.cell_speed, "Speed", "0".plus(UNIT_KMH)) //速度
+        setTypeFace(layout_run_bottom.cell_speed)
         setupRunInfoCell(layout_run_bottom.cell_distance, "Distance", "0".plus(UNIT_KM))//距离
+        setTypeFace(layout_run_bottom.cell_distance)
         setupRunInfoCell(layout_run_bottom.cell_calories, "Calories", "0.0".plus(UNIT_KCL))//卡路里
+        setTypeFace(layout_run_bottom.cell_calories)
         setupRunInfoCell(layout_run_bottom.cell_time_used, "Time used", "00:00:00") //使用时间
+        setTypeFace(layout_run_bottom.cell_time_used)
         setupRunInfoCell(layout_run_bottom.cell_incline, "Incline", "0") //坡度
+        setTypeFace(layout_run_bottom.cell_incline)
         setupRunInfoCell(layout_run_bottom.cell_bmp, "BMP", "0")//心率
+        setTypeFace(layout_run_bottom.cell_bmp)
     }
 
     fun setupRunInfoCell(view: View, title: String, content: String) {
@@ -219,14 +285,14 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     }
 
     fun setupRunContentCell(view: View, content: String) {
-        view.info_content_textView.text = content
+        view?.info_content_textView.text = content
     }
 
     /**
      * 设置字体
      */
-    fun setTypeFace() {
-//        TypefaceHelper.setImpactFont(context,)
+    fun setTypeFace(v: View) {
+        TypefaceHelper.setImpactFont(context, v.info_content_textView)
     }
 
     /**
@@ -298,56 +364,15 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 
     override fun onResume() {
         super.onResume()
-
-//        startRunPrepareUI()
-
-//        startRunPauseUI()
-
-//        layout_run_head.head_imageView.setOnClickListener {
-//            if (isInRunWayUI()) {
-//                hiddenRunWayUI()
-//                //显示catatory
-//                showVideoCategoryUI()
-//            } else {
-//                showRunWayUI()
-//                hiddenVideoCategoryUI()
-//            }
-////        }
-//
-//            layout_run_head.user_name_TextView.setOnClickListener {
-//
-//                if (isInVideosUI()) {
-//                    if (isInVideoListUI()) {
-//                        getIntoIqiyiVideo(videoSelectedPosition)
-//                    } else if (isInVideoEpisodeListUI()) {
-//                        getIntoIqiyiVideo(videoEpisodeSelectedPosition)
-//                    }
-//
-//                } else {
-//                    changeCategoryTab()
-//                }
-//            }
-//
-//            layout_run_head.text_gym_name.setOnClickListener {
-//
-//                if (isInVideoCategoryUI()) {
-//                    hiddenVideoCategoryUI()
-//                    loadVideoList()
-//                }
-//            }
-//            layout_run_head.text_time.setOnClickListener {
-//                if (isInVideosUI()) {
-//                    selectIqiyiVideoItem(true)
-//                }
-//
-//            }
-//        }
+        startRunPrepareUI()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        handler.removeMessages(MESSAGE_RETAIN)
         mIqiyiPresenter.detachView(this)
         cancleCountDown()
+        layout_run_content.layout_run_way.run_way_view.stopRun()
     }
 
     /**
@@ -372,9 +397,6 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 IToast.show("s:" + tab?.tag + ";count:" + category_tab_layout.tabCount
                         + ";index:" + categoryTabIndex + ";select:" + category_tab_layout.selectedTabPosition)
-                if (categoryTabIndex >= category_tab_layout.tabCount - 1) {
-                    categoryTabIndex = 0
-                }
             }
         })
     }
@@ -386,16 +408,35 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     fun selectIqiyiVideoItem(direction: Boolean) {
         if (isInVideoListUI()) {
             val lastPosition = videoSelectedPosition
-            ++videoSelectedPosition
-            if (videoSelectedPosition >= videoListAdapter.dataList.size) {
-                videoSelectedPosition = videoListAdapter.dataList.size - 1
+            if(direction) {
+                if(videoSelectedPosition < videoListAdapter.dataList.size) {
+                    ++videoSelectedPosition
+                } else {
+                    videoSelectedPosition = videoListAdapter.dataList.size - 1
+                }
+            } else {
+                if(videoSelectedPosition > 0) {
+                    --videoSelectedPosition
+                } else{
+                    videoSelectedPosition = 0
+                }
             }
             selectedVideo(video_list_recyclerView, lastPosition, videoSelectedPosition)
         } else if (isInVideoEpisodeListUI()) {
             val lastPosition = videoEpisodeSelectedPosition
-            ++videoEpisodeSelectedPosition
-            if (videoEpisodeSelectedPosition >= videoEpisodeAdapter.dataList.size) {
-                videoEpisodeSelectedPosition = videoEpisodeAdapter.dataList.size - 1
+
+            if(direction) {
+                if(videoEpisodeSelectedPosition < videoEpisodeAdapter.dataList.size) {
+                    ++videoEpisodeSelectedPosition
+                } else{
+                    videoEpisodeSelectedPosition = videoEpisodeAdapter.dataList.size - 1
+                }
+            } else {
+                if(videoEpisodeSelectedPosition > 0) {
+                    --videoEpisodeSelectedPosition
+                } else{
+                    videoEpisodeSelectedPosition = 0
+                }
             }
             selectedVideo(video_list_recyclerView_episode, lastPosition, videoEpisodeSelectedPosition)
         }
@@ -438,6 +479,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                             videoEpisodeAdapter = IqiyiVideoEpisodesAdapter(videoName, context)
                             videoEpisodeAdapter.addData(it)
                             video_list_recyclerView_episode?.adapter = videoEpisodeAdapter
+                            //默认选中第一项
+                            selectedVideo(video_list_recyclerView_episode, 0, 0)
                         } else {
                             IToast.show("视频播放失败!")
                         }
@@ -448,7 +491,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             if (position < videoEpisodeAdapter.dataList.size) {
                 videoEpisodeAdapter.dataList[position].let {
                     layout_run_content?.layout_run_video_list_stateview
-                            ?.findViewById(R.id.layout_root)?.visibility = View.VISIBLE
+                            ?.findViewById(R.id.layout_root)
+                            ?.visibility = View.VISIBLE
                     mIqiyiPresenter.getVideoInfo(this, it.toString())
                 }
             }
@@ -458,10 +502,22 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     /**
      * 切换频道
      */
-    fun changeCategoryTab() {
+    fun categoryNext() {
         //切换频道
-        if (category_tab_layout.selectedTabPosition < category_tab_layout.tabCount - 1) {
+        if (categoryTabIndex < category_tab_layout.tabCount - 1) {
             ++categoryTabIndex
+        } else {
+            categoryTabIndex = category_tab_layout.tabCount - 1
+        }
+        category_tab_layout.getTabAt(categoryTabIndex)?.select()
+    }
+
+    fun categoryLast() {
+        //切换频道
+        if (categoryTabIndex > 0) {
+            --categoryTabIndex
+        } else {
+            categoryTabIndex = 0
         }
         category_tab_layout.getTabAt(categoryTabIndex)?.select()
     }
@@ -479,6 +535,9 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * 加载爱奇艺排行榜视频
      */
     fun loadIqiyiVideoTopList(categoryId: String) {
+        videoListAdapter.let {
+            videoListAdapter.dataList.clear()
+        }
         mIqiyiPresenter.getTopList(this, categoryId)
     }
 
@@ -525,6 +584,10 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                     //免费视频
                     videoListAdapter.addData(result?.data?.filter { 0 == it.isPurchase })
                     videoListAdapter.notifyDataSetChanged()
+                    //默认选中第一项
+                    if(it.size > 0) {
+                        selectedVideo(video_list_recyclerView, 0, 0)
+                    }
                 }
             }
         }
@@ -613,7 +676,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         //hidden列表向下移
         setAllParentsClip(layout_run_content.layout_run_video_list_stateview, false)
         hiddenTranslationYUI(layout_run_content.layout_run_video_list_stateview,
-                DisplayUtils.dp2px(ResourceUtils.getDimen(R.dimen.run_bottom_height)).toFloat(), animatorDuration)
+                DisplayUtils.dp2px(ResourceUtils.getDimen(R.dimen.run_bottom_height)).toFloat(),
+                animatorDuration)
 
         //hidden head left
         ObjectAnimator.ofFloat(
@@ -635,12 +699,34 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             override fun onAnimationRepeat(animation: Animator?) {}
             override fun onAnimationEnd(animation: Animator?) {
                 setAllParentsClip(layout_run_content.layout_run_video_list_stateview, true)
-                layout_run_video_play.visibility = View.VISIBLE
+
+                val videoPlay = VideoPlayBrowserFragment.newInstance(category, h5url)
                 childFragmentManager
                         .beginTransaction()
-                        .replace(R.id.layout_run_video_play, VideoPlayBrowserFragment.newInstance(category, h5url))
+                        .replace(R.id.layout_run_video_play, videoPlay)
                         .commitAllowingStateLoss()
+
                 showTranslationYUI(run_bottom_layout_bg, animatorDuration)
+                layout_run_video_play.visibility = View.VISIBLE
+                if(isVideoPlayAnimator) {
+                    var obj = ObjectAnimator.ofFloat(layout_run_video_play, "scaleX", 0f, 1f)
+                            .setDuration(animatorDuration)
+                    obj.addListener(object : Animator.AnimatorListener {
+                        override fun onAnimationStart(animation: Animator) {}
+                        override fun onAnimationEnd(animation: Animator) {
+                            videoPlay.loadUrl(h5url)
+                        }
+                        override fun onAnimationCancel(animation: Animator) {}
+                        override fun onAnimationRepeat(animation: Animator) {}
+                    })
+                    obj.start()
+                    ObjectAnimator.ofFloat(layout_run_video_play, "scaleY", 0f, 1f)
+                            .setDuration(animatorDuration)
+                            .start()
+                } else{
+                    videoPlay.loadUrl(h5url)
+                }
+
             }
 
             override fun onAnimationCancel(animation: Animator?) {}
@@ -663,13 +749,24 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * 关闭播放页面
      */
     fun closeVideoPlayBrowserUI() {
-
-        //        layout_run_video_play.visibility = View.GONE
-        showTranslationYUI(run_bottom_layout_bg, animatorDuration)
+        layout_run_video_play.visibility = View.GONE
+        hiddenBottomLayoutBg()//TranslationYUI(run_bottom_layout_bg, animatorDuration)
         //show 播放列表向上移
         showTranslationYUI(layout_run_content.layout_run_video_list_stateview, animatorDuration)
         //show head left
+        ObjectAnimator.ofFloat(
+                layout_run_head.layout_run_head_left,
+                "translationX",
+                layout_run_head.layout_run_head_left.translationX,
+                0.0f)
+                .setDuration(animatorDuration)
+                .start()
         //show head right
+        ObjectAnimator.ofFloat(
+                layout_run_head.layout_run_head_right,
+                "translationX",
+                layout_run_head.layout_run_head_right.translationX, 0.0f)
+                .setDuration(animatorDuration)
     }
 
     /**
@@ -739,6 +836,13 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     }
 
     /**
+     *隐藏底部背景
+     */
+    fun hiddenBottomLayoutBg() {
+        hiddenTranslationYUI(run_bottom_layout_bg, 0.0f,animatorDuration)
+    }
+
+    /**
      * 是否在跑道页
      */
     fun isInRunWayUI(): Boolean = isInUI(layout_run_content.layout_run_way.visibility)
@@ -762,6 +866,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * 是否在视频剧集列表页
      */
     fun isInVideoEpisodeListUI(): Boolean = isInUI(video_list_recyclerView_episode.visibility)
+
+    fun isInVideoPlayUI(): Boolean = isInUI(layout_run_video_play.visibility)
 
     /**
      * 是否在准备页
@@ -804,8 +910,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     fun isInUI(visible: Int): Boolean = visible == View.VISIBLE
 
     fun startRun() {
-        startTreadMill(SerialPortUtil.DEFAULT_SPEED, SerialPortUtil.DEFAULT_GRADE)
-//        startRunThread()
+        startTreadMill(DEFAULT_SPEED, DEFAULT_GRADE)
     }
 
     /**
@@ -822,13 +927,13 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         val homeActivity = activity as HomeActivity
         homeActivity.setTitle("")
         if (homeActivity.mUserLoginPresenter != null) {
-            val cardNo = SerialPortUtil.getTreadInstance().cardNo
-            if (SerialPortUtil.getTreadInstance().userInfo != null
+            val cardNo = getTreadInstance().cardNo
+            if (getTreadInstance().userInfo != null
                     && !StringUtils.isEmpty(cardNo)
-                    && cardNo != SerialPortUtil.getTreadInstance().userInfo.mBraceletId) {
+                    && cardNo != getTreadInstance().userInfo.mBraceletId) {
                 //Logout  //刷卡切换
                 if (homeActivity.isLogin) {
-                    homeActivity.userLogout(SerialPortUtil.getTreadInstance().userInfo.mBraceletId)
+                    homeActivity.userLogout(getTreadInstance().userInfo.mBraceletId)
                     homeActivity.isLogin = false
                 }
                 //Login
@@ -844,19 +949,27 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     override fun onTreadKeyDown(keyCode: Int, event: LikingTreadKeyEvent) {
         super.onTreadKeyDown(keyCode, event)
-        if (isInRunWayUI() && !isInPrepareUI()) { //正在跑步界面
+        if (isInPrepareUI()) {
+
+        } else if (isInPauseUI()) {
+            if (keyCode == LikingTreadKeyEvent.KEY_START.toInt()) {
+                startTreadMill(DEFAULT_SPEED, mGrade)
+            } else if (keyCode == LikingTreadKeyEvent.KEY_STOP.toInt()) {
+                finishExercise()
+            }
+        } else if (isInRunWayUI()) { //正在跑步界面
             if (keyCode == LikingTreadKeyEvent.KEY_PAUSE.toInt()) {
                 pauseTreadmill()
             } else if (keyCode == LikingTreadKeyEvent.KEY_STOP.toInt()) {
                 finishExercise()
             } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS.toInt()) {
-                setSpeed(SerialPortUtil.getTreadInstance().currentSpeed + 1)
+                setSpeed(getTreadInstance().currentSpeed + 1)
             } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_REDUCE.toInt()) {
-                setSpeed(SerialPortUtil.getTreadInstance().currentSpeed - 1)
+                setSpeed(getTreadInstance().currentSpeed - 1)
             } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_PLUS.toInt()) {
-                setGrade(SerialPortUtil.getTreadInstance().currentGrade + 1)
+                setGrade(getTreadInstance().currentGrade + 1)
             } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_REDUCE.toInt()) {
-                setGrade(SerialPortUtil.getTreadInstance().currentGrade - 1)
+                setGrade(getTreadInstance().currentGrade - 1)
             } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_3.toInt()) {
                 setSpeed(30)
             } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_6.toInt()) {
@@ -878,14 +991,90 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             } else if (keyCode == LikingTreadKeyEvent.KEY_GRADE_15.toInt()) {
                 setGrade(15)
             } else if (keyCode == LikingTreadKeyEvent.KEY_HAND_SHANK_SPEED_PLUS.toInt()) {
-                setSpeed(SerialPortUtil.getTreadInstance().currentSpeed + 10)
+                setSpeed(getTreadInstance().currentSpeed + 10)
             } else if (keyCode == LikingTreadKeyEvent.KEY_HAND_SHANK_SPEED_REDUCE.toInt()) {
-                setSpeed(SerialPortUtil.getTreadInstance().currentSpeed - 10)
+                setSpeed(getTreadInstance().currentSpeed - 10)
             } else if (keyCode == LikingTreadKeyEvent.KEY_HAND_SHANK_GRADE_PLUS.toInt()) {
-                setGrade(SerialPortUtil.getTreadInstance().currentGrade + 1)
+                setGrade(getTreadInstance().currentGrade + 1)
             } else if (keyCode == LikingTreadKeyEvent.KEY_HAND_SHANK_GRADE_REDUCE.toInt()) {
-                setGrade(SerialPortUtil.getTreadInstance().currentGrade - 1)
+                setGrade(getTreadInstance().currentGrade - 1)
+            } else if (keyCode == LikingTreadKeyEvent.KEY_MULTIMEDIA.toInt()) {
+                hiddenRunWayUI()
+                showVideoCategoryUI()
             }
+        } else if (isInVideoCategoryUI()) {
+            if (keyCode == LikingTreadKeyEvent.KEY_LAST.toInt()) {
+                categoryLast()
+            } else if (keyCode == LikingTreadKeyEvent.KEY_NEXT.toInt()) {
+                categoryNext()
+            } else if (keyCode == LikingTreadKeyEvent.KEY_PLAY_PAUSE_MEDIA.toInt()) {
+                hiddenVideoCategoryUI()
+                loadVideoList()
+            } else if(keyCode == LikingTreadKeyEvent.KEY_RETURN.toInt()) {
+                hiddenVideoCategoryUI()
+                showRunWayUI()
+            }
+        } else if(isInVideosUI()) {
+            isVideoPlayAnimator = true
+            if(isInVideoListUI()) {
+                //如果加载中 return
+                if(layout_run_content.layout_run_video_list_stateview.currState == StateView.State.LOADING) return
+
+                if (keyCode == LikingTreadKeyEvent.KEY_LAST.toInt()) {
+                    selectIqiyiVideoItem(false)
+                }else if (keyCode == LikingTreadKeyEvent.KEY_NEXT.toInt()) {
+                    selectIqiyiVideoItem(true)
+                } else if (keyCode == LikingTreadKeyEvent.KEY_PLAY_PAUSE_MEDIA.toInt()) {
+                    getIntoIqiyiVideo(videoSelectedPosition)
+                } else if(keyCode == LikingTreadKeyEvent.KEY_RETURN.toInt()) {
+                    hiddenVideoListUI()
+                    showVideoCategoryUI()
+                }
+            } else if (isInVideoEpisodeListUI()) {
+                if (keyCode == LikingTreadKeyEvent.KEY_LAST.toInt()) {
+                    selectIqiyiVideoItem(false)
+                }else if (keyCode == LikingTreadKeyEvent.KEY_NEXT.toInt()) {
+                    selectIqiyiVideoItem(true)
+                } else if (keyCode == LikingTreadKeyEvent.KEY_PLAY_PAUSE_MEDIA.toInt()) {
+                    getIntoIqiyiVideo(videoEpisodeSelectedPosition)
+                }
+            }
+
+        } else if(isInVideoPlayUI()) {
+            isVideoPlayAnimator = false
+            if (keyCode == LikingTreadKeyEvent.KEY_LAST.toInt()) {
+                var videoPlayFragment = childFragmentManager
+                        .findFragmentById(R.id.layout_run_video_play)
+                        as VideoPlayBrowserFragment
+                videoPlayFragment.let {
+                    selectIqiyiVideoItem(false)
+                    if(isInVideoListUI()) {
+                        getIntoIqiyiVideo(videoSelectedPosition)
+                    } else if(isInVideoEpisodeListUI()) {
+                        getIntoIqiyiVideo(videoEpisodeSelectedPosition)
+                    }
+                }
+            }else if (keyCode == LikingTreadKeyEvent.KEY_NEXT.toInt()) {
+                var videoPlayFragment = childFragmentManager
+                        .findFragmentById(R.id.layout_run_video_play)
+                        as VideoPlayBrowserFragment
+                videoPlayFragment.let {
+                    selectIqiyiVideoItem(true)
+                    if(isInVideoListUI()) {
+                        getIntoIqiyiVideo(videoSelectedPosition)
+                    } else if(isInVideoEpisodeListUI()) {
+                        getIntoIqiyiVideo(videoEpisodeSelectedPosition)
+                    }
+                }
+            }else if(keyCode == LikingTreadKeyEvent.KEY_RETURN.toInt()) {
+
+               childFragmentManager.findFragmentById(R.id.layout_run_video_play)
+                .let {
+                    childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()
+                }
+                closeVideoPlayBrowserUI()
+            }
+
         } else if (isInFinishUI()) {
             if (keyCode == LikingTreadKeyEvent.KEY_RETURN.toInt()) {
                 resetTreadmill()
@@ -894,16 +1083,10 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             } else if (keyCode == LikingTreadKeyEvent.KEY_CARD.toInt()) {
                 cardLogin()
             } else if (keyCode == LikingTreadKeyEvent.KEY_PROGRAM.toInt()) {
-                val userInfo = SerialPortUtil.getTreadInstance().userInfo
+                val userInfo = getTreadInstance().userInfo
                 if (userInfo != null && userInfo.isManager) {
                     showSettingUI()
                 }
-            }
-        } else if (isInPauseUI()) {
-            if (keyCode == LikingTreadKeyEvent.KEY_START.toInt()) {
-                startTreadMill(SerialPortUtil.DEFAULT_SPEED, mGrade)
-            } else if (keyCode == LikingTreadKeyEvent.KEY_STOP.toInt()) {
-                finishExercise()
             }
         }
     }
@@ -915,7 +1098,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     private fun setSpeed(speed: Int) {
         if (speed in 1..150) {
             mSpeed = speed
-            SerialPortUtil.setSpeedInRunning(mSpeed)
+            setSpeedInRunning(mSpeed)
             showToast("速度", StringUtils.getDecimalString(mSpeed / 10.0f, 1))
         }
     }
@@ -927,7 +1110,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     private fun setGrade(grade: Int) {
         if (grade in 1..15) {
             mGrade = grade
-            SerialPortUtil.setGradeInRunning(mGrade)
+            setGradeInRunning(mGrade)
             showToast("坡度", mGrade.toString())
         }
     }
@@ -940,6 +1123,9 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         layout_run_pause.visibility = View.GONE
         layout_run_content.visibility = View.VISIBLE
         layout_run_finish.visibility = View.GONE
+        isFinish = false
+        isPause = false
+        handler.sendEmptyMessageDelayed(MESSAGE_RETAIN, RUNNING_CALCULATE_INTERVAL_SECOND.toLong())
     }
 
     /**
@@ -947,27 +1133,28 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     private fun pauseTreadmill() {
         startRunPauseUI()
-        SerialPortUtil.stopTreadMill()//暂停命令
+        stopTreadMill()//暂停命令
         layout_run_pause.visibility = View.VISIBLE
-//        layout_run_content.layout_run_way.run_way_view.stopRun()
+        layout_run_content.layout_run_way.run_way_view.stopRun()
     }
 
     /**
      * 重置跑步机设置
      */
     fun resetTreadmill() {
-        SerialPortUtil.getTreadInstance().reset()//清空数据
+        getTreadInstance().reset()//清空数据
     }
+
     /**
      *  跑步机相关
      */
     override fun handleTreadData(treadData: SerialPortUtil.TreadData?) {
         super.handleTreadData(treadData)
         if (isFinish) return
-        if (treadData?.safeLock == SerialPortUtil.SaveLock.SAVE_LOCK_OPEN) {
+        if (treadData?.safeLock == SaveLock.SAVE_LOCK_OPEN) {
             finishExercise()
-        } else if (treadData?.safeLock == SerialPortUtil.SaveLock.SAVE_LOCK_CLOSE) {
-            LogUtils.e(TAG, "SAVE_LOCK_CLOSE")
+        } else if (treadData?.safeLock == SaveLock.SAVE_LOCK_CLOSE) {
+//            LogUtils.e(TAG, "SAVE_LOCK_CLOSE")
         }
         //坡度设置
         val grade = treadData?.currentGrade
@@ -1018,13 +1205,19 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     fun finishExercise() {
         isFinish = true
+        handler.removeMessages(MESSAGE_RETAIN)
+        childFragmentManager.findFragmentById(R.id.layout_run_video_play)
+        .let {
+            childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()
+        }
+        hiddenBottomLayoutBg()
         layout_run_content.visibility = View.GONE
         layout_run_video_play.visibility = View.GONE
-//        layout_run_finish.visibility = View.GONE
+        layout_run_finish.visibility = View.VISIBLE
         statisticsRunData()
         //清空数据
-        SerialPortUtil.getTreadInstance().reset()
-        SerialPortUtil.stopTreadMill()
+        getTreadInstance().reset()
+        stopTreadMill()
         //10s后无操作退出
         startActiveMonitor(12)
     }
@@ -1033,35 +1226,41 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * 跑步结束统计 距离 、用时、平均坡度、平均速度、消耗热量，平均心率
      */
     fun statisticsRunData() {
-        val treadData = SerialPortUtil.getTreadInstance()
+        val treadData = getTreadInstance()
         //用时
         val runTime = treadData.runTime
         if (runTime != 0) {
             val userTime = RunTimeUtil.secToTime(runTime)
-//            mUseTimeTextView.setText(userTime)
+            setupRunContentCell(cell_time_used, userTime)
         }
         val totalDistance = treadData.distance//米
         val totalDistanceKm = getKmDistance(totalDistance)
         //总距离
         if (totalDistanceKm > 0.0f) {
-//            mDistanceTextView.setText(StringUtils.getDecimalString(totalDistanceKm, 2))
+            setupRunContentCell(cell_distance, StringUtils.getDecimalString(totalDistanceKm, 2).plus(UNIT_KM))
         }
         //平均速度
         if (totalDistance > 0.0f) {
-//            val h = (treadData.runTime / 3600.0).toFloat()
-//            val avergageSpeed = totalDistanceKm / h
-//            mAvergageSpeedTextView.setText(StringUtils.getDecimalString(avergageSpeed, 2))
+            val h = (treadData.runTime / 3600.0).toFloat()
+            val avergageSpeed = totalDistanceKm / h
+            setupRunInfoCell(layout_run_bottom.cell_speed,
+                    "Average Speed",
+                    StringUtils.getDecimalString(avergageSpeed, 2).plus(UNIT_KMH)) //平均速度
         }
         //消耗热量
         val kcal = treadData.kcal
         if (kcal > 0.0f) {
-//            mConsumeKcalTextView.setText(StringUtils.getDecimalString(kcal, 2))
+            setupRunContentCell(layout_run_bottom.cell_calories, StringUtils.getDecimalString(kcal, 2))
         }
         //平均心率
+        var mAverageHeartRate = 0
         if (mTotalHeartRate != 0) {
-//            val mAverageHeartRate = mTotalHeartRate / mHeartChangeCount
-//            mAvergHraetRateTextView.setText(mAverageHeartRate.toString() + "")
+            mAverageHeartRate = mTotalHeartRate / mHeartChangeCount
         }
+        setupRunInfoCell(layout_run_bottom.cell_bmp,
+                "Average BPM",
+                mAverageHeartRate.toString()) //平均心率
+
         //安全锁打开时,会清除所有数据
         if (runTime == 0 || totalDistanceKm == 0.0f || kcal == 0.0f) {
             showRunResult(mTotalRunTime.toFloat(), mTotalKmDistance, mTotalKcal)
@@ -1108,34 +1307,59 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * @param percentage
      */
     fun showfinishedView(percentage: Float) {
-//        if (percentage == -1f) {
-//            mRunFinishPromptextView.setText(ResourceUtils.getString(R.string.this_run_finish))
-//        } else if (percentage < 1) {
-//            val percent = Math.round(percentage * 100)
-//            mRunCompleteImg.setVisibility(View.GONE)
-//            mRunProgressLayout.setVisibility(View.VISIBLE)
-//            mRunProgressView.setPercent(percent.toFloat())
-//            val percents = percent.toString() + "%"
-//            mRunPrgressValue.setText(percents)
-//            mRunFinishPromptextView.setText(ResourceUtils.getString(R.string.run_result_unfinished_txt_hint))
-//        } else {
-//            ACHIEVE_TYPE = 1
-//            mRunProgressLayout.setVisibility(View.GONE)
-//            mRunCompleteImg.setVisibility(View.VISIBLE)
-//            mRunFinishPromptextView.setText(ResourceUtils.getString(R.string.this_run_attainment_target))
-//        }
-//        if (SerialPortUtil.getTreadInstance().userInfo != null) {
-//            mUserNameTextView.setText(SerialPortUtil.getTreadInstance().userInfo.mUserName)
-//            HImageLoaderSingleton.getInstance().loadImage(mUserHeadImageView, SerialPortUtil.getTreadInstance().userInfo.mAvatar)
-//        }
-//        val ssbh = SpannableStringBuilder(ResourceUtils.getString(R.string.threadmill_run_complete_hint))
-//        val imageSpanBack = ImageSpan(activity, R.drawable.key_back)
-//        ssbh.setSpan(imageSpanBack, 3, 5, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
-//        mFinishHintTextView.setText(ssbh)
+        if (percentage == -1f) {
+            layout_run_finish.this_run_finish_prompt.text = ResourceUtils.getString(R.string.this_run_finish)
+        } else if (percentage < 1) {
+            val percent = Math.round(percentage * 100)
+            layout_run_finish.run_finish_ImageView.visibility = View.GONE
+            layout_run_finish.run_progress_layout.visibility = View.VISIBLE
+            layout_run_finish.colorfulring_progress.percent = percent.toFloat()
+            layout_run_finish.run_progress.text = percent.toString().plus("%")
+            layout_run_finish.this_run_finish_prompt.text = ResourceUtils.getString(R.string.run_result_unfinished_txt_hint)
+        } else {
+            ACHIEVE_TYPE = 1
+            layout_run_finish.run_progress_layout.visibility = View.GONE
+            layout_run_finish.run_finish_ImageView.visibility = View.VISIBLE
+            layout_run_finish.this_run_finish_prompt.text = ResourceUtils.getString(R.string.this_run_attainment_target)
+        }
     }
 
     fun showToast(n: String, value: String) {
         IToast.show(String.format(ResourceUtils.getString(R.string.run_thread_set_txt), n, value))
+    }
+
+    /**
+     * 目标设置：验证跑步结果
+     */
+    fun checkRunResult(time: Float, distance: Float, kcal: Float) {
+
+        if (time >= maxTotalTime * 60) { //超过跑步的最长时间
+            finishExercise()
+        }
+
+        if (totalTime > 0 && time >= totalTime * 60
+                || totalKilometre > 0 && distance >= totalKilometre
+                || totalKcal > 0 && kcal >= totalKcal) {
+            if (!isTargetCmp) {
+                isTargetCmp = true
+                IToast.show(ResourceUtils.getString(R.string.this_run_attainment_target))
+            }
+        }
+        //在锻炼期即将达成目标时，当前画面上方出现toast消息进行提示
+        if (totalTime * 60 > 300 && totalTime * 60 - time == 300f) {
+            IToast.show(String.format(ResourceUtils.getString(R.string.run_attainment_target_upcoming), "继续5分钟"))
+        } else if (totalKilometre > 0.5 && totalKilometre - distance < 0.51 && totalKilometre - distance > 0.49) {
+            IToast.show(String.format(ResourceUtils.getString(R.string.run_attainment_target_upcoming), "跑步0.5公里"))
+        } else if (totalKcal > 50 && (totalKcal - kcal).toInt() == 50) {
+            IToast.show(String.format(ResourceUtils.getString(R.string.run_attainment_target_upcoming), "消耗50卡路里"))
+        }
+        //如果为访客模式 超过五分钟结束跑步
+        val userInfo = getTreadInstance().userInfo
+        if (userInfo != null && userInfo.isVisitor) {
+            if (time >= 5 * 60) {
+                finishExercise()
+            }
+        }
     }
 
 }

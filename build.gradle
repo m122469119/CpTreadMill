@@ -46,7 +46,7 @@ project.ext {
     compileSdkVersion = 24
     buildToolsVersion = "24.0.2"
     minSdkVersion = 14
-    targetSdkVersion = 22
+    targetSdkVersion = 19
     versionCode = getManifestVersionCode().toInteger()
     versionName = getManifestVersionName()
     sourceCompatibility = JavaVersion.VERSION_1_7

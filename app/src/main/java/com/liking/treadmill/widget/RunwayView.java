@@ -2,7 +2,6 @@ package com.liking.treadmill.widget;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -195,17 +194,17 @@ public class RunwayView extends View {
     }
 
 
-    private void startRun() {
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                handler.sendEmptyMessage(MESSAGE_WHAT);
-            }
-        }, 40);
+    public void startRun() {
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                handler.sendEmptyMessage(MESSAGE_WHAT);
+//            }
+//        }, 40);
     }
 
-    private void stopRun() {
-        handler.removeMessages(MESSAGE_WHAT);
+    public void stopRun() {
+//        handler.removeMessages(MESSAGE_WHAT);
     }
 
     private int getColor(int cid) {

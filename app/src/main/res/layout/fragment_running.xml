@@ -35,7 +35,7 @@
 
             <include
                 android:id="@+id/layout_run_finish"
-                layout="@layout/layout_finish"
+                layout="@layout/layout_run_finish"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone"/>

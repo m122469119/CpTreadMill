@@ -25,9 +25,11 @@ public class ScrollSpeedLinearLayoutManger extends LinearLayoutManager {
 
     @Override
     public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
-        RecyclerView.SmoothScroller smoothScroller = new CenterSmoothScroller(recyclerView.getContext());
-        smoothScroller.setTargetPosition(position);
-        startSmoothScroll(smoothScroller);
+        try {
+            RecyclerView.SmoothScroller smoothScroller = new CenterSmoothScroller(recyclerView.getContext());
+            smoothScroller.setTargetPosition(position);
+            startSmoothScroll(smoothScroller);
+        } catch (Exception e){}
     }
 
     private class CenterSmoothScroller extends LinearSmoothScroller {

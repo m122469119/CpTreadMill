@@ -81,7 +81,6 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         launchInit();
-       // launchFragment(new StartFragment());
         if (mUserLoginPresenter == null) {
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
@@ -118,7 +117,17 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 @Override
                 public void run() {
                     if (!isUpdate) {
-                        launchFragment(new StartSettingFragment());
+                        SerialPortUtil.TreadData.UserInfo userInfo = SerialPortUtil.getTreadInstance().getUserInfo();
+                        if (userInfo == null) {
+                            userInfo = new SerialPortUtil.TreadData.UserInfo();
+                            userInfo.mUserName = "LikingFans";
+                            userInfo.mGender = 1;
+                            userInfo.mAvatar = "";
+                            userInfo.isVisitor = true;
+                        }
+                        SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
+                        launchFragment(new RunningFragment());
+//                        launchFragment(new StartSettingFragment());
                     }
                 }
             }, delayedInterval);

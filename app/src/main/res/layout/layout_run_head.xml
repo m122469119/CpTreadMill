@@ -56,7 +56,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginLeft="@dimen/spacing_20dp"
-                android:text="复兴SOHO店"
                 android:textColor="@color/text_color_dark"
                 android:textSize="@dimen/textsize_16sp"/>
 

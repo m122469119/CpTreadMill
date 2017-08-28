@@ -18,6 +18,7 @@ import org.jetbrains.anko.backgroundResource
 import android.view.animation.ScaleAnimation
 import android.webkit.WebChromeClient
 import android.webkit.WebViewClient
+import com.aaron.android.codelibrary.utils.LogUtils
 
 
 /**
@@ -29,14 +30,14 @@ import android.webkit.WebViewClient
 class VideoPlayBrowserFragment : BaseFragment() {
 
     private var mediaBrowserWebview: WebView? = null
-    private var h5url: String = ""
+//    private var h5url: String = ""
     private var category :String = ""
 
     private var marginTop : Int = 0
 
-    private var margin1:Int = -116
+    private var margin1:Int = -166
 
-    private var margin2:Int = -256
+    private var margin2:Int = -336
 
     companion object {
         val H5URL_KEY = "h5url"
@@ -63,28 +64,31 @@ class VideoPlayBrowserFragment : BaseFragment() {
         initData()
     }
 
-    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation {
-        if (enter) {
-            val scaleAnimationIn = ScaleAnimation(0f, 1f, 0f, 1f,
-                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
-            scaleAnimationIn.duration = 800
-            scaleAnimationIn.setAnimationListener(object : Animation.AnimationListener {
-                override fun onAnimationRepeat(animation: Animation?) {}
-                override fun onAnimationStart(animation: Animation?) {}
-                override fun onAnimationEnd(animation: Animation?) {
-                    loadUrl()
-                }
-            })
-            return scaleAnimationIn
-        } else {
-            val scaleAnimationOut = ScaleAnimation(1f, 0f, 1f, 0f,
-                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
-            scaleAnimationOut.duration = 800
-            return scaleAnimationOut
-        }
-    }
+//    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation {
+//        if (enter) {
+//            val scaleAnimationIn = ScaleAnimation(0f, 1f, 0f, 1f,
+//                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+//            scaleAnimationIn.duration = 800
+//            scaleAnimationIn.setAnimationListener(object : Animation.AnimationListener {
+//                override fun onAnimationRepeat(animation: Animation?) {}
+//                override fun onAnimationStart(animation: Animation?) {}
+//                override fun onAnimationEnd(animation: Animation?) {
+//                    loadUrl()
+//                }
+//            })
+//            return scaleAnimationIn
+//        }
+//        return super.onCreateAnimation(transit, enter, nextAnim)
+////        else {
+////            val scaleAnimationOut = ScaleAnimation(1f, 0f, 1f, 0f,
+////                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+////            scaleAnimationOut.duration = 800
+////            return scaleAnimationOut
+////        }
+//    }
 
-    fun loadUrl() {
+    fun loadUrl(h5url:String ) {
+        LogUtils.e(TAG, "loadurl:"  + h5url)
         mediaBrowserWebview?.loadUrl(h5url)
     }
 
@@ -132,7 +136,7 @@ class VideoPlayBrowserFragment : BaseFragment() {
 
     fun initData() {
         arguments.let {
-            h5url = it.getString(H5URL_KEY,"")
+//            h5url = it.getString(H5URL_KEY,"")
             category = it.getString(CATEGORY_KEY,"")
             if("1".equals(category)) { //电影
                 marginTop = margin1
@@ -201,6 +205,10 @@ class VideoPlayBrowserFragment : BaseFragment() {
                 "javascript:document.getElementsByTagName('body')[0].style.setProperty('margin-top', "
                         +"'${marginTop}px', 'important'); " +
                 " var video = document.getElementsByTagName('video')[0]; video.play();")
+    }
+
+    fun reloadPlayVideo(s: String) {
+
     }
 
 }
