@@ -8,31 +8,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
+import com.liking.treadmill.db.entity.AdvEntity;
 import com.liking.treadmill.db.entity.Member;
+import com.liking.treadmill.db.service.AdvService;
 import com.liking.treadmill.fragment.*;
-import com.liking.treadmill.message.AdvertisementMessage;
-import com.liking.treadmill.message.FanStateMessage;
-import com.liking.treadmill.message.GymBindSuccessMessage;
-import com.liking.treadmill.message.GymUnBindSuccessMessage;
-import com.liking.treadmill.message.LoginUserInfoMessage;
-import com.liking.treadmill.message.MemberListMessage;
-import com.liking.treadmill.message.MemberNoneMessage;
-import com.liking.treadmill.message.MembersDeleteMessage;
-import com.liking.treadmill.message.RequestMembersMessage;
-import com.liking.treadmill.message.UpdateAppMessage;
-import com.liking.treadmill.message.UpdateCompleteMessage;
-import com.liking.treadmill.module.run.RunningFragment;
+import com.liking.treadmill.message.*;
 import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
 import com.liking.treadmill.socket.LKSocketServiceKt;
-import com.liking.treadmill.socket.SocketService;
 import com.liking.treadmill.socket.result.AdvertisementResult;
+import com.liking.treadmill.socket.result.NewAdResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
@@ -40,6 +30,7 @@ import com.liking.treadmill.utils.MemberHelper;
 import com.liking.treadmill.utils.UsbUpdateUtils;
 import com.liking.treadmill.widget.IToast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.liking.treadmill.app.LikingThreadMillApplication.mLKAppSocketLogQueue;
@@ -64,12 +55,12 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             iBackService = IBackService.Stub.asInterface(iBinder);
             mBound = true;
-            LogUtils.d(SocketService.TAG, "service is connected");
+            //LogUtils.d(SocketService.TAG, "service is connected");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            LogUtils.d(SocketService.TAG, "service is disconnected");
+          //  LogUtils.d(SocketService.TAG, "service is disconnected");
             mBound = false;
             iBackService = null;
         }
@@ -429,4 +420,49 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             }
         }
     }
+
+    public void onEvent(AdvResultMessage message) {
+        switch (message.what) {
+            case AdvResultMessage.ADV_DEFAULT:
+                NewAdResult.DataBean dataBean = (NewAdResult.DataBean) message.obj1;
+                List<AdvEntity> entities = new ArrayList<>();
+                for (NewAdResult.DataBean.NewAdBean bean : dataBean.getHome()) {
+                    entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_HOME,
+                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id()));
+                }
+
+                for (NewAdResult.DataBean.NewAdBean bean: dataBean.getLogin()) {
+                    entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_HOME,
+                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id()));
+                }
+
+
+                for (NewAdResult.DataBean.NewAdBean bean: dataBean.getQuick_start()) {
+                    entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_QUICK_START,
+                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id()));
+                }
+
+                for (NewAdResult.DataBean.NewAdBean bean: dataBean.getSet_mode()) {
+                    entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_SET_MODE,
+                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id()));
+                }
+
+                AdvService.getInstance().insertAdvList(entities, new AdvService.CallBack<Boolean>() {
+                    @Override
+                    public void onBack(Boolean aBoolean) {
+                        LogUtils.i(TAG, String.format("insert is %b", aBoolean));
+                        postEvent(new AdvRefreshMessage());
+                    }
+                });
+
+                break;
+            case AdvResultMessage.ADV_NEW:
+
+
+
+
+                break;
+        }
+    }
+
 }
