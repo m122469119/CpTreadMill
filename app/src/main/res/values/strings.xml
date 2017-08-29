@@ -22,9 +22,9 @@
     <string name="goalsetting_step_run_time">时间</string>
     <string name="goalsetting_step_kilometre">公里</string>
     <string name="goalsetting_step_kcal">热量</string>
-    <string name="goalsetting_step_mode_time">设定跑步总时间</string>
-    <string name="goalsetting_step_mode_kcl">设定总消耗卡路里</string>
-    <string name="goalsetting_step_mode_kilometre">设定跑步总距离</string>
+    <string name="goalsetting_step_mode_time">设定运动时间(min)</string>
+    <string name="goalsetting_step_mode_kcl">设定消耗卡路里(Kcal)</string>
+    <string name="goalsetting_step_mode_kilometre">设定运动距离(km)</string>
     <string name="goalsetting_step_setting_hint1">点击&#160;&#160;&#160;&#160;选择设定目标类型&#160;&#160;&#160;&#160;&#160;&#160;再点击&#160;&#160;&#160;&#160;确认选定</string>
     <string name="goalsetting_step_setting_hint2">点击&#160;&#160;&#160;&#160;返回上一页</string>
     <string name="goalsetting_step_mode_hint1_part1">通过点击坡度&#160;&#160;&#160;&#160;&#160;&#160;&#160;以</string>
