@@ -14,22 +14,27 @@ public class AdvEntity implements Serializable{
     public static final String TYPE_QUICK_START = "quick_start";
     public static final String TYPE_SET_MODE = "set_mode";
 
+    public static final int DEFAULT = 1;
+    public static final int NOT_DEFAULT = 0;
+
 
     private Long adv_id; //主键
     private String url;
     private String type;
     private String endtime;
     private int staytime;
+    private int isDefault;
 
     public AdvEntity() {
     }
 
-    public AdvEntity(String url, String type, String endtime, int staytime, Long adv_id) {
+    public AdvEntity(String url, String type, String endtime, int staytime, Long adv_id, int isDefault) {
         this.url = url;
         this.type = type;
         this.endtime = endtime;
         this.staytime = staytime;
         this.adv_id = adv_id;
+        this.isDefault = isDefault;
     }
 
     public String getUrl() {
@@ -70,5 +75,13 @@ public class AdvEntity implements Serializable{
 
     public void setAdv_id(Long adv_id) {
         this.adv_id = adv_id;
+    }
+
+    public int getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(int isDefault) {
+        this.isDefault = isDefault;
     }
 }

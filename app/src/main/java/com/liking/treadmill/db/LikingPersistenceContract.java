@@ -20,5 +20,6 @@ public final class LikingPersistenceContract {
         public static final String COLUMN_NAME_TREADMILL_ADV_URL = "url"; //img type
         public static final String COLUMN_NAME_TREADMILL_ADV_END_TIME = "end_time"; // 失效时间
         public static final String COLUMN_NAME_TREADMILL_ADV_STAY_TIME = "stay_time";  // 显示时间
+        public static final String COLUMN_NAME_TREADMILL_ADV_IS_DEFAULT = "is_default"; // 是否是默认图片
     }
 }

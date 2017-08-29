@@ -96,6 +96,13 @@ object LKProtocolsHelperKt {
     /*清除场馆会员*/
     val REPORT_CLEAR_MEMBER_LIST_CMD = "clean_member"
 
+    /*新的广告图*/
+    private val NEW_ADVERTISEMENT_CMD = "new_advertisement"
+
+    /*默认广告图*/
+    private val DEFAULT_ADVERTISEMENT_CMD = "default_advertisement"
+
+
     val mGson = Gson()
 
     val resultHandler = Handler(Looper.getMainLooper())
@@ -274,7 +281,20 @@ object LKProtocolsHelperKt {
                     postEvent(MembersDeleteMessage())
                 }
             }
-
+            NEW_ADVERTISEMENT_CMD -> {
+                val newAdResult = mGson.fromJson(result, NewAdResult::class.java)
+                val data = newAdResult.data
+                val newAdvResultMessage = AdvResultMessage(AdvResultMessage.ADV_NEW)
+                newAdvResultMessage.obj1 = data
+                postEvent(newAdvResultMessage)
+            }
+            DEFAULT_ADVERTISEMENT_CMD -> {
+                val defaultAdResult = mGson.fromJson(result, DefaultAdResult::class.java)
+                val data = defaultAdResult.data
+                val defaultAdvResultMessage = AdvResultMessage(AdvResultMessage.ADV_DEFAULT)
+                defaultAdvResultMessage.obj1 = data
+                postEvent(defaultAdvResultMessage)
+            }
         }
     }
 
@@ -286,7 +306,7 @@ object LKProtocolsHelperKt {
         mAlarmManager.setTimeZone("GMT+08:00")
 
         val ct = SystemClock.setCurrentTimeMillis(time * 1000)
-        LogUtils.d("aaron", if (ct == true) "同步成功" else "同步失败")
+        LogUtils.d("aaron", if (ct) "同步成功" else "同步失败")
     }
 
     /**

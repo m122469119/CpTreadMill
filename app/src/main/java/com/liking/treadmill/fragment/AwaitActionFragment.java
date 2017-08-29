@@ -11,6 +11,7 @@ import android.widget.EditText;
 
 import android.widget.TextView;
 import butterknife.BindView;
+import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.base.widget.dialog.HBaseDialog;
@@ -20,13 +21,17 @@ import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.adapter.BannerPagerAdapter;
 import com.liking.treadmill.app.ThreadMillConstant;
+import com.liking.treadmill.db.entity.AdvEntity;
+import com.liking.treadmill.db.service.AdvService;
 import com.liking.treadmill.fragment.base.SerialPortFragment;
+import com.liking.treadmill.message.AdvRefreshMessage;
 import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.ApkUpdateHelper;
+import com.liking.treadmill.utils.TimeUtils;
 import com.liking.treadmill.widget.IToast;
 
 import butterknife.ButterKnife;
@@ -34,7 +39,10 @@ import com.liking.treadmill.widget.autoviewpager.InfiniteViewPager;
 import com.liking.treadmill.widget.autoviewpager.indicator.IconPageIndicator;
 import de.greenrobot.event.EventBus;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created on 16/12/15.
@@ -51,6 +59,8 @@ public class AwaitActionFragment extends SerialPortFragment {
     BannerPagerAdapter mBannerPagerAdapter;
     @BindView(R.id.text_please)
     TextView mPleaseView;
+
+    List<String> mBannerList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -151,16 +161,66 @@ public class AwaitActionFragment extends SerialPortFragment {
     }
 
     private void initViews() {
-        mBannerPagerAdapter= new BannerPagerAdapter(getActivity());
-        LinkedList<String> strings = new LinkedList<>();
-        strings.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3426174069,2716068976&fm=26&gp=0.jpg");
-        strings.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1015817196,3119022711&fm=26&gp=0.jpg");
-        mBannerPagerAdapter.setData(strings);
+        mBannerPagerAdapter = new BannerPagerAdapter(getActivity());
         mViewpager.setAdapter(mBannerPagerAdapter);
         mViewpager.setAutoScrollTime(AUTO_SCROLL);
         mIndicator.setViewPager(mViewpager);
         mViewpager.startAutoScroll();
         mPleaseView.setText(Html.fromHtml("<font color=\"#85878e\">请</font><font color=\"#34c86c\">在下方面板上刷手环处刷手环</font><font color=\"#85878e\">开启跑步机</font>"));
+        initBanner();
+    }
+
+    @Override
+    protected boolean isEventTarget() {
+        return true;
+    }
+
+    public void onEvent(AdvRefreshMessage message) {
+        initBanner();
+    }
+
+
+    public void initBanner() {
+        String yyyyMMdd = DateUtils.formatDate("yyyyMMdd", new Date());
+        yyyyMMdd = "20160212";
+        AdvService.getInstance().findAdvByTypeAndEndTime(AdvEntity.TYPE_HOME, AdvEntity.NOT_DEFAULT, yyyyMMdd, new AdvService.CallBack<List<AdvEntity>>() {
+            @Override
+            public void onBack(List<AdvEntity> advEntities) {
+                mBannerList.clear();
+                if (advEntities != null && advEntities.size() > 0) {
+                    for (AdvEntity entity : advEntities) {
+                        mBannerList.add(entity.getUrl());
+                    }
+                    setAdapterData(mBannerList);
+
+                } else {
+                    //设置为默认的图片
+                    AdvService.getInstance().findAdvByType(AdvEntity.TYPE_HOME, AdvEntity.NOT_DEFAULT, new AdvService.CallBack<List<AdvEntity>>() {
+                        @Override
+                        public void onBack(List<AdvEntity> advEntities) {
+                            if (advEntities != null && advEntities.size() > 0) {
+                                for (AdvEntity entity : advEntities) {
+                                    mBannerList.add(entity.getUrl());
+                                }
+                                setAdapterData(mBannerList);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void setAdapterData(final List<String> list) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mBannerPagerAdapter.setData(list);
+                mBannerPagerAdapter.notifyDataSetChanged();
+                mViewpager.startAutoScroll();
+
+            }
+        });
     }
 
 }
