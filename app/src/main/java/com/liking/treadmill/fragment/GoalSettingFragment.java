@@ -298,7 +298,7 @@ public class GoalSettingFragment extends SerialPortFragment {
             mStep1Hint2.setText(ssbh2);
         }
         showView(mViewSetting);
-        setClick();
+
     }
 
     private void setClick() {
