@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,10 +65,11 @@ public class GoalSettingFragment extends SerialPortFragment {
      * mode setting
      */
     private View mViewModeSetting;
-    private ImageView modeSettingIcon;
+    //    private ImageView modeSettingIcon;
     private TextView modeSettingType;
     private TextView modeSettingValue;
-    private TextView modeSettingUnit;
+    private TextView mSelectPrompt;
+    //    private TextView modeSettingUnit;
     private TextView modeSettingHint1;
     private TextView modeSettingHint1After;
     private TextView modeSettingHint2;
@@ -296,6 +298,36 @@ public class GoalSettingFragment extends SerialPortFragment {
             mStep1Hint2.setText(ssbh2);
         }
         showView(mViewSetting);
+        setClick();
+    }
+
+    private void setClick() {
+        mRunTimeImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showModeSettingView();
+                mCurrMode = GOAL_SETTING_MODE_RUNTIME;
+                showModeView();
+            }
+        });
+        mKilometreImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showModeSettingView();
+                mCurrMode = GOAL_SETTING_MODE_KILOMETRE;
+                showModeView();
+            }
+        });
+
+        mKcalImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showModeSettingView();
+                mCurrMode = GOAL_SETTING_MODE_KCAL;
+                showModeView();
+            }
+        });
+
     }
 
     public void setModeView(View view, int iconId, String modename) {
@@ -311,10 +343,11 @@ public class GoalSettingFragment extends SerialPortFragment {
     private void showModeSettingView() {
         if (mViewModeSetting == null) {
             mViewModeSetting = LayoutInflater.from(getActivity()).inflate(R.layout.layout_goalsetting_mode, null);
-            modeSettingIcon = (ImageView) mViewModeSetting.findViewById(R.id.mode_setting_icon);
+            // modeSettingIcon = (ImageView) mViewModeSetting.findViewById(R.id.mode_setting_icon);
             modeSettingType = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_type);
             modeSettingValue = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_value);
-            modeSettingUnit = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_unit);
+            mSelectPrompt = (TextView) mViewModeSetting.findViewById(R.id.goal_select_prompt);
+            //  modeSettingUnit = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_unit);
             modeSettingHint1 = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_hint1);
             modeSettingHint1After = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_hint1_after);
             modeSettingHint2 = (TextView) mViewModeSetting.findViewById(R.id.mode_setting_hint2);
@@ -333,27 +366,32 @@ public class GoalSettingFragment extends SerialPortFragment {
         switch (mCurrMode) {
             case GOAL_SETTING_MODE_RUNTIME:
                 modeSettingType.setText(ResourceUtils.getString(R.string.goalsetting_step_mode_time));
-                modeSettingIcon.setImageResource(R.drawable.goal_mode_time_img);
+                //  modeSettingIcon.setImageResource(R.drawable.goal_mode_time_img);
                 totalTarget = String.valueOf((int) totalTime);
-                modeSettingUnit.setText("min");
+                //  modeSettingUnit.setText("min");
                 hint1 = mode_runtime_grade_increment_str;
                 hint2 = mode_runtime_speed_increment_str;
+
+                setSelectPromptTextColor();
+
                 break;
             case GOAL_SETTING_MODE_KILOMETRE:
                 modeSettingType.setText(ResourceUtils.getString(R.string.goalsetting_step_mode_kilometre));
-                modeSettingIcon.setImageResource(R.drawable.goal_mode_kilometre_img);
+                //  modeSettingIcon.setImageResource(R.drawable.goal_mode_kilometre_img);
                 totalTarget = StringUtils.getDecimalString(totalKilometre, 1);
-                modeSettingUnit.setText("Km");
+                //  modeSettingUnit.setText("Km");
                 hint1 = mode_kilometre_grade_increment_str;
                 hint2 = mode_kilometre_speed_increment_str;
+                setSelectPromptTextColor();
                 break;
             case GOAL_SETTING_MODE_KCAL:
                 modeSettingType.setText(ResourceUtils.getString(R.string.goalsetting_step_mode_kcl));
-                modeSettingIcon.setImageResource(R.drawable.goal_mode_kcal_img);
+                //   modeSettingIcon.setImageResource(R.drawable.goal_mode_kcal_img);
                 totalTarget = String.valueOf((int) totalKcal);
-                modeSettingUnit.setText("Kcal");
+                //  modeSettingUnit.setText("Kcal");
                 hint1 = mode_kcal_grade_increment_str;
                 hint2 = mode_kcal_speed_increment_str;
+                setSelectPromptTextColor();
                 break;
         }
         modeSettingValue.setText(totalTarget);
@@ -384,6 +422,15 @@ public class GoalSettingFragment extends SerialPortFragment {
         ImageSpan imageSpanBack = new ImageSpan(getActivity(), R.drawable.key_back);
         ssbh3.setSpan(imageSpanBack, 3, 5, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         modeSettingHint3.setText(ssbh3);
+    }
+
+    private void setSelectPromptTextColor() {
+        String str = "请在下方按钮选择目标";
+        SpannableStringBuilder style = new SpannableStringBuilder(str);
+        style.setSpan(new ForegroundColorSpan(ResourceUtils.getColor(R.color.c85878e)), 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        style.setSpan(new ForegroundColorSpan(ResourceUtils.getColor(R.color.c34c86c)), 1, 6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        style.setSpan(new ForegroundColorSpan(ResourceUtils.getColor(R.color.c85878e)), 6, 10, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mSelectPrompt.setText(style);//将其添加到tv中
     }
 
     /**
