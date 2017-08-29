@@ -92,7 +92,7 @@
                     android:textColor="@color/text_color_green"
                     android:textStyle="bold"
                     android:gravity="center"
-                    android:textSize="60sp"
+                    android:textSize="50sp"
             />
 
             <TextView
@@ -103,7 +103,7 @@
                     android:textColor="@color/text_color_dark"
                     android:textStyle="bold"
                     android:gravity="center"
-                    android:textSize="30sp"
+                    android:textSize="25sp"
             />
 
             <TextView
@@ -115,7 +115,7 @@
                     android:textColor="@color/text_color_green"
                     android:textStyle="bold"
                     android:gravity="center"
-                    android:textSize="60sp"
+                    android:textSize="50sp"
             />
 
 

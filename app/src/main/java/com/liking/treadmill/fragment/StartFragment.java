@@ -13,13 +13,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.library.imageloader.HImageView;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.adapter.BannerPagerAdapter;
+import com.liking.treadmill.db.entity.AdvEntity;
+import com.liking.treadmill.db.service.AdvService;
 import com.liking.treadmill.fragment.base.SerialPortFragment;
+import com.liking.treadmill.message.AdvRefreshMessage;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
@@ -30,7 +34,10 @@ import butterknife.ButterKnife;
 import com.liking.treadmill.widget.autoviewpager.InfiniteViewPager;
 import com.liking.treadmill.widget.autoviewpager.indicator.IconPageIndicator;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created on 16/12/27.
@@ -70,6 +77,9 @@ public class StartFragment extends SerialPortFragment {
 
     AnimatorSet mQuickAnimator, mSetAnimator;
 
+    List<String> mBannerList = new ArrayList<>();
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -81,17 +91,13 @@ public class StartFragment extends SerialPortFragment {
     }
 
     private void initView() {
-
         mBannerPagerAdapter= new BannerPagerAdapter(getActivity());
-        LinkedList<String> strings = new LinkedList<>();
-        strings.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3426174069,2716068976&fm=26&gp=0.jpg");
-        strings.add("https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=1015817196,3119022711&fm=26&gp=0.jpg");
-        mBannerPagerAdapter.setData(strings);
         mViewpager.setAdapter(mBannerPagerAdapter);
         mViewpager.setAutoScrollTime(AUTO_SCROLL);
         mIndicator.setViewPager(mViewpager);
         mViewpager.startAutoScroll();
         mPleaseView.setText(Html.fromHtml("<font color=\"#AAACAF\">请使用下方面板上的相应按钮</font><br></br><font color=\"#34c86c\">快速开始</font><font color=\"#AAACAF\">或</font><font color=\"#34c86c\">设定目标</font>"));
+        initBanner();
     }
 
     @Override
@@ -246,7 +252,56 @@ public class StartFragment extends SerialPortFragment {
 
     }
 
+    @Override
+    protected boolean isEventTarget() {
+        return true;
+    }
+
+    public void onEvent(AdvRefreshMessage message){
+        initBanner();
+    }
+
+    private void setAdapterData(final List<String> list) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mBannerPagerAdapter.setData(list);
+                mBannerPagerAdapter.notifyDataSetChanged();
+                mViewpager.startAutoScroll();
+
+            }
+        });
+    }
 
 
+    public void initBanner() {
+        String yyyyMMdd = DateUtils.formatDate("yyyyMMdd", new Date());
+        yyyyMMdd = "20160212";
+        AdvService.getInstance().findAdvByTypeAndEndTime(AdvEntity.TYPE_QUICK_START, AdvEntity.NOT_DEFAULT, yyyyMMdd, new AdvService.CallBack<List<AdvEntity>>() {
+            @Override
+            public void onBack(List<AdvEntity> advEntities) {
+                mBannerList.clear();
+                if (advEntities != null && advEntities.size() > 0) {
+                    for (AdvEntity entity : advEntities) {
+                        mBannerList.add(entity.getUrl());
+                    }
+                    setAdapterData(mBannerList);
+                } else {
+                    //设置为默认的图片
+                    AdvService.getInstance().findAdvByType(AdvEntity.TYPE_QUICK_START, AdvEntity.DEFAULT, new AdvService.CallBack<List<AdvEntity>>() {
+                        @Override
+                        public void onBack(List<AdvEntity> advEntities) {
+                            if (advEntities != null && advEntities.size() > 0) {
+                                for (AdvEntity entity : advEntities) {
+                                    mBannerList.add(entity.getUrl());
+                                }
+                                setAdapterData(mBannerList);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
 
 }
