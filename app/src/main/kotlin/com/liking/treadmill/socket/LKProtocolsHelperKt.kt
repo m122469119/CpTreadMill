@@ -295,7 +295,6 @@ object LKProtocolsHelperKt {
                 defaultAdvResultMessage.obj1 = data
                 postEvent(defaultAdvResultMessage)
             }
-
         }
     }
 
@@ -307,7 +306,7 @@ object LKProtocolsHelperKt {
         mAlarmManager.setTimeZone("GMT+08:00")
 
         val ct = SystemClock.setCurrentTimeMillis(time * 1000)
-        LogUtils.d("aaron", if (ct == true) "同步成功" else "同步失败")
+        LogUtils.d("aaron", if (ct) "同步成功" else "同步失败")
     }
 
     /**

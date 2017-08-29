@@ -424,6 +424,9 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     public void onEvent(AdvResultMessage message) {
         switch (message.what) {
             case AdvResultMessage.ADV_DEFAULT:
+
+                break;
+            case AdvResultMessage.ADV_NEW:
                 NewAdResult.DataBean dataBean = (NewAdResult.DataBean) message.obj1;
                 List<AdvEntity> entities = new ArrayList<>();
                 for (NewAdResult.DataBean.NewAdBean bean : dataBean.getHome()) {
@@ -454,13 +457,6 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                         postEvent(new AdvRefreshMessage());
                     }
                 });
-
-                break;
-            case AdvResultMessage.ADV_NEW:
-
-
-
-
                 break;
         }
     }

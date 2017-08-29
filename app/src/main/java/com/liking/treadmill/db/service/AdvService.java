@@ -46,6 +46,16 @@ public class AdvService {
         });
     }
 
+    public void findAdvByTypeAndEndTime(final String type, final String endTime, final CallBack<List<AdvEntity>> callBack) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                callBack.onBack(mLocalDataSource.findAdvByTypeAndEndTime(type, endTime));
+            }
+        });
+    }
+
+
     public void insertAdvOne(final AdvEntity advEntity, final CallBack<Boolean> callBack) {
         mExecutor.execute(new Runnable() {
             @Override

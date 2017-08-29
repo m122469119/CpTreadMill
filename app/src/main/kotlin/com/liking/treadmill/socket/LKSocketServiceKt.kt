@@ -99,9 +99,11 @@ class LKSocketServiceKt : Service() {
         val flagLastIndex = resultHandlerBuilder.lastIndexOf(flag)
 
         if (flagIsLast(flagLastIndex, resultHandlerBuilder.length, flaglength)) {
-            val results = resultHandlerBuilder.toString()
+            val results = resultHandlerBuilder.toString().trim()
             resultHandlerBuilder.setLength(0)
-            handlerFullResult(results)
+            if (results.isNotEmpty()) {
+                handlerFullResult(results)
+            }
         } else if (flagLastIndex > -1) {
             val partStart = flagLastIndex + flaglength
             //不完整部分
@@ -133,7 +135,7 @@ class LKSocketServiceKt : Service() {
                 val resultSuccess = LKProtocolsHelperKt.isResultSuccess(result)
                 if (resultSuccess != null) {
                     mCount += 1
-                    LogUtils.e(TAG, "result:" + resultSuccess)
+                    LogUtils.i(TAG, "result:" + resultSuccess)
                     LKProtocolsHelperKt.handlerSocketReceive(resultSuccess)
 //                    val intent = Intent("com.liking.threadmill.socket")
 //                    intent.putExtra("message", resultSuccess)

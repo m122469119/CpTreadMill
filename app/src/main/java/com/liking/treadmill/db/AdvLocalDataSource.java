@@ -1,5 +1,6 @@
 package com.liking.treadmill.db;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,6 +23,11 @@ public class AdvLocalDataSource {
     private static final String FIND_ADV_BY_TYPE = "SELECT * FROM "
             + LikingPersistenceContract.TreadmillAdv.TABLE_NAME
             + " WHERE " + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_TYPE + "=?";
+
+    private static final String FIND_ADV_BY_TYPE_AND_TYPE = "SELECT * FROM "
+            + LikingPersistenceContract.TreadmillAdv.TABLE_NAME
+            + " WHERE " + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_TYPE + "=?"
+            + " AND " + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME + ">=?";
 
     private static final String INSERT_INTO_ADV_ONE = "INSERT INTO "
             + LikingPersistenceContract.TreadmillAdv.TABLE_NAME
@@ -48,49 +54,70 @@ public class AdvLocalDataSource {
                 }
             }
         } finally {
-            db.close();
+            mDatabaseManager.closeDatabase();
         }
-
         return advEntityList;
     }
+
+    public List<AdvEntity> findAdvByTypeAndEndTime(String type, String endTime) {
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
+        List<AdvEntity> advEntityList = new ArrayList<>();
+        try {
+            Cursor c = db.rawQuery(FIND_ADV_BY_TYPE_AND_TYPE, new String[]{type, endTime});
+            while (c.moveToNext()) {
+                AdvEntity advEntity = loadAdvEntity(c);
+                if (advEntity != null) {
+                    advEntityList.add(advEntity);
+                }
+            }
+        } finally {
+            mDatabaseManager.closeDatabase();
+        }
+        return advEntityList;
+    }
+
+
+
 
     public boolean insertAdvOne(AdvEntity advEntity) {
         SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         try {
-            db.rawQuery(INSERT_INTO_ADV_ONE, new String[]{advEntity.getType(),
-                    String.valueOf(advEntity.getStaytime()),
-                    advEntity.getEndtime(),
-                    advEntity.getUrl(),
-                    String.valueOf(advEntity.getAdv_id())
-            });
+            insertAdv(db, advEntity);
         } catch (Exception e) {
             return false;
         } finally {
-            db.close();
+            mDatabaseManager.closeDatabase();
         }
         return true;
     }
 
     public boolean insertAdvList(List<AdvEntity> advEntities) {
         SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
-        db.beginTransaction();
+    //    db.beginTransaction();
         try {
             for (AdvEntity entity : advEntities) {
-                db.rawQuery(INSERT_INTO_ADV_ONE, new String[]{entity.getType(),
-                        String.valueOf(entity.getStaytime()),
-                        entity.getEndtime(),
-                        entity.getUrl(),
-                        String.valueOf(entity.getAdv_id())
-                });
+                insertAdv(db, entity);
             }
-            db.setTransactionSuccessful();
+          //  db.setTransactionSuccessful();
         } catch (Exception e) {
             return false;
         } finally {
-            db.endTransaction();
+         //   db.endTransaction();
+            mDatabaseManager.closeDatabase();
         }
         return true;
     }
+
+    private void insertAdv(SQLiteDatabase db, AdvEntity entity){
+        ContentValues values = new ContentValues();
+        values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_TYPE, entity.getType());
+        values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_STAY_TIME, entity.getStaytime());
+        values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME, entity.getEndtime());
+        values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL, entity.getUrl());
+        values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID, entity.getAdv_id());
+        db.insert(LikingPersistenceContract.TreadmillAdv.TABLE_NAME, null, values);
+    }
+
 
     public boolean deleteAll() {
         SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
@@ -100,7 +127,7 @@ public class AdvLocalDataSource {
             LogUtils.e(TAG, e.toString());
             return false;
         } finally {
-            db.close();
+            mDatabaseManager.closeDatabase();
         }
         return true;
     }
@@ -115,7 +142,7 @@ public class AdvLocalDataSource {
             LogUtils.e(TAG, e.toString());
             return false;
         } finally {
-            db.close();
+            mDatabaseManager.closeDatabase();
         }
         return true;
     }
@@ -129,5 +156,6 @@ public class AdvLocalDataSource {
         String url = c.getString(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL));
         return new AdvEntity(url, type, end_time, stay_time, adv_id);
     }
+
 
 }
