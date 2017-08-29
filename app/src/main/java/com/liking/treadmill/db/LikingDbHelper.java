@@ -35,7 +35,8 @@ public class LikingDbHelper extends SQLiteOpenHelper {
             LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL + TEXT_TYPE + COMMA_SEP +
             LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME + TEXT_TYPE + COMMA_SEP +
             LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_STAY_TIME + INTEGER_TYPE + COMMA_SEP +
-            LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_TYPE + TEXT_TYPE +
+            LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_TYPE + TEXT_TYPE + COMMA_SEP +
+            LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_IS_DEFAULT + INTEGER_TYPE +
             " )";
 
 

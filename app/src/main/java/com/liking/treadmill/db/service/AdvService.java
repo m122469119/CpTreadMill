@@ -30,31 +30,31 @@ public class AdvService {
         return AdvServiceFactory.instance();
     }
 
-    private static class AdvServiceFactory{
+    private static class AdvServiceFactory {
         private static AdvService advService = new AdvService();
-        public static AdvService instance(){
+
+        public static AdvService instance() {
             return advService;
         }
     }
 
-    public void findAdvByType(final String type, final CallBack<List<AdvEntity>> callBack) {
+    public void findAdvByType(final String type, final int isDefault, final CallBack<List<AdvEntity>> callBack) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                callBack.onBack(mLocalDataSource.findAdvByType(type));
+                callBack.onBack(mLocalDataSource.findAdvByType(type, isDefault));
             }
         });
     }
 
-    public void findAdvByTypeAndEndTime(final String type, final String endTime, final CallBack<List<AdvEntity>> callBack) {
+    public void findAdvByTypeAndEndTime(final String type, final int isDefault, final String endTime, final CallBack<List<AdvEntity>> callBack) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                callBack.onBack(mLocalDataSource.findAdvByTypeAndEndTime(type, endTime));
+                callBack.onBack(mLocalDataSource.findAdvByTypeAndEndTime(type, endTime, isDefault));
             }
         });
     }
-
 
     public void insertAdvOne(final AdvEntity advEntity, final CallBack<Boolean> callBack) {
         mExecutor.execute(new Runnable() {
@@ -83,7 +83,7 @@ public class AdvService {
         });
     }
 
-    public void deleteAdvByTime(final String endTime, final CallBack<Boolean> callBack){
+    public void deleteAdvByTime(final String endTime, final CallBack<Boolean> callBack) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {

@@ -22,6 +22,7 @@ import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
 import com.liking.treadmill.socket.LKSocketServiceKt;
 import com.liking.treadmill.socket.result.AdvertisementResult;
+import com.liking.treadmill.socket.result.DefaultAdResult;
 import com.liking.treadmill.socket.result.NewAdResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
@@ -424,36 +425,65 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     public void onEvent(AdvResultMessage message) {
         switch (message.what) {
             case AdvResultMessage.ADV_DEFAULT:
+                DefaultAdResult.DataBean defaultBean = (DefaultAdResult.DataBean) message.obj1;
+                List<AdvEntity> defaultEntities = new ArrayList<>();
 
+                for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getHome()) {
+                    defaultEntities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_HOME,
+                            "0", 0, (long) bean.getAdv_id(), AdvEntity.DEFAULT));
+                }
+
+                for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getLogin()) {
+                    defaultEntities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_LOGIN,
+                            "0", 0, (long) bean.getAdv_id(), AdvEntity.DEFAULT));
+                }
+
+                for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getQuick_start()) {
+                    defaultEntities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_LOGIN,
+                            "0", 0, (long) bean.getAdv_id(), AdvEntity.DEFAULT));
+                }
+
+                for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getSet_mode()) {
+                    defaultEntities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_SET_MODE,
+                            "0", 0, (long) bean.getAdv_id(), AdvEntity.DEFAULT));
+                }
+
+                AdvService.getInstance().insertAdvList(defaultEntities, new AdvService.CallBack<Boolean>() {
+                    @Override
+                    public void onBack(Boolean aBoolean) {
+                        LogUtils.i(TAG, String.format("default insert is %b", aBoolean));
+                        postEvent(new AdvRefreshMessage());
+                    }
+                });
                 break;
             case AdvResultMessage.ADV_NEW:
                 NewAdResult.DataBean dataBean = (NewAdResult.DataBean) message.obj1;
                 List<AdvEntity> entities = new ArrayList<>();
                 for (NewAdResult.DataBean.NewAdBean bean : dataBean.getHome()) {
                     entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_HOME,
-                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id()));
+                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id(), AdvEntity.NOT_DEFAULT));
                 }
 
                 for (NewAdResult.DataBean.NewAdBean bean: dataBean.getLogin()) {
-                    entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_HOME,
-                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id()));
+                    entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_LOGIN,
+                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id(), AdvEntity.NOT_DEFAULT));
                 }
 
 
                 for (NewAdResult.DataBean.NewAdBean bean: dataBean.getQuick_start()) {
                     entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_QUICK_START,
-                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id()));
+                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id(), AdvEntity.NOT_DEFAULT));
                 }
 
                 for (NewAdResult.DataBean.NewAdBean bean: dataBean.getSet_mode()) {
                     entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_SET_MODE,
-                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id()));
+                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id(), AdvEntity.NOT_DEFAULT));
                 }
 
                 AdvService.getInstance().insertAdvList(entities, new AdvService.CallBack<Boolean>() {
                     @Override
                     public void onBack(Boolean aBoolean) {
-                        LogUtils.i(TAG, String.format("insert is %b", aBoolean));
+                        LogUtils.i(TAG, String.format("new insert is %b", aBoolean));
                         postEvent(new AdvRefreshMessage());
                     }
                 });
