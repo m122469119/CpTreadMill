@@ -50,7 +50,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/spacing_40dp"
+        android:paddingBottom="@dimen/spacing_60dp"
         android:paddingTop="@dimen/spacing_40dp">
 
         <LinearLayout
