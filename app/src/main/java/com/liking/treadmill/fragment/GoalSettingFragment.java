@@ -44,7 +44,7 @@ public class GoalSettingFragment extends SerialPortFragment {
     private boolean isModeSelect = true;//选择模式
     private boolean isModeSetting = false;//模式设置
 
-    private int mCurrMode = GOAL_SETTING_MODE_KCAL;//当前mode
+    private int mCurrMode = GOAL_SETTING_MODE_RUNTIME;//当前mode
 
     private FrameLayout mRootView;
 
