@@ -60,6 +60,7 @@ public class StartFragment extends SerialPortFragment {
 
     @BindView(R.id.text_time)
     TextView mTextTime;
+
     @BindView(R.id.text_quickstart)
     TextView mQuickstartTextView;
     @BindView(R.id.text_set)
@@ -68,7 +69,6 @@ public class StartFragment extends SerialPortFragment {
     ImageView mQuickImageView;
     @BindView(R.id.image_set)
     ImageView mSetImageView;
-
 
     @BindView(R.id.viewpager_start)
     InfiniteViewPager mViewpager;
@@ -166,6 +166,12 @@ public class StartFragment extends SerialPortFragment {
                 return;
             }
             ((HomeActivity) getActivity()).launchFragment(new GoalSettingFragment());
+        } else if(keyCode == LikingTreadKeyEvent.KEY_MULTIMEDIA) {
+            RunningFragment runningFragment = new RunningFragment();
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(runningFragment.getRUNING_START_MODE_KEY(), true);
+            runningFragment.setArguments(bundle);
+            ((HomeActivity) getActivity()).launchFragment(runningFragment);
         }
     }
 

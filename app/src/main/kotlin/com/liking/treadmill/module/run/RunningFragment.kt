@@ -28,6 +28,7 @@ import com.liking.treadmill.adapter.IqiyiVideoEpisodesAdapter
 import com.liking.treadmill.adapter.IqiyiVideoListAdapter
 import com.liking.treadmill.app.ThreadMillConstant
 import com.liking.treadmill.fragment.AwaitActionFragment
+import com.liking.treadmill.fragment.GoalSettingFragment
 import com.liking.treadmill.fragment.SettingFragment
 import com.liking.treadmill.fragment.StartFragment
 import com.liking.treadmill.fragment.base.SerialPortFragment
@@ -75,6 +76,8 @@ import org.jetbrains.anko.layoutInflater
  */
 
 class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
+
+    val RUNING_START_MODE_KEY: String = "MEDIA_STAR" //影音方式启动
 
     private val RUN_COUNTDOWN_TIME_INTERVAL: Long = 1000 //倒计时间隔
     private val RUN_COUNTDOWN_TIME_PREPARE = 5 * 1000 //跑步倒计时
@@ -169,6 +172,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     private val RUNNING_CALCULATE_INTERVAL_SECOND = 1000
 
     private var isMediaStart: Boolean = false
+    private var isRunning: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater?.inflate(R.layout.fragment_running, container, false)
@@ -319,6 +323,10 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     }
 
     fun initData() {
+
+        if(arguments != null) {
+            isMediaStart = arguments.getBoolean(RUNING_START_MODE_KEY,false)
+        }
         //预备动画
         prepareAnimation = AnimationUtils.loadAnimation(context, R.anim.count_down_exit)
 
@@ -360,12 +368,12 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 
     override fun onResume() {
         super.onResume()
-        if(isMediaStart) {
+        if (isMediaStart) {
             layout_run_content.layout_run_way.visibility = View.INVISIBLE
             layout_run_bottom.layout_run_bottom_content_layout.visibility = View.INVISIBLE
             layout_run_content.layout_run_way.translationY =
                     layout_run_content.layout_run_way.height +
-                    DisplayUtils.dp2px(ResourceUtils.getDimen(R.dimen.run_bottom_height)).toFloat()
+                            DisplayUtils.dp2px(ResourceUtils.getDimen(R.dimen.run_bottom_height)).toFloat()
             showVideoCategoryUI()
         } else {
             startRunPrepareUI()
@@ -956,6 +964,25 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     }
 
     /**
+     * 退出
+     */
+    private fun exitRunUI() {
+        resetTreadmill()
+        (activity as HomeActivity).setTitle("")
+        (activity as HomeActivity).launchFragment(AwaitActionFragment())
+    }
+
+    /**
+     * 跳转目标设置
+     */
+    fun setUpGoalSetting () {
+        //目标设置
+        if (!isRunning) {
+            (activity as HomeActivity).launchFragment(GoalSettingFragment())
+        }
+    }
+
+    /**
      * 跑步机按键回调
      */
     override fun onTreadKeyDown(keyCode: Int, event: LikingTreadKeyEvent) {
@@ -971,10 +998,9 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             }
 
         } else if (isInFinishUI()) { //结束页面
+
             if (keyCode == LikingTreadKeyEvent.KEY_RETURN.toInt()) {
-                resetTreadmill()
-                (activity as HomeActivity).setTitle("")
-                (activity as HomeActivity).launchFragment(AwaitActionFragment())
+                exitRunUI()
             } else if (keyCode == LikingTreadKeyEvent.KEY_CARD.toInt()) {
                 cardLogin()
             } else if (keyCode == LikingTreadKeyEvent.KEY_PROGRAM.toInt()) {
@@ -988,6 +1014,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             setUpRun(keyCode, true)
 
         } else if (isInVideoCategoryUI()) { //视频分类
+
             if (keyCode == LikingTreadKeyEvent.KEY_LAST.toInt()) {
                 categoryLast()
             } else if (keyCode == LikingTreadKeyEvent.KEY_NEXT.toInt()) {
@@ -996,11 +1023,37 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 hiddenVideoCategoryUI()
                 loadVideoList()
             } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN.toInt()) {
-                hiddenVideoCategoryUI()
-                showRunWayUI()
+                if (isRunning) {
+                    hiddenVideoCategoryUI()
+                    showRunWayUI()
+                } else {
+                    exitRunUI()
+                }
+            } else if (keyCode == LikingTreadKeyEvent.KEY_START.toInt()) {
+                if(!isRunning) {
+                    hiddenVideoCategoryUI()
+                    showRunWayUI()
+                    layout_run_bottom.layout_run_bottom_content_layout.visibility = View.VISIBLE
+                    startRunPrepareUI()
+                }
+            } else if(keyCode == LikingTreadKeyEvent.KEY_SET.toInt()) {
+                setUpGoalSetting()
             }
-            //else if(keyCode == LikingTreadKeyEvent.KEY_)
+
         } else if (isInVideosUI()) { //视频列表
+
+            if (keyCode == LikingTreadKeyEvent.KEY_START.toInt()) {
+                if(!isRunning) {
+                    hiddenVideoListUI()
+                    showRunWayUI()
+                    layout_run_bottom.layout_run_bottom_content_layout.visibility = View.VISIBLE
+                    startRunPrepareUI()
+                }
+                return
+            } else if(keyCode == LikingTreadKeyEvent.KEY_SET.toInt()) {
+                setUpGoalSetting()
+                return
+            }
 
             if (isInVideoListUI()) {
                 //如果加载中 return
@@ -1016,7 +1069,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                     hiddenVideoListUI()
                     showVideoCategoryUI()
                 } else {
-                    setUpRun(keyCode , false)
+                    setUpRun(keyCode, false)
                 }
             } else if (isInVideoEpisodeListUI()) {
                 if (keyCode == LikingTreadKeyEvent.KEY_LAST.toInt()) {
@@ -1029,11 +1082,19 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                     video_list_recyclerView_episode.visibility = View.GONE
                     video_list_recyclerView.visibility = View.VISIBLE
                 } else {
-                    setUpRun(keyCode , false)
+                    setUpRun(keyCode, false)
                 }
             }
 
         } else if (isInVideoPlayUI()) { //视频播放
+
+            if (keyCode == LikingTreadKeyEvent.KEY_START.toInt()) {
+                if(!isRunning) {
+                    layout_run_bottom.layout_run_bottom_content_layout.visibility = View.VISIBLE
+                    startRunPrepareUI()
+                }
+                return
+            }
 
             if (keyCode == LikingTreadKeyEvent.KEY_LAST.toInt()) {
                 videoPlayBrowserUIAction {
@@ -1066,8 +1127,11 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 videoPlayBrowserUIAction {
                     it.playVideo()
                 }
+            } else if(keyCode == LikingTreadKeyEvent.KEY_SET.toInt()) {
+                //目标设置
+               setUpGoalSetting()
             } else {
-                setUpRun(keyCode , false)
+                setUpRun(keyCode, false)
             }
         }
     }
@@ -1167,6 +1231,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         layout_run_pause.visibility = View.GONE
         layout_run_content.visibility = View.VISIBLE
         layout_run_finish.visibility = View.GONE
+        isRunning = true
         isFinish = false
         isPause = false
         handler.sendEmptyMessageDelayed(MESSAGE_RETAIN, RUNNING_CALCULATE_INTERVAL_SECOND.toLong())
@@ -1177,6 +1242,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     private fun pauseTreadmill() {
         startRunPauseUI()
+        isRunning = false
         stopTreadMill()//暂停命令
         layout_run_pause.visibility = View.VISIBLE
         layout_run_content.layout_run_way.run_way_view.stopRun()
@@ -1248,6 +1314,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * 结束跑步
      */
     fun finishExercise() {
+        isRunning = false
         isFinish = true
         handler.removeMessages(MESSAGE_RETAIN)
         videoPlayBrowserUIAction {
