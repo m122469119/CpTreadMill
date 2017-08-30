@@ -331,8 +331,8 @@ public class StartFragment extends SerialPortFragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         mHandler.removeCallbacksAndMessages(null);
         mHandler = null;
     }
