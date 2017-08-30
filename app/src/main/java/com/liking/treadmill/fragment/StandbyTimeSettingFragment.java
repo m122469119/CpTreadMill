@@ -59,9 +59,9 @@ public class StandbyTimeSettingFragment extends SerialPortFragment {
 
 
     private void initData() {
-        mTextItems.add(new CarouselPicker.TextItem("1", 150));
-        mTextItems.add(new CarouselPicker.TextItem("2", 150));
-        mTextItems.add(new CarouselPicker.TextItem("3", 150));
+        mTextItems.add(new CarouselPicker.TextItem("1", 400));
+        mTextItems.add(new CarouselPicker.TextItem("2", 400));
+        mTextItems.add(new CarouselPicker.TextItem("3", 400));
         mTextAdapter = new CarouselPicker.CarouselViewAdapter(getActivity(), mTextItems, 0);
         mTimePickerView.setAdapter(mTextAdapter);
     }
