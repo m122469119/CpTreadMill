@@ -8,7 +8,7 @@
 
     <com.aaron.android.framework.library.imageloader.HImageView
         android:id="@+id/imageview_adv"
-        android:layout_width="515dp"
+        android:layout_width="470dp"
         android:layout_height="250dp"
         android:scaleType="centerCrop"
         android:adjustViewBounds="true"
