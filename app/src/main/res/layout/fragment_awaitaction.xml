@@ -39,7 +39,6 @@
         </RelativeLayout>
 
         <TextView
-                android:text="十五字十五字十五字十五字十五字"
                 android:id="@+id/text_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -53,6 +52,7 @@
         <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="15dp"
                 android:src="@drawable/await_button"
                 android:layout_below="@id/text_title"

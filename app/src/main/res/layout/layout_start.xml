@@ -4,70 +4,77 @@
               android:layout_height="match_parent"
               android:gravity="center"
               android:orientation="vertical">
-
-
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="190dp"
-            android:layout_marginRight="190dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="47dp"
             android:orientation="horizontal">
 
-        <com.aaron.android.framework.library.imageloader.HImageView
-                xmlns:fresco="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/head_imageView"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                fresco:failureImage="@drawable/icon_head_default_image"
-                fresco:failureImageScaleType="centerCrop"
-                fresco:placeholderImage="@drawable/icon_head_default_image"
-                fresco:placeholderImageScaleType="centerCrop"
-                fresco:roundAsCircle="true"/>
-
-
-        <TextView
-                android:id="@+id/user_name_TextView"
+        <LinearLayout
+                android:id="@+id/layout_run_head_left"
+                android:paddingLeft="126dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/spacing_4dp"
-                android:layout_marginLeft="@dimen/spacing_20dp"
-                android:text="LikingFans"
-                android:layout_gravity="center_vertical"
-                android:background="@drawable/textview_underline"
-                android:textColor="@color/text_color_dark"
-                android:textSize="44sp"/>
+                android:orientation="horizontal">
+
+            <com.aaron.android.framework.library.imageloader.HImageView
+                    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/head_imageView"
+                    android:layout_width="67dp"
+                    android:layout_height="67dp"
+                    android:layout_gravity="center"
+                    fresco:failureImage="@drawable/icon_head_default_image"
+                    fresco:failureImageScaleType="centerCrop"
+                    fresco:placeholderImage="@drawable/icon_head_default_image"
+                    fresco:placeholderImageScaleType="centerCrop"
+                    fresco:roundAsCircle="true"/>
+
+            <TextView
+                    android:id="@+id/user_name_TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/spacing_20dp"
+                    android:background="@drawable/textview_underline"
+                    android:padding="@dimen/spacing_4dp"
+                    android:text="LikingFans"
+                    android:textColor="@color/text_color_dark"
+                    android:textSize="35dp"/>
+
+        </LinearLayout>
 
         <RelativeLayout
+                android:id="@+id/layout_run_head_right"
                 android:layout_width="match_parent"
+                android:paddingRight="126dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:orientation="vertical">
-
 
             <TextView
                     android:id="@+id/text_gym_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="复兴SOHO店"
+                    android:layout_marginLeft="@dimen/spacing_20dp"
                     android:textColor="@color/text_color_dark"
-                    android:textSize="30sp"/>
+                    android:textSize="@dimen/textsize_16sp"/>
 
             <TextView
                     android:id="@+id/text_time"
-                    android:layout_below="@+id/text_gym_name"
-                    android:layout_marginTop="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
+                    android:layout_below="@+id/text_gym_name"
+                    android:layout_marginLeft="@dimen/spacing_20dp"
+                    android:layout_marginTop="5dp"
                     android:text="2017.07.21 17:45"
                     android:textColor="@color/text_color_dark"
-                    android:textSize="22sp"/>
-
+                    android:textSize="@dimen/textsize_16sp"/>
         </RelativeLayout>
     </LinearLayout>
+
+
     <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -80,11 +87,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingTop="20dp"
-                android:gravity="center"
-        >
+                android:gravity="center">
 
             <TextView
+                    android:layout_marginTop="30dp"
                     android:id="@+id/text_quickstart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -92,7 +98,7 @@
                     android:textColor="@color/text_color_green"
                     android:textStyle="bold"
                     android:gravity="center"
-                    android:textSize="50sp"
+                    android:textSize="40sp"
             />
 
             <TextView
@@ -103,7 +109,7 @@
                     android:textColor="@color/text_color_dark"
                     android:textStyle="bold"
                     android:gravity="center"
-                    android:textSize="25sp"
+                    android:textSize="20sp"
             />
 
             <TextView
@@ -115,13 +121,13 @@
                     android:textColor="@color/text_color_green"
                     android:textStyle="bold"
                     android:gravity="center"
-                    android:textSize="50sp"
+                    android:textSize="40sp"
             />
 
 
             <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="30dp"
                     android:layout_height="140dp">
 
                 <ImageView
@@ -152,7 +158,7 @@
 
             <TextView
                     android:id="@+id/text_please"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="15dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="22sp"

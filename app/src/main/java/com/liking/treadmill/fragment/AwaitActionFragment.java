@@ -60,6 +60,8 @@ public class AwaitActionFragment extends SerialPortFragment {
     BannerPagerAdapter mBannerPagerAdapter;
     @BindView(R.id.text_please)
     TextView mPleaseView;
+    @BindView(R.id.text_title)
+    TextView mTitle;
 
     List<String> mBannerList = new ArrayList<>();
 
@@ -168,6 +170,7 @@ public class AwaitActionFragment extends SerialPortFragment {
         mIndicator.setViewPager(mViewpager);
         mPleaseView.setText(Html.fromHtml("<font color=\"#85878e\">请</font><font color=\"#34c86c\">在下方面板上刷手环处刷手环</font><font color=\"#85878e\">开启跑步机</font>"));
         initBanner();
+        mTitle.setText(Preference.getBindUserGymName());
     }
 
     @Override

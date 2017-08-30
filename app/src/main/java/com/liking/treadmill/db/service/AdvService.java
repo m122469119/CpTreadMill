@@ -42,7 +42,8 @@ public class AdvService {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                callBack.onBack(mLocalDataSource.findAdvByType(type, isDefault));
+                List<AdvEntity> advByType = mLocalDataSource.findAdvByType(type, isDefault);
+                callBack.onBack(advByType);
             }
         });
     }
@@ -51,7 +52,8 @@ public class AdvService {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                callBack.onBack(mLocalDataSource.findAdvByTypeAndEndTime(type, endTime, isDefault));
+                List<AdvEntity> advByTypeAndEndTime = mLocalDataSource.findAdvByTypeAndEndTime(type, endTime, isDefault);
+                callBack.onBack(advByTypeAndEndTime);
             }
         });
     }
@@ -69,7 +71,8 @@ public class AdvService {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                callBack.onBack(mLocalDataSource.insertAdvList(advEntities));
+                boolean b = mLocalDataSource.insertAdvList(advEntities);
+                callBack.onBack(b);
             }
         });
     }
