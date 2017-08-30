@@ -14,6 +14,7 @@ import com.aaron.android.framework.base.BaseApplication
 import com.aaron.android.framework.utils.DeviceUtils
 import com.aaron.android.framework.utils.EnvironmentUtils
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.liking.treadmill.app.LikingThreadMillApplication
 import com.liking.treadmill.app.ThreadMillConstant
 import com.liking.treadmill.message.*
@@ -24,8 +25,11 @@ import com.liking.treadmill.socket.result.*
 import com.liking.treadmill.storge.Preference
 import com.liking.treadmill.treadcontroller.SerialPortUtil
 import com.liking.treadmill.utils.*
+import com.liking.treadmill.utils.UUID
+import com.liking.treadmill.widget.IToast
 import de.greenrobot.event.EventBus
 import java.io.File
+import java.util.*
 
 /**
  * Created on 2017/08/07
@@ -103,7 +107,7 @@ object LKProtocolsHelperKt {
     private val DEFAULT_ADVERTISEMENT_CMD = "default_advertisement"
 
 
-    val mGson = Gson()
+    val mGson = GsonBuilder().disableHtmlEscaping().create()
 
     val resultHandler = Handler(Looper.getMainLooper())
 
@@ -177,7 +181,7 @@ object LKProtocolsHelperKt {
 
                 userData?.let {
                     message.mUserData = userData
-                    userData.userInfoData?.let {
+                    if(userData.userInfoData != null) {
                         //缓存一条登录状态
                         val deviceId = DeviceUtils.getDeviceInfo(BaseApplication.getInstance())
                         val time = DateUtils.currentDataSeconds().toString()
@@ -188,6 +192,7 @@ object LKProtocolsHelperKt {
                         val json = mGson.toJson(TreadProtocolData(TYPE_USERLOGOUT, UUID.getMsgId(), VERSION, userLogout))
                         FileUtils.store(json, ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE + braceletId)
                     }
+                    postEvent(message)
                 }
             }
 
@@ -477,7 +482,7 @@ object LKProtocolsHelperKt {
     fun getReportExerciseDataRequest(braceletId: Long, period: Int, distance: Float,
                                      cal: Float, type: Int, aimType: Int, aim: Float, achieve: Int): String? {
         val deviceId = DeviceUtils.getDeviceInfo(BaseApplication.getInstance())
-        val msgId = UUID.getMsgId()
+        val msgId = SerialPortUtil.getTreadInstance().cardNo + Date().time//UUID.getMsgId()
         val gymId = Preference.getBindUserGymId()
         val time = DateUtils.currentDataSeconds().toString()
 
@@ -485,7 +490,7 @@ object LKProtocolsHelperKt {
                 period.toString(), distance.toString(), cal.toString(),
                 type.toString(), aimType.toString(), aim.toString(), achieve.toString(), time)
 
-        val result = mGson.toJson(TreadProtocolData(TYPE_EXERCISE_DATA, UUID.getMsgId(), VERSION, exerciseData))
+        val result = mGson.toJson(TreadProtocolData(TYPE_EXERCISE_DATA, msgId, VERSION, exerciseData))
 
         FileUtils.store(result, ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE + msgId)
         return toJson(result)

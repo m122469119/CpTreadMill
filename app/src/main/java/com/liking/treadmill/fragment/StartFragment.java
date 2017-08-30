@@ -24,6 +24,7 @@ import com.liking.treadmill.db.entity.AdvEntity;
 import com.liking.treadmill.db.service.AdvService;
 import com.liking.treadmill.fragment.base.SerialPortFragment;
 import com.liking.treadmill.message.AdvRefreshMessage;
+import com.liking.treadmill.module.run.RunningFragment;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
@@ -93,7 +94,6 @@ public class StartFragment extends SerialPortFragment {
     private void initView() {
         mBannerPagerAdapter= new BannerPagerAdapter(getActivity());
         mViewpager.setAdapter(mBannerPagerAdapter);
-        mViewpager.setAutoScrollTime(AUTO_SCROLL);
         mIndicator.setViewPager(mViewpager);
         mViewpager.startAutoScroll();
         mPleaseView.setText(Html.fromHtml("<font color=\"#AAACAF\">请使用下方面板上的相应按钮</font><br></br><font color=\"#34c86c\">快速开始</font><font color=\"#AAACAF\">或</font><font color=\"#34c86c\">设定目标</font>"));
@@ -130,7 +130,7 @@ public class StartFragment extends SerialPortFragment {
                 IToast.show("场馆未绑定，请联系管理员!");
                 return;
             }
-            ((HomeActivity) getActivity()).launchFragment(new RunFragment());
+            ((HomeActivity) getActivity()).launchFragment(new RunningFragment());
         } else if (keyCode == LikingTreadKeyEvent.KEY_CARD) {
             startActiveMonitor();
             cardLogin();
@@ -267,6 +267,7 @@ public class StartFragment extends SerialPortFragment {
             public void run() {
                 mBannerPagerAdapter.setData(list);
                 mBannerPagerAdapter.notifyDataSetChanged();
+                mIndicator.notifyDataSetChanged();
                 mViewpager.startAutoScroll();
 
             }

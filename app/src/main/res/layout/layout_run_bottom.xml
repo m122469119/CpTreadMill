@@ -13,6 +13,7 @@
         android:background="@color/c353535"/>
 
     <LinearLayout
+        android:id="@+id/layout_run_bottom_content_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/spacing_20dp"

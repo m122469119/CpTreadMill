@@ -16,6 +16,7 @@ import com.liking.treadmill.socket.data.request.PingData;
 import com.liking.treadmill.socket.result.MemberListResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
+import com.liking.treadmill.utils.AESUtils;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,6 +64,7 @@ public class ExampleInstrumentedTest {
 //        System.out.println(LKProtocolsHelperKt.INSTANCE.getUserLoginRequest(27777788382L));
 //
 //        System.out.println(LKProtocolsHelperKt.INSTANCE.getUserLogoutRequest(37777788382L));
+
     }
 
 }

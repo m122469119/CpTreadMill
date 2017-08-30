@@ -1,10 +1,10 @@
 package com.liking.treadmill.module.run
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.LinearLayout
@@ -15,10 +15,10 @@ import com.liking.treadmill.BuildConfig
 import com.liking.treadmill.R
 import kotlinx.android.synthetic.main.layout_media_browser.*
 import org.jetbrains.anko.backgroundResource
-import android.view.animation.ScaleAnimation
 import android.webkit.WebChromeClient
 import android.webkit.WebViewClient
 import com.aaron.android.codelibrary.utils.LogUtils
+import com.liking.treadmill.widget.IToast
 
 
 /**
@@ -37,7 +37,15 @@ class VideoPlayBrowserFragment : BaseFragment() {
 
     private var margin1:Int = -166
 
-    private var margin2:Int = -336
+    private var margin2:Int = -333
+
+    private var handler: Handler = Handler()
+
+    private var videoTypeRun =  Runnable {
+        //清晰度设置
+        mediaBrowserWebview?.loadUrl(
+                "javascript: document.getElementsByClassName('c-videoType-item')[1].click()")
+    }
 
     companion object {
         val H5URL_KEY = "h5url"
@@ -62,30 +70,8 @@ class VideoPlayBrowserFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         initView()
         initData()
+        handler.postDelayed(videoTypeRun, 2 * 60 * 1000 + 5000)
     }
-
-//    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation {
-//        if (enter) {
-//            val scaleAnimationIn = ScaleAnimation(0f, 1f, 0f, 1f,
-//                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
-//            scaleAnimationIn.duration = 800
-//            scaleAnimationIn.setAnimationListener(object : Animation.AnimationListener {
-//                override fun onAnimationRepeat(animation: Animation?) {}
-//                override fun onAnimationStart(animation: Animation?) {}
-//                override fun onAnimationEnd(animation: Animation?) {
-//                    loadUrl()
-//                }
-//            })
-//            return scaleAnimationIn
-//        }
-//        return super.onCreateAnimation(transit, enter, nextAnim)
-////        else {
-////            val scaleAnimationOut = ScaleAnimation(1f, 0f, 1f, 0f,
-////                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
-////            scaleAnimationOut.duration = 800
-////            return scaleAnimationOut
-////        }
-//    }
 
     fun loadUrl(h5url:String ) {
         LogUtils.e(TAG, "loadurl:"  + h5url)
@@ -122,14 +108,14 @@ class VideoPlayBrowserFragment : BaseFragment() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
                 if (newProgress == 100) {
-                    playVideo()
+                    autoPlayVideo()
                 }
             }
         })
         mediaBrowserWebview?.setWebViewClient(object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-                playVideo()
+                autoPlayVideo()
             }
         })
     }
@@ -156,6 +142,7 @@ class VideoPlayBrowserFragment : BaseFragment() {
             releaseAllWebViewCallback()
         }
         super.onDestroyView()
+        handler.removeCallbacks(videoTypeRun)
     }
 
     fun releaseAllWebViewCallback() {
@@ -200,15 +187,22 @@ class VideoPlayBrowserFragment : BaseFragment() {
         }
     }
 
-    fun playVideo() {
+    fun autoPlayVideo() {
+        IToast.show("autoPlayVideo")
         mediaBrowserWebview?.loadUrl(
                 "javascript:document.getElementsByTagName('body')[0].style.setProperty('margin-top', "
                         +"'${marginTop}px', 'important'); " +
-                " var video = document.getElementsByTagName('video')[0]; video.play();")
+                " document.getElementsByTagName('video')[0].play();")
     }
 
-    fun reloadPlayVideo(s: String) {
+    fun pausePlayVideo() {
+        mediaBrowserWebview?.loadUrl(
+                        "javascript: document.getElementsByTagName('video')[0].pause();")
+    }
 
+    fun playVideo() {
+        mediaBrowserWebview?.loadUrl(
+                "javascript: document.getElementsByTagName('video')[0].play();")
     }
 
 }

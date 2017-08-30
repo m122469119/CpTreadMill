@@ -17,6 +17,7 @@ import com.liking.treadmill.db.entity.Member;
 import com.liking.treadmill.db.service.AdvService;
 import com.liking.treadmill.fragment.*;
 import com.liking.treadmill.message.*;
+import com.liking.treadmill.module.run.RunningFragment;
 import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
@@ -109,17 +110,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 @Override
                 public void run() {
                     if (!isUpdate) {
-                        SerialPortUtil.TreadData.UserInfo userInfo = SerialPortUtil.getTreadInstance().getUserInfo();
-                        if (userInfo == null) {
-                            userInfo = new SerialPortUtil.TreadData.UserInfo();
-                            userInfo.mUserName = "LikingFans";
-                            userInfo.mGender = 1;
-                            userInfo.mAvatar = "";
-                            userInfo.isVisitor = true;
-                        }
-                        SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
-                        launchFragment(new RunningFragment());
-//                        launchFragment(new StartSettingFragment());
+                        launchFragment(new StartSettingFragment());
                     }
                 }
             }, delayedInterval);

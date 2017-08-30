@@ -21,6 +21,7 @@ import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
 import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.fragment.base.SerialPortFragment;
+import com.liking.treadmill.module.run.RunningFragment;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.widget.IToast;
@@ -181,7 +182,7 @@ public class GoalSettingFragment extends SerialPortFragment {
     }
 
     public void goToRun(String key, float value) {
-        RunFragment run = new RunFragment();
+        RunningFragment run = new RunningFragment();
         Bundle bundle = new Bundle();
         bundle.putFloat(key, value);
         run.setArguments(bundle);

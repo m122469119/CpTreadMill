@@ -133,7 +133,7 @@ class LKSocketServiceKt : Service() {
         for (result in rlist) {
             try {
                 val resultSuccess = LKProtocolsHelperKt.isResultSuccess(result)
-                if (resultSuccess != null) {
+                if (resultSuccess != null && resultSuccess.isNotEmpty()) {
                     mCount += 1
                     LogUtils.i(TAG, "result:" + resultSuccess)
                     LKProtocolsHelperKt.handlerSocketReceive(resultSuccess)

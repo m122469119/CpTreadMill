@@ -16,7 +16,7 @@ class ExerciseData(@SerializedName("bracelet_id") var braceletId: Long,
                    @SerializedName("distance") var distance: String,
                    @SerializedName("cal") var cal: String,
                    @SerializedName("type") var type: String,
-                   @SerializedName("aimType") var aimType: String,
+                   @SerializedName("aim_type") var aimType: String,
                    @SerializedName("aim") var aim: String,
                    @SerializedName("achieve") var achieve: String,
                    @SerializedName("timestamp") var timestamp: String) :BaseData()

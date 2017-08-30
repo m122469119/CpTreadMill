@@ -27,6 +27,7 @@ import com.liking.treadmill.fragment.base.SerialPortFragment;
 import com.liking.treadmill.message.AdvRefreshMessage;
 import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.UpdateAppMessage;
+import com.liking.treadmill.module.run.RunningFragment;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
@@ -128,7 +129,7 @@ public class AwaitActionFragment extends SerialPortFragment {
                     userInfo.isVisitor = true;
                 }
                 SerialPortUtil.getTreadInstance().setUserInfo(userInfo);
-                ((HomeActivity) getActivity()).launchFragment(new RunFragment());
+                ((HomeActivity) getActivity()).launchFragment(new RunningFragment());
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_SPEED_PLUS_SPEED_REDUCE) {
             String gymId = Preference.getBindUserGymId();
@@ -165,7 +166,6 @@ public class AwaitActionFragment extends SerialPortFragment {
         mViewpager.setAdapter(mBannerPagerAdapter);
         mViewpager.setAutoScrollTime(AUTO_SCROLL);
         mIndicator.setViewPager(mViewpager);
-        mViewpager.startAutoScroll();
         mPleaseView.setText(Html.fromHtml("<font color=\"#85878e\">请</font><font color=\"#34c86c\">在下方面板上刷手环处刷手环</font><font color=\"#85878e\">开启跑步机</font>"));
         initBanner();
     }
@@ -183,7 +183,7 @@ public class AwaitActionFragment extends SerialPortFragment {
     public void initBanner() {
         String yyyyMMdd = DateUtils.formatDate("yyyyMMdd", new Date());
         yyyyMMdd = "20160212";
-        AdvService.getInstance().findAdvByTypeAndEndTime(AdvEntity.TYPE_HOME, AdvEntity.NOT_DEFAULT, yyyyMMdd, new AdvService.CallBack<List<AdvEntity>>() {
+        AdvService.getInstance().findAdvByTypeAndEndTime(AdvEntity.TYPE_LOGIN, AdvEntity.NOT_DEFAULT, yyyyMMdd, new AdvService.CallBack<List<AdvEntity>>() {
             @Override
             public void onBack(List<AdvEntity> advEntities) {
                 mBannerList.clear();
@@ -195,7 +195,7 @@ public class AwaitActionFragment extends SerialPortFragment {
 
                 } else {
                     //设置为默认的图片
-                    AdvService.getInstance().findAdvByType(AdvEntity.TYPE_HOME, AdvEntity.NOT_DEFAULT, new AdvService.CallBack<List<AdvEntity>>() {
+                    AdvService.getInstance().findAdvByType(AdvEntity.TYPE_LOGIN, AdvEntity.NOT_DEFAULT, new AdvService.CallBack<List<AdvEntity>>() {
                         @Override
                         public void onBack(List<AdvEntity> advEntities) {
                             if (advEntities != null && advEntities.size() > 0) {
@@ -217,8 +217,8 @@ public class AwaitActionFragment extends SerialPortFragment {
             public void run() {
                 mBannerPagerAdapter.setData(list);
                 mBannerPagerAdapter.notifyDataSetChanged();
+                mIndicator.notifyDataSetChanged();
                 mViewpager.startAutoScroll();
-
             }
         });
     }
