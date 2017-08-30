@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -49,14 +50,16 @@ import java.util.List;
 
 public class StartFragment extends SerialPortFragment {
 
-    public static final long AUTO_SCROLL = 8 * 1000;
+    private static final long AUTO_SCROLL = 8 * 1000;
+    private static final long ONE_MIN = 60  * 1000;
 
     @BindView(R.id.user_name_TextView)
     TextView mUserNameTextView;
     @BindView(R.id.head_imageView)
     HImageView mHeadImageView;
 
-
+    @BindView(R.id.text_time)
+    TextView mTextTime;
     @BindView(R.id.text_quickstart)
     TextView mQuickstartTextView;
     @BindView(R.id.text_set)
@@ -71,14 +74,17 @@ public class StartFragment extends SerialPortFragment {
     InfiniteViewPager mViewpager;
     @BindView(R.id.indicator_start)
     IconPageIndicator mIndicator;
-    BannerPagerAdapter mBannerPagerAdapter;
+
 
     @BindView(R.id.text_please)
     TextView mPleaseView;
 
-    AnimatorSet mQuickAnimator, mSetAnimator;
+    private BannerPagerAdapter mBannerPagerAdapter;
 
-    List<String> mBannerList = new ArrayList<>();
+    private AnimatorSet mQuickAnimator, mSetAnimator;
+    private List<String> mBannerList = new ArrayList<>();
+
+    private Handler mHandler = new Handler();
 
 
     @Nullable
@@ -95,10 +101,23 @@ public class StartFragment extends SerialPortFragment {
         mBannerPagerAdapter= new BannerPagerAdapter(getActivity());
         mViewpager.setAdapter(mBannerPagerAdapter);
         mIndicator.setViewPager(mViewpager);
+        mViewpager.setAutoScrollTime(AUTO_SCROLL);
         mViewpager.startAutoScroll();
         mPleaseView.setText(Html.fromHtml("<font color=\"#AAACAF\">请使用下方面板上的相应按钮</font><br></br><font color=\"#34c86c\">快速开始</font><font color=\"#AAACAF\">或</font><font color=\"#34c86c\">设定目标</font>"));
         initBanner();
+        mHandler.post(mTimeRun);
     }
+
+
+    private Runnable mTimeRun = new Runnable() {
+        @Override
+        public void run() {
+            // "2017.07.21 17:45"
+            String s = DateUtils.formatDate("yyyy.MM.dd hh:mm", new Date(System.currentTimeMillis()));
+            mTextTime.setText(s);
+            mHandler.postDelayed(mTimeRun, ONE_MIN);
+        }
+    };
 
     @Override
     public void onResume() {
@@ -305,4 +324,10 @@ public class StartFragment extends SerialPortFragment {
         });
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
+        mHandler = null;
+    }
 }
