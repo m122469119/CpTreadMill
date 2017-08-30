@@ -25,14 +25,9 @@ import java.util.Date;
  */
 
 public class LikingTreadmillBaseActivity extends AppBarActivity {
-    @BindView(R.id.left_ad_imageView)
-    HImageView mLeftAdImageView;
-    @BindView(R.id.right_ad_imageView)
-    HImageView mRightAdImageView;
     private ImageView mWifiImageView;
     private ImageView mFanImageView;
     private ImageView mCooldownImageView;
-    private TextView mTimeTextView;
     private TextView mTitleView;
 
     @Override
@@ -53,8 +48,6 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
         mFanImageView = (ImageView) customToolBarView.findViewById(R.id.fan_imageView);
         mCooldownImageView = (ImageView) customToolBarView.findViewById(R.id.cooldown_imageView);
         mTitleView = (TextView) customToolBarView.findViewById(R.id.title_textView);
-        mTimeTextView = (TextView) customToolBarView.findViewById(R.id.time_textView);
-        mTimeTextView.setText(getToolBarTime());
         setCustomToolBar(customToolBarView);
     }
 
@@ -66,23 +59,11 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
 
     @Override
     public void launchFragment(Fragment fragment) {
-        if(mLeftAdImageView.getVisibility() == View.INVISIBLE) {
-            mLeftAdImageView.setVisibility(View.VISIBLE);
-        }
-        if(mRightAdImageView.getVisibility() == View.INVISIBLE) {
-            mRightAdImageView.setVisibility(View.VISIBLE);
-        }
         launchFragment(R.id.treadmill_container_layout, fragment);
     }
 
     public void launchFullFragment(Fragment fragment) {
         launchFragment(fragment);
-        if(mLeftAdImageView.getVisibility() == View.VISIBLE) {
-            mLeftAdImageView.setVisibility(View.INVISIBLE);
-        }
-        if(mRightAdImageView.getVisibility() == View.VISIBLE) {
-            mRightAdImageView.setVisibility(View.INVISIBLE);
-        }
     }
 
     public void setFanViewVisibility(int visibility) {
@@ -106,22 +87,6 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
         } else {
             setNoWifiView();
         }
-    }
-
-    /**
-     * toolbar时间刷新
-     * @param message
-     */
-    public void onEvent(ToolBarTimeMessage message) {
-        mTimeTextView.setText(getToolBarTime());
-    }
-
-    /**
-     * 获取时间
-     * @return
-     */
-    public String getToolBarTime () {
-        return new SimpleDateFormat("HH:mm").format(new Date());
     }
 
     private void setHaveWifiView() {

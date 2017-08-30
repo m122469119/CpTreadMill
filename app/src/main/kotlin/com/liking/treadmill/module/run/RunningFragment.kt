@@ -1575,20 +1575,22 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     fun verificationIsRun() {
         handler.postDelayed({
-            verificationTost(ResourceUtils.getString(R.string.run_timeout_1))
+            verificationTost(ResourceUtils.getString(R.string.run_timeout_1), false)
         }, 8 * 60 * 1000)
         handler.postDelayed({
-            verificationTost(ResourceUtils.getString(R.string.run_timeout_2))
+            verificationTost(ResourceUtils.getString(R.string.run_timeout_2), false)
         }, 9 * 60 * 1000)
         handler.postDelayed({
-            verificationTost(ResourceUtils.getString(R.string.run_timeout_3))
-            exitRunUI()
+            verificationTost(ResourceUtils.getString(R.string.run_timeout_3), true)
         }, 10 * 60 * 1000)
     }
 
-    fun verificationTost(hint: String) {
+    fun verificationTost(hint: String, isExit: Boolean) {
         if (!isRunning && !isPause && !isFinish) { //没有跑步过程并且不在暂停状态,不在结束页面
             IToast.showLong(hint)
+            if (isExit) {
+                exitRunUI()
+            }
         }
     }
 
@@ -1655,12 +1657,12 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     fun showAdvertisement(time: Int, distanceKm: Float, kcal: Float) {
 
-        LogUtils.e(TAG, "已跑时间：$time; 距离 ：$distanceKm; 卡路里：$kcal" )
+        LogUtils.e(TAG, "已跑时间：$time; 距离 ：$distanceKm; 卡路里：$kcal")
 
         when (THREADMILL_MODE_SELECT) {
             ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START -> {
                 val t = time / 60 //分钟
-                if(t > 0 && time % 60 == 0) {
+                if (t > 0 && time % 60 == 0) {
                     showAdv(t % 5 == 0)//每5分钟切换一次广告
                 }
             }

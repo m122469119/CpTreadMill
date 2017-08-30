@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import com.aaron.android.codelibrary.utils.LogUtils;
-import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.db.entity.AdvEntity;
@@ -17,12 +16,10 @@ import com.liking.treadmill.db.entity.Member;
 import com.liking.treadmill.db.service.AdvService;
 import com.liking.treadmill.fragment.*;
 import com.liking.treadmill.message.*;
-import com.liking.treadmill.module.run.RunningFragment;
 import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
 import com.liking.treadmill.socket.LKSocketServiceKt;
-import com.liking.treadmill.socket.result.AdvertisementResult;
 import com.liking.treadmill.socket.result.DefaultAdResult;
 import com.liking.treadmill.socket.result.NewAdResult;
 import com.liking.treadmill.storge.Preference;
@@ -77,7 +74,6 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         if (mUserLoginPresenter == null) {
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
-        initAdViews();
         mLKAppSocketLogQueue.put(TAG, "onCreate(), 初始化主界面");
 
     }
@@ -117,11 +113,6 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         } else {
             launchFragment(new AwaitActionFragment());
         }
-    }
-
-    private void initAdViews() {
-        HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.run_bg_ad);
-        HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, R.drawable.run_bg_ad);
     }
 
     @Override
@@ -252,59 +243,6 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             }, delayedInterval);
         }
         mLKAppSocketLogQueue.put(TAG, "场馆解除绑定");
-    }
-
-    /**
-     * 广告下发事件
-     *
-     * @param message
-     */
-    public void onEvent(AdvertisementMessage message) {
-        if (message.mResources != null) {
-
-            AdvertisementResult.AdvUrlResource.Resource leftAdv = getAdvResource(0, message.mResources);
-            if (leftAdv != null) {
-                if (leftAdv.isOpen()) {
-                    HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, leftAdv.getUrl());
-                } else {
-                    showDefaultAdvLeftImg();
-                }
-            } else {
-                showDefaultAdvLeftImg();
-            }
-
-            AdvertisementResult.AdvUrlResource.Resource rightAdv = getAdvResource(1, message.mResources);
-            if (rightAdv != null) {
-                if (rightAdv.isOpen()) {
-                    HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, rightAdv.getUrl());
-                } else {
-                    showDefaultAdvRightImg();
-                }
-            } else {
-                showDefaultAdvRightImg();
-            }
-        }
-    }
-
-    /**
-     * 左边默认广告
-     */
-    public void showDefaultAdvLeftImg() {
-        HImageLoaderSingleton.getInstance().loadImage(mLeftAdImageView, R.drawable.run_bg_ad);
-    }
-
-    /**
-     * 右边默认广告
-     */
-    public void showDefaultAdvRightImg() {
-        HImageLoaderSingleton.getInstance().loadImage(mRightAdImageView, R.drawable.run_bg_ad);
-    }
-
-    private AdvertisementResult.AdvUrlResource.Resource getAdvResource(int poistion, List<AdvertisementResult.AdvUrlResource.Resource> resources) {
-        if (poistion >= 0 && poistion < resources.size()) {
-            return resources.get(poistion);
-        }
-        return null;
     }
 
     /**
