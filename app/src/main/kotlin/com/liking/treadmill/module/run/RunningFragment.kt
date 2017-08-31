@@ -1667,17 +1667,23 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 }
             }
             ThreadMillConstant.THREADMILL_MODE_SELECT_GOAL_SETTING -> {
-                val t = time / 60
-                if (t > 0) {
-                    val section = totalTime.toInt() / 4
-                    showAdv(time % section == 0)
-                } else if (distanceKm > 0) {
+                if(totalTime > 0) {
+                    val t = time / 60
+                    if (t > 0 && time % 60 == 0) {
+                        val section = totalTime.toInt() / 4
+                        showAdv(t % section == 0)
+                    }
+                } else if (totalKilometre > 0) {
                     val distance = (distanceKm * 1000).toInt()
                     val section = totalKilometre.toInt() / 4
-                    showAdv(distance % section == 0)
-                } else if (kcal > 0) {
+                    if(distance > 0) {
+                        showAdv(distance % section == 0)
+                    }
+                } else if (totalKcal > 0) {
                     val section = totalKcal.toInt() / 4
-                    showAdv(kcal.toInt() % section == 0)
+                    if(kcal.toInt() > 0) {
+                        showAdv(kcal.toInt() % section == 0)
+                    }
                 }
             }
         }
