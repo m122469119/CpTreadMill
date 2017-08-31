@@ -20,6 +20,10 @@ public class AdvLocalDataSource {
     private static final String TAG = "AdvLocalDataSource";
 
     private DatabaseManager mDatabaseManager;
+    private static final String FIND_ADV_BY_ONE = "SELECT * FROM "
+            + LikingPersistenceContract.TreadmillAdv.TABLE_NAME
+            + " WHERE " + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID + "=?";
+
     private static final String FIND_ADV_BY_TYPE_AND_NEW = "SELECT * FROM "
             + LikingPersistenceContract.TreadmillAdv.TABLE_NAME
             + " WHERE " + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_TYPE + "=?"
@@ -61,6 +65,20 @@ public class AdvLocalDataSource {
         }
         return advEntityList;
     }
+
+
+    public AdvEntity findAdvByOne(Long adv_id){
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
+        AdvEntity advEntity;
+        try {
+            Cursor c = db.rawQuery(FIND_ADV_BY_ONE, new String[]{String.valueOf(adv_id)});
+            advEntity = loadAdvEntity(c);
+        } finally {
+            mDatabaseManager.closeDatabase();
+        }
+        return advEntity;
+    }
+
 
     public List<AdvEntity> findAdvByTypeAndEndTime(String type, String endTime, int isDefault) {
         SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
@@ -118,7 +136,15 @@ public class AdvLocalDataSource {
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL, entity.getUrl());
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID, entity.getAdv_id());
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_IS_DEFAULT, entity.getIsDefault());
-        db.insert(LikingPersistenceContract.TreadmillAdv.TABLE_NAME, null, values);
+
+
+        AdvEntity advByOne = findAdvByOne(entity.getAdv_id());
+
+        if (advByOne != null) {
+            db.update(LikingPersistenceContract.TreadmillAdv.TABLE_NAME, values, null, null);
+        } else  {
+            db.insert(LikingPersistenceContract.TreadmillAdv.TABLE_NAME, null, values);
+        }
     }
 
 
