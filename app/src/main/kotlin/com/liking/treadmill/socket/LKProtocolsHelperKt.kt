@@ -137,6 +137,14 @@ object LKProtocolsHelperKt {
                 postEvent(QrCodeMessage())
             }
 
+            //解绑
+            TYPE_QRCODE_UNBIND -> {
+                val qrcodeResult = mGson.fromJson(result, QrcodeResult::class.java)
+                val codeUrl = qrcodeResult.qrcodeData.codeUrl
+                Preference.setQcodeUrl(codeUrl)
+                postEvent(QrCodeMessage())
+            }
+
         //升级通知
             TYPE_UPDATE_NOTIFY -> {
                 val updateResult = mGson.fromJson(result, ApkUpdateResult::class.java)

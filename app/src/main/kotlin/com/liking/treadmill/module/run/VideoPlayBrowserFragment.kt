@@ -70,7 +70,6 @@ class VideoPlayBrowserFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         initView()
         initData()
-        handler.postDelayed(videoTypeRun, 2 * 60 * 1000 + 5000)
     }
 
     fun loadUrl(h5url:String ) {
@@ -124,11 +123,6 @@ class VideoPlayBrowserFragment : BaseFragment() {
         arguments.let {
 //            h5url = it.getString(H5URL_KEY,"")
             category = it.getString(CATEGORY_KEY,"")
-            if("1".equals(category)) { //电影
-                marginTop = margin1
-            } else{
-                marginTop = margin2
-            }
         }
     }
 
@@ -189,6 +183,13 @@ class VideoPlayBrowserFragment : BaseFragment() {
 
     fun autoPlayVideo() {
         IToast.show("autoPlayVideo")
+        if("1".equals(category)) { //电影
+            marginTop = margin1
+        } else{
+            marginTop = margin2
+        }
+        handler.removeCallbacks(videoTypeRun)
+        handler.postDelayed(videoTypeRun, 2 * 60 * 1000 + 5000)
         mediaBrowserWebview?.loadUrl(
                 "javascript:document.getElementsByTagName('body')[0].style.setProperty('margin-top', "
                         +"'${marginTop}px', 'important'); " +
@@ -201,6 +202,8 @@ class VideoPlayBrowserFragment : BaseFragment() {
     }
 
     fun playVideo() {
+        handler.removeCallbacks(videoTypeRun)
+        handler.postDelayed(videoTypeRun, 2 * 60 * 1000 + 5000)
         mediaBrowserWebview?.loadUrl(
                 "javascript: document.getElementsByTagName('video')[0].play();")
     }

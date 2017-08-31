@@ -23,7 +23,7 @@
             android:paddingLeft="@dimen/spacing_24dp"
             android:paddingRight="@dimen/spacing_24dp"
             android:paddingTop="@dimen/spacing_12dp"
-            android:textColor="@color/c383838"
+            android:textColor="@color/white"
             android:textSize="@dimen/textsize_16sp"/>
 
         <ImageView

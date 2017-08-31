@@ -41,7 +41,7 @@
                     android:id="@+id/update_hint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
+                    android:textColor="@color/c85878e"
                     android:textSize="@dimen/textsize_18sp"/>
 
                 <TextView
@@ -49,7 +49,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:textColor="@color/white"
+                    android:textColor="@color/c85878e"
                     android:textSize="@dimen/textsize_24sp"
                     android:textStyle="bold"/>
             </LinearLayout>
@@ -60,7 +60,7 @@
             android:layout_width="400dp"
             android:layout_height="160dp"
             android:layout_gravity="center"
-            android:background="@color/c1A9B9B9B"
+            android:background="@color/cb4000000"
             android:gravity="center"
             android:orientation="vertical"
             android:visibility="gone">
@@ -90,7 +90,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@color/c179B9B9B"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="80dp"
@@ -102,7 +101,7 @@
             android:layout_marginBottom="@dimen/spacing_16dp"
             android:layout_marginTop="@dimen/spacing_16dp"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/c85878e"
             android:textSize="@dimen/textsize_20sp"/>
     </LinearLayout>
 </LinearLayout>
