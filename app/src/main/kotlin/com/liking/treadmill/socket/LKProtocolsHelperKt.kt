@@ -110,13 +110,20 @@ object LKProtocolsHelperKt {
 
     private val NOTIFY_FOLLOWER_CMD = "notify_follower"
 
+    /*马拉松*/
+    private val MARATHON_CMD = "marathon"
+
+    /*用户马拉松查询*/
+    val USER_MARATHON_CMD = "user_marathon"
+
+    /*上报用户马拉松数据*/
+    val MARATHON_RANK_CMD = "marathon_rank"
 
     val mGson = GsonBuilder().disableHtmlEscaping().create()
 
     val resultHandler = Handler(Looper.getMainLooper())
 
     var sTimestampOffset: Long = 0
-
 
     fun postEvent(event: Any) {
         resultHandler.post {
@@ -141,7 +148,7 @@ object LKProtocolsHelperKt {
                 postEvent(QrCodeMessage())
             }
 
-            //解绑
+        //解绑
             TYPE_QRCODE_UNBIND -> {
                 val qrcodeResult = mGson.fromJson(result, QrcodeResult::class.java)
                 val codeUrl = qrcodeResult.qrcodeData.codeUrl
@@ -193,7 +200,7 @@ object LKProtocolsHelperKt {
 
                 userData?.let {
                     message.mUserData = userData
-                    if(userData.userInfoData != null) {
+                    if (userData.userInfoData != null) {
                         //缓存一条登录状态
                         val deviceId = DeviceUtils.getDeviceInfo(BaseApplication.getInstance())
                         val time = DateUtils.currentDataSeconds().toString()
@@ -280,14 +287,14 @@ object LKProtocolsHelperKt {
                 }
             }
 
-            //日志上报
+        //日志上报
             REPORT_LOG_CMD -> {
                 LikingThreadMillApplication.mLKAppSocketLogQueue.put("aaron", "REPORT_LOG, 上报log操作")
                 LikingThreadMillApplication.mLKSocketLogQueue.putOnce()
                 LikingThreadMillApplication.mLKAppSocketLogQueue.putOnce()
             }
 
-            //场馆会员清除
+        //场馆会员清除
             REPORT_CLEAR_MEMBER_LIST_CMD -> {
                 MemberHelper.getInstance().deleteMembersFromLocal { result ->
                     if (result) {
@@ -313,9 +320,9 @@ object LKProtocolsHelperKt {
                 postEvent(defaultAdvResultMessage)
             }
 
-            //
+        //
             NOTIFY_USER_CMD -> {
-               val notifyUserResult = mGson.fromJson(result, NotifyUserResult::class.java)
+                val notifyUserResult = mGson.fromJson(result, NotifyUserResult::class.java)
                 notifyUserResult.let {
                     notifyUserResult.data.let {
                         LogUtils.e(TAG, "NOTIFY_USER:".plus(it.name))
@@ -323,12 +330,44 @@ object LKProtocolsHelperKt {
                 }
             }
 
-            //
+        //
             NOTIFY_FOLLOWER_CMD -> {
                 val notifyFollowerResult = mGson.fromJson(result, NotifyFollowerResult::class.java)
                 notifyFollowerResult.let {
                     notifyFollowerResult.data.let {
                         LogUtils.e(TAG, "NOTIFY_FOLLOWER:".plus(it.name))
+                    }
+                }
+            }
+
+        //马拉松活动信息
+            MARATHON_CMD -> {
+                LogUtils.e(TAG, "---MARATHON_CMD----")
+                val marathonRunResult = mGson.fromJson(result, MarathonRunResult::class.java)
+                marathonRunResult.let {
+                    marathonRunResult.data.let {
+                        LogUtils.e(TAG, "MARATHON_CMD:".plus(it[0].startDate))
+
+                    }
+                }
+            }
+
+        //服务端回复用户马拉松数据
+            USER_MARATHON_CMD -> {
+                val marathonUserInfoResult = mGson.fromJson(result, MarathonUserInfoResult::class.java)
+                marathonUserInfoResult.let {
+                    marathonUserInfoResult.data.let {
+                        LogUtils.e(TAG, "TYPE_USER_MARATHON:".plus(it.toString()))
+                    }
+                }
+            }
+
+            //服务端下发排名数据
+            MARATHON_RANK_CMD -> {
+                val marathonRankHotResult = mGson.fromJson(result, MarathonRankHotResult::class.java)
+                marathonRankHotResult.let {
+                    marathonRankHotResult.data.let {
+                        LogUtils.e(TAG, "MARATHON_RANK_CMD:".plus(it.toString()))
                     }
                 }
             }
@@ -592,5 +631,24 @@ object LKProtocolsHelperKt {
             } catch (e: Exception) {
             }
         }
+    }
+
+    /**
+     * 获取用户马拉松数据
+     */
+    fun reportedUserMarathon(braceletId: Long, marathonId: String): String? {
+        val deviceId = DeviceUtils.getDeviceInfo(BaseApplication.getInstance())
+        val gymId = Preference.getBindUserGymId()
+        return toJson(UserMarathonInfoData(braceletId.toString(),
+                marathonId, gymId, deviceId), USER_MARATHON_CMD)
+    }
+
+    /**
+     * 上报用户马拉松数据(用户上报实时跑步数据)
+     */
+    fun reportedMarathonRank(braceletId: Long, marathonId: String,
+                             useTime: String, distance: String, cal: String): String? {
+        return toJson(MarathonRankData(
+                        braceletId.toString(), marathonId, useTime, distance, cal), MARATHON_RANK_CMD)
     }
 }

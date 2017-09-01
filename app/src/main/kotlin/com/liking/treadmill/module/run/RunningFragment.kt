@@ -174,6 +174,10 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 } catch (e: Exception) {
                     LogUtils.e(TAG, e.message + "")
                 }
+                //20s显示一次log
+                if(getTreadInstance().runTime != 0 && getTreadInstance().runTime % 20 == 0) {
+                    layout_run_way.run_way_view.showLikingLog(true)
+                }
             }
         }
     }
