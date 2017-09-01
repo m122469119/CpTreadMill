@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class IQYServiceGenerator {
 
     private final static String BASE_URL = "http://expand.video.iqiyi.com/api/";
-    private static final int CONNECT_TIMEOUT = 10; //秒
+    private static final int CONNECT_TIMEOUT = 18; //秒
     private static OkHttpClient.Builder sOkHttpClientBuilder = new OkHttpClient
             .Builder().connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS);
 

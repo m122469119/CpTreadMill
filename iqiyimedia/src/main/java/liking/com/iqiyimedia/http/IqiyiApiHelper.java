@@ -31,6 +31,6 @@ public class IqiyiApiHelper {
 
     }
 
-    public static final String IQIYI_APIKEY = "71c300df4a7f4e89a43d8e19e5458e6f";
+    public static final String IQIYI_APIKEY = "de07c1779ada4d77b6ab62d8ba436a3d";
 
 }

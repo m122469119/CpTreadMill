@@ -10,10 +10,10 @@
         android:id="@+id/category_tab_layout"
         style="@style/CustomTabLayout"
         android:layout_width="1020dp"
-        android:layout_height="280dp"
+        android:layout_height="340dp"
         app:tabGravity="center"
-        app:tabMaxWidth="280dp"
-        app:tabMode="fixed"
+        app:tabMaxWidth="260dp"
+        app:tabMode="scrollable"
         app:tabPadding="4dp"
         app:tabPaddingBottom="10dp"
         app:tabPaddingTop="4dp"/>

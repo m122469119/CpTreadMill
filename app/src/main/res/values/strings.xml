@@ -75,7 +75,7 @@
     <string name="run_pause_click">点击 </string>
     <string name="run_pause_quick_start">QUICK\nSTART</string>
     <string name="run_pause_restart"> 继续运动</string>
-    <string name="run_pause_stop">点击 <font color="#25ff8c"><b>STOP</b></font>完成锻炼</string>
+    <string name="run_pause_stop">点击 <font color="#25ff8c">STOP</font>完成锻炼</string>
     <string name="run_timeout_1">您目前位于跑步机，快快跑起来吧~</string>
     <string name="run_timeout_2">您必须马上跑起来，排队的小伙伴正在等待，1分钟后若您未进入跑步状态，本次使用将结束</string>
     <string name="run_timeout_3">本次使用结束，谢谢使用</string>

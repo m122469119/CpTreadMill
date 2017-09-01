@@ -74,7 +74,8 @@ class VideoPlayBrowserFragment : BaseFragment() {
 
     fun loadUrl(h5url:String ) {
         LogUtils.e(TAG, "loadurl:"  + h5url)
-        mediaBrowserWebview?.loadUrl(h5url)
+        val url = h5url.replace("http://", "https://")
+        mediaBrowserWebview?.loadUrl(url)
     }
 
     fun initView() {
@@ -182,7 +183,7 @@ class VideoPlayBrowserFragment : BaseFragment() {
     }
 
     fun autoPlayVideo() {
-        IToast.show("autoPlayVideo")
+//        IToast.show("autoPlayVideo")
         if("1".equals(category)) { //电影
             marginTop = margin1
         } else{

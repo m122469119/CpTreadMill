@@ -20,6 +20,7 @@
 
     <com.liking.treadmill.widget.RunwayView
         android:id="@+id/run_way_view"
-        android:layout_width="1020dp"
-        android:layout_height="336dp" />
+        android:layout_width="1080dp"
+        android:layout_height="380dp" />
+
 </LinearLayout>

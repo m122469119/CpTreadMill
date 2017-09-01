@@ -1,9 +1,11 @@
 package com.liking.treadmill.activity;
 
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -66,11 +68,13 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     };
 
     public UserLoginPresenter mUserLoginPresenter = null;
+    private AudioManager audioManager = null; // Audio管理器
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         launchInit();
+        initPlayWork();
         if (mUserLoginPresenter == null) {
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
@@ -427,6 +431,22 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 });
                 break;
         }
+    }
+
+    /**
+     * 初始化播放器、音量数据等相关工作
+     */
+    private void initPlayWork() {
+        audioManager = (AudioManager) getSystemService(Service.AUDIO_SERVICE);
+    }
+
+    // 调用此方法增加音量
+    public void volumeAdd(){
+        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+    }
+    // 调用此方法减小音量
+    public void volumeSubtract(){
+        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
     }
 
 }

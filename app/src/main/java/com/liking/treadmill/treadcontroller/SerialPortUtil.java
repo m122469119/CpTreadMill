@@ -116,7 +116,7 @@ public class SerialPortUtil {
 //        }
 
         public int getCurrentSpeed() {
-            LogUtils.d("data", "speed: " + (mCurrentSpeed & 0xFF));
+//            LogUtils.d("data", "speed: " + (mCurrentSpeed & 0xFF));
             return mCurrentSpeed & 0xFF;
         }
 

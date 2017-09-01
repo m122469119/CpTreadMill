@@ -2,6 +2,7 @@ package com.liking.treadmill.widget;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -13,14 +14,20 @@ import android.graphics.Shader;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.animation.ValueAnimator;
 
 /**
  * Created on 2017/08/16
@@ -32,77 +39,61 @@ import com.liking.treadmill.R;
 
 public class RunwayView extends View {
 
-    private Paint mPaint;
+    private float DEFAULT_SCALE = 1.45f;
+    // 默认宽度
+    private int DEFAULT_WIDTH = 834;
+    // 默认高度
+    private int DEFAULT_HEIGHT = 574;
+
+    private int gradient_start_color = Color.parseColor("#3CBE96");
+
+    private int gradient_end_color = Color.parseColor("#46C86E");
+
+    private Paint paint;
+
+    private Camera camera;
+    private Matrix matrixCamera;
+
+    private float degree = 30.0f;
+
+    int wayWidth;
+    int wayHeight;
+
+    LinearGradient linearGradient;
+
+    int phase = 0;
+
+    int dashWidth = 26;
+    int dashHeight = 60;//路线高度
+    int dashGap = 40;//路线间隔
+
+    int wayLeft;
+    int wayTop;
+    int wayRight;
+    int wayBottom;
+
+    int clipWidth;
+    int clipheight;
 
     private Path mPathWay;
-    private Path mPathDash;
+    private int bottomHeight = 26;
 
-    private int wayWidth;
-    private int wayHeight;
-
-    private int lineWayWidth = 24;
-
-    private int bottomHeight = 30;
-
-    private int phase = 0;
-
-    private Handler handler;
-
-    private static final int MESSAGE_WHAT = 0x123;
-
-    private LinearGradient mLinearGradient;
-
-    private DashPathEffect mDashPathEffect;
-
-    private Matrix mMatrixDash;
-
-    private float[] dashFloat;
-
-    private float[] srcDash;
-
-    private float[] dstDash;
-
-    private Matrix mMatrixAdv;
-
-    private float[] dstAdv;
-
-    private int leftImgH = 0;
-
-    private Bitmap leftImgBitmap;
+    private ObjectAnimator animator = ObjectAnimator.ofInt(this, "phase", 0, dashHeight + dashGap);
 
     private void init() {
-
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setStyle(Paint.Style.FILL);
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        camera = new Camera();
+        matrixCamera = new Matrix();
 
         mPathWay = new Path();
-        mPathDash = new Path();
 
-        handler = new Handler() {
-            public void handleMessage(Message msg) {
-                if (msg.what == MESSAGE_WHAT) {
-                    // 改变偏移值
-                    phase = phase - 6;
+        animator.setDuration(1000);
+        animator.setInterpolator(new LinearInterpolator());
+        animator.setRepeatCount(ValueAnimator.INFINITE);
 
-                    if (phase < -(wayHeight + (14 * 30))) {
-                        phase = 0;
-                    }
-
-//                    leftImgH = leftImgH + 8;
-//                    if (leftImgH >= wayHeight) {
-//                        leftImgH = 0;
-//                    }
-
-                    invalidate();
-                    startRun();
-                }
-
-            }
-        };
-
-//        startRun();
-//        leftImgBitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher);
-//        leftImgH = -leftImgBitmap.getHeight();
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        float newZ = -displayMetrics.density * 6;
+        camera.setLocation(0, 0, newZ);
     }
 
     public RunwayView(Context context) {
@@ -121,15 +112,42 @@ public class RunwayView extends View {
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightSpecSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        if (widthSpecMode == MeasureSpec.AT_MOST && heightSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        } else if (widthSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension((int) (heightSpecSize * DEFAULT_SCALE), heightSpecSize);
+        } else if (heightSpecMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(widthSpecSize, (int) (widthSpecSize / DEFAULT_SCALE));
+        }
+    }
+
+    private int width;
+    private int height;
+
+    @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        wayWidth = getWidth();
-        wayHeight = getHeight();
+        width = getWidth();
+        height = getHeight();
 
-        dashFloat = new float[]{wayHeight / 14, 30};
+//        clipWidth = width / 10;
+//        clipheight = height / 3;
 
-        wayHeight = wayHeight - bottomHeight;
+        wayWidth = width - clipWidth;
+        wayHeight = height - clipheight - bottomHeight;
+
+        wayLeft = clipWidth;
+        wayTop = clipheight;
+        wayRight = wayWidth;
+        wayBottom = wayHeight;
 
         //绘制梯形
         mPathWay.moveTo(wayWidth * 0.25f, 0);
@@ -138,76 +156,114 @@ public class RunwayView extends View {
         mPathWay.lineTo(0, wayHeight);
 
         //渐变
-        mLinearGradient = new LinearGradient(wayWidth, 0, wayWidth, wayHeight, getColor(R.color.c3CBE96), getColor(R.color.c46C86E), Shader.TileMode.CLAMP);
-
-//        //广告logo
-//        mMatrixAdv = new Matrix();
-//        dstAdv = new float[] { wayWidth * 0.25f, leftImgH, wayWidth - (wayWidth * 0.25f), leftImgH, wayWidth, wayHeight , 0, wayHeight };
-
-        //虚线
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-
-        mPathDash.moveTo(wayWidth / 2, 0);
-        mPathDash.lineTo(wayWidth / 2, wayHeight);
-
-        mMatrixDash = new Matrix();
-        srcDash = new float[]{0, 0, wayWidth, 0, wayWidth, wayHeight, 0, wayHeight};
-        dstDash = new float[]{wayWidth * 0.35f, 0, wayWidth - (wayWidth * 0.35f), 0, wayWidth, wayHeight , 0, wayHeight};
+        linearGradient = new LinearGradient(wayLeft, wayTop, wayRight, wayBottom, gradient_start_color, gradient_end_color, Shader.TileMode.CLAMP);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
+    @SuppressWarnings("unused")
+    public void setPhase(int phase) {
+        this.phase = phase;
+        invalidate();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onDraw(Canvas canvas) {
-        Log.e("info", "left:" + getLeft() + ";right:" + getRight() + ";top:" + getTop() + ";bottom:" + getBottom());
-        Log.e("info", "w:" + getWidth() + "h:" + getHeight());
+        super.onDraw(canvas);
 
-        mPaint.reset();
-        mPaint.setShader(mLinearGradient);
-        canvas.drawPath(mPathWay, mPaint);
-        mPaint.setShader(null);
+        setLayerType(View.LAYER_TYPE_HARDWARE, null);
 
-        //绘制log
-//        mMatrixAdv.setPolyToPoly(srcDash, 0, dstAdv, 0, srcDash.length >> 1);
-//        canvas.setMatrix(mMatrixAdv);
-//        canvas.drawBitmap(leftImgBitmap, wayWidth * 0.25f, leftImgH, mPaint);
-//        canvas.setMatrix(null);
+        int centerX = width / 2;
+        int centerY = height / 2;
 
-        /* 路线 */
-        mDashPathEffect = new DashPathEffect(dashFloat, phase);
-        mPaint.setPathEffect(mDashPathEffect);
-        mPaint.setColor(Color.WHITE);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(lineWayWidth);
+        paint.reset();
+        paint.setFlags(Paint.ANTI_ALIAS_FLAG);
 
-        mMatrixDash.setPolyToPoly(srcDash, 0, dstDash, 0, srcDash.length >> 1);
-        canvas.setMatrix(mMatrixDash);
-        canvas.drawPath(mPathDash, mPaint);
-        mPaint.setPathEffect(null);
-        canvas.setMatrix(null);
+        // 划背景
+        paint.setShader(linearGradient);
+        canvas.drawPath(mPathWay, paint);
+        paint.setShader(null);
 
         //底部矩形
-        mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(getColor(R.color.c41B361));
-        canvas.drawRect(0, wayHeight, wayWidth, wayHeight + bottomHeight, mPaint);
+        paint.setColor(ResourceUtils.getColor(R.color.c41B361));
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawRect(0, wayHeight, wayWidth, wayHeight + bottomHeight, paint);
 
-        mDashPathEffect = null;
+        //旋转图层
+        camera.save();
+        matrixCamera.reset();
+        camera.rotateX(degree);
+        camera.getMatrix(matrixCamera);
+        camera.restore();
+        matrixCamera.preTranslate(-centerX, -centerY);
+        matrixCamera.postTranslate(centerX, centerY);
+        canvas.save();
+        canvas.concat(matrixCamera);
+
+        paint.setColor(Color.WHITE);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(dashWidth);
+
+        int r = wayHeight % (dashHeight + dashGap);
+        int count = wayHeight / (dashHeight + dashGap);
+        int dashCount = r == 0 ? count : count + 1;
+        for (int i = -2; i < dashCount; i++) {
+            int startX = width / 2;
+            int startY = phase + (dashHeight + dashGap) * i;
+            int stopX = width / 2;
+            int stopY = phase + (dashHeight + dashGap) * i + dashHeight;
+
+            //去超出部分
+            if (startY < wayTop - 100) {
+                if (stopY > wayTop - 100) {
+                    startY = wayTop - 100;
+                } else {
+                    startY = wayTop;
+                    stopY = wayTop;
+                }
+            }
+            if (startY > wayHeight - 10) {
+                startY = wayHeight - 10;
+            }
+            if (stopY > wayHeight - 10) {
+                stopY = wayHeight - 10;
+            }
+//            Log.e("info", "startY:" + startY + ";stopY:" + stopY);
+            //划线
+            canvas.drawLine(startX, startY, stopX, stopY, paint);
+        }
+        canvas.restore();
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+    }
 
     public void startRun() {
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                handler.sendEmptyMessage(MESSAGE_WHAT);
-//            }
-//        }, 40);
+        animator.start();
     }
 
     public void stopRun() {
-//        handler.removeMessages(MESSAGE_WHAT);
+        animator.end();
     }
 
-    private int getColor(int cid) {
-        return ResourceUtils.getColor(cid);
+    @Override
+    protected void onVisibilityChanged( View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        if(visibility == GONE) {
+            animator.end();
+        } else  if(visibility == VISIBLE){
+            animator.start();
+        }
     }
+
+    public void gearShift(int level) {
+        animator.setDuration(1200 / level);
+    }
+
 }

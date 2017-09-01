@@ -29,6 +29,8 @@ public class IqiyiModel {
         String limit = "";
         if("31".equals(categoryId)) { //脱口秀
             limit = "20";//显示数量大小，不限制会timeout
+        } else  {
+            limit = "50";
         }
         IqiyiApiService.getTopList(tag, categoryId, topType, limit, callback);
     }

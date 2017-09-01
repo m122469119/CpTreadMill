@@ -78,7 +78,6 @@
 
             </RelativeLayout>
 
-
         </LinearLayout>
 
         <LinearLayout
@@ -98,14 +97,39 @@
                 android:textColor="@color/white"
                 android:textSize="28sp"/>
 
-            <TextView
-                android:id="@+id/stop_prompt_TextView"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:textColor="@color/white"
-                android:textSize="26sp"
-                android:text="@string/run_pause_stop"/>
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/stop_part1_prompt_TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
+                    android:text="@string/run_pause_click"/>
+
+                <TextView
+                    android:id="@+id/stop_part2_prompt_TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/c25ff8c"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:text="STOP"/>
+
+
+                <TextView
+                    android:id="@+id/stop_part3_prompt_TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
+                    android:text="完成锻炼"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

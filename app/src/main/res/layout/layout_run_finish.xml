@@ -56,7 +56,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:paddingLeft="18dp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/c85878e"
                         android:text="80%"
                         android:textSize="@dimen/textsize_30sp"
                         android:textStyle="bold"/>
@@ -83,7 +83,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/run_finish_layout"
-                    android:textColor="@color/c7c7c8"
+                    android:textColor="@color/c85878e"
                     android:textSize="20sp"/>
 
                 <TextView
@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/spacing_8dp"
                     android:layout_below="@+id/this_run_finish_prompt"
-                    android:textColor="@color/c7c7c8"
+                    android:textColor="@color/c85878e"
                     android:textSize="16sp"/>
 
             </LinearLayout>
@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/spacing_8dp"
                 android:layout_marginTop="@dimen/spacing_8dp"
-                android:textColor="@color/c7c7c8"
+                android:textColor="@color/c85878e"
                 android:textSize="@dimen/textsize_20sp"/>
         </LinearLayout>
 

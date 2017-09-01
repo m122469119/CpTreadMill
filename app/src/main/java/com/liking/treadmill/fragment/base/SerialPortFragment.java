@@ -141,6 +141,7 @@ public abstract class SerialPortFragment extends BaseFragment implements SerialP
 
     @Override
     public void onNoneOperate() {
+        LogUtils.e(TAG, "---onNoneOperate---");
         ((HomeActivity) getActivity()).setTitle("");
         ((HomeActivity) getActivity()).launchFragment(new AwaitActionFragment());
     }

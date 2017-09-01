@@ -128,7 +128,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     private var isTargetCmp = false
     private var maxTotalTime: Float = 0f  //系统设置的最长跑步时间 /min
     private var totalTime: Float = 0f  //目标设置的总时间 /min
-    private var totalKilometre: Float = 0f//目标设置的总距离
+    private var totalKilometre: Float = 0f//目标设置的总距离 公里
     private var totalKcal: Float = 0f//目标设置的总卡路里
     private var totalTarget = ""
     private var THREADMILL_MODE_SELECT = ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START//启动方式
@@ -174,8 +174,11 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 if (!isPause && !isFinish) {
                     sendEmptyMessageDelayed(MESSAGE_RETAIN, RUNNING_CALCULATE_INTERVAL_SECOND.toLong())
                 }
-
-                showAdvertisement(mTotalRunTime, mTotalKmDistance, mTotalKcal)
+                try {
+                    showAdvertisement(mTotalRunTime, mTotalKmDistance, mTotalKcal)
+                }catch (e: Exception) {
+                    LogUtils.e(TAG, e.message+"")
+                }
             }
         }
     }
@@ -186,7 +189,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     private var isRunning: Boolean = false
     private val dateFormat = SimpleDateFormat("yyyy.MM.dd hh:mm")
     private val mAdvEntities = ArrayList<AdvEntity>() //广告资源
-    private var mAdvPosition: Int = 0
+    private var mAdvPosition: Int = 0 //当前广告显示位置
+    private var mAdvAscend:Int = 0 //广告显示阀值
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater?.inflate(R.layout.fragment_running, container, false)
@@ -217,7 +221,9 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * 跑步预备
      */
     fun startRunPrepareUI() {
+        stopActiveMonitor()
         layout_run_prepare.visibility = View.VISIBLE
+        layout_run_content.layout_run_way.run_way_view.stopRun()
         startCountDown(RUN_COUNTDOWN_TIME_PREPARE.toLong(),
                 RUN_COUNTDOWN_TIME_INTERVAL,
                 object : CountDownListener {
@@ -248,7 +254,9 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * 跑步暂停
      */
     fun startRunPauseUI() {
+        cancleCountDown()
         layout_run_pause.visibility = View.VISIBLE
+        layout_run_content.layout_run_way.run_way_view.stopRun()
         isPause = true
         handler.removeMessages(MESSAGE_RETAIN)
         startCountDown(RUN_COUNTDOWN_TIME_PAUSE.toLong(),
@@ -344,8 +352,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         //预备动画
         prepareAnimation = AnimationUtils.loadAnimation(context, R.anim.count_down_exit)
 
-        initGoalSettingData()
-        initAdvertisementData()
+        initGoalSettingData() //目标设置
+        initAdvertisementData() //广告显示
     }
 
     /**
@@ -412,6 +420,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        stopTreadMill()
         handler.removeCallbacksAndMessages(null)
         mIqiyiPresenter.detachView(this)
         cancleCountDown()
@@ -441,8 +450,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                IToast.show("s:" + tab?.tag + ";count:" + category_tab_layout.tabCount
-                        + ";index:" + categoryTabIndex + ";select:" + category_tab_layout.selectedTabPosition)
+//                IToast.show("s:" + tab?.tag + ";count:" + category_tab_layout.tabCount
+//                        + ";index:" + categoryTabIndex + ";select:" + category_tab_layout.selectedTabPosition)
             }
         })
     }
@@ -513,7 +522,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             if (position < videoListAdapter!!.dataList.size) {
                 videoListAdapter!!.dataList[position].let {
                     var videoName = it.albumName
-                    IToast.show(videoName)
+//                    IToast.show(videoName)
                     it.tvQipuIds.let {
                         if (it.size == 1) {
                             layout_run_content?.layout_run_video_list_stateview
@@ -1016,23 +1025,32 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         }
     }
 
+    fun volumeControl(keyCode: Int) {
+        if(keyCode == LikingTreadKeyEvent.KEY_VOL_PLUS.toInt()) {// +
+            (activity as HomeActivity).volumeAdd()
+            return
+        } else if (keyCode == LikingTreadKeyEvent.KEY_VOL_REDUCE.toInt()) {
+            (activity as HomeActivity).volumeSubtract()
+            return
+        }
+    }
     /**
      * 跑步机按键回调
      */
     override fun onTreadKeyDown(keyCode: Int, event: LikingTreadKeyEvent) {
         super.onTreadKeyDown(keyCode, event)
+
+        volumeControl(keyCode)
+
         if (isInPrepareUI()) {
 
         } else if (isInPauseUI()) { //暂停页面
 
-            if (isRunning) {
-                if (keyCode == LikingTreadKeyEvent.KEY_START.toInt()) {
-                    startTreadMill(DEFAULT_SPEED, mGrade)
-                } else if (keyCode == LikingTreadKeyEvent.KEY_STOP.toInt()) {
-                    finishExercise()
-                }
+            if (keyCode == LikingTreadKeyEvent.KEY_START.toInt()) {
+                startTreadMill(DEFAULT_SPEED, mGrade)
+            } else if (keyCode == LikingTreadKeyEvent.KEY_STOP.toInt()) {
+                finishExercise()
             }
-
         } else if (isInFinishUI()) { //结束页面
 
             if (keyCode == LikingTreadKeyEvent.KEY_RETURN.toInt()) {
@@ -1088,6 +1106,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 
             } else if (keyCode == LikingTreadKeyEvent.KEY_SET.toInt()) {
                 setUpGoalSetting()
+            } else {
+                setUpRun(keyCode, false)
             }
 
         } else if (isInVideosUI()) { //视频页（视频列表、视频剧集列表）
@@ -1207,6 +1227,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             } else {
                 setUpRun(keyCode, false)
             }
+        } else {
+            showRunWayUI()
         }
     }
 
@@ -1214,7 +1236,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * 跑步机设置速度坡度，暂停，停止
      */
     fun setUpRun(keyCode: Int, isInRunWayUI: Boolean) {
-
+        if(!isRunning) return
         if (keyCode == LikingTreadKeyEvent.KEY_PAUSE.toInt()) {
             pauseTreadmill()
         } else if (keyCode == LikingTreadKeyEvent.KEY_STOP.toInt()) {
@@ -1302,10 +1324,12 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     fun startTreadMill(speed: Int, grade: Int) {
         stopActiveMonitor()//关闭计时
+        cancleCountDown()
         SerialPortUtil.startTreadMill(speed, grade)
         layout_run_pause.visibility = View.GONE
         layout_run_content.visibility = View.VISIBLE
         layout_run_finish.visibility = View.GONE
+        layout_run_content.layout_run_way.run_way_view.startRun()
         isRunning = true
         isFinish = false
         isPause = false
@@ -1379,12 +1403,13 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     fun setSpeedBack(speed: Int) {
         val speed = speed.toFloat() / 10.0f
         if (speed > 0f && speed <= 5f) {//慢走
-//            layout_run_way.run_way_view.
+            layout_run_way.run_way_view.gearShift(1)
         } else if (speed > 5f && speed <= 6.5f) {//快走
-
+            layout_run_way.run_way_view.gearShift(2)
         } else if (speed > 6.5f && speed <= 9f) {//慢跑
-
+            layout_run_way.run_way_view.gearShift(3)
         } else if (speed > 9f) {//疾跑
+            layout_run_way.run_way_view.gearShift(4)
         }
     }
 
@@ -1400,6 +1425,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         }
         hiddenBottomLayoutBg()
         layout_run_content.visibility = View.GONE
+        layout_run_pause.visibility = View.GONE
         layout_run_video_play.visibility = View.GONE
         layout_run_finish.visibility = View.VISIBLE
         statisticsRunData()
@@ -1599,11 +1625,12 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     fun initAdvertisementData() {
         var yyyyMMdd = DateUtils.formatDate("yyyyMMdd", Date())
-        yyyyMMdd = "20160212"
+//        yyyyMMdd = "20160212"
 
         when (THREADMILL_MODE_SELECT) {
             ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START -> {
 
+                mAdvAscend = 5 * 60 //每隔五分钟显示
                 AdvService.getInstance()
                         .findAdvByTypeAndEndTime(AdvEntity.TYPE_QUICK_START, AdvEntity.NOT_DEFAULT, yyyyMMdd) {
                             advEntities ->
@@ -1623,6 +1650,17 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             }
 
             ThreadMillConstant.THREADMILL_MODE_SELECT_GOAL_SETTING -> {
+
+                if(totalTime > 0) {
+                    mAdvAscend = (totalTime.toInt() * 60) / 4 //s
+                    LogUtils.e(TAG, "目标是时间-广告间隔：" + mAdvAscend)
+                } else if(totalKilometre > 0) {
+                    mAdvAscend = (totalKilometre.toInt() * 1000) / 4 //m
+                    LogUtils.e(TAG, "目标是距离-广告间隔：" + mAdvAscend +"m")
+                } else if(totalKcal > 0) {
+                    mAdvAscend = totalKcal.toInt() / 4
+                    LogUtils.e(TAG, "目标是卡路里-广告间隔：" + mAdvAscend +"kcl")
+                }
 
                 AdvService.getInstance()
                         .findAdvByTypeAndEndTime(AdvEntity.TYPE_SET_MODE, AdvEntity.NOT_DEFAULT, yyyyMMdd) {
@@ -1661,52 +1699,55 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 
         when (THREADMILL_MODE_SELECT) {
             ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START -> {
-                val t = time / 60 //分钟
-                if (t > 0 && time % 60 == 0) {
-                    showAdv(t % 5 == 0)//每5分钟切换一次广告
+                //每5分钟切换一次广告
+                if(time != 0) {
+                    if(time >= mAdvAscend) {
+                        showAdv()
+                    }
                 }
             }
+
             ThreadMillConstant.THREADMILL_MODE_SELECT_GOAL_SETTING -> {
-                if(totalTime > 0) {
-                    val t = time / 60
-                    if (t > 0 && time % 60 == 0) {
-                        val section = totalTime.toInt() / 4
-                        showAdv(t % section == 0)
+                if(mAdvAscend <= 0) return
+
+                if(totalTime > 0 && time != 0) {
+                    if (time >= mAdvAscend) {
+                        showAdv()
                     }
                 } else if (totalKilometre > 0) {
-                    val distance = (distanceKm * 1000).toInt()
-                    val section = totalKilometre.toInt() / 4
-                    if(distance > 0) {
-                        showAdv(distance % section == 0)
+                    if(distanceKm > 0 && distanceKm * 1000 > mAdvAscend) {
+                        showAdv()
                     }
                 } else if (totalKcal > 0) {
-                    val section = totalKcal.toInt() / 4
-                    if(kcal.toInt() > 0) {
-                        showAdv(kcal.toInt() % section == 0)
+                    if(kcal > 0 && kcal > mAdvAscend) {
+                        showAdv()
                     }
                 }
             }
         }
     }
 
-    fun showAdv(show: Boolean) {
-        LogUtils.e(TAG, "是否显示广告：" + show)
-        if (show) {
-            if (mAdvEntities.size > 0) {
-                layout_run_way.imageview_adv.visibility = View.VISIBLE
-                HImageLoaderSingleton.getInstance()
-                        .loadImage(layout_run_way.imageview_adv,
-                                mAdvEntities[mAdvPosition].url)
-                ++mAdvPosition
-                if (mAdvPosition >= mAdvEntities.size) {
-                    mAdvPosition = 0
-                }
-                //广告存在时间20s
-                handler.postDelayed({
-                    layout_run_way.imageview_adv.visibility = View.INVISIBLE
-                }, 20 * 1000)
+    fun showAdv() {
+        LogUtils.e(TAG, "---显示广告中---")
+        if (mAdvEntities.size > 0) {
+            layout_run_way.imageview_adv.visibility = View.VISIBLE
+            HImageLoaderSingleton.getInstance()
+                    .loadImage(layout_run_way.imageview_adv,
+                            mAdvEntities[mAdvPosition].url)
+            ++mAdvPosition
+            if (mAdvPosition >= mAdvEntities.size) {
+                mAdvPosition = 0
             }
+            //广告存在时间20s
+            handler.removeCallbacks(mAadvRunTask)
+            handler.postDelayed(mAadvRunTask, 20 * 1000)
         }
+        mAdvAscend += mAdvAscend
+        LogUtils.e(TAG, "下一次广告显示：".plus(mAdvAscend).plus("广告位：" + mAdvPosition))
+    }
+
+    var mAadvRunTask = Runnable {
+        layout_run_way.imageview_adv.visibility = View.INVISIBLE
     }
 
     fun onEvent(message: AdvRefreshMessage) {
