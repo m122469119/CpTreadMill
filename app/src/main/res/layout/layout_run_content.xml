@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:app="http://schemas.android.com/apk/res-auto"
              android:layout_width="match_parent"
-             android:layout_height="wrap_content">
+             android:layout_height="match_parent">
 
     <include
         android:id="@+id/layout_run_way"
@@ -16,7 +16,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_gravity="center"
         android:visibility="gone"
         app:failed_view="@layout/stateview_fail_view"
         app:loading_view="@layout/stateview_loading_view"

@@ -1,26 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:orientation="vertical">
-
-    <com.aaron.android.framework.library.imageloader.HImageView
-        android:id="@+id/imageview_adv"
-        android:layout_width="470dp"
-        android:layout_height="250dp"
-        android:scaleType="centerCrop"
-        android:adjustViewBounds="true"
-        fresco:failureImage="@drawable/run_adv"
-        fresco:failureImageScaleType="centerCrop"
-        fresco:placeholderImage="@drawable/run_adv"
-        fresco:placeholderImageScaleType="centerCrop"
-        android:visibility="invisible"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <com.liking.treadmill.widget.RunwayView
         android:id="@+id/run_way_view"
-        android:layout_width="1080dp"
-        android:layout_height="380dp" />
+        android:layout_width="match_parent"
+        android:layout_height="380dp"
+        android:layout_alignParentBottom="true"/>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/run_way_view"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.aaron.android.framework.library.imageloader.HImageView
+            android:id="@+id/imageview_adv"
+            android:layout_width="680dp"
+            android:layout_height="496dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:visibility="visible"
+            fresco:failureImage="@drawable/run_adv"
+            fresco:failureImageScaleType="centerCrop"
+            fresco:placeholderImage="@drawable/run_adv"
+            fresco:placeholderImageScaleType="centerCrop"/>
+    </LinearLayout>
+
+</RelativeLayout>

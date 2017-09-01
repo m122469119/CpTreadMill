@@ -36,7 +36,6 @@ import com.liking.treadmill.fragment.SettingFragment
 import com.liking.treadmill.fragment.StartFragment
 import com.liking.treadmill.fragment.base.SerialPortFragment
 import com.liking.treadmill.message.AdvRefreshMessage
-import com.liking.treadmill.message.ToolBarTimeMessage
 import com.liking.treadmill.storge.Preference
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent
 import com.liking.treadmill.treadcontroller.SerialPortUtil
@@ -48,18 +47,15 @@ import com.liking.treadmill.utils.countdownutils.LikingCountDownHelper
 import com.liking.treadmill.widget.IToast
 import com.liking.treadmill.widget.ScrollSpeedLinearLayoutManger
 import de.greenrobot.event.EventBus
-import kotlinx.android.synthetic.main.activity_run.*
 import kotlinx.android.synthetic.main.fragment_running.*
 import kotlinx.android.synthetic.main.layout_category_tablayout.view.*
 import kotlinx.android.synthetic.main.layout_pause.*
 import kotlinx.android.synthetic.main.layout_prepare.*
-import kotlinx.android.synthetic.main.layout_run.*
 import kotlinx.android.synthetic.main.layout_run_bottom.*
 import kotlinx.android.synthetic.main.layout_run_bottom.view.*
 import kotlinx.android.synthetic.main.layout_run_content.*
 import kotlinx.android.synthetic.main.layout_run_content.view.*
 import kotlinx.android.synthetic.main.layout_run_finish.view.*
-import kotlinx.android.synthetic.main.layout_run_head.view.*
 import kotlinx.android.synthetic.main.layout_run_video_category.*
 import kotlinx.android.synthetic.main.layout_run_video_list.*
 import kotlinx.android.synthetic.main.layout_run_way.view.*
@@ -71,7 +67,6 @@ import liking.com.iqiyimedia.http.result.TopListResult
 import liking.com.iqiyimedia.http.result.VideoInfoResult
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.layoutInflater
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -176,8 +171,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 }
                 try {
                     showAdvertisement(mTotalRunTime, mTotalKmDistance, mTotalKcal)
-                }catch (e: Exception) {
-                    LogUtils.e(TAG, e.message+"")
+                } catch (e: Exception) {
+                    LogUtils.e(TAG, e.message + "")
                 }
             }
         }
@@ -187,10 +182,9 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 
     private var isMediaStart: Boolean = false
     private var isRunning: Boolean = false
-    private val dateFormat = SimpleDateFormat("yyyy.MM.dd hh:mm")
     private val mAdvEntities = ArrayList<AdvEntity>() //广告资源
     private var mAdvPosition: Int = 0 //当前广告显示位置
-    private var mAdvAscend:Int = 0 //广告显示阀值
+    private var mAdvAscend: Int = 0 //广告显示阀值
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater?.inflate(R.layout.fragment_running, container, false)
@@ -275,15 +269,6 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     fun initView() {
         initRunInfoView()
         initIqiyiMediaView()
-
-        //会员以及场馆信息显示
-        try {
-            layout_run_head.user_name_TextView.text = getTreadInstance().userInfo.mUserName
-            HImageLoaderSingleton.getInstance().loadImage(layout_run_head.head_imageView,
-                    SerialPortUtil.getTreadInstance().userInfo.mAvatar)
-            layout_run_head.text_gym_name.text = Preference.getBindUserGymName()
-        } catch (e: Exception) {
-        }
     }
 
     /**
@@ -415,6 +400,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     fun mediaStartActiveMonitor() {
         LogUtils.e(TAG, "-----mediaStartActiveMonitor---")
+        if (isRunning) return
         startActiveMonitor(22)
     }
 
@@ -695,7 +681,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * 跑道隐藏
      */
     fun hiddenRunWayUI() {
-        hiddenTranslationYUI(layout_run_content.layout_run_way, 0.0f, animatorDuration)
+        hiddenTranslationYUI(layout_run_content.layout_run_way, 0.0f, animatorDuration, {})
     }
 
     /**
@@ -732,69 +718,47 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     fun openVideoPlayBrowserUI(category: String, h5url: String) {
         stopActiveMonitor() //关闭计时
         //hidden列表向下移
-        setAllParentsClip(layout_run_content.layout_run_video_list_stateview, false)
+//        setAllParentsClip(layout_run_content.layout_run_video_list_stateview, false)
+
         hiddenTranslationYUI(layout_run_content.layout_run_video_list_stateview,
                 DisplayUtils.dp2px(ResourceUtils.getDimen(R.dimen.run_bottom_height)).toFloat(),
-                animatorDuration)
+                animatorDuration, {
 
-        //hidden head left
-        ObjectAnimator.ofFloat(
-                layout_run_head.layout_run_head_left,
-                "translationX",
-                layout_run_head.layout_run_head_left.translationX,
-                -layout_run_head.layout_run_head_left.width.toFloat())
-                .setDuration(animatorDuration)
-                .start()
+//            setAllParentsClip(layout_run_content.layout_run_video_list_stateview, true)
 
-        //hidden head right
-        var obj = ObjectAnimator.ofFloat(
-                layout_run_head.layout_run_head_right,
-                "translationX",
-                layout_run_head.layout_run_head_right.translationX,
-                layout_run_head.layout_run_head_right.width.toFloat())
-                .setDuration(animatorDuration)
-        obj.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {}
-            override fun onAnimationEnd(animation: Animator?) {
-                setAllParentsClip(layout_run_content.layout_run_video_list_stateview, true)
-
-                var videoPlayUI = childFragmentManager
-                        .findFragmentById(R.id.layout_run_video_play)
-                if (videoPlayUI == null) {
-                    videoPlayUI = VideoPlayBrowserFragment.newInstance(category, h5url)
-                    childFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.layout_run_video_play, videoPlayUI)
-                            .commitAllowingStateLoss()
-                }
-                if (!isInVideoPlayUI()) {
-                    showTranslationYUI(run_bottom_layout_bg, animatorDuration)
-                    layout_run_video_play.visibility = View.VISIBLE
-
-                    var obj = ObjectAnimator.ofFloat(layout_run_video_play, "scaleX", 0f, 1f)
-                            .setDuration(animatorDuration)
-                    obj.addListener(object : Animator.AnimatorListener {
-                        override fun onAnimationStart(animation: Animator) {}
-                        override fun onAnimationEnd(animation: Animator) {
-                            (videoPlayUI as VideoPlayBrowserFragment).loadUrl(h5url)
-                        }
-
-                        override fun onAnimationCancel(animation: Animator) {}
-                        override fun onAnimationRepeat(animation: Animator) {}
-                    })
-                    obj.start()
-                    ObjectAnimator.ofFloat(layout_run_video_play, "scaleY", 0f, 1f)
-                            .setDuration(animatorDuration)
-                            .start()
-                } else {
-                    (videoPlayUI as VideoPlayBrowserFragment).loadUrl(h5url)
-                }
+            var videoPlayUI = childFragmentManager
+                    .findFragmentById(R.id.layout_run_video_play)
+            if (videoPlayUI == null) {
+                videoPlayUI = VideoPlayBrowserFragment.newInstance(category, h5url)
+                childFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.layout_run_video_play, videoPlayUI)
+                        .commitAllowingStateLoss()
             }
+            if (!isInVideoPlayUI()) {
+                showTranslationYUI(run_bottom_layout_bg, animatorDuration)
+                layout_run_video_play.visibility = View.VISIBLE
 
-            override fun onAnimationCancel(animation: Animator?) {}
-            override fun onAnimationStart(animation: Animator?) {}
+                var obj = ObjectAnimator.ofFloat(layout_run_video_play, "scaleX", 0f, 1f)
+                        .setDuration(animatorDuration)
+                obj.addListener(object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator) {}
+                    override fun onAnimationEnd(animation: Animator) {
+                        (videoPlayUI as VideoPlayBrowserFragment).loadUrl(h5url)
+                    }
+
+                    override fun onAnimationCancel(animation: Animator) {}
+                    override fun onAnimationRepeat(animation: Animator) {}
+                })
+                obj.start()
+                ObjectAnimator.ofFloat(layout_run_video_play, "scaleY", 0f, 1f)
+                        .setDuration(animatorDuration)
+                        .start()
+            } else {
+                (videoPlayUI as VideoPlayBrowserFragment).loadUrl(h5url)
+            }
         })
-        obj.start()
+
     }
 
     fun setAllParentsClip(v: View, enabled: Boolean) {
@@ -816,25 +780,25 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         //show 播放列表向上移
         showTranslationYUI(layout_run_content.layout_run_video_list_stateview, animatorDuration)
         //show head left
-        ObjectAnimator.ofFloat(
-                layout_run_head.layout_run_head_left,
-                "translationX",
-                layout_run_head.layout_run_head_left.translationX,
-                0.0f)
-                .setDuration(animatorDuration)
-                .start()
+//        ObjectAnimator.ofFloat(
+//                layout_run_head.layout_run_head_left,
+//                "translationX",
+//                layout_run_head.layout_run_head_left.translationX,
+//                0.0f)
+//                .setDuration(animatorDuration)
+//                .start()
         //show head right
-        ObjectAnimator.ofFloat(
-                layout_run_head.layout_run_head_right,
-                "translationX",
-                layout_run_head.layout_run_head_right.translationX, 0.0f)
-                .setDuration(animatorDuration)
+//        ObjectAnimator.ofFloat(
+//                layout_run_head.layout_run_head_right,
+//                "translationX",
+//                layout_run_head.layout_run_head_right.translationX, 0.0f)
+//                .setDuration(animatorDuration)
     }
 
     /**
      * Y位移动画显示
      */
-    fun hiddenTranslationYUI(view: View, offset: Float, duration: Long) {
+    fun hiddenTranslationYUI(view: View, offset: Float, duration: Long, funAnimEnd: () -> Unit?) {
         val y = view.translationY
         var translationYAnimatorHidden = ObjectAnimator.ofFloat(view,
                 "translationY", y, view.height.toFloat() + offset)
@@ -843,6 +807,9 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             override fun onAnimationStart(animation: Animator) {}
             override fun onAnimationEnd(animation: Animator) {
                 view.visibility = View.INVISIBLE
+                funAnimEnd.let {
+                    funAnimEnd.invoke()
+                }
             }
 
             override fun onAnimationCancel(animation: Animator) {}
@@ -900,9 +867,9 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     /**
      *隐藏底部背景
      */
-    fun hiddenBottomLayoutBg() {
-        hiddenTranslationYUI(run_bottom_layout_bg, 0.0f, animatorDuration)
-    }
+    fun hiddenBottomLayoutBg() = ObjectAnimator.ofFloat(run_bottom_layout_bg,
+            "translationY", run_bottom_layout_bg.translationY, - run_bottom_layout_bg.height.toFloat())
+            .setDuration(animatorDuration).start()
 
     /**
      * 是否在跑道页
@@ -1026,7 +993,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     }
 
     fun volumeControl(keyCode: Int) {
-        if(keyCode == LikingTreadKeyEvent.KEY_VOL_PLUS.toInt()) {// +
+        if (keyCode == LikingTreadKeyEvent.KEY_VOL_PLUS.toInt()) {// +
             (activity as HomeActivity).volumeAdd()
             return
         } else if (keyCode == LikingTreadKeyEvent.KEY_VOL_REDUCE.toInt()) {
@@ -1034,6 +1001,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             return
         }
     }
+
     /**
      * 跑步机按键回调
      */
@@ -1236,7 +1204,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * 跑步机设置速度坡度，暂停，停止
      */
     fun setUpRun(keyCode: Int, isInRunWayUI: Boolean) {
-        if(!isRunning) return
+        if (!isRunning) return
         if (keyCode == LikingTreadKeyEvent.KEY_PAUSE.toInt()) {
             pauseTreadmill()
         } else if (keyCode == LikingTreadKeyEvent.KEY_STOP.toInt()) {
@@ -1581,18 +1549,6 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     }
 
     /**
-     * 时间刷新
-     * @param message
-     */
-    fun onEvent(message: ToolBarTimeMessage) {
-        layout_run_head?.text_time?.text = getTime()
-    }
-
-    fun getTime(): String {
-        return dateFormat.format(Date())
-    }
-
-    /**
      * 超时验证（避免跑步机沦为电视机）
      * 如果用户在刷手环后10分钟内（超时机制仍然存在）未进行跑步操作
      * 8分钟时弹框提示：您目前位于跑步机，快快跑起来吧~（5s自动消失）
@@ -1651,15 +1607,15 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 
             ThreadMillConstant.THREADMILL_MODE_SELECT_GOAL_SETTING -> {
 
-                if(totalTime > 0) {
+                if (totalTime > 0) {
                     mAdvAscend = (totalTime.toInt() * 60) / 4 //s
                     LogUtils.e(TAG, "目标是时间-广告间隔：" + mAdvAscend)
-                } else if(totalKilometre > 0) {
+                } else if (totalKilometre > 0) {
                     mAdvAscend = (totalKilometre.toInt() * 1000) / 4 //m
-                    LogUtils.e(TAG, "目标是距离-广告间隔：" + mAdvAscend +"m")
-                } else if(totalKcal > 0) {
+                    LogUtils.e(TAG, "目标是距离-广告间隔：" + mAdvAscend + "m")
+                } else if (totalKcal > 0) {
                     mAdvAscend = totalKcal.toInt() / 4
-                    LogUtils.e(TAG, "目标是卡路里-广告间隔：" + mAdvAscend +"kcl")
+                    LogUtils.e(TAG, "目标是卡路里-广告间隔：" + mAdvAscend + "kcl")
                 }
 
                 AdvService.getInstance()
@@ -1700,26 +1656,26 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         when (THREADMILL_MODE_SELECT) {
             ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START -> {
                 //每5分钟切换一次广告
-                if(time != 0) {
-                    if(time >= mAdvAscend) {
+                if (time != 0) {
+                    if (time >= mAdvAscend) {
                         showAdv()
                     }
                 }
             }
 
             ThreadMillConstant.THREADMILL_MODE_SELECT_GOAL_SETTING -> {
-                if(mAdvAscend <= 0) return
+                if (mAdvAscend <= 0) return
 
-                if(totalTime > 0 && time != 0) {
+                if (totalTime > 0 && time != 0) {
                     if (time >= mAdvAscend) {
                         showAdv()
                     }
                 } else if (totalKilometre > 0) {
-                    if(distanceKm > 0 && distanceKm * 1000 > mAdvAscend) {
+                    if (distanceKm > 0 && distanceKm * 1000 > mAdvAscend) {
                         showAdv()
                     }
                 } else if (totalKcal > 0) {
-                    if(kcal > 0 && kcal > mAdvAscend) {
+                    if (kcal > 0 && kcal > mAdvAscend) {
                         showAdv()
                     }
                 }

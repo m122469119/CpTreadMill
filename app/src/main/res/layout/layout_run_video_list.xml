@@ -2,17 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:gravity="center"
+              android:gravity="center_horizontal"
               android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="46dp"
+        android:layout_marginBottom="26dp"
         android:layout_marginTop="10dp"
         android:text="请选择视频"
         android:textColor="@color/c84898F"
-        android:textSize="26sp"/>
+        android:textSize="22sp"/>
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"

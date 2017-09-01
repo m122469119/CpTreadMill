@@ -8,7 +8,7 @@
     <View
         android:id="@+id/run_bottom_layout_bg"
         android:layout_width="match_parent"
-        android:translationY="@dimen/run_bottom_height"
+        android:translationY="-270dp"
         android:layout_height="@dimen/run_bottom_height"
         android:background="@color/c353535"/>
 

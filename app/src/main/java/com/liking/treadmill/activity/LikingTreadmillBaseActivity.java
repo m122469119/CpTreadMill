@@ -28,6 +28,7 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
     private ImageView mWifiImageView;
     private ImageView mFanImageView;
     private ImageView mCooldownImageView;
+    private TextView mTimeTextView;
     private TextView mTitleView;
 
     @Override
@@ -48,6 +49,8 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
         mFanImageView = (ImageView) customToolBarView.findViewById(R.id.fan_imageView);
         mCooldownImageView = (ImageView) customToolBarView.findViewById(R.id.cooldown_imageView);
         mTitleView = (TextView) customToolBarView.findViewById(R.id.title_textView);
+        mTimeTextView = (TextView) customToolBarView.findViewById(R.id.time_textView);
+        mTimeTextView.setText(getToolBarTime());
         setCustomToolBar(customToolBarView);
     }
 
@@ -87,6 +90,23 @@ public class LikingTreadmillBaseActivity extends AppBarActivity {
         } else {
             setNoWifiView();
         }
+    }
+
+    /**
+     * toolbar时间刷新
+     * @param message
+     */
+    public void onEvent(ToolBarTimeMessage message) {
+        mTimeTextView.setText(getToolBarTime());
+    }
+
+
+    /**
+     * 获取时间
+     * @return
+     */
+    public String getToolBarTime () {
+        return new SimpleDateFormat("HH:mm").format(new Date());
     }
 
     private void setHaveWifiView() {

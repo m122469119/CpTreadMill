@@ -54,7 +54,7 @@ public class RunwayView extends View {
     private Camera camera;
     private Matrix matrixCamera;
 
-    private float degree = 30.0f;
+    private float degree = 40.0f;
 
     int wayWidth;
     int wayHeight;
@@ -150,8 +150,8 @@ public class RunwayView extends View {
         wayBottom = wayHeight;
 
         //绘制梯形
-        mPathWay.moveTo(wayWidth * 0.25f, 0);
-        mPathWay.lineTo(wayWidth - (wayWidth * 0.25f), 0);
+        mPathWay.moveTo(wayWidth * 0.32f, 0);
+        mPathWay.lineTo(wayWidth - (wayWidth * 0.32f), 0);
         mPathWay.lineTo(wayWidth, wayHeight);
         mPathWay.lineTo(0, wayHeight);
 
@@ -206,26 +206,26 @@ public class RunwayView extends View {
         int r = wayHeight % (dashHeight + dashGap);
         int count = wayHeight / (dashHeight + dashGap);
         int dashCount = r == 0 ? count : count + 1;
-        for (int i = -2; i < dashCount; i++) {
+        for (int i = -3; i < dashCount; i++) {
             int startX = width / 2;
             int startY = phase + (dashHeight + dashGap) * i;
             int stopX = width / 2;
             int stopY = phase + (dashHeight + dashGap) * i + dashHeight;
 
             //去超出部分
-            if (startY < wayTop - 100) {
-                if (stopY > wayTop - 100) {
-                    startY = wayTop - 100;
+            if (startY < wayTop - 200) {
+                if (stopY > wayTop - 200) {
+                    startY = wayTop - 200;
                 } else {
                     startY = wayTop;
                     stopY = wayTop;
                 }
             }
-            if (startY > wayHeight - 10) {
-                startY = wayHeight - 10;
+            if (startY > wayHeight - 2) {
+                startY = wayHeight - 2;
             }
-            if (stopY > wayHeight - 10) {
-                stopY = wayHeight - 10;
+            if (stopY > wayHeight - 2) {
+                stopY = wayHeight - 2;
             }
 //            Log.e("info", "startY:" + startY + ";stopY:" + stopY);
             //划线

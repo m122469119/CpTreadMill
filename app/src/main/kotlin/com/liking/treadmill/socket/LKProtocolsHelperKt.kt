@@ -106,6 +106,10 @@ object LKProtocolsHelperKt {
     /*默认广告图*/
     private val DEFAULT_ADVERTISEMENT_CMD = "default_advertisement"
 
+    private val NOTIFY_USER_CMD = "notify_user"
+
+    private val NOTIFY_FOLLOWER_CMD = "notify_follower"
+
 
     val mGson = GsonBuilder().disableHtmlEscaping().create()
 
@@ -307,6 +311,26 @@ object LKProtocolsHelperKt {
                 val defaultAdvResultMessage = AdvResultMessage(AdvResultMessage.ADV_DEFAULT)
                 defaultAdvResultMessage.obj1 = data
                 postEvent(defaultAdvResultMessage)
+            }
+
+            //
+            NOTIFY_USER_CMD -> {
+               val notifyUserResult = mGson.fromJson(result, NotifyUserResult::class.java)
+                notifyUserResult.let {
+                    notifyUserResult.data.let {
+                        LogUtils.e(TAG, "NOTIFY_USER:".plus(it.name))
+                    }
+                }
+            }
+
+            //
+            NOTIFY_FOLLOWER_CMD -> {
+                val notifyFollowerResult = mGson.fromJson(result, NotifyFollowerResult::class.java)
+                notifyFollowerResult.let {
+                    notifyFollowerResult.data.let {
+                        LogUtils.e(TAG, "NOTIFY_FOLLOWER:".plus(it.name))
+                    }
+                }
             }
         }
     }
