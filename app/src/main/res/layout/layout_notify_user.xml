@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical"
+              android:orientation="vertical"
+              android:padding="@dimen/spacing_12dp">
+
+    <TextView
+        android:id="@+id/notify_user_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/spacing_40dp"
+        android:text="同城"
+        android:textColor="@color/c85878e"
+        android:textSize="26dp"
+        android:textStyle="bold"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingRight="@dimen/spacing_30dp"
+        android:padding="@dimen/spacing_4dp">
+
+        <TextView
+            android:id="@+id/n_u_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="相遇次数"
+            android:textColor="@color/c85878e"
+            android:textSize="18dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="96dp"
+            android:layout_toLeftOf="@+id/n_u_right"
+            android:text="性别"
+            android:textColor="@color/c85878e"
+            android:textSize="18dp"
+            android:textStyle="bold"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/notify_user_RecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/spacing_20dp"/>
+
+        <LinearLayout
+            android:id="@+id/notify_user_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:gravity="center|bottom"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="14dp"
+                android:layout_toLeftOf="@+id/n_u_right"
+                android:text="总跑人数:"
+                android:textColor="@color/c85878e"
+                android:textSize="18dp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="14dp"
+                android:layout_toLeftOf="@+id/n_u_right"
+                android:text="3,242,3"
+                android:textColor="@color/c34c86c"
+                android:textSize="18dp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

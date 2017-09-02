@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Message
 import android.os.RemoteException
 import android.support.design.widget.TabLayout
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -27,6 +28,7 @@ import com.liking.treadmill.R
 import com.liking.treadmill.activity.HomeActivity
 import com.liking.treadmill.adapter.IqiyiVideoEpisodesAdapter
 import com.liking.treadmill.adapter.IqiyiVideoListAdapter
+import com.liking.treadmill.adapter.NotifyUserAdapter
 import com.liking.treadmill.app.ThreadMillConstant
 import com.liking.treadmill.db.entity.AdvEntity
 import com.liking.treadmill.db.service.AdvService
@@ -54,6 +56,7 @@ import de.greenrobot.event.EventBus
 import kotlinx.android.synthetic.main.fragment_running.*
 import kotlinx.android.synthetic.main.layout_category_tablayout.view.*
 import kotlinx.android.synthetic.main.layout_follower_user.view.*
+import kotlinx.android.synthetic.main.layout_notify_user.view.*
 import kotlinx.android.synthetic.main.layout_pause.*
 import kotlinx.android.synthetic.main.layout_prepare.*
 import kotlinx.android.synthetic.main.layout_run_bottom.*
@@ -196,6 +199,10 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     private var mAdvPosition: Int = 0 //当前广告显示位置
     private var mAdvAscend: Int = 0 //广告显示阀值
 
+    //同城、全国通知 View
+    private lateinit var cityUserLeftView: View
+    private lateinit var nationwideUserRightView: View
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater?.inflate(R.layout.fragment_running, container, false)
         setPresenter()
@@ -280,7 +287,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         initRunInfoView()
         initIqiyiMediaView()
 
-        //
+        initNotifyUserView()
+        // 相遇显示
         layout_run_bottom.follower_user.translationX = 0.0f
         objInfollowerUser = ObjectAnimator.ofFloat(layout_run_bottom.follower_user,
                 "translationX", layout_run_bottom.follower_user.translationX, -300.0f)
@@ -294,16 +302,17 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                     var objOut = ObjectAnimator.ofFloat(layout_run_bottom.follower_user,
                             "translationX", layout_run_bottom.follower_user.translationX, 0.0f)
                             .setDuration(animatorDuration)
-                    objOut.addListener(object : Animator.AnimatorListener{
+                    objOut.addListener(object : Animator.AnimatorListener {
                         override fun onAnimationRepeat(animation: Animator?) {}
                         override fun onAnimationEnd(animation: Animator?) {
                             var data = followerUserList.poll()
-                            if(data != null) {
+                            if (data != null) {
                                 showfollowerUI(data)
                             } else {
                                 followerUserUI = false
                             }
                         }
+
                         override fun onAnimationCancel(animation: Animator?) {}
                         override fun onAnimationStart(animation: Animator?) {}
                     })
@@ -311,6 +320,36 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 }, 1000)
             }
         })
+    }
+
+    /**
+     * 个人跑步时 同城、全国名单显示
+     */
+    fun initNotifyUserView() {
+        when (THREADMILL_MODE_SELECT) {
+            ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON -> {
+
+            }
+            else -> {
+                cityUserLeftView = LayoutInflater.from(context).inflate(R.layout.layout_notify_user, null)
+
+                cityUserLeftView.notify_user_RecyclerView.setHasFixedSize(true)
+                cityUserLeftView.notify_user_RecyclerView.layoutManager = LinearLayoutManager(context)
+                cityUserLeftView.notify_user_RecyclerView.adapter = NotifyUserAdapter(context)
+                nationwideUserRightView = LayoutInflater.from(context).inflate(R.layout.layout_notify_user, null)
+                nationwideUserRightView.notify_user_type.text = "全国"
+                nationwideUserRightView.notify_user_RecyclerView.notify_user_RecyclerView.setHasFixedSize(true)
+                nationwideUserRightView.notify_user_RecyclerView.notify_user_RecyclerView.layoutManager = LinearLayoutManager(context)
+                nationwideUserRightView.notify_user_RecyclerView.adapter = NotifyUserAdapter(context)
+                nationwideUserRightView.notify_user_bottom.visibility = View.INVISIBLE
+
+                layout_run_way.run_way_left_FrameLayout.removeAllViews()
+                layout_run_way.run_way_left_FrameLayout.addView(cityUserLeftView)
+
+                layout_run_way.run_way_right_FrameLayout.removeAllViews()
+                layout_run_way.run_way_right_FrameLayout.addView(nationwideUserRightView)
+            }
+        }
     }
 
     /**
@@ -1754,33 +1793,52 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         initAdvertisementData()
     }
 
-    //同城、全国通知
-    var cityUserList: MutableList<NotifyUserResult.DataBean> = ArrayList()
+    var cityUserList: MutableList<NotifyUserResult.DataBean> = mutableListOf()
     var nationwideUserList: MutableList<NotifyUserResult.DataBean> = ArrayList()
     fun onEvent(message: NotifyUserMessage) {
+
         message.mDataBean.let {
             when (message.mDataBean.type) {
             //同城
                 1 -> {
-
-                    try {
-
-                        if (cityUserList.size + 1 > 5) {
-                            cityUserList.removeAt(cityUserList.size - 1)
+                    cityUserLeftView.let {
+                        try {
+                            var adapter = cityUserLeftView.notify_user_RecyclerView.adapter as NotifyUserAdapter
+                            adapter.dataList.filter {
+                                it.userId.equals(message.mDataBean.userId)
+                            }.let {
+                                if (it is MutableList<NotifyUserResult.DataBean>) {
+                                    if (it.size + 1 > 5) {
+                                        it.removeAt(it.size - 1)
+                                    }
+                                    it.add(0, message.mDataBean)
+                                    adapter.setData(it)
+                                    adapter.notifyDataSetChanged()
+                                }
+                            }
+                        } catch (e: Exception) {
+                            LogUtils.e(TAG, "cityUserList error:" + e.message)
                         }
-                        cityUserList.add(0, message.mDataBean)
-
-                    }catch (e: Exception) {
-                        LogUtils.e(TAG, "cityUserList error:" + e.message)
                     }
                 }
             //全国
                 2 -> {
 
-                    if (nationwideUserList.size + 1 > 5) {
-                        nationwideUserList.removeAt(nationwideUserList.size - 1)
+                    nationwideUserRightView.let {
+                        var adapter = nationwideUserRightView.notify_user_RecyclerView.adapter as NotifyUserAdapter
+                        adapter.dataList.filter {
+                            it.userId.equals(message.mDataBean.userId)
+                        }.let {
+                            if (it is MutableList<NotifyUserResult.DataBean>) {
+                                if (it.size + 1 > 5) {
+                                    it.removeAt(it.size - 1)
+                                }
+                                it.add(0, message.mDataBean)
+                                adapter.setData(it)
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
                     }
-                    nationwideUserList.add(0, message.mDataBean)
                 }
                 else -> {
                 }
@@ -1790,33 +1848,33 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     }
 
     //关注会员通知
-    lateinit var objInfollowerUser : ObjectAnimator
-    var followerUserUI :Boolean =  false
+    lateinit var objInfollowerUser: ObjectAnimator
+    var followerUserUI: Boolean = false
     var followerUserList: Queue<NotifyFollowerResult.DataBean> = LinkedList()
 
     fun onEvent(message: NotifyFollowerMessage) {
         message.mDataBean.let {
             try {
                 followerUserList.add(message.mDataBean)
-                if(followerUserUI ||objInfollowerUser.isStarted || objInfollowerUser.isRunning) {
+                if (followerUserUI || objInfollowerUser.isStarted || objInfollowerUser.isRunning) {
                     return
                 }
                 var d = followerUserList.poll()
-                if(d != null) {
+                if (d != null) {
                     showfollowerUI(d)
                 }
-            } catch(e: Exception){
+            } catch(e: Exception) {
                 LogUtils.e(TAG, "NotifyFollowerMessage ERROR!" + e.message)
             }
         }
     }
 
-    fun showfollowerUI(data:NotifyFollowerResult.DataBean) {
+    fun showfollowerUI(data: NotifyFollowerResult.DataBean) {
         data.let {
             followerUserUI = true
             layout_run_bottom.follower_user.follower_user_name.text = data.name
-//            HImageLoaderSingleton.getInstance().loadImage(layout_run_bottom.follower_user.head_imageView,
-//                    data.gender)
+            HImageLoaderSingleton.getInstance().loadImage(layout_run_bottom.follower_user.head_imageView,
+                    data?.avatar)
             objInfollowerUser.start()
         }
     }

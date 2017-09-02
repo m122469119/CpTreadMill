@@ -15,7 +15,15 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/run_way_view"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/run_way_left_FrameLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp"
+            android:layout_weight="1.0"/>
 
         <com.aaron.android.framework.library.imageloader.HImageView
             android:id="@+id/imageview_adv"
@@ -28,6 +36,15 @@
             fresco:failureImageScaleType="centerCrop"
             fresco:placeholderImage="@drawable/run_adv"
             fresco:placeholderImageScaleType="centerCrop"/>
+
+        <FrameLayout
+            android:id="@+id/run_way_right_FrameLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp"
+            android:layout_weight="1.0"/>
+
     </LinearLayout>
 
 </RelativeLayout>

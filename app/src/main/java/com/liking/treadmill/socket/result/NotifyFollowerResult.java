@@ -33,6 +33,16 @@ public class NotifyFollowerResult extends BaseSocketResult {
         private String name;
         @SerializedName("gender")
         private int gender;
+        @SerializedName("avatar")
+        private String avatar;
+
+        public String getAvatar() {
+            return avatar;
+        }
+
+        public void setAvatar(String avatar) {
+            this.avatar = avatar;
+        }
 
         public String getName() {
             return name;

@@ -43,6 +43,26 @@ public class NotifyUserResult extends BaseSocketResult {
         private int encounter;
         @SerializedName("type")
         private int type;
+        @SerializedName("user_id")
+        private String userId;
+        @SerializedName("avatar")
+        private String avatar;
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getAvatar() {
+            return avatar;
+        }
+
+        public void setAvatar(String avatar) {
+            this.avatar = avatar;
+        }
 
         public int getType() {
             return type;
