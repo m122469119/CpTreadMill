@@ -141,7 +141,7 @@ public class AdvLocalDataSource {
         AdvEntity advByOne = findAdvByOne(entity.getAdv_id());
 
         if (advByOne != null) {
-            db.update(LikingPersistenceContract.TreadmillAdv.TABLE_NAME, values, null, null);
+            db.update(LikingPersistenceContract.TreadmillAdv.TABLE_NAME, values, gi, null);
         } else  {
             db.insert(LikingPersistenceContract.TreadmillAdv.TABLE_NAME, null, values);
         }
