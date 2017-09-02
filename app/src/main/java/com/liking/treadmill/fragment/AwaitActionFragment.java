@@ -186,7 +186,7 @@ public class AwaitActionFragment extends SerialPortFragment {
 
     public void initBanner() {
         String yyyyMMdd = DateUtils.formatDate("yyyyMMdd", new Date());
-        AdvService.getInstance().findAdvByTypeAndEndTime(AdvEntity.TYPE_LOGIN, AdvEntity.NOT_DEFAULT, yyyyMMdd, new AdvService.CallBack<List<AdvEntity>>() {
+        AdvService.getInstance().findAdvByTypeAndEndTime(AdvEntity.TYPE_HOME, AdvEntity.NOT_DEFAULT, yyyyMMdd, new AdvService.CallBack<List<AdvEntity>>() {
             @Override
             public void onBack(List<AdvEntity> advEntities) {
                 mBannerList.clear();
@@ -200,7 +200,7 @@ public class AwaitActionFragment extends SerialPortFragment {
                 } else {
                     //设置为默认的图片
                     LogUtils.e(TAG, "-----AdvRefreshMessage---default--" + mBannerList.size());
-                    AdvService.getInstance().findAdvByType(AdvEntity.TYPE_LOGIN, AdvEntity.DEFAULT, new AdvService.CallBack<List<AdvEntity>>() {
+                    AdvService.getInstance().findAdvByType(AdvEntity.TYPE_HOME, AdvEntity.DEFAULT, new AdvService.CallBack<List<AdvEntity>>() {
                         @Override
                         public void onBack(List<AdvEntity> advEntities) {
                             if (advEntities != null && advEntities.size() > 0) {

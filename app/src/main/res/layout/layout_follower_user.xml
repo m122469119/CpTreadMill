@@ -51,6 +51,4 @@
         fresco:placeholderImage="@drawable/icon_head_default_image"
         fresco:placeholderImageScaleType="centerCrop"
         fresco:roundAsCircle="true"/>
-
-
 </FrameLayout>

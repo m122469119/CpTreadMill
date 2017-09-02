@@ -73,6 +73,7 @@ import liking.com.iqiyimedia.http.result.VideoInfoResult
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.layoutInflater
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -278,6 +279,38 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     fun initView() {
         initRunInfoView()
         initIqiyiMediaView()
+
+        //
+        layout_run_bottom.follower_user.translationX = 0.0f
+        objInfollowerUser = ObjectAnimator.ofFloat(layout_run_bottom.follower_user,
+                "translationX", layout_run_bottom.follower_user.translationX, -300.0f)
+                .setDuration(animatorDuration)
+        objInfollowerUser.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationRepeat(animation: Animator?) {}
+            override fun onAnimationCancel(animation: Animator?) {}
+            override fun onAnimationStart(animation: Animator?) {}
+            override fun onAnimationEnd(animation: Animator?) {
+                handler.postDelayed({
+                    var objOut = ObjectAnimator.ofFloat(layout_run_bottom.follower_user,
+                            "translationX", layout_run_bottom.follower_user.translationX, 0.0f)
+                            .setDuration(animatorDuration)
+                    objOut.addListener(object : Animator.AnimatorListener{
+                        override fun onAnimationRepeat(animation: Animator?) {}
+                        override fun onAnimationEnd(animation: Animator?) {
+                            var data = followerUserList.poll()
+                            if(data != null) {
+                                showfollowerUI(data)
+                            } else {
+                                followerUserUI = false
+                            }
+                        }
+                        override fun onAnimationCancel(animation: Animator?) {}
+                        override fun onAnimationStart(animation: Animator?) {}
+                    })
+                    objOut.start()
+                }, 1000)
+            }
+        })
     }
 
     /**
@@ -348,6 +381,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 
         initGoalSettingData() //目标设置
         initAdvertisementData() //广告显示
+        (activity as HomeActivity)?.setTitle(Preference.getBindUserGymName())
     }
 
     /**
@@ -1721,24 +1755,32 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     }
 
     //同城、全国通知
-    var cityUserList: Queue<NotifyUserResult.DataBean> = LinkedList()
-    var nationwideUserList: Queue<NotifyUserResult.DataBean> = LinkedList()
+    var cityUserList: MutableList<NotifyUserResult.DataBean> = ArrayList()
+    var nationwideUserList: MutableList<NotifyUserResult.DataBean> = ArrayList()
     fun onEvent(message: NotifyUserMessage) {
         message.mDataBean.let {
             when (message.mDataBean.type) {
             //同城
                 1 -> {
-                    if (cityUserList.size > 5) {
-                        cityUserList.poll()
+
+                    try {
+
+                        if (cityUserList.size + 1 > 5) {
+                            cityUserList.removeAt(cityUserList.size - 1)
+                        }
+                        cityUserList.add(0, message.mDataBean)
+
+                    }catch (e: Exception) {
+                        LogUtils.e(TAG, "cityUserList error:" + e.message)
                     }
-                    cityUserList.add(message.mDataBean)
                 }
             //全国
                 2 -> {
-                    if (nationwideUserList.size > 5) {
-                        nationwideUserList.poll()
+
+                    if (nationwideUserList.size + 1 > 5) {
+                        nationwideUserList.removeAt(nationwideUserList.size - 1)
                     }
-                    nationwideUserList.add(message.mDataBean)
+                    nationwideUserList.add(0, message.mDataBean)
                 }
                 else -> {
                 }
@@ -1748,53 +1790,35 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     }
 
     //关注会员通知
+    lateinit var objInfollowerUser : ObjectAnimator
+    var followerUserUI :Boolean =  false
     var followerUserList: Queue<NotifyFollowerResult.DataBean> = LinkedList()
 
     fun onEvent(message: NotifyFollowerMessage) {
         message.mDataBean.let {
             try {
                 followerUserList.add(message.mDataBean)
-                showfollowerUI(followerUserList.poll())
+                if(followerUserUI ||objInfollowerUser.isStarted || objInfollowerUser.isRunning) {
+                    return
+                }
+                var d = followerUserList.poll()
+                if(d != null) {
+                    showfollowerUI(d)
+                }
             } catch(e: Exception){
-                LogUtils.e(TAG, "NotifyFollowerMessage ERROR!")
+                LogUtils.e(TAG, "NotifyFollowerMessage ERROR!" + e.message)
             }
         }
     }
 
     fun showfollowerUI(data:NotifyFollowerResult.DataBean) {
-
         data.let {
+            followerUserUI = true
             layout_run_bottom.follower_user.follower_user_name.text = data.name
-            HImageLoaderSingleton.getInstance().loadImage(layout_run_bottom.follower_user.head_imageView,
-                    data.gender)
-            var objIn = ObjectAnimator.ofFloat(layout_run_bottom.follower_user,
-                    "translationX", layout_run_bottom.follower_user.translationX, 0.0f)
-                    .setDuration(animatorDuration)
-            objIn.addListener(object : Animator.AnimatorListener {
-                        override fun onAnimationRepeat(animation: Animator?) {}
-                        override fun onAnimationCancel(animation: Animator?) {}
-                        override fun onAnimationStart(animation: Animator?) {}
-                        override fun onAnimationEnd(animation: Animator?) {
-                            var objOut = ObjectAnimator.ofFloat(layout_run_bottom.follower_user,
-                                    "translationX", layout_run_bottom.follower_user.translationX, -300.0f)
-                                    .setDuration(animatorDuration)
-                            objOut.addListener(object : Animator.AnimatorListener{
-                                override fun onAnimationRepeat(animation: Animator?) {}
-                                override fun onAnimationEnd(animation: Animator?) {
-                                    var data = followerUserList.poll()
-                                    if(data != null) {
-                                        showfollowerUI(data)
-                                    }
-                                }
-                                override fun onAnimationCancel(animation: Animator?) {}
-                                override fun onAnimationStart(animation: Animator?) {}
-                            })
-                            objOut.start()
-                        }
-                    })
-            objIn.start()
+//            HImageLoaderSingleton.getInstance().loadImage(layout_run_bottom.follower_user.head_imageView,
+//                    data.gender)
+            objInfollowerUser.start()
         }
-
     }
 
 }
