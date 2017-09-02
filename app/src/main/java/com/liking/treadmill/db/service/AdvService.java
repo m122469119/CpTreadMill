@@ -95,6 +95,16 @@ public class AdvService {
         });
     }
 
+    public void deleteAdvByIsDefault(final int type, final CallBack<Boolean> callBack){
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                callBack.onBack(mLocalDataSource.deleteAdvByIsDefault(type));
+            }
+        });
+    }
+
+
     public interface CallBack<T> {
         void onBack(T t);
     }

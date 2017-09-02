@@ -185,6 +185,21 @@ public class AdvLocalDataSource {
         return true;
     }
 
+    public boolean deleteAdvByIsDefault(int isDefault){
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
+        try {
+            db.delete(LikingPersistenceContract.TreadmillAdv.TABLE_NAME,
+                    LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_IS_DEFAULT + ">?",
+                    new String[]{String.valueOf(isDefault)});
+        } catch (Exception e) {
+            LogUtils.e(TAG, e.toString());
+            return false;
+        } finally {
+            mDatabaseManager.closeDatabase();
+        }
+        return true;
+    }
+
 
     public AdvEntity loadAdvEntity(Cursor c) {
 
