@@ -73,7 +73,7 @@ public class DefaultAdResult extends BaseSocketResult {
              */
 
             private String url;
-            private int adv_id;
+            private int exhibition_id;
 
             public String getUrl() {
                 return url;
@@ -83,12 +83,12 @@ public class DefaultAdResult extends BaseSocketResult {
                 this.url = url;
             }
 
-            public int getAdv_id() {
-                return adv_id;
+            public int getExhibition_id() {
+                return exhibition_id;
             }
 
-            public void setAdv_id(int adv_id) {
-                this.adv_id = adv_id;
+            public void setExhibition_id(int exhibition_id) {
+                this.exhibition_id = exhibition_id;
             }
         }
 

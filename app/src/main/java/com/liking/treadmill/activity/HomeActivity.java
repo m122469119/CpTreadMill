@@ -402,26 +402,26 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 DefaultAdResult.DataBean defaultBean = (DefaultAdResult.DataBean) message.obj1;
                 List<AdvEntity> defaultEntities = new ArrayList<>();
                 for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getHome()) {
-                    defaultEntities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_HOME,
-                            "0", 0, (long) bean.getAdv_id(), AdvEntity.DEFAULT));
+                    defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_HOME,
+                            "0", 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
                 }
                 for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getLogin()) {
-                    defaultEntities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_LOGIN,
-                            "0", 0, (long) bean.getAdv_id(), AdvEntity.DEFAULT));
+                    defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_LOGIN,
+                            "0", 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
                 }
                 for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getQuick_start()) {
-                    defaultEntities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_LOGIN,
-                            "0", 0, (long) bean.getAdv_id(), AdvEntity.DEFAULT));
+                    defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_QUICK_START,
+                            "0", 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
                 }
                 for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getSet_mode()) {
-                    defaultEntities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_SET_MODE,
-                            "0", 0, (long) bean.getAdv_id(), AdvEntity.DEFAULT));
+                    defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_SET_MODE,
+                            "0", 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
                 }
                 final List<AdvEntity> finalEntity = defaultEntities;
-
                 AdvService.getInstance().deleteAdvByIsDefault(AdvEntity.DEFAULT, new AdvService.CallBack<Boolean>() {
                     @Override
                     public void onBack(Boolean aBoolean) {
+                        LogUtils.e(TAG, "delete success !!!!!!!! + default" + aBoolean);
                         AdvService.getInstance().insertAdvList(finalEntity, new AdvService.CallBack<Boolean>() {
                             @Override
                             public void onBack(Boolean aBoolean) {
@@ -436,28 +436,34 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 NewAdResult.DataBean dataBean = (NewAdResult.DataBean) message.obj1;
                 List<AdvEntity> entities = new ArrayList<>();
                 for (NewAdResult.DataBean.NewAdBean bean : dataBean.getHome()) {
-                    entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_HOME,
-                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id(), AdvEntity.NOT_DEFAULT));
+                    entities.add(new AdvEntity((long)bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_HOME,
+                            bean.getEndtime(), bean.getStaytime(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
                 }
                 for (NewAdResult.DataBean.NewAdBean bean : dataBean.getLogin()) {
-                    entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_LOGIN,
-                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id(), AdvEntity.NOT_DEFAULT));
+                    entities.add(new AdvEntity((long)bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_LOGIN,
+                            bean.getEndtime(), bean.getStaytime(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
                 }
                 for (NewAdResult.DataBean.NewAdBean bean : dataBean.getQuick_start()) {
-                    entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_QUICK_START,
-                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id(), AdvEntity.NOT_DEFAULT));
+                    entities.add(new AdvEntity((long)bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_QUICK_START,
+                            bean.getEndtime(), bean.getStaytime(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
                 }
                 for (NewAdResult.DataBean.NewAdBean bean : dataBean.getSet_mode()) {
-                    entities.add(new AdvEntity(bean.getUrl(), AdvEntity.TYPE_SET_MODE,
-                            bean.getEndtime(), bean.getStaytime(), (long) bean.getAdv_id(), AdvEntity.NOT_DEFAULT));
+                    entities.add(new AdvEntity((long)bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_SET_MODE,
+                            bean.getEndtime(), bean.getStaytime(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
                 }
                 final List<AdvEntity> finalNewEntity = entities;
                 AdvService.getInstance().deleteAdvByIsDefault(AdvEntity.NOT_DEFAULT, new AdvService.CallBack<Boolean>() {
                     @Override
                     public void onBack(Boolean aBoolean) {
+
+
+                        LogUtils.e(TAG, "delete success !!!!!!!! + default" + aBoolean);
+
                         AdvService.getInstance().insertAdvList(finalNewEntity, new AdvService.CallBack<Boolean>() {
                             @Override
                             public void onBack(Boolean aBoolean) {
+
+
                                 LogUtils.i(TAG, String.format("new insert is %b", aBoolean));
                                 postEvent(new AdvRefreshMessage());
                             }

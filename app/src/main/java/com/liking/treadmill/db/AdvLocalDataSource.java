@@ -147,8 +147,8 @@ public class AdvLocalDataSource {
         AdvEntity advByOne = findAdvByOne(entity.getAdv_id());
         if (advByOne != null) {
             LogUtils.e("insertAdvList", "advByOne != null");
-            String selection = LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID + " = ?";
-            String[] selectionArgs = {String.valueOf(entity.getAdv_id())};
+            String selection = LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_EXHIBITION_ID + " = ?";
+            String[] selectionArgs = {String.valueOf(entity.getExhibition_id())};
             db.update(LikingPersistenceContract.TreadmillAdv.TABLE_NAME, values, selection, selectionArgs);
         } else {
             LogUtils.e("insertAdvList", "advByOne == null");
@@ -189,7 +189,7 @@ public class AdvLocalDataSource {
         SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         try {
             db.delete(LikingPersistenceContract.TreadmillAdv.TABLE_NAME,
-                    LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_IS_DEFAULT + ">?",
+                    LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_IS_DEFAULT + "=?",
                     new String[]{String.valueOf(isDefault)});
         } catch (Exception e) {
             LogUtils.e(TAG, e.toString());
@@ -209,12 +209,13 @@ public class AdvLocalDataSource {
             String end_time = c.getString(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME));
             int stay_time = c.getInt(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_STAY_TIME));
             String url = c.getString(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL));
+            Long exhibition_id = c.getLong(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_EXHIBITION_ID));
             int isDefault = c.getInt(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_IS_DEFAULT));
 
             if ("".equals(url) || url == null) {
                 return null;
             }
-            return new AdvEntity(url, type, end_time, stay_time, adv_id, isDefault);
+            return new AdvEntity(adv_id, url, type, end_time, stay_time, exhibition_id, isDefault);
         }catch (Exception e){
             LogUtils.e("info", e.getMessage());
             return  null;

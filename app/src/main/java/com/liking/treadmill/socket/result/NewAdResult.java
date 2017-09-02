@@ -73,6 +73,16 @@ public class NewAdResult extends BaseSocketResult{
             private String endtime;
             private int staytime;
             private int adv_id;
+            private int exhibition_id;
+
+
+            public int getExhibition_id() {
+                return exhibition_id;
+            }
+
+            public void setExhibition_id(int exhibition_id) {
+                this.exhibition_id = exhibition_id;
+            }
 
             public String getUrl() {
                 return url;
