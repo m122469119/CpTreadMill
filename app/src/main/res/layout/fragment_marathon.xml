@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center"
+              android:orientation="horizontal">
+    <com.aaron.android.framework.library.imageloader.HImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:fresco="http://schemas.android.com/apk/res-auto"
+        android:padding="2dp"
+        android:layout_width="1920dp"
+        android:layout_height="1080dp"
+        android:scaleType="centerCrop"
+        fresco:failureImage="@drawable/marathon_bg"
+        fresco:failureImageScaleType="centerCrop"
+        fresco:placeholderImage="@drawable/marathon_bg"
+        fresco:placeholderImageScaleType="centerCrop"/>
+</LinearLayout>

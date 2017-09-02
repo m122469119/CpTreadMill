@@ -302,7 +302,7 @@ public class StartFragment extends SerialPortFragment {
 
     public void initBanner() {
         String yyyyMMdd = DateUtils.formatDate("yyyyMMdd", new Date());
-        yyyyMMdd = "20160212";
+//        yyyyMMdd = "20160212";
         AdvService.getInstance().findAdvByTypeAndEndTime(AdvEntity.TYPE_QUICK_START, AdvEntity.NOT_DEFAULT, yyyyMMdd, new AdvService.CallBack<List<AdvEntity>>() {
             @Override
             public void onBack(List<AdvEntity> advEntities) {

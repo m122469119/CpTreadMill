@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.liking.treadmill.db.entity.AdvEntity;
 
@@ -67,14 +68,16 @@ public class AdvLocalDataSource {
     }
 
 
-    public AdvEntity findAdvByOne(Long adv_id){
+    public AdvEntity findAdvByOne(Long adv_id) {
         SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
-        AdvEntity advEntity;
+        AdvEntity advEntity = null;
         try {
             Cursor c = db.rawQuery(FIND_ADV_BY_ONE, new String[]{String.valueOf(adv_id)});
-            advEntity = loadAdvEntity(c);
+            if(c.moveToNext()) {
+                advEntity = loadAdvEntity(c);
+            }
         } finally {
-            mDatabaseManager.closeDatabase();
+          //  mDatabaseManager.closeDatabase();
         }
         return advEntity;
     }
@@ -84,6 +87,7 @@ public class AdvLocalDataSource {
         SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         List<AdvEntity> advEntityList = new ArrayList<>();
         try {
+            LogUtils.e("sql", FIND_ADV_BY_TYPE_AND_TYPE_NEW + ";"+ type + ";" + endTime +";" +String.valueOf(isDefault));
             Cursor c = db.rawQuery(FIND_ADV_BY_TYPE_AND_TYPE_NEW, new String[]{type,
                     endTime,
                     String.valueOf(isDefault)});
@@ -93,6 +97,8 @@ public class AdvLocalDataSource {
                     advEntityList.add(advEntity);
                 }
             }
+            LogUtils.e("sql", "result:" + advEntityList.size());
+
         } finally {
             mDatabaseManager.closeDatabase();
         }
@@ -113,22 +119,24 @@ public class AdvLocalDataSource {
 
     public boolean insertAdvList(List<AdvEntity> advEntities) {
         SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
-    //    db.beginTransaction();
+        //    db.beginTransaction();
         try {
             for (AdvEntity entity : advEntities) {
                 insertAdv(db, entity);
             }
-          //  db.setTransactionSuccessful();
+            //  db.setTransactionSuccessful();
         } catch (Exception e) {
+            LogUtils.e("insertAdvList", e.getMessage());
             return false;
         } finally {
-         //   db.endTransaction();
+            //   db.endTransaction();
             mDatabaseManager.closeDatabase();
         }
+        LogUtils.e("insertAdvList", " success ");
         return true;
     }
 
-    private void insertAdv(SQLiteDatabase db, AdvEntity entity){
+    private void insertAdv(SQLiteDatabase db, AdvEntity entity) {
         ContentValues values = new ContentValues();
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_TYPE, entity.getType());
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_STAY_TIME, entity.getStaytime());
@@ -136,13 +144,14 @@ public class AdvLocalDataSource {
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL, entity.getUrl());
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID, entity.getAdv_id());
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_IS_DEFAULT, entity.getIsDefault());
-
-
         AdvEntity advByOne = findAdvByOne(entity.getAdv_id());
-
         if (advByOne != null) {
-            db.update(LikingPersistenceContract.TreadmillAdv.TABLE_NAME, values, null, null);
-        } else  {
+            LogUtils.e("insertAdvList", "advByOne != null");
+            String selection = LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID + " = ?";
+            String[] selectionArgs = {String.valueOf(entity.getAdv_id())};
+            db.update(LikingPersistenceContract.TreadmillAdv.TABLE_NAME, values, selection, selectionArgs);
+        } else {
+            LogUtils.e("insertAdvList", "advByOne == null");
             db.insert(LikingPersistenceContract.TreadmillAdv.TABLE_NAME, null, values);
         }
     }
@@ -161,12 +170,12 @@ public class AdvLocalDataSource {
         return true;
     }
 
-    public boolean deleteAdvByTime(String endTime){
+    public boolean deleteAdvByTime(String endTime) {
         SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         try {
             db.delete(LikingPersistenceContract.TreadmillAdv.TABLE_NAME,
                     LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME + ">?",
-                    new String[] {endTime});
+                    new String[]{endTime});
         } catch (Exception e) {
             LogUtils.e(TAG, e.toString());
             return false;
@@ -178,15 +187,24 @@ public class AdvLocalDataSource {
 
 
     public AdvEntity loadAdvEntity(Cursor c) {
-        Long adv_id = c.getLong(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID));
-        String type = c.getString(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_TYPE));
-        String end_time = c.getString(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME));
-        int stay_time = c.getInt(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_STAY_TIME));
-        String url = c.getString(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL));
-        int isDefault = c.getInt(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_IS_DEFAULT));
-        return new AdvEntity(url, type, end_time, stay_time, adv_id, isDefault);
-    }
 
+        try {
+            Long adv_id = c.getLong(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID));
+            String type = c.getString(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_TYPE));
+            String end_time = c.getString(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME));
+            int stay_time = c.getInt(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_STAY_TIME));
+            String url = c.getString(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL));
+            int isDefault = c.getInt(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_IS_DEFAULT));
+
+            if ("".equals(url) || url == null) {
+                return null;
+            }
+            return new AdvEntity(url, type, end_time, stay_time, adv_id, isDefault);
+        }catch (Exception e){
+            LogUtils.e("info", e.getMessage());
+            return  null;
+        }
+    }
 
 
 }

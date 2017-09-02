@@ -10,7 +10,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+
+import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.db.entity.AdvEntity;
@@ -21,8 +24,10 @@ import com.liking.treadmill.message.*;
 import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
+import com.liking.treadmill.socket.LKProtocolsHelperKt;
 import com.liking.treadmill.socket.LKSocketServiceKt;
 import com.liking.treadmill.socket.result.DefaultAdResult;
+import com.liking.treadmill.socket.result.MarathonRunResult;
 import com.liking.treadmill.socket.result.NewAdResult;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.test.IBackService;
@@ -272,6 +277,25 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      */
     @Override
     public void launchStartFragment() {
+
+        String marathonInfos = Preference.getMarathonInfos();
+        try{
+            if(!StringUtils.isEmpty(marathonInfos)) { //是否有马拉松
+                MarathonRunResult  marathonRunResult = LKProtocolsHelperKt.INSTANCE.fromJsonResult(marathonInfos, MarathonRunResult.class);
+                if(marathonRunResult.getData() != null && marathonRunResult.getData().size() > 0) {
+                    MarathonRunResult.DataBean marathon = marathonRunResult.getData().get(0);
+                    long currTime = DateUtils.currentDateMilliseconds();
+                    long startTime = DateUtils.parseString("yyyyMMdd", marathon.getStartDate()).getTime();
+                    long endTime = DateUtils.parseString("yyyyMMdd", marathon.getEndDate()).getTime();
+                    if(currTime < endTime && currTime > startTime) {
+                        launchFragment(new MarathonRunFragment());
+                        return;
+                    }
+                }
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
         launchFragment(new StartFragment());
     }
 

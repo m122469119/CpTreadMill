@@ -14,6 +14,7 @@ import java.util.List;
 
 public class MarathonRunResult extends BaseSocketResult {
 
+
     @SerializedName("data")
     private List<DataBean> data;
 
@@ -28,9 +29,10 @@ public class MarathonRunResult extends BaseSocketResult {
     public static class DataBean {
         /**
          * id : 1
+         * marathon_name : 马拉松15公里跑
          * distance : 1000
-         * start_date : 20170901
-         * end_date : 20170902
+         * start_date : 20170902
+         * end_date : 20170904
          * limit_time : 7200
          * max_speed : 9
          * min_speed : 1
@@ -38,6 +40,8 @@ public class MarathonRunResult extends BaseSocketResult {
 
         @SerializedName("id")
         private String id;
+        @SerializedName("marathon_name")
+        private String marathonName;
         @SerializedName("distance")
         private String distance;
         @SerializedName("start_date")
@@ -57,6 +61,14 @@ public class MarathonRunResult extends BaseSocketResult {
 
         public void setId(String id) {
             this.id = id;
+        }
+
+        public String getMarathonName() {
+            return marathonName;
+        }
+
+        public void setMarathonName(String marathonName) {
+            this.marathonName = marathonName;
         }
 
         public String getDistance() {

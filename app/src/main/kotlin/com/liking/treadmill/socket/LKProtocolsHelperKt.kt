@@ -125,6 +125,14 @@ object LKProtocolsHelperKt {
 
     var sTimestampOffset: Long = 0
 
+    fun <T> fromJsonResult(json: String, clazz: Class<T>): T? {
+        try {
+            return mGson.fromJson(json, clazz)
+        } catch (e: Exception) {
+            return null
+        }
+    }
+
     fun postEvent(event: Any) {
         resultHandler.post {
             EventBus.getDefault().post(event)
@@ -320,22 +328,24 @@ object LKProtocolsHelperKt {
                 postEvent(defaultAdvResultMessage)
             }
 
-        //
+        //  同城
             NOTIFY_USER_CMD -> {
                 val notifyUserResult = mGson.fromJson(result, NotifyUserResult::class.java)
                 notifyUserResult.let {
                     notifyUserResult.data.let {
                         LogUtils.e(TAG, "NOTIFY_USER:".plus(it.name))
+                        postEvent(NotifyUserMessage(notifyUserResult.data))
                     }
                 }
             }
 
-        //
+        //  关注
             NOTIFY_FOLLOWER_CMD -> {
                 val notifyFollowerResult = mGson.fromJson(result, NotifyFollowerResult::class.java)
                 notifyFollowerResult.let {
                     notifyFollowerResult.data.let {
                         LogUtils.e(TAG, "NOTIFY_FOLLOWER:".plus(it.name))
+                        postEvent(NotifyFollowerMessage(notifyFollowerResult.data))
                     }
                 }
             }
@@ -344,15 +354,15 @@ object LKProtocolsHelperKt {
             MARATHON_CMD -> {
                 LogUtils.e(TAG, "---MARATHON_CMD----")
                 val marathonRunResult = mGson.fromJson(result, MarathonRunResult::class.java)
+                Preference.saveMarathonInfos(result)
                 marathonRunResult.let {
                     marathonRunResult.data.let {
-                        LogUtils.e(TAG, "MARATHON_CMD:".plus(it[0].startDate))
-
+                        LogUtils.e(TAG, "MARATHON_CMD:".plus(it.toString()))
                     }
                 }
             }
 
-        //服务端回复用户马拉松数据
+        //服务端回复用户参加马拉松信息
             USER_MARATHON_CMD -> {
                 val marathonUserInfoResult = mGson.fromJson(result, MarathonUserInfoResult::class.java)
                 marathonUserInfoResult.let {

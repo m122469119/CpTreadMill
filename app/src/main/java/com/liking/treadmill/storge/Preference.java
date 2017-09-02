@@ -11,6 +11,8 @@ import com.google.gson.Gson;
 import com.liking.treadmill.app.ThreadMillConstant;
 import com.liking.treadmill.socket.result.MemberListResult;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +51,8 @@ public class Preference extends AbsPreference {
     public static final String CURRENT_TIME_DIFF = "current_time_diff";
 
     public static final String MEMBER_SYN_TIMESTAMP = "membersyntimestamp";
+
+    public static final String PREFERENCE_MARATHON_INFOS = "preference_marathon_infos";
 
     /**
      * 清空SharedPreferences
@@ -422,4 +426,15 @@ public class Preference extends AbsPreference {
         return (int) getObject(APP_UPDATE_APK_FAIL_COUNT, 0);
     }
 
+    /**
+     * 马拉松信息
+     * @param marathonJson
+     */
+    public static void saveMarathonInfos(String marathonJson) {
+        setObject(PREFERENCE_MARATHON_INFOS, marathonJson);
+    }
+
+    public static String getMarathonInfos() {
+        return (String) getObject(PREFERENCE_MARATHON_INFOS, "");
+    }
 }

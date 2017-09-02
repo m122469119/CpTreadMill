@@ -36,6 +36,10 @@ import com.liking.treadmill.fragment.SettingFragment
 import com.liking.treadmill.fragment.StartFragment
 import com.liking.treadmill.fragment.base.SerialPortFragment
 import com.liking.treadmill.message.AdvRefreshMessage
+import com.liking.treadmill.message.NotifyFollowerMessage
+import com.liking.treadmill.message.NotifyUserMessage
+import com.liking.treadmill.socket.result.NotifyFollowerResult
+import com.liking.treadmill.socket.result.NotifyUserResult
 import com.liking.treadmill.storge.Preference
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent
 import com.liking.treadmill.treadcontroller.SerialPortUtil
@@ -49,6 +53,7 @@ import com.liking.treadmill.widget.ScrollSpeedLinearLayoutManger
 import de.greenrobot.event.EventBus
 import kotlinx.android.synthetic.main.fragment_running.*
 import kotlinx.android.synthetic.main.layout_category_tablayout.view.*
+import kotlinx.android.synthetic.main.layout_follower_user.view.*
 import kotlinx.android.synthetic.main.layout_pause.*
 import kotlinx.android.synthetic.main.layout_prepare.*
 import kotlinx.android.synthetic.main.layout_run_bottom.*
@@ -175,7 +180,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                     LogUtils.e(TAG, e.message + "")
                 }
                 //20s显示一次log
-                if(getTreadInstance().runTime != 0 && getTreadInstance().runTime % 20 == 0) {
+                if (getTreadInstance().runTime != 0 && getTreadInstance().runTime % 20 == 0) {
                     layout_run_way.run_way_view.showLikingLog(true)
                 }
             }
@@ -728,7 +733,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 DisplayUtils.dp2px(ResourceUtils.getDimen(R.dimen.run_bottom_height)).toFloat(),
                 animatorDuration, {
 
-//            setAllParentsClip(layout_run_content.layout_run_video_list_stateview, true)
+            //            setAllParentsClip(layout_run_content.layout_run_video_list_stateview, true)
 
             var videoPlayUI = childFragmentManager
                     .findFragmentById(R.id.layout_run_video_play)
@@ -872,7 +877,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      *隐藏底部背景
      */
     fun hiddenBottomLayoutBg() = ObjectAnimator.ofFloat(run_bottom_layout_bg,
-            "translationY", run_bottom_layout_bg.translationY, - run_bottom_layout_bg.height.toFloat())
+            "translationY", run_bottom_layout_bg.translationY, -run_bottom_layout_bg.height.toFloat())
             .setDuration(animatorDuration).start()
 
     /**
@@ -1710,8 +1715,86 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         layout_run_way.imageview_adv.visibility = View.INVISIBLE
     }
 
+
     fun onEvent(message: AdvRefreshMessage) {
         initAdvertisementData()
+    }
+
+    //同城、全国通知
+    var cityUserList: Queue<NotifyUserResult.DataBean> = LinkedList()
+    var nationwideUserList: Queue<NotifyUserResult.DataBean> = LinkedList()
+    fun onEvent(message: NotifyUserMessage) {
+        message.mDataBean.let {
+            when (message.mDataBean.type) {
+            //同城
+                1 -> {
+                    if (cityUserList.size > 5) {
+                        cityUserList.poll()
+                    }
+                    cityUserList.add(message.mDataBean)
+                }
+            //全国
+                2 -> {
+                    if (nationwideUserList.size > 5) {
+                        nationwideUserList.poll()
+                    }
+                    nationwideUserList.add(message.mDataBean)
+                }
+                else -> {
+                }
+            }
+
+        }
+    }
+
+    //关注会员通知
+    var followerUserList: Queue<NotifyFollowerResult.DataBean> = LinkedList()
+
+    fun onEvent(message: NotifyFollowerMessage) {
+        message.mDataBean.let {
+            try {
+                followerUserList.add(message.mDataBean)
+                showfollowerUI(followerUserList.poll())
+            } catch(e: Exception){
+                LogUtils.e(TAG, "NotifyFollowerMessage ERROR!")
+            }
+        }
+    }
+
+    fun showfollowerUI(data:NotifyFollowerResult.DataBean) {
+
+        data.let {
+            layout_run_bottom.follower_user.follower_user_name.text = data.name
+            HImageLoaderSingleton.getInstance().loadImage(layout_run_bottom.follower_user.head_imageView,
+                    data.gender)
+            var objIn = ObjectAnimator.ofFloat(layout_run_bottom.follower_user,
+                    "translationX", layout_run_bottom.follower_user.translationX, 0.0f)
+                    .setDuration(animatorDuration)
+            objIn.addListener(object : Animator.AnimatorListener {
+                        override fun onAnimationRepeat(animation: Animator?) {}
+                        override fun onAnimationCancel(animation: Animator?) {}
+                        override fun onAnimationStart(animation: Animator?) {}
+                        override fun onAnimationEnd(animation: Animator?) {
+                            var objOut = ObjectAnimator.ofFloat(layout_run_bottom.follower_user,
+                                    "translationX", layout_run_bottom.follower_user.translationX, -300.0f)
+                                    .setDuration(animatorDuration)
+                            objOut.addListener(object : Animator.AnimatorListener{
+                                override fun onAnimationRepeat(animation: Animator?) {}
+                                override fun onAnimationEnd(animation: Animator?) {
+                                    var data = followerUserList.poll()
+                                    if(data != null) {
+                                        showfollowerUI(data)
+                                    }
+                                }
+                                override fun onAnimationCancel(animation: Animator?) {}
+                                override fun onAnimationStart(animation: Animator?) {}
+                            })
+                            objOut.start()
+                        }
+                    })
+            objIn.start()
+        }
+
     }
 
 }
