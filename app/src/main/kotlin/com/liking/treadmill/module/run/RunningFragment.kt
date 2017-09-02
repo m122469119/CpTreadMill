@@ -335,12 +335,16 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 
                 cityUserLeftView.notify_user_RecyclerView.setHasFixedSize(true)
                 cityUserLeftView.notify_user_RecyclerView.layoutManager = LinearLayoutManager(context)
-                cityUserLeftView.notify_user_RecyclerView.adapter = NotifyUserAdapter(context)
+                var nationwide_city = NotifyUserAdapter(context)
+                nationwide_city.setData(mutableListOf())
+                cityUserLeftView.notify_user_RecyclerView.adapter = nationwide_city
                 nationwideUserRightView = LayoutInflater.from(context).inflate(R.layout.layout_notify_user, null)
                 nationwideUserRightView.notify_user_type.text = "全国"
                 nationwideUserRightView.notify_user_RecyclerView.notify_user_RecyclerView.setHasFixedSize(true)
                 nationwideUserRightView.notify_user_RecyclerView.notify_user_RecyclerView.layoutManager = LinearLayoutManager(context)
-                nationwideUserRightView.notify_user_RecyclerView.adapter = NotifyUserAdapter(context)
+                var nationwide_adapter = NotifyUserAdapter(context)
+                nationwide_adapter.setData(mutableListOf())
+                nationwideUserRightView.notify_user_RecyclerView.adapter = nationwide_adapter
                 nationwideUserRightView.notify_user_bottom.visibility = View.INVISIBLE
 
                 layout_run_way.run_way_left_FrameLayout.removeAllViews()
@@ -1767,24 +1771,26 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 
     fun showAdv() {
         LogUtils.e(TAG, "---显示广告中---")
-        if (mAdvEntities.size > 0) {
-            layout_run_way.imageview_adv.visibility = View.VISIBLE
-            HImageLoaderSingleton.getInstance()
-                    .loadImage(layout_run_way.imageview_adv,
-                            mAdvEntities[mAdvPosition].url)
-            ++mAdvPosition
-            if (mAdvPosition >= mAdvEntities.size) {
-                mAdvPosition = 0
-            }
+//        if (mAdvEntities.size > 0) {
+//            layout_run_way.imageview_adv.visibility = View.VISIBLE
+//            HImageLoaderSingleton.getInstance()
+//                    .loadImage(layout_run_way.imageview_adv,
+//                            mAdvEntities[mAdvPosition].url)
+//            ++mAdvPosition
+//            if (mAdvPosition >= mAdvEntities.size) {
+//                mAdvPosition = 0
+//            }
             //广告存在时间20s
             handler.removeCallbacks(mAadvRunTask)
             handler.postDelayed(mAadvRunTask, 20 * 1000)
-        }
+//        }
         mAdvAscend += mAdvAscend
         LogUtils.e(TAG, "下一次广告显示：".plus(mAdvAscend).plus("广告位：" + mAdvPosition))
     }
 
     var mAadvRunTask = Runnable {
+        hiddenTranslationYUI(layout_run_way.imageview_adv, 0.0f,animatorDuration, {})
+
         layout_run_way.imageview_adv.visibility = View.INVISIBLE
     }
 
@@ -1793,8 +1799,6 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         initAdvertisementData()
     }
 
-    var cityUserList: MutableList<NotifyUserResult.DataBean> = mutableListOf()
-    var nationwideUserList: MutableList<NotifyUserResult.DataBean> = ArrayList()
     fun onEvent(message: NotifyUserMessage) {
 
         message.mDataBean.let {
@@ -1805,7 +1809,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                         try {
                             var adapter = cityUserLeftView.notify_user_RecyclerView.adapter as NotifyUserAdapter
                             adapter.dataList.filter {
-                                it.userId.equals(message.mDataBean.userId)
+                                !it.userId.equals(message.mDataBean.userId)
                             }.let {
                                 if (it is MutableList<NotifyUserResult.DataBean>) {
                                     if (it.size + 1 > 5) {
@@ -1823,11 +1827,10 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 }
             //全国
                 2 -> {
-
                     nationwideUserRightView.let {
                         var adapter = nationwideUserRightView.notify_user_RecyclerView.adapter as NotifyUserAdapter
                         adapter.dataList.filter {
-                            it.userId.equals(message.mDataBean.userId)
+                            !it.userId.equals(message.mDataBean.userId)
                         }.let {
                             if (it is MutableList<NotifyUserResult.DataBean>) {
                                 if (it.size + 1 > 5) {
