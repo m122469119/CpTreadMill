@@ -19,4 +19,9 @@ public class TypefaceHelper {
             view.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Impact.ttf"));
         }
     }
+
+    public static Typeface getImpactTypeface(Context context) {
+        Typeface typeFace = Typeface.createFromAsset(context.getAssets(), "fonts/Impact.ttf");
+        return typeFace;
+    }
 }

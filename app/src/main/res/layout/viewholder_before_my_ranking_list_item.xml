@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.aaron.android.framework.library.imageloader.HImageView
+        android:id="@+id/before_my_ranking_head_HImageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        fresco:failureImage="@drawable/icon_head_default_image"
+        fresco:failureImageScaleType="centerCrop"
+        fresco:placeholderImage="@drawable/icon_head_default_image"
+        fresco:placeholderImageScaleType="centerCrop" />
+
+
+    <TextView
+        android:id="@+id/before_my_ranking_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:lines="1"
+        android:paddingTop="@dimen/spacing_12dp"
+        android:text="五个名字" />
+
+</LinearLayout>

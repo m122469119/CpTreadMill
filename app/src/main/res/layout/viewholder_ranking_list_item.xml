@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/spacing_12dp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/ranking_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:minWidth="@dimen/spacing_40dp"
+        android:padding="@dimen/spacing_12dp"
+        android:text="1"
+        android:textColor="@color/c34c86c"
+        android:textSize="@dimen/textsize_18sp" />
+
+    <com.aaron.android.framework.library.imageloader.HImageView
+        android:id="@+id/ranking_head_HImageView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        fresco:failureImage="@drawable/icon_head_default_image"
+        fresco:failureImageScaleType="centerCrop"
+        fresco:placeholderImage="@drawable/icon_head_default_image"
+        fresco:placeholderImageScaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/ranking_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="成成"
+        android:textColor="@color/c85878e"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/ranking_distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="@dimen/spacing_12dp"
+        android:text="10.3km"
+        android:textColor="@color/c34c86c"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/ranking_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="@dimen/spacing_12dp"
+        android:text="00:21:00"
+        android:textColor="@color/c34c86c"
+        android:textSize="13sp" />
+
+</LinearLayout>
