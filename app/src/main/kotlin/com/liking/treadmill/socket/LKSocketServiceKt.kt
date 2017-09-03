@@ -52,7 +52,7 @@ class LKSocketServiceKt : Service() {
 
         mLKSocketClient.setCallback(object : LKSocketClientKt.LKSocketCallback {
             override fun onMessage(inputStream: InputStream): Boolean {
-                val buffer = ByteArray(4 * 1024)
+                val buffer = ByteArray(8 * 1024)
                 val len = inputStream.read(buffer)
                 if (len == -1) {
                     return false
@@ -66,10 +66,12 @@ class LKSocketServiceKt : Service() {
             override fun onOpen() {
                 mIBackService?.reportDevices()
                 LKProtocolsHelperKt.reportedLogOutCache {
-                    data -> mIBackService.reportExerciseCacheData(data)
+                    data ->
+                    mIBackService.reportExerciseCacheData(data)
                 }
                 LKProtocolsHelperKt.reportedExerciseCache {
-                    data -> mIBackService.reportExerciseCacheData(data)
+                    data ->
+                    mIBackService.reportExerciseCacheData(data)
                 }
 
             }
@@ -142,13 +144,22 @@ class LKSocketServiceKt : Service() {
 //                    intent.putExtra("mCount", mCount)
 //                    mLocalBroadcastManager.sendBroadcast(intent)
                 }
-            }catch (t: Throwable) {
+            } catch (t: Throwable) {
                 t.printStackTrace()
             }
         }
     }
 
     private val mIBackService = object : IBackService.Stub() {
+
+        override fun reportedMarathonRank(cardno: String, marathonId: String, useTime: String, distance: String, kcal: String) {
+            mLKSocketClient.sendMessage(LKProtocolsHelperKt.reportedMarathonRank(cardno.toLong(), marathonId,
+                    useTime, distance, kcal))
+        }
+
+        override fun reportedUserMarathon(cardno: String, marathonId: String) {
+            mLKSocketClient.sendMessage(LKProtocolsHelperKt.reportedUserMarathon(cardno.toLong(), marathonId))
+        }
 
         override fun rebind() {
             mLKSocketClient.sendMessage(LKProtocolsHelperKt.getRebindRequest())

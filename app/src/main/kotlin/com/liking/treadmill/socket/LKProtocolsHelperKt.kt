@@ -368,6 +368,7 @@ object LKProtocolsHelperKt {
                 marathonUserInfoResult.let {
                     marathonUserInfoResult.data.let {
                         LogUtils.e(TAG, "TYPE_USER_MARATHON:".plus(it.toString()))
+                        postEvent(MarathonUserInfoMessage(marathonUserInfoResult.data))
                     }
                 }
             }
@@ -378,6 +379,7 @@ object LKProtocolsHelperKt {
                 marathonRankHotResult.let {
                     marathonRankHotResult.data.let {
                         LogUtils.e(TAG, "MARATHON_RANK_CMD:".plus(it.toString()))
+                        postEvent(MarathonRankHotMessage(marathonRankHotResult.data))
                     }
                 }
             }
@@ -637,7 +639,7 @@ object LKProtocolsHelperKt {
                 if (!StringUtils.isEmpty(data) && data.contains(flag)) {
                     data = data.replace(flag, "")
                 }
-                func.invoke(toJson(data)!!)
+                func.invoke(data)
             } catch (e: Exception) {
             }
         }

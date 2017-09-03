@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Message
 import android.os.RemoteException
 import android.support.design.widget.TabLayout
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Spannable
@@ -26,9 +27,7 @@ import com.aaron.android.framework.utils.DisplayUtils
 import com.aaron.android.framework.utils.ResourceUtils
 import com.liking.treadmill.R
 import com.liking.treadmill.activity.HomeActivity
-import com.liking.treadmill.adapter.IqiyiVideoEpisodesAdapter
-import com.liking.treadmill.adapter.IqiyiVideoListAdapter
-import com.liking.treadmill.adapter.NotifyUserAdapter
+import com.liking.treadmill.adapter.*
 import com.liking.treadmill.app.ThreadMillConstant
 import com.liking.treadmill.db.entity.AdvEntity
 import com.liking.treadmill.db.service.AdvService
@@ -38,6 +37,7 @@ import com.liking.treadmill.fragment.SettingFragment
 import com.liking.treadmill.fragment.StartFragment
 import com.liking.treadmill.fragment.base.SerialPortFragment
 import com.liking.treadmill.message.AdvRefreshMessage
+import com.liking.treadmill.message.MarathonRankHotMessage
 import com.liking.treadmill.message.NotifyFollowerMessage
 import com.liking.treadmill.message.NotifyUserMessage
 import com.liking.treadmill.socket.result.NotifyFollowerResult
@@ -56,9 +56,11 @@ import de.greenrobot.event.EventBus
 import kotlinx.android.synthetic.main.fragment_running.*
 import kotlinx.android.synthetic.main.layout_category_tablayout.view.*
 import kotlinx.android.synthetic.main.layout_follower_user.view.*
+import kotlinx.android.synthetic.main.layout_my_ranking_view.view.*
 import kotlinx.android.synthetic.main.layout_notify_user.view.*
 import kotlinx.android.synthetic.main.layout_pause.*
 import kotlinx.android.synthetic.main.layout_prepare.*
+import kotlinx.android.synthetic.main.layout_ranking_view.view.*
 import kotlinx.android.synthetic.main.layout_run_bottom.*
 import kotlinx.android.synthetic.main.layout_run_bottom.view.*
 import kotlinx.android.synthetic.main.layout_run_content.*
@@ -100,6 +102,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     private val UNIT_KMH: String = "Km/h"
     private val UNIT_KCL: String = "Kcl"
     private val UNIT_MIN: String = "min"
+    private var lastCalculate = true
+    private var mAllNumber = 583
 
     private lateinit var prepareAnimation: Animation
     private lateinit var mCountDownHelper: LikingCountDownHelper
@@ -122,7 +126,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     private var mTotalHeartRate = 0 //总心率
     private var mHeartChangeCount = 0//心里变化次数(用于平均心率计算)
     private var mTotalKmDistance: Float = 0.0f //已跑总距离
-    private var mTotalRunTime: Int = 0//已跑总时间 /min
+    private var mTotalRunTime: Int = 0//已跑总时间 /秒
     private var mTotalKcal: Float = 0.0f//消耗总卡路里
 
     @Volatile private var isPause = false //跑步机结束
@@ -141,6 +145,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     private var ACHIEVE_TYPE = 0//设定目标时完成情况
     /**目标设置end**/
 
+    var reportTime: Int = 1
+    var nubRef:Int = 1
     private val MESSAGE_RETAIN = 0x10
     private val handler = object : Handler() {
         override fun handleMessage(msg: Message) {
@@ -183,10 +189,59 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 } catch (e: Exception) {
                     LogUtils.e(TAG, e.message + "")
                 }
+
                 //20s显示一次log
                 if (getTreadInstance().runTime != 0 && getTreadInstance().runTime % 20 == 0) {
                     layout_run_way.run_way_view.showLikingLog(true)
                 }
+
+                //20s总跑人数
+                if (getTreadInstance().runTime != 0 && getTreadInstance().runTime % nubRef == 0) {
+                    nubRef = 10
+                    //变化人数
+                    val num = randomRunNumber
+                    if (lastCalculate) {
+                        lastCalculate = false
+                        mAllNumber += num
+                    } else {
+                        lastCalculate = true
+                        mAllNumber -= num
+                    }
+
+                    when(THREADMILL_MODE_SELECT){
+                        ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON ->{}
+                        else-> {
+                            cityUserLeftView.let {
+                                cityUserLeftView.notify_user_count.text = mAllNumber.toString()
+                            }
+                        }
+                    }
+                }
+
+                //20上报一次数据
+                if (getTreadInstance().runTime != 0 && getTreadInstance().runTime % reportTime == 0
+                        && THREADMILL_MODE_SELECT == ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON) {
+                    reportTime = 5
+
+                    mar_total_use_time = mar_last_use_time + mTotalRunTime
+                    mar_total_distance = mar_last_distance + distance
+                    mar_total_cal = mar_last_cal + mTotalKcal
+
+                    (activity as HomeActivity).iBackService.reportedMarathonRank(
+                            getTreadInstance().cardNo, marathonId,
+                            mar_total_use_time.toString(), mar_total_distance.toString(), mar_total_cal.toString())
+                }
+
+                //马拉松数据刷新
+                if (surplusDistance > 0 &&
+                        THREADMILL_MODE_SELECT == ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON) {
+                    surplusDistance -= mDistanceIncrement
+                }
+                if (surplusTime > 0) {
+                    surplusTime -= 1
+                }
+                updatecellSurplusData()
+
             }
         }
     }
@@ -202,6 +257,19 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     //同城、全国通知 View
     private lateinit var cityUserLeftView: View
     private lateinit var nationwideUserRightView: View
+
+    //马拉松
+    private var marathonName: String = ""
+    private var marathonId: String = ""
+    private var marathonDistance: Float = 0.0f
+    private var surplusDistance: Float = 0.0f //米
+    private var surplusTime: Long = 0 //秒
+    private var mar_last_distance: Int = 0
+    private var mar_last_use_time: Long = 0
+    private var mar_last_cal: Float = 0.0f
+    private var mar_total_distance: Float = 0.0f
+    private var mar_total_use_time: Long = 0
+    private var mar_total_cal: Float = 0.0f
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater?.inflate(R.layout.fragment_running, container, false)
@@ -287,7 +355,6 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         initRunInfoView()
         initIqiyiMediaView()
 
-        initNotifyUserView()
         // 相遇显示
         layout_run_bottom.follower_user.translationX = 0.0f
         objInfollowerUser = ObjectAnimator.ofFloat(layout_run_bottom.follower_user,
@@ -323,54 +390,55 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
     }
 
     /**
+     * 马拉松剩余距离和时间更新
+     */
+    fun updatecellSurplus(d: String, t: String) {
+        setupRunInfoCell(layout_run_bottom.cell_surplus_distance, "距离终点", d)//距离终点
+        setupRunInfoCell(layout_run_bottom.cell_surplus_time, "距离结束", t)//距离结束
+    }
+
+    /**
      * 个人跑步时 同城、全国名单显示
      */
     fun initNotifyUserView() {
-        when (THREADMILL_MODE_SELECT) {
-            ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON -> {
+        cityUserLeftView = LayoutInflater.from(context).inflate(R.layout.layout_notify_user, null)
 
-            }
-            else -> {
-                cityUserLeftView = LayoutInflater.from(context).inflate(R.layout.layout_notify_user, null)
+        cityUserLeftView.notify_user_RecyclerView.setHasFixedSize(true)
+        cityUserLeftView.notify_user_RecyclerView.layoutManager = LinearLayoutManager(context)
+        var nationwide_city = NotifyUserAdapter(context)
+        nationwide_city.setData(mutableListOf())
+        cityUserLeftView.notify_user_RecyclerView.adapter = nationwide_city
+        nationwideUserRightView = LayoutInflater.from(context).inflate(R.layout.layout_notify_user, null)
+        nationwideUserRightView.notify_user_type.text = "全国"
+        nationwideUserRightView.notify_user_RecyclerView.notify_user_RecyclerView.setHasFixedSize(true)
+        nationwideUserRightView.notify_user_RecyclerView.notify_user_RecyclerView.layoutManager = LinearLayoutManager(context)
+        var nationwide_adapter = NotifyUserAdapter(context)
+        nationwide_adapter.setData(mutableListOf())
+        nationwideUserRightView.notify_user_RecyclerView.adapter = nationwide_adapter
+        nationwideUserRightView.notify_user_bottom.visibility = View.INVISIBLE
 
-                cityUserLeftView.notify_user_RecyclerView.setHasFixedSize(true)
-                cityUserLeftView.notify_user_RecyclerView.layoutManager = LinearLayoutManager(context)
-                var nationwide_city = NotifyUserAdapter(context)
-                nationwide_city.setData(mutableListOf())
-                cityUserLeftView.notify_user_RecyclerView.adapter = nationwide_city
-                nationwideUserRightView = LayoutInflater.from(context).inflate(R.layout.layout_notify_user, null)
-                nationwideUserRightView.notify_user_type.text = "全国"
-                nationwideUserRightView.notify_user_RecyclerView.notify_user_RecyclerView.setHasFixedSize(true)
-                nationwideUserRightView.notify_user_RecyclerView.notify_user_RecyclerView.layoutManager = LinearLayoutManager(context)
-                var nationwide_adapter = NotifyUserAdapter(context)
-                nationwide_adapter.setData(mutableListOf())
-                nationwideUserRightView.notify_user_RecyclerView.adapter = nationwide_adapter
-                nationwideUserRightView.notify_user_bottom.visibility = View.INVISIBLE
+        layout_run_way.run_way_left_FrameLayout.removeAllViews()
+        layout_run_way.run_way_left_FrameLayout.addView(cityUserLeftView)
 
-                layout_run_way.run_way_left_FrameLayout.removeAllViews()
-                layout_run_way.run_way_left_FrameLayout.addView(cityUserLeftView)
-
-                layout_run_way.run_way_right_FrameLayout.removeAllViews()
-                layout_run_way.run_way_right_FrameLayout.addView(nationwideUserRightView)
-            }
-        }
+        layout_run_way.run_way_right_FrameLayout.removeAllViews()
+        layout_run_way.run_way_right_FrameLayout.addView(nationwideUserRightView)
     }
 
     /**
      * 跑步数据显示初始化
      */
     fun initRunInfoView() {
-        setupRunInfoCell(layout_run_bottom.cell_speed, "Speed", "0".plus(UNIT_KMH)) //速度
+        setupRunInfoCell(layout_run_bottom.cell_speed, "速度", "0".plus(UNIT_KMH)) //速度
         setTypeFace(layout_run_bottom.cell_speed)
-        setupRunInfoCell(layout_run_bottom.cell_distance, "Distance", "0".plus(UNIT_KM))//距离
+        setupRunInfoCell(layout_run_bottom.cell_distance, "距离", "0".plus(UNIT_KM))//距离
         setTypeFace(layout_run_bottom.cell_distance)
-        setupRunInfoCell(layout_run_bottom.cell_calories, "Calories", "0.0".plus(UNIT_KCL))//卡路里
+        setupRunInfoCell(layout_run_bottom.cell_calories, "卡路里", "0.0".plus(UNIT_KCL))//卡路里
         setTypeFace(layout_run_bottom.cell_calories)
-        setupRunInfoCell(layout_run_bottom.cell_time_used, "Time used", "00:00:00") //使用时间
+        setupRunInfoCell(layout_run_bottom.cell_time_used, "用时", "00:00:00") //使用时间
         setTypeFace(layout_run_bottom.cell_time_used)
-        setupRunInfoCell(layout_run_bottom.cell_incline, "Incline", "0") //坡度
+        setupRunInfoCell(layout_run_bottom.cell_incline, "坡度", "0") //坡度
         setTypeFace(layout_run_bottom.cell_incline)
-        setupRunInfoCell(layout_run_bottom.cell_bmp, "BMP", "0")//心率
+        setupRunInfoCell(layout_run_bottom.cell_bmp, "心率", "0")//心率
         setTypeFace(layout_run_bottom.cell_bmp)
     }
 
@@ -422,9 +490,64 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         //预备动画
         prepareAnimation = AnimationUtils.loadAnimation(context, R.anim.count_down_exit)
 
+        initMarathonData()
         initGoalSettingData() //目标设置
         initAdvertisementData() //广告显示
         (activity as HomeActivity)?.setTitle(Preference.getBindUserGymName())
+
+        when (THREADMILL_MODE_SELECT) {
+        //马拉松模式
+            ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON -> {
+
+                updatecellSurplus("0".plus(UNIT_KM), "00:00:00")
+                layout_run_bottom.cell_surplus_distance.visibility = View.VISIBLE
+                layout_run_bottom.cell_surplus_time.visibility = View.VISIBLE
+                setTypeFace(layout_run_bottom.cell_surplus_distance)
+                setTypeFace(layout_run_bottom.cell_surplus_time)
+
+                initMarathonRankTopView()
+            }
+            else -> {
+                initNotifyUserView()
+            }
+        }
+    }
+
+    /**
+     * 初始化马拉松
+     */
+    fun initMarathonData() {
+        val bundle = arguments
+        if (bundle != null) {
+            marathonName = bundle.getString("marathonName", "")
+            marathonId = bundle.getString("marathonId", "")
+            marathonDistance = bundle.getInt("marathonDistance", 0).toFloat()
+            if (!StringUtils.isEmpty(marathonId)) {
+                THREADMILL_MODE_SELECT = ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON
+            }
+            surplusDistance = bundle.getInt("surplusDistance", 0).toFloat()
+            surplusTime = bundle.getLong("surplusTime", 0)
+
+            mar_last_distance = bundle.getInt("lastDist")
+            mar_last_use_time = bundle.getLong("lastUseTime")
+            mar_last_cal = bundle.getFloat("lastCal")
+            updatecellSurplusData()
+        }
+    }
+
+    //更新马拉松剩余时间距离
+    fun updatecellSurplusData() {
+        if (surplusDistance > 0) {
+            var d = getKmDistance(surplusDistance) //km
+            setupRunContentCell(layout_run_bottom.cell_surplus_distance,
+                    StringUtils.getDecimalString(d, 1).plus(UNIT_KM))
+        }
+
+        if (surplusTime > 0) {
+            val time = RunTimeUtil.secToTime(surplusTime.toInt()) //s
+            setupRunContentCell(layout_run_bottom.cell_surplus_time,
+                    time)
+        }
     }
 
     /**
@@ -1054,7 +1177,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 //Login
                 homeActivity.mUserLoginPresenter.userLogin()
             } else {
-                homeActivity.launchFragment(StartFragment())
+                homeActivity.launchStartFragment()
             }
         }
     }
@@ -1512,7 +1635,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             val h = (treadData.runTime / 3600.0).toFloat()
             val avergageSpeed = totalDistanceKm / h
             setupRunInfoCell(layout_run_bottom.cell_speed,
-                    "Average Speed",
+                    "平均速度",
                     StringUtils.getDecimalString(avergageSpeed, 2).plus(UNIT_KMH)) //平均速度
         }
         //消耗热量
@@ -1526,8 +1649,15 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             mAverageHeartRate = mTotalHeartRate / mHeartChangeCount
         }
         setupRunInfoCell(layout_run_bottom.cell_bmp,
-                "Average BPM",
+                "消耗热量",
                 mAverageHeartRate.toString()) //平均心率
+
+        //如果当前为马拉松模式(结束页显示总结果)
+        if (THREADMILL_MODE_SELECT == ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON) {
+            setupRunContentCell(layout_run_bottom.cell_distance, StringUtils.getDecimalString(getKmDistance(mar_total_distance.toFloat()), 2).plus(UNIT_KM))
+            setupRunContentCell(layout_run_bottom.cell_time_used, RunTimeUtil.secToTime(mar_total_use_time.toInt()))
+            setupRunContentCell(layout_run_bottom.cell_calories, StringUtils.getDecimalString(mar_total_cal, 2))
+        }
 
         //安全锁打开时,会清除所有数据
         if (runTime == 0 || totalDistanceKm == 0.0f || kcal == 0.0f) {
@@ -1538,6 +1668,9 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         val userInfo = treadData.userInfo
         if (userInfo != null && !userInfo.isVisitor) {//非访客模式
             try {
+                if(THREADMILL_MODE_SELECT == ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON) {
+                    THREADMILL_MODE_SELECT = 1
+                }
                 //上传锻炼数据
                 (activity as HomeActivity)
                         .iBackService
@@ -1566,7 +1699,16 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         } else if (totalKcal > 0) {
             showfinishedView(kcal / totalKcal)
         } else {
-            showfinishedView(-1f)
+            if (!StringUtils.isEmpty(marathonId)) { //马拉松跑步结果
+                if (mar_total_distance > 0 && mar_total_distance < marathonDistance) {
+                    LogUtils.e("info", "r::::::".plus((mar_total_distance / marathonDistance)))
+                    showfinishedView((mar_total_distance / marathonDistance))
+                } else {
+                    showfinishedView(-1f)
+                }
+            } else {
+                showfinishedView(-1f)
+            }
         }
     }
 
@@ -1575,15 +1717,42 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      * @param percentage
      */
     fun showfinishedView(percentage: Float) {
+
+        if (SerialPortUtil.getTreadInstance().userInfo != null) {
+
+            HImageLoaderSingleton.getInstance()
+                    .loadImage(layout_run_finish.this_run_head_imageView,
+                            SerialPortUtil.getTreadInstance().userInfo.mAvatar)
+            layout_run_finish.this_run_finish_name.text = SerialPortUtil.getTreadInstance().userInfo.mUserName
+        }
+
         if (percentage == -1f) {
-            layout_run_finish.this_run_finish_prompt.text = ResourceUtils.getString(R.string.this_run_finish)
+            if (StringUtils.isEmpty(marathonId)) {
+                layout_run_finish.run_finish_ImageView.imageResource = R.drawable.icon_run_finish
+                layout_run_finish.this_run_finish_prompt.text = ResourceUtils.getString(R.string.run_finish_result_hint_1)
+            } else {
+                layout_run_finish.this_run_finish_marathon_layout.visibility = View.VISIBLE
+                layout_run_finish.this_run_finish_marathon_layout.this_run_finish_marathon_layout_rank.text = myRank
+                layout_run_finish.this_run_finish_marathon_layout.this_run_finish_marathon_layout_count.text = mar_count
+                layout_run_finish.run_finish_ImageView.imageResource = R.drawable.run_icon_win
+                layout_run_finish.this_run_finish_prompt.text = "恭喜你，完成".plus(marathonName)
+            }
         } else if (percentage < 1) {
             val percent = Math.round(percentage * 100)
             layout_run_finish.run_finish_ImageView.visibility = View.GONE
             layout_run_finish.run_progress_layout.visibility = View.VISIBLE
             layout_run_finish.colorfulring_progress.percent = percent.toFloat()
             layout_run_finish.run_progress.text = percent.toString().plus("%")
-            layout_run_finish.this_run_finish_prompt.text = ResourceUtils.getString(R.string.run_result_unfinished_txt_hint)
+
+            if (StringUtils.isEmpty(marathonId)) {
+                layout_run_finish.this_run_finish_prompt.text = ResourceUtils.getString(R.string.run_result_unfinished_txt_hint)
+            } else {
+                layout_run_finish.this_run_finish_marathon_layout.visibility = View.VISIBLE
+                layout_run_finish.this_run_finish_marathon_layout.this_run_finish_marathon_layout_rank.text = myRank
+                layout_run_finish.this_run_finish_marathon_layout.this_run_finish_marathon_layout_count.text = mar_count
+                layout_run_finish.this_run_finish_prompt.text = marathonName.plus("还未完成,等你回来呦")
+            }
+
         } else {
             ACHIEVE_TYPE = 1
             layout_run_finish.run_progress_layout.visibility = View.GONE
@@ -1692,7 +1861,6 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
             }
 
             ThreadMillConstant.THREADMILL_MODE_SELECT_GOAL_SETTING -> {
-
                 if (totalTime > 0) {
                     mAdvAscend = (totalTime.toInt() * 60) / 4 //s
                     LogUtils.e(TAG, "目标是时间-广告间隔：" + mAdvAscend)
@@ -1771,29 +1939,26 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 
     fun showAdv() {
         LogUtils.e(TAG, "---显示广告中---")
-//        if (mAdvEntities.size > 0) {
-//            layout_run_way.imageview_adv.visibility = View.VISIBLE
-//            HImageLoaderSingleton.getInstance()
-//                    .loadImage(layout_run_way.imageview_adv,
-//                            mAdvEntities[mAdvPosition].url)
-//            ++mAdvPosition
-//            if (mAdvPosition >= mAdvEntities.size) {
-//                mAdvPosition = 0
-//            }
+        if (mAdvEntities.size > 0) {
+            HImageLoaderSingleton.getInstance()
+                    .loadImage(layout_run_way.imageview_adv,
+                            mAdvEntities[mAdvPosition].url)
+            ++mAdvPosition
+            if (mAdvPosition >= mAdvEntities.size) {
+                mAdvPosition = 0
+            }
             //广告存在时间20s
             handler.removeCallbacks(mAadvRunTask)
             handler.postDelayed(mAadvRunTask, 20 * 1000)
-//        }
+        }
         mAdvAscend += mAdvAscend
         LogUtils.e(TAG, "下一次广告显示：".plus(mAdvAscend).plus("广告位：" + mAdvPosition))
     }
 
     var mAadvRunTask = Runnable {
-        hiddenTranslationYUI(layout_run_way.imageview_adv, 0.0f,animatorDuration, {})
-
-        layout_run_way.imageview_adv.visibility = View.INVISIBLE
+        HImageLoaderSingleton.getInstance()
+                .loadImage(layout_run_way.imageview_adv, R.drawable.run_adv_bg)
     }
-
 
     fun onEvent(message: AdvRefreshMessage) {
         initAdvertisementData()
@@ -1882,4 +2047,72 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         }
     }
 
+
+    //排行榜
+    lateinit var marathonRankHotListView: View
+    lateinit var marathonFrontsView: View
+
+    var myRank:String = "1"
+    var mar_count :String = "0"
+
+    fun onEvent(message: MarathonRankHotMessage) {
+        message.mDataBean.let {
+
+            marathonRankHotListView.let {
+                marathonRankHotListView.visibility = View.VISIBLE
+                mar_count = message.mDataBean.count.toString()
+                marathonRankHotListView.ranking_count.text = mar_count
+                if (message.mDataBean.list != null && message.mDataBean.list.size >= 0) {
+                    var adapter = marathonRankHotListView.ranking_RecyclerView.adapter as RankingAdapter
+                    adapter.setData(message.mDataBean.list)
+                    adapter.notifyDataSetChanged()
+                }
+            }
+
+            marathonFrontsView.let {
+                marathonFrontsView.visibility = View.VISIBLE
+                myRank =  "NO.".plus(message.mDataBean.myNum.toString())
+                marathonFrontsView.my_ranking.text = myRank
+                if (message.mDataBean.front != null && message.mDataBean.front.size >= 0) {
+                    var adapter = marathonFrontsView.before_my_ranking.adapter as BeforeMyRankingAdapter
+                    adapter.setData(message.mDataBean.front)
+                    adapter.notifyDataSetChanged()
+                } else {
+
+                }
+            }
+        }
+    }
+
+    fun initMarathonRankTopView() {
+        marathonRankHotListView = LayoutInflater.from(context).inflate(R.layout.layout_ranking_view, null)
+        marathonRankHotListView.visibility = View.INVISIBLE
+
+        marathonRankHotListView.ranking_RecyclerView.setHasFixedSize(true)
+        marathonRankHotListView.ranking_RecyclerView.layoutManager = LinearLayoutManager(context)
+        var marathonRankHotAdapter = RankingAdapter(context)
+        marathonRankHotAdapter.setData(mutableListOf())
+        marathonRankHotListView.ranking_RecyclerView.adapter = marathonRankHotAdapter
+
+        marathonFrontsView = LayoutInflater.from(context).inflate(R.layout.layout_my_ranking_view, null)
+        marathonFrontsView.visibility = View.INVISIBLE
+        marathonFrontsView.before_my_ranking.setHasFixedSize(true)
+        marathonFrontsView.before_my_ranking.layoutManager = GridLayoutManager(context, 3)
+        marathonFrontsView.before_my_ranking.adapter = BeforeMyRankingAdapter(context)
+
+        layout_run_way.run_way_left_FrameLayout.removeAllViews()
+        layout_run_way.run_way_left_FrameLayout.addView(marathonRankHotListView)
+
+        layout_run_way.run_way_right_FrameLayout.removeAllViews()
+        layout_run_way.run_way_right_FrameLayout.addView(marathonFrontsView)
+    }
+
+
+    /**
+     * 获取1-100以内的随机数
+     *
+     * @return
+     */
+    private val randomRunNumber: Int
+        get() = (1 + Math.random() * 100).toInt()
 }

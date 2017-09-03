@@ -14,7 +14,9 @@
         fresco:failureImage="@drawable/icon_head_default_image"
         fresco:failureImageScaleType="centerCrop"
         fresco:placeholderImage="@drawable/icon_head_default_image"
-        fresco:placeholderImageScaleType="centerCrop" />
+        fresco:placeholderImageScaleType="centerCrop"
+        fresco:roundAsCircle="true"
+        />
 
 
     <TextView
@@ -24,7 +26,6 @@
         android:layout_gravity="center"
         android:ellipsize="end"
         android:lines="1"
-        android:paddingTop="@dimen/spacing_12dp"
-        android:text="五个名字" />
+        android:paddingTop="@dimen/spacing_12dp" />
 
 </LinearLayout>

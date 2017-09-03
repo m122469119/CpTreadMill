@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/spacing_20dp">
+        android:paddingBottom="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -58,14 +58,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_40dp"
+        android:layout_marginTop="@dimen/spacing_20dp"
         android:gravity="center"
-        android:text="总参数人数:35554"
-        android:textColor="@color/c34c86c"
-        android:textSize="15sp" />
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="总参加人数："
+            android:textColor="@color/c85878e"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/ranking_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/c34c86c"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
 
 
 </LinearLayout>

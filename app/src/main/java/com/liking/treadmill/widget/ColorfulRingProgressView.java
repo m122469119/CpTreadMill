@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -21,14 +22,15 @@ public class ColorfulRingProgressView extends View {
     private float mPercent = 75;
     private float mStrokeWidth;
 
-    private int mBgColor = 0xffe1e1e1;
+    private int mBgColor = Color.parseColor("#BABCC3");
     private float mStartAngle = 0;
     private int mFgColorStart = 0xffffe400;
     private int mFgColorEnd = 0xffff4800;
-    private BitmapDrawable mStartTagDrawable = null;
+//    private BitmapDrawable mStartTagDrawable = null;
 
     private LinearGradient mShader;
     private Context mContext;
+    private RectF mOval_bg;
     private RectF mOval;
     private Paint mPaint;
     private Paint mPaintTag;
@@ -50,7 +52,7 @@ public class ColorfulRingProgressView extends View {
             mPercent = a.getFloat(R.styleable.ColorfulRingProgressView_percent, 75);
             mStartAngle = a.getFloat(R.styleable.ColorfulRingProgressView_startAngle, 0)+270;
             mStrokeWidth = a.getDimensionPixelSize(R.styleable.ColorfulRingProgressView_colorfulStrokeWidth, dp2px(21));
-            mStartTagDrawable = (BitmapDrawable) a.getDrawable(R.styleable.ColorfulRingProgressView_startTagImg);
+//            mStartTagDrawable = (BitmapDrawable) a.getDrawable(R.styleable.ColorfulRingProgressView_startTagImg);
             System.out.println("**** m"+mStrokeWidth);
         } finally {
             a.recycle();
@@ -83,16 +85,16 @@ public class ColorfulRingProgressView extends View {
         mPaint.setShader(mShader);
         canvas.drawArc(mOval, mStartAngle, mPercent * 3.6f, false, mPaint);
 
-        if(mStartTagDrawable != null) {
-            float r = mOval.width() / 2;
-            int x = (int) (mOval.centerX()   +   r   *   Math.cos(mStartAngle   *   3.14   / 180 ));
-            int y = (int) (mOval.centerY()   +   r   *  Math.sin(mStartAngle   *   3.14   / 180 ));
-            canvas.drawCircle(Math.abs(x), Math.abs(y) , mStrokeWidth / 2 + 6 , mPaintTag);
-            Bitmap bitmap = mStartTagDrawable.getBitmap();
-            canvas.drawBitmap(bitmap, Math.abs(x) - (bitmap.getWidth() / 2),
-                    Math.abs(y) - (bitmap.getHeight() / 2), mPaintTag);
-
-        }
+//        if(mStartTagDrawable != null) {
+//            float r = mOval.width() / 2;
+//            int x = (int) (mOval.centerX()   +   r   *   Math.cos(mStartAngle   *   3.14   / 180 ));
+//            int y = (int) (mOval.centerY()   +   r   *  Math.sin(mStartAngle   *   3.14   / 180 ));
+//            canvas.drawCircle(Math.abs(x), Math.abs(y) , mStrokeWidth / 2 + 6 , mPaintTag);
+//            Bitmap bitmap = mStartTagDrawable.getBitmap();
+//            canvas.drawBitmap(bitmap, Math.abs(x) - (bitmap.getWidth() / 2),
+//                    Math.abs(y) - (bitmap.getHeight() / 2), mPaintTag);
+//
+//        }
     }
 
     @Override
@@ -126,6 +128,9 @@ public class ColorfulRingProgressView extends View {
     private void updateOval() {
         int xp = getPaddingLeft() + getPaddingRight();
         int yp = getPaddingBottom() + getPaddingTop();
+        mOval_bg = new RectF(getPaddingLeft() + (mStrokeWidth - 6), getPaddingTop() + (mStrokeWidth - 6),
+                getPaddingLeft() + (getWidth() - xp) - (mStrokeWidth - 6),
+                getPaddingTop() + (getHeight() - yp) - (mStrokeWidth - 6));
         mOval = new RectF(getPaddingLeft() + mStrokeWidth, getPaddingTop() + mStrokeWidth,
                 getPaddingLeft() + (getWidth() - xp) - mStrokeWidth,
                 getPaddingTop() + (getHeight() - yp) - mStrokeWidth);

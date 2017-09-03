@@ -119,7 +119,7 @@ class LKSocketClientKt private constructor(private val mHost: String,
             }
         }
         mIsStart = true
-        CheckIsStopThread().start()
+       // CheckIsStopThread().start()
         InitSocketThread().start()
     }
 
@@ -222,7 +222,9 @@ class LKSocketClientKt private constructor(private val mHost: String,
     }
 
     private fun sendHeartMessageDelayed() {
-        if (mHandler == null) return
+        if (mIsReconnecting && mHandler == null) {
+            return
+        }
         val message = mHandler!!.obtainMessage(HEART_BEAT_MESSAGE)
         message.obj = createHeartEntity()
         if (mCount == 0) {
