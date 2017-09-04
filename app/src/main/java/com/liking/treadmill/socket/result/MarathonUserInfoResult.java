@@ -67,28 +67,38 @@ public class MarathonUserInfoResult extends BaseSocketResult {
              */
 
             @SerializedName("bracelet_id")
-            private int braceletId;
+            private String braceletId;
             @SerializedName("use_time")
-            private int useTime;
+            private Long useTime;
+            @SerializedName("end_time")
+            private Long endTime;
             @SerializedName("distance")
             private int distance;
             @SerializedName("cal")
-            private int cal;
+            private Float cal;
 
-            public int getBraceletId() {
+            public String getBraceletId() {
                 return braceletId;
             }
 
-            public void setBraceletId(int braceletId) {
+            public void setBraceletId(String braceletId) {
                 this.braceletId = braceletId;
             }
 
-            public int getUseTime() {
+            public Long getUseTime() {
                 return useTime;
             }
 
-            public void setUseTime(int useTime) {
+            public void setUseTime(Long useTime) {
                 this.useTime = useTime;
+            }
+
+            public Long getEndTime() {
+                return endTime;
+            }
+
+            public void setEndTime(Long endTime) {
+                this.endTime = endTime;
             }
 
             public int getDistance() {
@@ -99,11 +109,11 @@ public class MarathonUserInfoResult extends BaseSocketResult {
                 this.distance = distance;
             }
 
-            public int getCal() {
+            public Float getCal() {
                 return cal;
             }
 
-            public void setCal(int cal) {
+            public void setCal(Float cal) {
                 this.cal = cal;
             }
         }

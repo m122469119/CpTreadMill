@@ -157,6 +157,16 @@ public class SocketService extends Service {
             LogUtils.d(SocketService.TAG, "成员删除状态：" + result);
             sendUpStreamMessage(result);
         }
+
+        @Override
+        public void reportedUserMarathon(String cardno, String marathonId) throws RemoteException {
+
+        }
+
+        @Override
+        public void reportedMarathonRank(String cardno, String marathonId, String useTime, String distance, String kcal) throws RemoteException {
+
+        }
     };
 
     @Override

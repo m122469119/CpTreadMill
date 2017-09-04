@@ -14,7 +14,7 @@
         android:drawablePadding="@dimen/spacing_4dp"
         android:gravity="center_horizontal"
         android:textColor="@color/c94959C"
-        android:textSize="@dimen/textsize_24sp"/>
+        android:textSize="@dimen/textsize_20sp"/>
 
     <TextView
         android:id="@+id/info_content_textView"
@@ -23,6 +23,6 @@
         android:layout_marginTop="@dimen/spacing_8dp"
         android:gravity="center_horizontal"
         android:textColor="@color/c3CC860"
-        android:textSize="40sp"
+        android:textSize="30sp"
         android:textStyle="bold"/>
 </LinearLayout>

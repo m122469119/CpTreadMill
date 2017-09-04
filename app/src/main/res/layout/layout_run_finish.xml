@@ -6,8 +6,10 @@
                 android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/run_finish_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal">
 
@@ -15,31 +17,33 @@
             android:id="@+id/run_finish_layout"
             android:layout_width="256dp"
             android:layout_height="256dp"
-            android:layout_marginTop="120dp">
+            android:layout_marginTop="60dp">
 
             <ImageView
                 android:id="@+id/run_finish_ImageView"
-                android:layout_width="256dp"
-                android:layout_height="256dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
                 android:background="@drawable/icon_run_finish"/>
 
             <FrameLayout
                 android:id="@+id/run_progress_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
                 android:visibility="gone">
 
                 <com.liking.treadmill.widget.ColorfulRingProgressView
                     android:id="@+id/colorfulring_progress"
-                    android:layout_width="256dp"
-                    android:layout_height="256dp"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
                     android:padding="@dimen/spacing_12dp"
                     app:bgColor="@color/colorfulringprogress_run_progress_bgcolor"
+                    app:colorfulStrokeWidth="@dimen/colorfulringprogress_strokewidth"
                     app:fgColorEnd="@color/colorfulringprogress_fgcolorend"
                     app:fgColorStart="@color/colorfulringprogress_fgcolorstart"
-                    app:startTagImg="@drawable/progress_tag_point"
                     app:startAngle="50"
-                    app:colorfulStrokeWidth="@dimen/colorfulringprogress_strokewidth"/>
+                    app:startTagImg="@drawable/progress_tag_point"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -55,8 +59,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:paddingLeft="18dp"
-                        android:textColor="@color/c85878e"
-                        android:text="80%"
+                        android:textColor="@color/c34c86c"
                         android:textSize="@dimen/textsize_30sp"
                         android:textStyle="bold"/>
                 </LinearLayout>
@@ -66,45 +69,100 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="@dimen/spacing_30dp"
-            android:layout_marginLeft="@dimen/spacing_30dp"
-            android:orientation="vertical">
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/spacing_60dp"
+            android:orientation="horizontal">
+
+            <com.aaron.android.framework.library.imageloader.HImageView
+                xmlns:fresco="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/this_run_head_imageView"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                fresco:failureImage="@drawable/icon_head_default_image"
+                fresco:failureImageScaleType="centerCrop"
+                fresco:placeholderImage="@drawable/icon_head_default_image"
+                fresco:placeholderImageScaleType="centerCrop"
+                fresco:roundAsCircle="true"/>
+
+            <TextView
+                android:id="@+id/this_run_finish_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/spacing_20dp"
+                android:textColor="@color/c85878e"
+                android:textSize="22sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_below="@id/run_finish_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/this_run_finish_prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/run_finish_layout"
+            android:textColor="@color/c34c86c"
+            android:textStyle="bold"
+            android:textSize="20sp"/>
+
+        <LinearLayout
+            android:id="@+id/this_run_finish_marathon_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/spacing_8dp"
+            android:gravity="center"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/spacing_8dp"
                 android:orientation="horizontal">
-
                 <TextView
-                    android:id="@+id/this_run_finish_prompt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/run_finish_layout"
                     android:textColor="@color/c85878e"
+                    android:text="名次："
                     android:textSize="20sp"/>
-
                 <TextView
-                    android:id="@+id/run_time_TextView"
+                    android:id="@+id/this_run_finish_marathon_layout_rank"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/spacing_8dp"
-                    android:layout_below="@+id/this_run_finish_prompt"
-                    android:textColor="@color/c85878e"
-                    android:textSize="16sp"/>
-
+                    android:textColor="@color/c34c86c"
+                    android:textStyle="bold"
+                    android:text="1231"
+                    android:textSize="26sp"/>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/run_finish_hint"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/spacing_8dp"
-                android:layout_marginTop="@dimen/spacing_8dp"
-                android:textColor="@color/c85878e"
-                android:textSize="@dimen/textsize_20sp"/>
-        </LinearLayout>
+                android:layout_marginLeft="@dimen/spacing_30dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/c85878e"
+                    android:text="参加人数："
+                    android:textSize="20sp"/>
+                <TextView
+                    android:id="@+id/this_run_finish_marathon_layout_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/c34c86c"
+                    android:textStyle="bold"
+                    android:textSize="26sp"/>
+            </LinearLayout>
 
+        </LinearLayout>
     </LinearLayout>
+
 </RelativeLayout>

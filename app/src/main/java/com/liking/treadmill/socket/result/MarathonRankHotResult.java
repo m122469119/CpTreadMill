@@ -90,9 +90,9 @@ public class MarathonRankHotResult extends BaseSocketResult {
              */
 
             @SerializedName("bracelet_id")
-            private int braceletId;
+            private String braceletId;
             @SerializedName("marathon_id")
-            private int marathonId;
+            private String marathonId;
             @SerializedName("distance")
             private String distance;
             @SerializedName("use_time")
@@ -101,23 +101,23 @@ public class MarathonRankHotResult extends BaseSocketResult {
             private String username;
             @SerializedName("gender")
             private int gender;
-            @SerializedName("avatar ")
+            @SerializedName("avatar")
             private String avatar;
             private String ranking_number;
 
-            public int getBraceletId() {
+            public String getBraceletId() {
                 return braceletId;
             }
 
-            public void setBraceletId(int braceletId) {
+            public void setBraceletId(String braceletId) {
                 this.braceletId = braceletId;
             }
 
-            public int getMarathonId() {
+            public String getMarathonId() {
                 return marathonId;
             }
 
-            public void setMarathonId(int marathonId) {
+            public void setMarathonId(String marathonId) {
                 this.marathonId = marathonId;
             }
 
@@ -182,13 +182,13 @@ public class MarathonRankHotResult extends BaseSocketResult {
              */
 
             @SerializedName("bracelet_id")
-            private int braceletId;
+            private String braceletId;
             @SerializedName("marathon_id")
-            private int marathonId;
+            private String marathonId;
             @SerializedName("distance")
-            private int distance;
+            private String distance;
             @SerializedName("use_time")
-            private int useTime;
+            private String useTime;
             @SerializedName("username")
             private String username;
             @SerializedName("gender")
@@ -196,35 +196,35 @@ public class MarathonRankHotResult extends BaseSocketResult {
             @SerializedName("avatar")
             private String avatar;
 
-            public int getBraceletId() {
+            public String getBraceletId() {
                 return braceletId;
             }
 
-            public void setBraceletId(int braceletId) {
+            public void setBraceletId(String braceletId) {
                 this.braceletId = braceletId;
             }
 
-            public int getMarathonId() {
+            public String getMarathonId() {
                 return marathonId;
             }
 
-            public void setMarathonId(int marathonId) {
+            public void setMarathonId(String marathonId) {
                 this.marathonId = marathonId;
             }
 
-            public int getDistance() {
+            public String getDistance() {
                 return distance;
             }
 
-            public void setDistance(int distance) {
+            public void setDistance(String distance) {
                 this.distance = distance;
             }
 
-            public int getUseTime() {
+            public String getUseTime() {
                 return useTime;
             }
 
-            public void setUseTime(int useTime) {
+            public void setUseTime(String useTime) {
                 this.useTime = useTime;
             }
 

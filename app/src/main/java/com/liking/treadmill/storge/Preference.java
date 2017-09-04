@@ -54,6 +54,8 @@ public class Preference extends AbsPreference {
 
     public static final String PREFERENCE_MARATHON_INFOS = "preference_marathon_infos";
 
+    public static final String PREFERENCE_MARATHON_USER_INFO = "preference_marathon_user_info";
+
     /**
      * 清空SharedPreferences
      */

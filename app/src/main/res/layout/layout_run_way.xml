@@ -27,14 +27,13 @@
 
         <com.aaron.android.framework.library.imageloader.HImageView
             android:id="@+id/imageview_adv"
-            android:layout_width="680dp"
-            android:layout_height="496dp"
+            android:layout_width="690dp"
+            android:layout_height="480dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            android:visibility="visible"
-            fresco:failureImage="@drawable/run_adv"
+            fresco:failureImage="@drawable/run_adv_bg"
             fresco:failureImageScaleType="centerCrop"
-            fresco:placeholderImage="@drawable/run_adv"
+            fresco:placeholderImage="@drawable/run_adv_bg"
             fresco:placeholderImageScaleType="centerCrop"/>
 
         <FrameLayout

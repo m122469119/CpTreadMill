@@ -33,14 +33,27 @@
             android:textStyle="bold"/>
 
         <TextView
+            android:id="@+id/n_u_sex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="96dp"
+            android:layout_marginRight="106dp"
             android:layout_toLeftOf="@+id/n_u_right"
             android:text="性别"
             android:textColor="@color/c85878e"
             android:textSize="18dp"
             android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/n_u_vip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="106dp"
+            android:layout_toLeftOf="@+id/n_u_sex"
+            android:text="会员"
+            android:textColor="@color/c85878e"
+            android:textSize="18dp"
+            android:textStyle="bold"/>
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -72,11 +85,11 @@
                 android:textStyle="bold"/>
 
             <TextView
+                android:id="@+id/notify_user_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="14dp"
                 android:layout_toLeftOf="@+id/n_u_right"
-                android:text="3,242,3"
                 android:textColor="@color/c34c86c"
                 android:textSize="18dp"
                 android:textStyle="bold"/>

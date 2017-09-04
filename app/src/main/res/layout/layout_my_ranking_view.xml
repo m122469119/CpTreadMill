@@ -18,9 +18,8 @@
         android:id="@+id/my_ranking"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="30dp"
-        android:text="NO.12338"
-        android:textColor="@color/c85878e"
+        android:paddingTop="20dp"
+        android:textColor="@color/c34c86c"
         android:textSize="30sp"
         android:textStyle="bold" />
 

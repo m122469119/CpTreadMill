@@ -296,7 +296,15 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                     long startTime = DateUtils.parseString("yyyyMMdd", marathon.getStartDate()).getTime();
                     long endTime = DateUtils.parseString("yyyyMMdd", marathon.getEndDate()).getTime();
                     if (currTime < endTime && currTime > startTime) {
-                        launchFragment(new MarathonRunFragment());
+
+                        MarathonRunFragment marathonRunFragment = new MarathonRunFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("marathonName", marathon.getMarathonName());
+                        bundle.putString("marathonId", marathon.getId());
+                        bundle.putString("marathonDistance", marathon.getDistance());
+                        bundle.putString("marathonTime", marathon.getLimitTime());
+                        marathonRunFragment.setArguments(bundle);
+                        launchFragment(marathonRunFragment);
                         return;
                     }
                 }

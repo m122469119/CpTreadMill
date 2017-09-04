@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/run_bottom_layout"
     android:layout_width="match_parent"
+    android:paddingTop="@dimen/spacing_40dp"
     android:layout_gravity="center_vertical"
     android:layout_height="@dimen/run_bottom_height">
 
@@ -17,6 +18,8 @@
         android:id="@+id/layout_run_bottom_content_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="300dp"
+        android:layout_marginRight="300dp"
         android:layout_marginBottom="@dimen/spacing_20dp"
         android:layout_gravity="center"
         android:orientation="horizontal">
@@ -62,6 +65,22 @@
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
+
+        <include
+            android:id="@+id/cell_surplus_distance"
+            layout="@layout/run_info_cell"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="gone"/>
+
+        <include
+            android:id="@+id/cell_surplus_time"
+            layout="@layout/run_info_cell"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

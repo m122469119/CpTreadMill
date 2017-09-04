@@ -20,4 +20,6 @@ interface IBackService {
    void reportExerciseData(int type, int aimType, float aim, int achieve);
    void requestMembersCommand();
    void membersStateReplyCommand();
+   void reportedUserMarathon(String cardno, String marathonId);
+   void reportedMarathonRank(String cardno, String marathonId, String useTime, String distance, String kcal);
 }
