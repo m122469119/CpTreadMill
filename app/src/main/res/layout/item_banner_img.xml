@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="199dp"
     android:scaleType="centerCrop"
-    fresco:failureImage="@mipmap/ic_launcher"
+    fresco:failureImage="@mipmap/banner"
     fresco:failureImageScaleType="centerCrop"
-    fresco:placeholderImage="@mipmap/ic_launcher"
+    fresco:placeholderImage="@mipmap/banner"
     fresco:placeholderImageScaleType="centerCrop"/>
