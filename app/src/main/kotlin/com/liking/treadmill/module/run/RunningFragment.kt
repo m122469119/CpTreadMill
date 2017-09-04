@@ -196,27 +196,27 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                 }
 
                 //20s总跑人数
-                if (getTreadInstance().runTime != 0 && getTreadInstance().runTime % nubRef == 0) {
-                    nubRef = 10
-                    //变化人数
-                    val num = randomRunNumber
-                    if (lastCalculate) {
-                        lastCalculate = false
-                        mAllNumber += num
-                    } else {
-                        lastCalculate = true
-                        mAllNumber -= num
-                    }
-
-                    when(THREADMILL_MODE_SELECT){
-                        ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON ->{}
-                        else-> {
-                            cityUserLeftView.let {
-                                cityUserLeftView.notify_user_count.text = mAllNumber.toString()
-                            }
-                        }
-                    }
-                }
+//                if (getTreadInstance().runTime != 0 && getTreadInstance().runTime % nubRef == 0) {
+//                    nubRef = 10
+//                    //变化人数
+//                    val num = randomRunNumber
+//                    if (lastCalculate) {
+//                        lastCalculate = false
+//                        mAllNumber += num
+//                    } else {
+//                        lastCalculate = true
+//                        mAllNumber -= num
+//                    }
+//
+//                    when(THREADMILL_MODE_SELECT){
+//                        ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON ->{}
+//                        else-> {
+//                            cityUserLeftView.let {
+//                                cityUserLeftView.notify_user_count.text = mAllNumber.toString()
+//                            }
+//                        }
+//                    }
+//                }
 
                 //20上报一次数据
                 if (getTreadInstance().runTime != 0 && getTreadInstance().runTime % reportTime == 0
@@ -384,7 +384,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                         override fun onAnimationStart(animation: Animator?) {}
                     })
                     objOut.start()
-                }, 1000)
+                }, 5000)
             }
         })
     }
@@ -1839,7 +1839,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
 //        yyyyMMdd = "20160212"
 
         when (THREADMILL_MODE_SELECT) {
-            ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START -> {
+            ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START,
+            ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON -> {
 
                 mAdvAscend = 5 * 60 //每隔五分钟显示
                 AdvService.getInstance()
@@ -1908,7 +1909,8 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
         LogUtils.e(TAG, "已跑时间：$time; 距离 ：$distanceKm; 卡路里：$kcal")
 
         when (THREADMILL_MODE_SELECT) {
-            ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START -> {
+            ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START,
+            ThreadMillConstant.THREADMILL_MODE_SELECT_MARATHON -> {
                 //每5分钟切换一次广告
                 if (time != 0) {
                     if (time >= mAdvAscend) {

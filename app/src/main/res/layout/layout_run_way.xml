@@ -27,14 +27,14 @@
 
         <com.aaron.android.framework.library.imageloader.HImageView
             android:id="@+id/imageview_adv"
-            android:layout_width="690dp"
-            android:layout_height="480dp"
+            android:layout_width="720dp"
+            android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             fresco:failureImage="@drawable/run_adv_bg"
-            fresco:failureImageScaleType="centerCrop"
+            fresco:failureImageScaleType="fitCenter"
             fresco:placeholderImage="@drawable/run_adv_bg"
-            fresco:placeholderImageScaleType="centerCrop"/>
+            fresco:placeholderImageScaleType="fitCenter"/>
 
         <FrameLayout
             android:id="@+id/run_way_right_FrameLayout"

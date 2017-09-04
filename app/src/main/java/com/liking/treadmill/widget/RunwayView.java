@@ -156,8 +156,8 @@ public class RunwayView extends View {
         wayBottom = wayHeight;
 
         //绘制梯形
-        mPathWay.moveTo(wayWidth * 0.32f, 0);
-        mPathWay.lineTo(wayWidth - (wayWidth * 0.32f), 0);
+        mPathWay.moveTo(wayWidth * 0.313f, 0);
+        mPathWay.lineTo(wayWidth - (wayWidth * 0.313f), 0);
         mPathWay.lineTo(wayWidth, wayHeight);
         mPathWay.lineTo(0, wayHeight);
 

@@ -32,6 +32,8 @@
         android:gravity="center"
         android:layout_marginLeft="@dimen/spacing_8dp"
         android:text="GGGG"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textColor="@color/c85878e"
         android:textSize="22dp"/>
 
