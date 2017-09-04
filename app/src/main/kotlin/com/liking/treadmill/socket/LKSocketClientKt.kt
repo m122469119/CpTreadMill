@@ -61,7 +61,7 @@ class LKSocketClientKt private constructor(private val mHost: String,
 
     private var mIsStart = false
 
-    private var mIsReconnecting = false
+    @Volatile private var mIsReconnecting = false
 
     private var mLastPoneTime: Long = 0
     private var mReConnectRuleListener: ReConnectRuleListener? = null
@@ -95,6 +95,7 @@ class LKSocketClientKt private constructor(private val mHost: String,
         if (mIsStart) {
             return
         }
+        mIsStart = true
         mSendHandlerThread = HandlerThread("socket:${UUID.randomUUID()}")
         mSendHandlerThread!!.start()
         mHandler = object : Handler(mSendHandlerThread!!.looper) {
@@ -118,8 +119,7 @@ class LKSocketClientKt private constructor(private val mHost: String,
                 }
             }
         }
-        mIsStart = true
-       // CheckIsStopThread().start()
+        CheckIsStopThread().start()
         InitSocketThread().start()
     }
 
@@ -222,9 +222,6 @@ class LKSocketClientKt private constructor(private val mHost: String,
     }
 
     private fun sendHeartMessageDelayed() {
-        if (mIsReconnecting && mHandler == null) {
-            return
-        }
         val message = mHandler!!.obtainMessage(HEART_BEAT_MESSAGE)
         message.obj = createHeartEntity()
         if (mCount == 0) {
@@ -243,11 +240,11 @@ class LKSocketClientKt private constructor(private val mHost: String,
             mReadThread!!.start()
             mCount = 0
             mSendTime = 0
-            mIsReconnecting = false
             mCallback.onOpen()
             if (mHeartEntity != null) {
                 sendHeartMessageDelayed()//初始化成功后，就准备发送心跳
             }
+            mIsReconnecting = false
         } catch (e: IOException) {
             mIsReconnecting = false
             e.printStackTrace()
@@ -261,15 +258,16 @@ class LKSocketClientKt private constructor(private val mHost: String,
     private inner class CheckIsStopThread : Thread() {
         internal var currentTime: Long = 0
         override fun run() {
-            while (mIsReconnect) try {
-                Thread.sleep(mCheckIsResult)
-                if (currentTime == mLastPoneTime) {
-                    sendReConnectMessage()
+            while (mIsReconnect)
+                try {
+                    Thread.sleep(mCheckIsResult)
+                    if (currentTime == mLastPoneTime) {
+                        sendReConnectMessage()
+                    }
+                    currentTime = mLastPoneTime
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
                 }
-                currentTime = mLastPoneTime
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
         }
     }
 
@@ -287,6 +285,7 @@ class LKSocketClientKt private constructor(private val mHost: String,
                 e.printStackTrace()
             }
         }
+
         override fun run() {
             super.run()
             try {
