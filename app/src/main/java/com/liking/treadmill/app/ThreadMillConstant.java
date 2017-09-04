@@ -34,11 +34,11 @@ public class ThreadMillConstant {
         //财经
         CATEGORYRESOURCE.put(24, new CategoryEntity(R.drawable.tab_category_finance_select, "财经"));
         //军事
-        CATEGORYRESOURCE.put(28, new CategoryEntity(R.drawable.tab_category_military_select, "财经"));
+        CATEGORYRESOURCE.put(28, new CategoryEntity(R.drawable.tab_category_military_select, "军事"));
         //科技
-        CATEGORYRESOURCE.put(30, new CategoryEntity(R.drawable.tab_category_science_select, "财经"));
+        CATEGORYRESOURCE.put(30, new CategoryEntity(R.drawable.tab_category_science_select, "科技"));
         //汽车
-        CATEGORYRESOURCE.put(26, new CategoryEntity(R.drawable.tab_category_automobile_select, "财经"));
+        CATEGORYRESOURCE.put(26, new CategoryEntity(R.drawable.tab_category_automobile_select, "汽车"));
 
     }
 
