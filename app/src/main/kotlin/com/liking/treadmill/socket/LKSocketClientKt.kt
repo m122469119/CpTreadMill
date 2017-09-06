@@ -162,7 +162,7 @@ class LKSocketClientKt private constructor(private val mHost: String,
     private val MAX_SLEEP_TIME = (5 * 1000).toLong() //重试次数
 
     private fun sendReConnectMessage() {
-        if (mIsReconnecting && mHandler == null) {
+        if (mIsReconnecting || mHandler == null) {
             return
         }
         mIsReconnecting = true
