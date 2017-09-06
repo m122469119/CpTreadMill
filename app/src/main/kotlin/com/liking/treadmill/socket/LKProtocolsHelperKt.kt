@@ -564,7 +564,7 @@ object LKProtocolsHelperKt {
                 if (!StringUtils.isEmpty(data) && data.contains(flag)) {
                     data = data.replace(flag, "")
                 }
-                func.invoke(toJson(data)!!)
+                func.invoke(data)
             } catch (e: Exception) {
             }
         }
