@@ -415,6 +415,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
      */
     fun mediaStartActiveMonitor() {
         LogUtils.e(TAG, "-----mediaStartActiveMonitor---")
+        if(isRunning) return
         startActiveMonitor(22)
     }
 
@@ -1213,6 +1214,7 @@ class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
                     childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()
                 }
                 closeVideoPlayBrowserUI()
+                mediaStartActiveMonitor()
             } else if (keyCode == LikingTreadKeyEvent.KEY_STOP_MEDIA.toInt()) {
                 videoPlayBrowserUIAction {
                     it.pausePlayVideo()
