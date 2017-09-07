@@ -477,13 +477,6 @@ class RunningFragment : SerialPortFragment() {
     }
 
     /**
-     *隐藏底部背景
-     */
-    fun hiddenBottomLayoutBg() {
-        hiddenTranslationYUI(run_bottom_layout_bg, 0.0f, animatorDuration)
-    }
-
-    /**
      * 是否在跑道页
      */
     fun isInRunWayUI(): Boolean = isInUI(layout_run_content.layout_run_way.visibility)
@@ -788,7 +781,6 @@ class RunningFragment : SerialPortFragment() {
         isRunning = false
         isFinish = true
         handler.removeCallbacksAndMessages(null)
-        hiddenBottomLayoutBg()
         layout_run_content.visibility = View.GONE
         layout_run_pause.visibility = View.GONE
         layout_run_finish.visibility = View.VISIBLE

@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/run_bottom_height">
 
-    <View
-        android:id="@+id/run_bottom_layout_bg"
-        android:layout_width="match_parent"
-        android:translationY="@dimen/run_bottom_height"
-        android:layout_height="@dimen/run_bottom_height"
-        android:background="@color/c353535"/>
+    <!--<View-->
+        <!--android:id="@+id/run_bottom_layout_bg"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:translationY="@dimen/run_bottom_height"-->
+        <!--android:layout_height="@dimen/run_bottom_height"-->
+        <!--android:background="@color/c353535"/>-->
 
     <LinearLayout
         android:id="@+id/layout_run_bottom_content_layout"
