@@ -56,7 +56,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:paddingLeft="18dp"
-                        android:textColor="@color/c85878e"
+                        android:textColor="@color/c34c86c"
                         android:text="80%"
                         android:textSize="@dimen/textsize_30sp"
                         android:textStyle="bold"/>
