@@ -1,7 +1,6 @@
 package com.liking.treadmill.db.service;
 
 
-import android.telecom.Call;
 import com.aaron.android.framework.base.BaseApplication;
 import com.liking.treadmill.db.AdvLocalDataSource;
 import com.liking.treadmill.db.entity.AdvEntity;
@@ -94,6 +93,16 @@ public class AdvService {
             }
         });
     }
+
+    public void deleteAdvByIsDefault(final int type, final CallBack<Boolean> callBack){
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                callBack.onBack(mLocalDataSource.deleteAdvByIsDefault(type));
+            }
+        });
+    }
+
 
     public interface CallBack<T> {
         void onBack(T t);

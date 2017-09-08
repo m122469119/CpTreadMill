@@ -6,20 +6,25 @@ import android.graphics.BitmapFactory;
 import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Shader;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.nineoldandroids.animation.ObjectAnimator;
@@ -50,7 +55,7 @@ public class RunwayView extends View {
     private Camera camera;
     private Matrix matrixCamera;
 
-    private float degree = 40.0f;
+    private float degree = 30.0f;
 
     int wayWidth;
     int wayHeight;
@@ -71,15 +76,14 @@ public class RunwayView extends View {
     int clipWidth;
     int clipheight;
 
-    public int shiftLevel;
-
     private Path mPathWay;
     private int bottomHeight = 26;
+
+    public int shiftLevel = 1;
 
     private boolean isShowLog = false;
     private Bitmap mBitmapLog = null;
     private int yLog;
-
 
     private ObjectAnimator animator = ObjectAnimator.ofInt(this, "phase", 0, dashHeight + dashGap);
 
@@ -90,7 +94,7 @@ public class RunwayView extends View {
 
         mPathWay = new Path();
 
-        animator.setDuration(1200);
+        animator.setDuration(1000);
         animator.setInterpolator(new LinearInterpolator());
         animator.setRepeatCount(ValueAnimator.INFINITE);
 
@@ -156,8 +160,8 @@ public class RunwayView extends View {
         wayBottom = wayHeight;
 
         //绘制梯形
-        mPathWay.moveTo(wayWidth * 0.313f, 0);
-        mPathWay.lineTo(wayWidth - (wayWidth * 0.313f), 0);
+        mPathWay.moveTo(wayWidth * 0.26f, 0);
+        mPathWay.lineTo(wayWidth - (wayWidth * 0.26f), 0);
         mPathWay.lineTo(wayWidth, wayHeight);
         mPathWay.lineTo(0, wayHeight);
 
@@ -207,26 +211,26 @@ public class RunwayView extends View {
         int r = wayHeight % (dashHeight + dashGap);
         int count = wayHeight / (dashHeight + dashGap);
         int dashCount = r == 0 ? count : count + 1;
-        for (int i = -3; i < dashCount; i++) {
+        for (int i = -2; i < dashCount; i++) {
             int startX = width / 2;
             int startY = phase + (dashHeight + dashGap) * i;
             int stopX = width / 2;
             int stopY = phase + (dashHeight + dashGap) * i + dashHeight;
 
             //去超出部分
-            if (startY < wayTop - 200) {
-                if (stopY > wayTop - 200) {
-                    startY = wayTop - 200;
+            if (startY < wayTop - 100) {
+                if (stopY > wayTop - 100) {
+                    startY = wayTop - 100;
                 } else {
                     startY = wayTop;
                     stopY = wayTop;
                 }
             }
-            if (startY > wayHeight - 2) {
-                startY = wayHeight - 2;
+            if (startY > wayHeight - 10) {
+                startY = wayHeight - 10;
             }
-            if (stopY > wayHeight - 2) {
-                stopY = wayHeight - 2;
+            if (stopY > wayHeight - 10) {
+                stopY = wayHeight - 10;
             }
 //            Log.e("info", "startY:" + startY + ";stopY:" + stopY);
             //划线
@@ -234,30 +238,19 @@ public class RunwayView extends View {
         }
 
         if(isShowLog && yLog < wayHeight) {
-            int xLog = (int) (wayWidth - (wayWidth * 0.32f) - 20);
+            int xLog = (int) (wayWidth - (wayWidth * 0.26f) - 20);
             canvas.drawBitmap(mBitmapLog, xLog, yLog, paint);
             yLog += shiftLevel * 2;
         } else {
             isShowLog = false;
-            yLog = -mBitmapLog.getHeight() - 200;
+            yLog = -mBitmapLog.getHeight() - 100;
         }
-//        LogUtils.e("info", yLog+"--");
         canvas.restore();
 
         //底部矩形
         paint.setColor(ResourceUtils.getColor(R.color.c41B361));
         paint.setStyle(Paint.Style.FILL);
         canvas.drawRect(0, wayHeight, wayWidth, wayHeight + bottomHeight, paint);
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
     }
 
     public void startRun() {
@@ -267,23 +260,23 @@ public class RunwayView extends View {
     public void stopRun() {
         animator.end();
     }
-
-    @Override
-    protected void onVisibilityChanged( View changedView, int visibility) {
-        super.onVisibilityChanged(changedView, visibility);
-        if(visibility == GONE) {
-            animator.end();
-        } else  if(visibility == VISIBLE){
-            animator.start();
-        }
-    }
+//
+//    @Override
+//    protected void onVisibilityChanged( View changedView, int visibility) {
+//        super.onVisibilityChanged(changedView, visibility);
+//        if(visibility == GONE) {
+//            animator.end();
+//        } else  if(visibility == VISIBLE){
+//            animator.start();
+//        }
+//    }
 
     public void gearShift(int level) {
-        shiftLevel = level;
         animator.setDuration(1200 / level);
     }
 
     public void showLikingLog(boolean show) {
         this.isShowLog = show;
     }
+
 }

@@ -6,11 +6,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.os.RemoteException
-import android.support.design.widget.TabLayout
-import android.support.v7.widget.RecyclerView
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,19 +14,14 @@ import android.view.animation.AnimationUtils
 import com.aaron.android.codelibrary.utils.DateUtils
 import com.aaron.android.codelibrary.utils.LogUtils
 import com.aaron.android.codelibrary.utils.StringUtils
-import com.aaron.android.framework.base.widget.refresh.StateView
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton
-import com.aaron.android.framework.utils.DisplayUtils
 import com.aaron.android.framework.utils.ResourceUtils
 import com.liking.treadmill.R
 import com.liking.treadmill.activity.HomeActivity
-import com.liking.treadmill.adapter.IqiyiVideoEpisodesAdapter
-import com.liking.treadmill.adapter.IqiyiVideoListAdapter
 import com.liking.treadmill.app.ThreadMillConstant
 import com.liking.treadmill.db.entity.AdvEntity
 import com.liking.treadmill.db.service.AdvService
 import com.liking.treadmill.fragment.AwaitActionFragment
-import com.liking.treadmill.fragment.GoalSettingFragment
 import com.liking.treadmill.fragment.SettingFragment
 import com.liking.treadmill.fragment.StartFragment
 import com.liking.treadmill.fragment.base.SerialPortFragment
@@ -46,31 +36,18 @@ import com.liking.treadmill.utils.TypefaceHelper
 import com.liking.treadmill.utils.countdownutils.CountDownListener
 import com.liking.treadmill.utils.countdownutils.LikingCountDownHelper
 import com.liking.treadmill.widget.IToast
-import com.liking.treadmill.widget.ScrollSpeedLinearLayoutManger
 import de.greenrobot.event.EventBus
-import kotlinx.android.synthetic.main.activity_run.*
 import kotlinx.android.synthetic.main.fragment_running.*
-import kotlinx.android.synthetic.main.layout_category_tablayout.view.*
 import kotlinx.android.synthetic.main.layout_pause.*
 import kotlinx.android.synthetic.main.layout_prepare.*
-import kotlinx.android.synthetic.main.layout_run.*
 import kotlinx.android.synthetic.main.layout_run_bottom.*
 import kotlinx.android.synthetic.main.layout_run_bottom.view.*
 import kotlinx.android.synthetic.main.layout_run_content.*
 import kotlinx.android.synthetic.main.layout_run_content.view.*
 import kotlinx.android.synthetic.main.layout_run_finish.view.*
 import kotlinx.android.synthetic.main.layout_run_head.view.*
-import kotlinx.android.synthetic.main.layout_run_video_category.*
-import kotlinx.android.synthetic.main.layout_run_video_list.*
 import kotlinx.android.synthetic.main.layout_run_way.view.*
 import kotlinx.android.synthetic.main.run_info_cell.view.*
-import liking.com.iqiyimedia.IqiyiContract
-import liking.com.iqiyimedia.http.result.AlbumListResult
-import liking.com.iqiyimedia.http.result.CategoryListResult
-import liking.com.iqiyimedia.http.result.TopListResult
-import liking.com.iqiyimedia.http.result.VideoInfoResult
-import org.jetbrains.anko.imageResource
-import org.jetbrains.anko.layoutInflater
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -266,7 +243,6 @@ class RunningFragment : SerialPortFragment() {
 
     fun initView() {
         initRunInfoView()
-        initIqiyiMediaView()
 
         //会员以及场馆信息显示
         try {
@@ -310,29 +286,6 @@ class RunningFragment : SerialPortFragment() {
      */
     fun setTypeFace(v: View) {
         TypefaceHelper.setImpactFont(context, v.info_content_textView)
-    }
-
-    /**
-     * 初始化视频相关view
-     */
-    fun initIqiyiMediaView() {
-        //视频列表
-        video_list_recyclerView.setHasFixedSize(true)
-        video_list_recyclerView.layoutManager = ScrollSpeedLinearLayoutManger(context)
-        video_list_recyclerView_episode.setHasFixedSize(true)
-        video_list_recyclerView_episode.layoutManager = ScrollSpeedLinearLayoutManger(context)
-        //频道切换提示
-        val builderCategory = SpannableStringBuilder(ResourceUtils.getString(R.string.category_hint_txt))
-        builderCategory.setSpan(
-                ForegroundColorSpan(ResourceUtils.getColor(R.color.c27C454)), 1, 9,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        category_change_hint.text = builderCategory
-        //视频切换提示
-        val builderVideolist = SpannableStringBuilder(ResourceUtils.getString(R.string.videolist_hint_txt))
-        builderVideolist.setSpan(
-                ForegroundColorSpan(ResourceUtils.getColor(R.color.c27C454)), 1, 9,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        video_list_change_hint.text = builderVideolist
     }
 
     fun initData() {

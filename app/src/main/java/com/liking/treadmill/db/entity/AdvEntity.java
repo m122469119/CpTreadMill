@@ -23,18 +23,28 @@ public class AdvEntity implements Serializable{
     private String type;
     private String endtime;
     private int staytime;
+    private Long exhibition_id; //主键
     private int isDefault;
 
     public AdvEntity() {
     }
 
-    public AdvEntity(String url, String type, String endtime, int staytime, Long adv_id, int isDefault) {
+    public AdvEntity(Long adv_id, String url, String type, String endtime, int staytime, Long exhibition_id, int isDefault) {
+        this.adv_id = adv_id;
         this.url = url;
         this.type = type;
         this.endtime = endtime;
         this.staytime = staytime;
-        this.adv_id = adv_id;
+        this.exhibition_id = exhibition_id;
         this.isDefault = isDefault;
+    }
+
+    public Long getExhibition_id() {
+        return exhibition_id;
+    }
+
+    public void setExhibition_id(Long exhibition_id) {
+        this.exhibition_id = exhibition_id;
     }
 
     public String getUrl() {

@@ -2,7 +2,6 @@
 <android.support.design.widget.AppBarLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:theme="@style/AppTheme.AppBarOverlay"
@@ -45,30 +44,31 @@
                 android:textColor="@color/c85878e"
                 android:textSize="@dimen/textsize_20sp"/>
 
+
             <ImageView
                 android:id="@+id/wifi_imageView"
-                android:layout_width="@dimen/main_toolbar_icon_size"
-                android:layout_height="@dimen/main_toolbar_icon_size"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/spacing_12dp"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/spacing_8dp"
                 android:src="@drawable/main_wifi"/>
 
             <ImageView
                 android:id="@+id/fan_imageView"
-                android:layout_width="@dimen/main_toolbar_icon_size"
-                android:layout_height="@dimen/main_toolbar_icon_size"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="@dimen/spacing_12dp"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="-8dp"
                 android:layout_toLeftOf="@id/wifi_imageView"
                 android:src="@drawable/main_fan"/>
 
             <ImageView
                 android:id="@+id/cooldown_imageView"
-                android:layout_width="@dimen/main_toolbar_icon_size"
-                android:layout_height="@dimen/main_toolbar_icon_size"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="@dimen/spacing_12dp"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="-8dp"
                 android:layout_toLeftOf="@id/fan_imageView"
                 android:src="@drawable/main_cooldown"/>
 

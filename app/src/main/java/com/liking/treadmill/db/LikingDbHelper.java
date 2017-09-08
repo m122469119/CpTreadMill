@@ -31,7 +31,8 @@ public class LikingDbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_ADV = "CREATE TABLE " +
             LikingPersistenceContract.TreadmillAdv.TABLE_NAME + " (" +
-            LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID + INTEGER_TYPE + " PRIMARY KEY," +
+            LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_EXHIBITION_ID + INTEGER_TYPE + " PRIMARY KEY,"+
+            LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID + INTEGER_TYPE + COMMA_SEP +
             LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL + TEXT_TYPE + COMMA_SEP +
             LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME + TEXT_TYPE + COMMA_SEP +
             LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_STAY_TIME + INTEGER_TYPE + COMMA_SEP +
