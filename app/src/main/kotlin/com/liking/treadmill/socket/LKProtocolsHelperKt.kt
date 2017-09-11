@@ -530,7 +530,7 @@ object LKProtocolsHelperKt {
      */
     fun reportedLogOutCache(func: (data: String) -> Unit) {
         File(ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE)
-                .listFiles()?.map {
+                .listFiles()?.forEach {
             var data = FileUtils.load(it.absolutePath)
 
             if (!StringUtils.isEmpty(data)) {
@@ -558,15 +558,14 @@ object LKProtocolsHelperKt {
      */
     fun reportedExerciseCache(func: (data: String) -> Unit) {
         File(ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE)
-                .listFiles()?.map {
+                .listFiles()?.forEach {
             try {
                 var data = FileUtils.load(it.absolutePath)
                 if (!StringUtils.isEmpty(data) && data.contains(flag)) {
                     data = data.replace(flag, "")
+                    func.invoke(data)
                 }
-                func.invoke(data)
-            } catch (e: Exception) {
-            }
+            } catch (e: Exception) {}
         }
     }
 }

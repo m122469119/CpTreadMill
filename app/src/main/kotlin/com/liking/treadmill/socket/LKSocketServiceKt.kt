@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.IBinder
 import android.support.v4.content.LocalBroadcastManager
 import com.aaron.android.codelibrary.utils.LogUtils
+import com.aaron.android.codelibrary.utils.StringUtils
 import com.aaron.android.framework.utils.EnvironmentUtils
 import com.liking.treadmill.test.IBackService
 import com.liking.treadmill.treadcontroller.SerialPortUtil
@@ -184,6 +185,7 @@ class LKSocketServiceKt : Service() {
         }
 
         override fun reportExerciseCacheData(data: String) {
+            if(StringUtils.isEmpty(data)) return
             mLKSocketClient.sendMessage(LKProtocolsHelperKt.getReportExerciseCacheDataRequest(data))
         }
 
