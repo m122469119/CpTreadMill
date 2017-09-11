@@ -12,7 +12,7 @@
         android:layout_height="260dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        android:visibility="gone"
+        android:visibility="invisible"
         fresco:failureImage="@drawable/run_adv"
         fresco:failureImageScaleType="fitCenter"
         fresco:placeholderImage="@drawable/run_adv"
