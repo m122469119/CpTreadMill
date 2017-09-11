@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.liking.treadmill"
+          android:sharedUserId= "android.uid.system"
           android:versionCode="127"
           android:versionName="1.2.7">
 
