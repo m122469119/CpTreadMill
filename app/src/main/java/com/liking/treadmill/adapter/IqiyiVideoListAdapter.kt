@@ -1,3 +1,4 @@
+/*
 package com.liking.treadmill.adapter
 
 import android.content.Context
@@ -27,3 +28,4 @@ class IqiyiVideoListAdapter(context: Context) :BaseRecycleViewAdapter<VideoListV
         }
     }
 }
+*/
