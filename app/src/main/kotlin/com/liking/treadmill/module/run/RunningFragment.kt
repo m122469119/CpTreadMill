@@ -162,6 +162,7 @@ class RunningFragment : SerialPortFragment() {
     private val mAdvEntities = ArrayList<AdvEntity>() //广告资源
     private var mAdvPosition: Int = 0 //当前广告显示位置
     private var mAdvAscend:Int = 0 //广告显示阀值
+    private var mTotalAdvAscend:Int = 0 //广告下一次显示
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater?.inflate(R.layout.fragment_running, container, false)
@@ -981,7 +982,7 @@ class RunningFragment : SerialPortFragment() {
             ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START -> {
                 //每5分钟切换一次广告
                 if(time != 0) {
-                    if(time >= mAdvAscend) {
+                    if(time >= mTotalAdvAscend) {
                         showAdv()
                     }
                 }
@@ -991,15 +992,15 @@ class RunningFragment : SerialPortFragment() {
                 if(mAdvAscend <= 0) return
 
                 if(totalTime > 0 && time != 0) {
-                    if (time >= mAdvAscend) {
+                    if (time >= mTotalAdvAscend) {
                         showAdv()
                     }
                 } else if (totalKilometre > 0) {
-                    if(distanceKm > 0 && distanceKm * 1000 > mAdvAscend) {
+                    if(distanceKm > 0 && distanceKm * 1000 > mTotalAdvAscend) {
                         showAdv()
                     }
                 } else if (totalKcal > 0) {
-                    if(kcal > 0 && kcal > mAdvAscend) {
+                    if(kcal > 0 && kcal > mTotalAdvAscend) {
                         showAdv()
                     }
                 }
@@ -1022,8 +1023,8 @@ class RunningFragment : SerialPortFragment() {
             handler.removeCallbacks(mAadvRunTask)
             handler.postDelayed(mAadvRunTask, 20 * 1000)
         }
-        mAdvAscend += mAdvAscend
-        LogUtils.e(TAG, "下一次广告显示：".plus(mAdvAscend).plus("广告位：" + mAdvPosition))
+        mTotalAdvAscend += mAdvAscend
+        LogUtils.e(TAG, "下一次广告显示：".plus(mTotalAdvAscend).plus("广告位：" + mAdvPosition))
     }
 
     var mAadvRunTask = Runnable {
