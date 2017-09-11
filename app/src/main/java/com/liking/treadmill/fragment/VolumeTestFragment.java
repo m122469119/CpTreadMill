@@ -77,6 +77,14 @@ public class VolumeTestFragment extends SerialPortFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mActivity != null) {
+            mActivity.setTitle("");
+        }
+    }
+
+    @Override
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         volumeControl(keyCode);
