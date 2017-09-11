@@ -177,6 +177,7 @@ public class BindGymFragment extends SerialPortFragment {
             if(isSetting) return;
             postEvent(new SettingNextMessage(0));
         } else if(keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) {
+            ((HomeActivity) getActivity()).launchFullFragment(new VolumeTestFragment());
 //            if(!isSetting) {
 //                Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
 //                startActivity(intent);

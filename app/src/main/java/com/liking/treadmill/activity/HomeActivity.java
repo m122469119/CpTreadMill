@@ -68,6 +68,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     };
 
     public UserLoginPresenter mUserLoginPresenter = null;
+
     private AudioManager audioManager = null; // Audio管理器
 
     @Override
@@ -463,6 +464,10 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     // 调用此方法减小音量
     public void volumeSubtract(){
         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
+    }
+
+    public AudioManager getAudioManager() {
+        return audioManager;
     }
 
 }
