@@ -953,6 +953,7 @@ class RunningFragment : SerialPortFragment() {
         if (time != 0) {
             if (mTotalAdvAscend != 0 && time >= mTotalAdvAscend) {
                 showAdv()
+                mTotalAdvAscend += mAdvAscend
             }
         }
     }
@@ -962,18 +963,15 @@ class RunningFragment : SerialPortFragment() {
             LogUtils.e(TAG, "---显示广告中---")
             val advEntities = mAdvEntities[mAdvPosition]
             layout_run_way.imageview_adv.visibility = View.VISIBLE
-            HImageLoaderSingleton.getInstance()
-                    .loadImage(layout_run_way.imageview_adv,
-                            advEntities.url)
+            HImageLoaderSingleton.getInstance().loadImage(layout_run_way.imageview_adv, advEntities.url)
             ++mAdvPosition
             if (mAdvPosition >= mAdvEntities.size) {
                 mAdvPosition = 0
             }
             //广告存在时间? s
             handler.removeCallbacks(mAadvRunTask)
-            handler.postDelayed(mAadvRunTask, (advEntities.staytime * 1000).toLong())
+            handler.postDelayed(mAadvRunTask, ((advEntities.staytime + 1) * 1000).toLong())
 
-            mTotalAdvAscend += mAdvAscend
             LogUtils.e(TAG, "下一次广告显示：".plus(mTotalAdvAscend).plus("广告位：" + mAdvPosition))
         } else {
             LogUtils.e(TAG, "---无广告---")

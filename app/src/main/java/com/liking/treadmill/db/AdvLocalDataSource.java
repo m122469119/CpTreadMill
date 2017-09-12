@@ -23,7 +23,7 @@ public class AdvLocalDataSource {
     private DatabaseManager mDatabaseManager;
     private static final String FIND_ADV_BY_ONE = "SELECT * FROM "
             + LikingPersistenceContract.TreadmillAdv.TABLE_NAME
-            + " WHERE " + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID + "=?";
+            + " WHERE " + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_EXHIBITION_ID + "=?";
 
     private static final String FIND_ADV_BY_TYPE_AND_NEW = "SELECT * FROM "
             + LikingPersistenceContract.TreadmillAdv.TABLE_NAME
@@ -43,8 +43,9 @@ public class AdvLocalDataSource {
             + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_STAY_TIME + ", "
             + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME + ", "
             + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL + ", "
+            + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_EXHIBITION_ID + ") "
             + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID + ") "
-            + " VALUE (?, ?, ?, ?, ?, ?)";
+            + " VALUE (?, ?, ?, ?, ?, ?, ?)";
 
     public AdvLocalDataSource(Context context) {
         mDatabaseManager = DatabaseManager.getInstance(new LikingDbHelper(context));
@@ -69,11 +70,11 @@ public class AdvLocalDataSource {
     }
 
 
-    public AdvEntity findAdvByOne(Long adv_id) {
+    public AdvEntity findAdvByOne(Long exhibitionId) {
         SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         AdvEntity advEntity = null;
         try {
-            Cursor c = db.rawQuery(FIND_ADV_BY_ONE, new String[]{String.valueOf(adv_id)});
+            Cursor c = db.rawQuery(FIND_ADV_BY_ONE, new String[]{String.valueOf(exhibitionId)});
             if(c.moveToNext()) {
                 advEntity = loadAdvEntity(c);
             }
@@ -145,8 +146,9 @@ public class AdvLocalDataSource {
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME, entity.getEndtime());
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL, entity.getUrl());
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID, entity.getAdv_id());
+        values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_EXHIBITION_ID, entity.getExhibition_id());
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_IS_DEFAULT, entity.getIsDefault());
-        AdvEntity advByOne = findAdvByOne(entity.getAdv_id());
+        AdvEntity advByOne = findAdvByOne(entity.getExhibition_id());
         if (advByOne != null) {
             LogUtils.e("insertAdvList", "advByOne != null");
             String selection = LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_EXHIBITION_ID + " = ?";

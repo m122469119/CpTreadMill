@@ -147,7 +147,7 @@ public class BindGymFragment extends SerialPortFragment {
             mBindGymHint1.setText("当前未绑定健身房");
             mBindGymHint2.setText("扫码安全登录，进行健身房绑定");
         }
-        Spanned h = Html.fromHtml("打开<font color=#25ff8c>手机微信</font><br>扫一扫" + state);
+        Spanned h = Html.fromHtml("打开<font color=#85878e>手机微信</font><br>扫一扫" + state);
         mQrcodeHint3.setText(h);
 
         if(isSetting) {

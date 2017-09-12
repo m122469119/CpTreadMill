@@ -60,7 +60,6 @@
             android:layout_width="400dp"
             android:layout_height="160dp"
             android:layout_gravity="center"
-            android:background="@color/cb4000000"
             android:gravity="center"
             android:orientation="vertical"
             android:visibility="gone">
@@ -69,7 +68,7 @@
                 android:id="@+id/update_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
+                android:textColor="@color/c85878e"
                 android:textSize="@dimen/textsize_20sp"
                 android:textStyle="bold"/>
 
@@ -79,7 +78,7 @@
                 android:layout_gravity="center_horizontal"
                 android:paddingTop="@dimen/spacing_8dp"
                 android:text="@string/threadmill_system_update_newest_txt"
-                android:textColor="@color/white"
+                android:textColor="@color/c85878e"
                 android:textSize="@dimen/textsize_20sp"/>
         </LinearLayout>
     </FrameLayout>
