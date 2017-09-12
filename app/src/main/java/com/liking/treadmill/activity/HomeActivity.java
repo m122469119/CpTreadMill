@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
+
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
@@ -61,7 +62,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-          //  LogUtils.d(SocketService.TAG, "service is disconnected");
+            //  LogUtils.d(SocketService.TAG, "service is disconnected");
             mBound = false;
             iBackService = null;
         }
@@ -259,6 +260,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     /**
      * 用户刷卡登录登录
+     *
      * @param cardno
      */
     @Override
@@ -379,20 +381,21 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 List<AdvEntity> defaultEntities = new ArrayList<>();
                 for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getHome()) {
                     defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_HOME,
-                            "0", 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
+                            "0", 0, 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
                 }
                 for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getLogin()) {
                     defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_LOGIN,
-                            "0", 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
+                            "0", 0, 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
                 }
                 for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getQuick_start()) {
                     defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_QUICK_START,
-                            "0", 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
+                            "0", bean.getStaytime(), bean.getInterval(), (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
                 }
                 for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getSet_mode()) {
                     defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_SET_MODE,
-                            "0", 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
+                            "0", bean.getStaytime(), bean.getInterval(), (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
                 }
+
                 final List<AdvEntity> finalEntity = defaultEntities;
                 AdvService.getInstance().deleteAdvByIsDefault(AdvEntity.DEFAULT, new AdvService.CallBack<Boolean>() {
                     @Override
@@ -412,34 +415,29 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 NewAdResult.DataBean dataBean = (NewAdResult.DataBean) message.obj1;
                 List<AdvEntity> entities = new ArrayList<>();
                 for (NewAdResult.DataBean.NewAdBean bean : dataBean.getHome()) {
-                    entities.add(new AdvEntity((long)bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_HOME,
-                            bean.getEndtime(), bean.getStaytime(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
+                    entities.add(new AdvEntity((long) bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_HOME,
+                            bean.getEndtime(), bean.getStaytime(), 0, (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
                 }
                 for (NewAdResult.DataBean.NewAdBean bean : dataBean.getLogin()) {
-                    entities.add(new AdvEntity((long)bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_LOGIN,
-                            bean.getEndtime(), bean.getStaytime(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
+                    entities.add(new AdvEntity((long) bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_LOGIN,
+                            bean.getEndtime(), bean.getStaytime(), 0, (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
                 }
                 for (NewAdResult.DataBean.NewAdBean bean : dataBean.getQuick_start()) {
-                    entities.add(new AdvEntity((long)bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_QUICK_START,
-                            bean.getEndtime(), bean.getStaytime(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
+                    entities.add(new AdvEntity((long) bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_QUICK_START,
+                            bean.getEndtime(), bean.getStaytime(), bean.getInterval(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
                 }
                 for (NewAdResult.DataBean.NewAdBean bean : dataBean.getSet_mode()) {
-                    entities.add(new AdvEntity((long)bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_SET_MODE,
-                            bean.getEndtime(), bean.getStaytime(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
+                    entities.add(new AdvEntity((long) bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_SET_MODE,
+                            bean.getEndtime(), bean.getStaytime(), bean.getInterval(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
                 }
                 final List<AdvEntity> finalNewEntity = entities;
                 AdvService.getInstance().deleteAdvByIsDefault(AdvEntity.NOT_DEFAULT, new AdvService.CallBack<Boolean>() {
                     @Override
                     public void onBack(Boolean aBoolean) {
-
-
                         LogUtils.e(TAG, "delete success !!!!!!!! + default" + aBoolean);
-
                         AdvService.getInstance().insertAdvList(finalNewEntity, new AdvService.CallBack<Boolean>() {
                             @Override
                             public void onBack(Boolean aBoolean) {
-
-
                                 LogUtils.i(TAG, String.format("new insert is %b", aBoolean));
                                 postEvent(new AdvRefreshMessage());
                             }
@@ -458,11 +456,12 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     }
 
     // 调用此方法增加音量
-    public void volumeAdd(){
+    public void volumeAdd() {
         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
     }
+
     // 调用此方法减小音量
-    public void volumeSubtract(){
+    public void volumeSubtract() {
         audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
     }
 

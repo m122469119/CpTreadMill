@@ -72,6 +72,7 @@ public class NewAdResult extends BaseSocketResult{
             private String url;
             private String endtime;
             private int staytime;
+            private int interval;//显示间隔
             private int adv_id;
             private int exhibition_id;
 
@@ -114,6 +115,14 @@ public class NewAdResult extends BaseSocketResult{
 
             public void setAdv_id(int adv_id) {
                 this.adv_id = adv_id;
+            }
+
+            public int getInterval() {
+                return interval;
+            }
+
+            public void setInterval(int interval) {
+                this.interval = interval;
             }
         }
     }

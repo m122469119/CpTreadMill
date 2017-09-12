@@ -73,6 +73,8 @@ public class DefaultAdResult extends BaseSocketResult {
              */
 
             private String url;
+            private int staytime;//停留时间
+            private int interval;//显示间隔
             private int exhibition_id;
 
             public String getUrl() {
@@ -89,6 +91,22 @@ public class DefaultAdResult extends BaseSocketResult {
 
             public void setExhibition_id(int exhibition_id) {
                 this.exhibition_id = exhibition_id;
+            }
+
+            public int getStaytime() {
+                return staytime;
+            }
+
+            public void setStaytime(int staytime) {
+                this.staytime = staytime;
+            }
+
+            public int getInterval() {
+                return interval;
+            }
+
+            public void setInterval(int interval) {
+                this.interval = interval;
             }
         }
 

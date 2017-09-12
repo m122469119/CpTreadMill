@@ -39,11 +39,12 @@ public class AdvLocalDataSource {
     private static final String INSERT_INTO_ADV_ONE = "INSERT INTO "
             + LikingPersistenceContract.TreadmillAdv.TABLE_NAME
             + " (" + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_TYPE + ", "
+            + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_INTERVAL_TIME + ", "
             + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_STAY_TIME + ", "
             + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME + ", "
             + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL + ", "
             + LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID + ") "
-            + " VALUE (?, ?, ?, ?, ?)";
+            + " VALUE (?, ?, ?, ?, ?, ?)";
 
     public AdvLocalDataSource(Context context) {
         mDatabaseManager = DatabaseManager.getInstance(new LikingDbHelper(context));
@@ -139,6 +140,7 @@ public class AdvLocalDataSource {
     private void insertAdv(SQLiteDatabase db, AdvEntity entity) {
         ContentValues values = new ContentValues();
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_TYPE, entity.getType());
+        values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_INTERVAL_TIME, entity.getInterval());
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_STAY_TIME, entity.getStaytime());
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME, entity.getEndtime());
         values.put(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL, entity.getUrl());
@@ -207,6 +209,7 @@ public class AdvLocalDataSource {
             Long adv_id = c.getLong(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_ID));
             String type = c.getString(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_TYPE));
             String end_time = c.getString(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_END_TIME));
+            int interval_time = c.getInt(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_INTERVAL_TIME));
             int stay_time = c.getInt(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_STAY_TIME));
             String url = c.getString(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_ADV_URL));
             Long exhibition_id = c.getLong(c.getColumnIndexOrThrow(LikingPersistenceContract.TreadmillAdv.COLUMN_NAME_TREADMILL_EXHIBITION_ID));
@@ -215,7 +218,7 @@ public class AdvLocalDataSource {
             if ("".equals(url) || url == null) {
                 return null;
             }
-            return new AdvEntity(adv_id, url, type, end_time, stay_time, exhibition_id, isDefault);
+            return new AdvEntity(adv_id, url, type, end_time, stay_time, interval_time, exhibition_id, isDefault);
         }catch (Exception e){
             LogUtils.e("info", e.getMessage());
             return  null;

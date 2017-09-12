@@ -143,8 +143,8 @@ class RunningFragment : SerialPortFragment() {
                 }
                 try {
                     showAdvertisement(mTotalRunTime, mTotalKmDistance, mTotalKcal)
-                }catch (e: Exception) {
-                    LogUtils.e(TAG, e.message+"")
+                } catch (e: Exception) {
+                    LogUtils.e(TAG, e.message + "")
                 }
 
                 //20s显示一次log
@@ -159,10 +159,10 @@ class RunningFragment : SerialPortFragment() {
 
     private var isRunning: Boolean = false
     private val dateFormat = SimpleDateFormat("yyyy.MM.dd hh:mm")
-    private val mAdvEntities = ArrayList<AdvEntity>() //广告资源
+    private val mAdvEntities = mutableListOf<AdvEntity>() //广告资源
     private var mAdvPosition: Int = 0 //当前广告显示位置
-    private var mAdvAscend:Int = 0 //广告显示阀值
-    private var mTotalAdvAscend:Int = 0 //广告下一次显示
+    private var mAdvAscend: Int = 0 //广告显示阀值
+    private var mTotalAdvAscend: Int = 0 //广告下一次显示
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater?.inflate(R.layout.fragment_running, container, false)
@@ -520,7 +520,7 @@ class RunningFragment : SerialPortFragment() {
     }
 
     fun volumeControl(keyCode: Int) {
-        if(keyCode == LikingTreadKeyEvent.KEY_VOL_PLUS.toInt()) {// +
+        if (keyCode == LikingTreadKeyEvent.KEY_VOL_PLUS.toInt()) {// +
             (activity as HomeActivity).volumeAdd()
             return
         } else if (keyCode == LikingTreadKeyEvent.KEY_VOL_REDUCE.toInt()) {
@@ -528,6 +528,7 @@ class RunningFragment : SerialPortFragment() {
             return
         }
     }
+
     /**
      * 跑步机按键回调
      */
@@ -565,7 +566,7 @@ class RunningFragment : SerialPortFragment() {
      * 跑步机设置速度坡度，暂停，停止
      */
     fun setUpRun(keyCode: Int, isInRunWayUI: Boolean) {
-        if(!isRunning) return
+        if (!isRunning) return
         if (keyCode == LikingTreadKeyEvent.KEY_PAUSE.toInt()) {
             pauseTreadmill()
         } else if (keyCode == LikingTreadKeyEvent.KEY_STOP.toInt()) {
@@ -907,60 +908,27 @@ class RunningFragment : SerialPortFragment() {
      */
     fun initAdvertisementData() {
         var yyyyMMdd = DateUtils.formatDate("yyyyMMdd", Date())
-
-        when (THREADMILL_MODE_SELECT) {
-            ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START -> {
-
-                mAdvAscend = 5 * 60 //每隔五分钟显示
-                AdvService.getInstance()
-                        .findAdvByTypeAndEndTime(AdvEntity.TYPE_QUICK_START, AdvEntity.NOT_DEFAULT, yyyyMMdd) {
-                            advEntities ->
-                            if (advEntities != null && advEntities.size > 0) {
-                                mAdvEntities.addAll(advEntities)
-                            } else {
-                                //设置为默认的图片
-                                AdvService.getInstance()
-                                        .findAdvByType(AdvEntity.TYPE_QUICK_START, AdvEntity.DEFAULT) {
-                                            advEntities ->
-                                            if (advEntities != null && advEntities.size > 0) {
-                                                mAdvEntities.addAll(advEntities)
-                                            }
-                                        }
-                            }
-                        }
-            }
-
-            ThreadMillConstant.THREADMILL_MODE_SELECT_GOAL_SETTING -> {
-
-                if(totalTime > 0) {
-                    mAdvAscend = (totalTime.toInt() * 60) / 4 //s
-                    LogUtils.e(TAG, "目标是时间-广告间隔：" + mAdvAscend)
-                } else if(totalKilometre > 0) {
-                    mAdvAscend = (totalKilometre.toInt() * 1000) / 4 //m
-                    LogUtils.e(TAG, "目标是距离-广告间隔：" + mAdvAscend +"m")
-                } else if(totalKcal > 0) {
-                    mAdvAscend = totalKcal.toInt() / 4
-                    LogUtils.e(TAG, "目标是卡路里-广告间隔：" + mAdvAscend +"kcl")
-                }
-
-                AdvService.getInstance()
-                        .findAdvByTypeAndEndTime(AdvEntity.TYPE_SET_MODE, AdvEntity.NOT_DEFAULT, yyyyMMdd) {
-                            advEntities ->
-                            if (advEntities != null && advEntities.size > 0) {
-                                mAdvEntities.addAll(advEntities)
-
-                            } else {
-                                //设置为默认的图片
-                                AdvService.getInstance().findAdvByType(AdvEntity.TYPE_SET_MODE, AdvEntity.DEFAULT) {
+        AdvService.getInstance()
+                .findAdvByTypeAndEndTime(AdvEntity.TYPE_QUICK_START, AdvEntity.NOT_DEFAULT, yyyyMMdd) {
+                    advEntities ->
+                    if (advEntities != null && advEntities.size > 0) {
+                        mAdvEntities.addAll(advEntities)
+                    } else {
+                        //设置为默认的图片
+                        AdvService.getInstance()
+                                .findAdvByType(AdvEntity.TYPE_QUICK_START, AdvEntity.DEFAULT) {
                                     advEntities ->
                                     if (advEntities != null && advEntities.size > 0) {
                                         mAdvEntities.addAll(advEntities)
                                     }
                                 }
-                            }
-                        }
-            }
+                    }
+                }
+
+        if (mAdvEntities.size > 0) {
+            mAdvAscend = mAdvEntities[0].interval // s
         }
+        mTotalAdvAscend = mAdvAscend
     }
 
     /**
@@ -975,56 +943,36 @@ class RunningFragment : SerialPortFragment() {
      * 广告存在时间20s
      */
     fun showAdvertisement(time: Int, distanceKm: Float, kcal: Float) {
-
         LogUtils.e(TAG, "已跑时间：$time; 距离 ：$distanceKm; 卡路里：$kcal")
-
-        when (THREADMILL_MODE_SELECT) {
-            ThreadMillConstant.THREADMILL_MODE_SELECT_QUICK_START -> {
-                //每5分钟切换一次广告
-                if(time != 0) {
-                    if(time >= mTotalAdvAscend) {
-                        showAdv()
-                    }
-                }
-            }
-
-            ThreadMillConstant.THREADMILL_MODE_SELECT_GOAL_SETTING -> {
-                if(mAdvAscend <= 0) return
-
-                if(totalTime > 0 && time != 0) {
-                    if (time >= mTotalAdvAscend) {
-                        showAdv()
-                    }
-                } else if (totalKilometre > 0) {
-                    if(distanceKm > 0 && distanceKm * 1000 > mTotalAdvAscend) {
-                        showAdv()
-                    }
-                } else if (totalKcal > 0) {
-                    if(kcal > 0 && kcal > mTotalAdvAscend) {
-                        showAdv()
-                    }
-                }
+        if (time != 0) {
+            if (mTotalAdvAscend != 0 && time >= mTotalAdvAscend) {
+                showAdv()
             }
         }
     }
 
     fun showAdv() {
-        LogUtils.e(TAG, "---显示广告中---")
         if (mAdvEntities.size > 0) {
+            LogUtils.e(TAG, "---显示广告中---")
+            val advEntities = mAdvEntities[mAdvPosition];
             layout_run_way.imageview_adv.visibility = View.VISIBLE
             HImageLoaderSingleton.getInstance()
                     .loadImage(layout_run_way.imageview_adv,
-                            mAdvEntities[mAdvPosition].url)
+                            advEntities.url)
             ++mAdvPosition
             if (mAdvPosition >= mAdvEntities.size) {
                 mAdvPosition = 0
             }
-            //广告存在时间20s
+            //广告存在时间? s
             handler.removeCallbacks(mAadvRunTask)
-            handler.postDelayed(mAadvRunTask, 20 * 1000)
+            handler.postDelayed(mAadvRunTask, (advEntities.staytime * 1000).toLong())
+
+            mTotalAdvAscend += mAdvAscend
+            LogUtils.e(TAG, "下一次广告显示：".plus(mTotalAdvAscend).plus("广告位：" + mAdvPosition))
+        } else {
+            LogUtils.e(TAG, "---无广告---")
         }
-        mTotalAdvAscend += mAdvAscend
-        LogUtils.e(TAG, "下一次广告显示：".plus(mTotalAdvAscend).plus("广告位：" + mAdvPosition))
+
     }
 
     var mAadvRunTask = Runnable {

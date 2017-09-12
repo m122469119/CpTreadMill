@@ -23,18 +23,20 @@ public class AdvEntity implements Serializable{
     private String type;
     private String endtime;
     private int staytime;
+    private int interval;//显示间隔
     private Long exhibition_id; //主键
     private int isDefault;
 
     public AdvEntity() {
     }
 
-    public AdvEntity(Long adv_id, String url, String type, String endtime, int staytime, Long exhibition_id, int isDefault) {
+    public AdvEntity(Long adv_id, String url, String type, String endtime, int staytime, int intervaltime, Long exhibition_id, int isDefault) {
         this.adv_id = adv_id;
         this.url = url;
         this.type = type;
         this.endtime = endtime;
         this.staytime = staytime;
+        this.interval = intervaltime;
         this.exhibition_id = exhibition_id;
         this.isDefault = isDefault;
     }
@@ -93,5 +95,13 @@ public class AdvEntity implements Serializable{
 
     public void setIsDefault(int isDefault) {
         this.isDefault = isDefault;
+    }
+
+    public int getInterval() {
+        return interval;
+    }
+
+    public void setInterval(int interval) {
+        this.interval = interval;
     }
 }
