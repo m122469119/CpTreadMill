@@ -35,7 +35,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/spacing_20dp"
-                    android:background="@drawable/textview_underline"
                     android:padding="@dimen/spacing_4dp"
                     android:text="LikingFans"
                     android:textColor="@color/text_color_dark"

@@ -118,7 +118,12 @@ public class GoalSettingFragment extends SerialPortFragment {
         if (keyCode == LikingTreadKeyEvent.KEY_NEXT) {//模式选择:下一步
             onRefreshBehavior();
             if (isModeSelect) {
-                modeSelect();
+                modeSelect(true);
+            }
+        } else if (keyCode == LikingTreadKeyEvent.KEY_LAST) {
+            onRefreshBehavior();
+            if (isModeSelect) {
+                modeSelect(false);
             }
         } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN) { //返回
             if (isModeSetting) {
@@ -211,7 +216,7 @@ public class GoalSettingFragment extends SerialPortFragment {
 
     private void initViews() {
         showSettingView();
-        modeSelect();
+        modeSelect(true);
         ((HomeActivity) getActivity()).setTitle("设定目标");
     }
 
@@ -222,44 +227,57 @@ public class GoalSettingFragment extends SerialPortFragment {
         }
     }
 
-
-    public void modeSelect() {
+    /**
+     * 向前 true , 向后 false
+     *
+     * @param direction
+     */
+    public void modeSelect(boolean direction) {
         if (!isModeSelect) return;
         switch (mCurrMode) {
             case GOAL_SETTING_MODE_RUNTIME:
-//                mRunTimeModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
-//                mKilometreModeLayout.setBackgroundResource(R.drawable.setting_card_selected);
-//                mKcalModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
-
-                mRunTimeImageView.setImageResource(R.drawable.icon_goal_mode_time_normal);
-                mKilometreImageView.setImageResource(R.drawable.icon_goal_mode_kilometre_select);
-                mKcalImageView.setImageResource(R.drawable.icon_goal_mode_kcal_normal);
-
-                mCurrMode = GOAL_SETTING_MODE_KILOMETRE;
+                if (direction) {
+                    showKilometreTab();
+                } else {
+                    showKcalTab();
+                }
                 break;
             case GOAL_SETTING_MODE_KILOMETRE:
-//                mRunTimeModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
-//                mKilometreModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
-//                mKcalModeLayout.setBackgroundResource(R.drawable.setting_card_selected);
-
-                mRunTimeImageView.setImageResource(R.drawable.icon_goal_mode_time_normal);
-                mKilometreImageView.setImageResource(R.drawable.icon_goal_mode_kilometre_normal);
-                mKcalImageView.setImageResource(R.drawable.icon_goal_mode_kcal_select);
-
-                mCurrMode = GOAL_SETTING_MODE_KCAL;
+                if (direction) {
+                    showKcalTab();
+                } else {
+                    showRunTimeTab();
+                }
                 break;
             case GOAL_SETTING_MODE_KCAL:
-//                mRunTimeModeLayout.setBackgroundResource(R.drawable.setting_card_selected);
-//                mKilometreModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
-//                mKcalModeLayout.setBackgroundResource(R.drawable.setting_car_normal);
-
-                mRunTimeImageView.setImageResource(R.drawable.icon_goal_mode_time_select);
-                mKilometreImageView.setImageResource(R.drawable.icon_goal_mode_kilometre_normal);
-                mKcalImageView.setImageResource(R.drawable.icon_goal_mode_kcal_normal);
-
-                mCurrMode = GOAL_SETTING_MODE_RUNTIME;
+                if (direction) {
+                    showRunTimeTab();
+                } else {
+                    showKilometreTab();
+                }
                 break;
         }
+    }
+
+    private void showRunTimeTab() {
+        mRunTimeImageView.setImageResource(R.drawable.icon_goal_mode_time_select);
+        mKilometreImageView.setImageResource(R.drawable.icon_goal_mode_kilometre_normal);
+        mKcalImageView.setImageResource(R.drawable.icon_goal_mode_kcal_normal);
+        mCurrMode = GOAL_SETTING_MODE_RUNTIME;
+    }
+
+    private void showKilometreTab() {
+        mRunTimeImageView.setImageResource(R.drawable.icon_goal_mode_time_normal);
+        mKilometreImageView.setImageResource(R.drawable.icon_goal_mode_kilometre_select);
+        mKcalImageView.setImageResource(R.drawable.icon_goal_mode_kcal_normal);
+        mCurrMode = GOAL_SETTING_MODE_KILOMETRE;
+    }
+
+    private void showKcalTab() {
+        mRunTimeImageView.setImageResource(R.drawable.icon_goal_mode_time_normal);
+        mKilometreImageView.setImageResource(R.drawable.icon_goal_mode_kilometre_normal);
+        mKcalImageView.setImageResource(R.drawable.icon_goal_mode_kcal_select);
+        mCurrMode = GOAL_SETTING_MODE_KCAL;
     }
 
     /**
@@ -300,7 +318,7 @@ public class GoalSettingFragment extends SerialPortFragment {
         }
         showView(mViewSetting);
     }
-    
+
 
     public void setModeView(View view, int iconId, String modename) {
         ImageView modeImg = (ImageView) view.findViewById(R.id.step1_mode_img);

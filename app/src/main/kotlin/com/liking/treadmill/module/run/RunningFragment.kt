@@ -701,13 +701,13 @@ class RunningFragment : SerialPortFragment() {
         val speed = treadData?.currentSpeed
         if (mSpeed != speed && speed != null) {
             mSpeed = speed
-            setupRunContentCell(layout_run_bottom.cell_speed, StringUtils.getDecimalString((mSpeed / 10.0).toFloat(), 2))
+            setupRunContentCell(layout_run_bottom.cell_speed, StringUtils.getDecimalString((mSpeed / 10.0).toFloat(), 2).plus(UNIT_KMH))
         }
         //卡路里
         val kcal = treadData?.kcal
         if (mKcal != kcal && kcal != null) {
             mKcal = kcal
-            setupRunContentCell(layout_run_bottom.cell_calories, StringUtils.getDecimalString(mKcal, 1))
+            setupRunContentCell(layout_run_bottom.cell_calories, StringUtils.getDecimalString(mKcal, 1).plus(UNIT_KCL))
         }
         //设置跑道速度
         setSpeedBack(mSpeed)
@@ -775,7 +775,7 @@ class RunningFragment : SerialPortFragment() {
         //消耗热量
         val kcal = treadData.kcal
         if (kcal > 0.0f) {
-            setupRunContentCell(layout_run_bottom.cell_calories, StringUtils.getDecimalString(kcal, 2))
+            setupRunContentCell(layout_run_bottom.cell_calories, StringUtils.getDecimalString(kcal, 2).plus(UNIT_KCL))
         }
         //平均心率
         var mAverageHeartRate = 0
@@ -954,7 +954,7 @@ class RunningFragment : SerialPortFragment() {
     fun showAdv() {
         if (mAdvEntities.size > 0) {
             LogUtils.e(TAG, "---显示广告中---")
-            val advEntities = mAdvEntities[mAdvPosition];
+            val advEntities = mAdvEntities[mAdvPosition]
             layout_run_way.imageview_adv.visibility = View.VISIBLE
             HImageLoaderSingleton.getInstance()
                     .loadImage(layout_run_way.imageview_adv,

@@ -55,6 +55,8 @@ public class StartFragment extends SerialPortFragment {
 
     @BindView(R.id.user_name_TextView)
     TextView mUserNameTextView;
+    @BindView(R.id.text_gym_name)
+    TextView mGymNameTextView;
     @BindView(R.id.head_imageView)
     HImageView mHeadImageView;
 
@@ -123,15 +125,16 @@ public class StartFragment extends SerialPortFragment {
     public void onResume() {
         super.onResume();
         if (SerialPortUtil.getTreadInstance().getUserInfo() != null) {
-            ////0女 1男
-            if(SerialPortUtil.getTreadInstance().getUserInfo().mGender == 0) {
-                mUserNameTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_girl, 0);
-            } else {
-                mUserNameTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_boy, 0);
-            }
+//            ////0女 1男
+//            if(SerialPortUtil.getTreadInstance().getUserInfo().mGender == 0) {
+//                mUserNameTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_girl, 0);
+//            } else {
+//                mUserNameTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.icon_boy, 0);
+//            }
             mUserNameTextView.setText(SerialPortUtil.getTreadInstance().getUserInfo().mUserName);
             HImageLoaderSingleton.getInstance().loadImage(mHeadImageView, SerialPortUtil.getTreadInstance().getUserInfo().mAvatar);
         }
+        mGymNameTextView.setText(Preference.getBindUserGymName());
         startActiveMonitor();
         mQuickAnimator.start();
     }
