@@ -160,8 +160,8 @@ public class RunwayView extends View {
         wayBottom = wayHeight;
 
         //绘制梯形
-        mPathWay.moveTo(wayWidth * 0.26f, 0);
-        mPathWay.lineTo(wayWidth - (wayWidth * 0.26f), 0);
+        mPathWay.moveTo(wayWidth * 0.278f, 0);
+        mPathWay.lineTo(wayWidth - (wayWidth * 0.278f), 0);
         mPathWay.lineTo(wayWidth, wayHeight);
         mPathWay.lineTo(0, wayHeight);
 
@@ -238,7 +238,7 @@ public class RunwayView extends View {
         }
 
         if(isShowLog && yLog < wayHeight) {
-            int xLog = (int) (wayWidth - (wayWidth * 0.26f) - 20);
+            int xLog = (int) (wayWidth - (wayWidth * 0.278f) - 20);
             canvas.drawBitmap(mBitmapLog, xLog, yLog, paint);
             yLog += shiftLevel * 2;
         } else {

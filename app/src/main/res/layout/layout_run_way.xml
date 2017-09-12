@@ -8,15 +8,11 @@
 
     <com.aaron.android.framework.library.imageloader.HImageView
         android:id="@+id/imageview_adv"
-        android:layout_width="460dp"
+        android:layout_width="480dp"
         android:layout_height="260dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        android:visibility="invisible"
-        fresco:failureImage="@drawable/run_adv"
-        fresco:failureImageScaleType="fitCenter"
-        fresco:placeholderImage="@drawable/run_adv"
-        fresco:placeholderImageScaleType="fitCenter"/>
+        android:visibility="invisible"/>
 
     <com.liking.treadmill.widget.RunwayView
         android:id="@+id/run_way_view"

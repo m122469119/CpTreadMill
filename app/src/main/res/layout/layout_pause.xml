@@ -70,6 +70,7 @@
                     android:id="@+id/go_on_right_prompt_TextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
                     android:layout_marginTop="30dp"
                     android:layout_toRightOf="@+id/go_on_prompt_TextView"
                     android:textColor="@color/white"
