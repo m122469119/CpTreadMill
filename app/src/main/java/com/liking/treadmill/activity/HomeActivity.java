@@ -379,21 +379,33 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             case AdvResultMessage.ADV_DEFAULT:
                 DefaultAdResult.DataBean defaultBean = (DefaultAdResult.DataBean) message.obj1;
                 List<AdvEntity> defaultEntities = new ArrayList<>();
-                for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getHome()) {
-                    defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_HOME,
-                            "0", 0, 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
+
+                if(defaultBean.getHome() != null) {
+                    for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getHome()) {
+                        defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_HOME,
+                                "0", 0, 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
+                    }
                 }
-                for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getLogin()) {
-                    defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_LOGIN,
-                            "0", 0, 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
+
+                if(defaultBean.getLogin() != null) {
+                    for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getLogin()) {
+                        defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_LOGIN,
+                                "0", 0, 0, (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
+                    }
                 }
-                for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getQuick_start()) {
-                    defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_QUICK_START,
-                            "0", bean.getStaytime(), bean.getInterval(), (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
+
+                if(defaultBean.getQuick_start() != null) {
+                    for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getQuick_start()) {
+                        defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_QUICK_START,
+                                "0", bean.getStaytime(), bean.getInterval(), (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
+                    }
                 }
-                for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getSet_mode()) {
-                    defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_SET_MODE,
-                            "0", bean.getStaytime(), bean.getInterval(), (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
+
+                if(defaultBean.getSet_mode() != null) {
+                    for (DefaultAdResult.DataBean.DefaultAdBean bean : defaultBean.getSet_mode()) {
+                        defaultEntities.add(new AdvEntity(0L, bean.getUrl(), AdvEntity.TYPE_SET_MODE,
+                                "0", bean.getStaytime(), bean.getInterval(), (long) bean.getExhibition_id(), AdvEntity.DEFAULT));
+                    }
                 }
 
                 final List<AdvEntity> finalEntity = defaultEntities;
@@ -414,21 +426,33 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             case AdvResultMessage.ADV_NEW:
                 NewAdResult.DataBean dataBean = (NewAdResult.DataBean) message.obj1;
                 List<AdvEntity> entities = new ArrayList<>();
-                for (NewAdResult.DataBean.NewAdBean bean : dataBean.getHome()) {
-                    entities.add(new AdvEntity((long) bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_HOME,
-                            bean.getEndtime(), bean.getStaytime(), 0, (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
+
+                if(dataBean.getHome() != null) {
+                    for (NewAdResult.DataBean.NewAdBean bean : dataBean.getHome()) {
+                        entities.add(new AdvEntity((long) bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_HOME,
+                                bean.getEndtime(), bean.getStaytime(), 0, (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
+                    }
                 }
-                for (NewAdResult.DataBean.NewAdBean bean : dataBean.getLogin()) {
-                    entities.add(new AdvEntity((long) bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_LOGIN,
-                            bean.getEndtime(), bean.getStaytime(), 0, (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
+
+                if(dataBean.getLogin() != null) {
+                    for (NewAdResult.DataBean.NewAdBean bean : dataBean.getLogin()) {
+                        entities.add(new AdvEntity((long) bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_LOGIN,
+                                bean.getEndtime(), bean.getStaytime(), 0, (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
+                    }
                 }
-                for (NewAdResult.DataBean.NewAdBean bean : dataBean.getQuick_start()) {
-                    entities.add(new AdvEntity((long) bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_QUICK_START,
-                            bean.getEndtime(), bean.getStaytime(), bean.getInterval(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
+
+                if(dataBean.getQuick_start() != null) {
+                    for (NewAdResult.DataBean.NewAdBean bean : dataBean.getQuick_start()) {
+                        entities.add(new AdvEntity((long) bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_QUICK_START,
+                                bean.getEndtime(), bean.getStaytime(), bean.getInterval(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
+                    }
                 }
-                for (NewAdResult.DataBean.NewAdBean bean : dataBean.getSet_mode()) {
-                    entities.add(new AdvEntity((long) bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_SET_MODE,
-                            bean.getEndtime(), bean.getStaytime(), bean.getInterval(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
+
+                if(dataBean.getSet_mode() != null) {
+                    for (NewAdResult.DataBean.NewAdBean bean : dataBean.getSet_mode()) {
+                        entities.add(new AdvEntity((long) bean.getAdv_id(), bean.getUrl(), AdvEntity.TYPE_SET_MODE,
+                                bean.getEndtime(), bean.getStaytime(), bean.getInterval(), (long) bean.getExhibition_id(), AdvEntity.NOT_DEFAULT));
+                    }
                 }
                 final List<AdvEntity> finalNewEntity = entities;
                 AdvService.getInstance().deleteAdvByIsDefault(AdvEntity.NOT_DEFAULT, new AdvService.CallBack<Boolean>() {

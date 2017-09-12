@@ -477,6 +477,7 @@ class RunningFragment : SerialPortFragment() {
 
     fun startRun() {
         startTreadMill(DEFAULT_SPEED, DEFAULT_GRADE)
+        showAdv()
     }
 
     /**
@@ -913,6 +914,7 @@ class RunningFragment : SerialPortFragment() {
                     advEntities ->
                     if (advEntities != null && advEntities.size > 0) {
                         mAdvEntities.addAll(advEntities)
+                        setAdvAscendData()
                     } else {
                         //设置为默认的图片
                         AdvService.getInstance()
@@ -920,17 +922,21 @@ class RunningFragment : SerialPortFragment() {
                                     advEntities ->
                                     if (advEntities != null && advEntities.size > 0) {
                                         mAdvEntities.addAll(advEntities)
+                                        setAdvAscendData()
                                     }
                                 }
                     }
                 }
-
-        if (mAdvEntities.size > 0) {
-            mAdvAscend = mAdvEntities[0].interval // s
-        }
-        mTotalAdvAscend = mAdvAscend
     }
 
+    fun setAdvAscendData() {
+        if (mAdvEntities.size > 0) {
+            val adv = mAdvEntities[0]
+            mAdvAscend = adv.interval // s
+        }
+        mTotalAdvAscend = mAdvAscend
+        LogUtils.e(TAG, "广告每段时间间隔：$mAdvAscend;下一次广告显示时间：$mTotalAdvAscend")
+    }
     /**
      * 显示广告
      * QUICKSTART模式下以时间维度触发
@@ -943,7 +949,7 @@ class RunningFragment : SerialPortFragment() {
      * 广告存在时间20s
      */
     fun showAdvertisement(time: Int, distanceKm: Float, kcal: Float) {
-        LogUtils.e(TAG, "已跑时间：$time; 距离 ：$distanceKm; 卡路里：$kcal")
+        LogUtils.e(TAG, "已跑时间：$time; 距离 ：$distanceKm; 卡路里：$kcal;下一次广告显示时间：$mTotalAdvAscend")
         if (time != 0) {
             if (mTotalAdvAscend != 0 && time >= mTotalAdvAscend) {
                 showAdv()
