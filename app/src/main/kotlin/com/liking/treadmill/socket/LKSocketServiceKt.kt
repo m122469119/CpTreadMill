@@ -67,10 +67,12 @@ class LKSocketServiceKt : Service() {
             override fun onOpen() {
                 mIBackService?.reportDevices()
                 LKProtocolsHelperKt.reportedLogOutCache {
-                    data -> mIBackService.reportExerciseCacheData(data)
+                    data ->
+                    mIBackService.reportExerciseCacheData(data)
                 }
                 LKProtocolsHelperKt.reportedExerciseCache {
-                    data -> mIBackService.reportExerciseCacheData(data)
+                    data ->
+                    mIBackService.reportExerciseCacheData(data)
                 }
 
             }
@@ -143,7 +145,7 @@ class LKSocketServiceKt : Service() {
 //                    intent.putExtra("mCount", mCount)
 //                    mLocalBroadcastManager.sendBroadcast(intent)
                 }
-            }catch (t: Throwable) {
+            } catch (t: Throwable) {
                 t.printStackTrace()
             }
         }
@@ -185,8 +187,9 @@ class LKSocketServiceKt : Service() {
         }
 
         override fun reportExerciseCacheData(data: String) {
-            if(StringUtils.isEmpty(data)) return
-            mLKSocketClient.sendMessage(LKProtocolsHelperKt.getReportExerciseCacheDataRequest(data))
+            if (!StringUtils.isEmpty(data)) {
+                mLKSocketClient.sendMessage(LKProtocolsHelperKt.getReportExerciseCacheDataRequest(data))
+            }
         }
 
         override fun reportExerciseData(type: Int, aimType: Int, aim: Float, achieve: Int) {

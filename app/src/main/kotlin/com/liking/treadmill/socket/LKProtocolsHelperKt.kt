@@ -137,7 +137,7 @@ object LKProtocolsHelperKt {
                 postEvent(QrCodeMessage())
             }
 
-            //解绑
+        //解绑
             TYPE_QRCODE_UNBIND -> {
                 val qrcodeResult = mGson.fromJson(result, QrcodeResult::class.java)
                 val codeUrl = qrcodeResult.qrcodeData.codeUrl
@@ -189,7 +189,7 @@ object LKProtocolsHelperKt {
 
                 userData?.let {
                     message.mUserData = userData
-                    if(userData.userInfoData != null) {
+                    if (userData.userInfoData != null) {
                         //缓存一条登录状态
                         val deviceId = DeviceUtils.getDeviceInfo(BaseApplication.getInstance())
                         val time = DateUtils.currentDataSeconds().toString()
@@ -276,14 +276,14 @@ object LKProtocolsHelperKt {
                 }
             }
 
-            //日志上报
+        //日志上报
             REPORT_LOG_CMD -> {
                 LikingThreadMillApplication.mLKAppSocketLogQueue.put("aaron", "REPORT_LOG, 上报log操作")
                 LikingThreadMillApplication.mLKSocketLogQueue.putOnce()
                 LikingThreadMillApplication.mLKAppSocketLogQueue.putOnce()
             }
 
-            //场馆会员清除
+        //场馆会员清除
             REPORT_CLEAR_MEMBER_LIST_CMD -> {
                 MemberHelper.getInstance().deleteMembersFromLocal { result ->
                     if (result) {
@@ -531,10 +531,10 @@ object LKProtocolsHelperKt {
     fun reportedLogOutCache(func: (data: String) -> Unit) {
         File(ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE)
                 .listFiles()?.forEach {
-            var data = FileUtils.load(it.absolutePath)
-
-            if (!StringUtils.isEmpty(data)) {
-                try {
+            try {
+                var data = FileUtils.load(it.absolutePath)
+                if (!StringUtils.isEmpty(data)) {
+                    //如果在登录状态return
                     val logOutResult = mGson.fromJson(data, UserLogOutResult::class.java)
                     if (SerialPortUtil.getTreadInstance().userInfo != null
                             && logOutResult != null
@@ -542,14 +542,18 @@ object LKProtocolsHelperKt {
                             logOutResult!!.data.braceletId) {
                         return
                     }
-                } catch (e: Exception) {
-                } finally {
+
                     if (data.contains(flag)) {
                         data = data.replace(flag, "")
                     }
+                    LogUtils.e(TAG, "跑步机用户登录状态:" + data)
                     func.invoke(data)
+
+                } else {
+                    LogUtils.e(TAG, "跑步机用户登录状态:null")
+                    it.delete()
                 }
-            }
+            }catch (e: Exception) {}
         }
     }
 
@@ -561,11 +565,18 @@ object LKProtocolsHelperKt {
                 .listFiles()?.forEach {
             try {
                 var data = FileUtils.load(it.absolutePath)
-                if (!StringUtils.isEmpty(data) && data.contains(flag)) {
-                    data = data.replace(flag, "")
+                if (!StringUtils.isEmpty(data)) {
+                    if (data.contains(flag)) {
+                        data = data.replace(flag, "")
+                    }
+                    LogUtils.e(TAG, "用户跑步数据缓存:".plus(data).plus(it.name))
                     func.invoke(data)
+                } else {
+                    LogUtils.e(TAG, "用户跑步数据缓存:null-".plus(it.name))
+                    it.delete()
                 }
-            } catch (e: Exception) {}
+            } catch (e: Exception) {
+            }
         }
     }
 }
