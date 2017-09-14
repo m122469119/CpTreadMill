@@ -35,6 +35,8 @@ import com.liking.treadmill.widget.IToast;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
 import static com.liking.treadmill.app.LikingThreadMillApplication.mLKAppSocketLogQueue;
 
 public class HomeActivity extends LikingTreadmillBaseActivity implements UserLoginView {
@@ -243,7 +245,12 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
                 @Override
                 public void run() {
                     SerialPortUtil.getTreadInstance().reset();//清空跑步数据
-                    MemberHelper.getInstance().deleteMembersFromLocal(null);
+                    MemberHelper.getInstance().deleteMembersFromLocal(new MemberHelper.DeleteMembersListener() {
+                        @Override
+                        public void onMembersDeleteResult(boolean result) {
+                            EventBus.getDefault().post(new MembersDeleteMessage());
+                        }
+                    });
                     launchFragment(new StartSettingFragment());
 
                     AdvService.getInstance().deleteAll(new AdvService.CallBack<Boolean>() {
