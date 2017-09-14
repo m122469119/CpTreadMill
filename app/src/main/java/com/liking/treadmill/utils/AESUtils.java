@@ -3,6 +3,8 @@ package com.liking.treadmill.utils;
 
 import android.util.Base64;
 
+import com.aaron.android.framework.utils.EnvironmentUtils;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -17,7 +19,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class AESUtils {
 
-    public static final String DEFAULT_KEY = "GmZgJ1990H6ds4yo";//"2oN6nODf74IKF3JQ:GmZgJ1990H6ds4yo";
+    public static final String DEFAULT_KEY = EnvironmentUtils.Config.isTestMode() ? "GmZgJ1990H6ds4yo":"2oN6nODf74IKF3JQ";//"2oN6nODf74IKF3JQ:GmZgJ1990H6ds4yo";
     private static final String TAG = "AESUtils";
 
     public static byte[] encrypt(byte[] data, byte[] key, byte[] ivkey) {
