@@ -69,7 +69,7 @@ class RunningFragment : SerialPortFragment() {
 
     private val UNIT_KM: String = "Km"
     private val UNIT_KMH: String = "Km/h"
-    private val UNIT_KCL: String = "Kcl"
+    private val UNIT_KCL: String = "Kcal"
     private val UNIT_MIN: String = "min"
 
     private lateinit var prepareAnimation: Animation
