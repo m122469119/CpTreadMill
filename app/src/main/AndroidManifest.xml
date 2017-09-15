@@ -39,8 +39,7 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".socket.SocketService"/>
+        <service android:name=".socket.LKSocketServiceKt"/>
         <service android:name=".service.ApkDownloadService" />
         <!--ThreadMill服务-->
         <service android:name=".service.ThreadMillService" />

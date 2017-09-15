@@ -27,9 +27,8 @@
         android:theme="@style/LikingThreadmillTheme"
         tools:replace="android:name">
 
-        <service
-            android:name=".socket.SocketService"/>
         <service android:name=".socket.LKSocketServiceKt"/>
+
         <service android:name=".service.ApkDownloadService" />
         <!--ThreadMill服务-->
         <service android:name=".service.ThreadMillService" />
