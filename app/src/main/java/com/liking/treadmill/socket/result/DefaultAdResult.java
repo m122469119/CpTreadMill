@@ -1,5 +1,6 @@
 package com.liking.treadmill.socket.result;
 
+import com.google.gson.annotations.SerializedName;
 import com.liking.treadmill.socket.data.BaseData;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ public class DefaultAdResult extends BaseSocketResult {
      * data : {"home":[{"url":"http: //testrun.likingfit.com/img/advertisement02.jpg","adv_id":1}],"login":[{"url":"http: //testrun.likingfit.com/img/advertisement02.jpg","adv_id":2}],"quick_start":[{"url":"http: //testrun.likingfit.com/img/advertisement02.jpg","adv_id":3}],"set_mode":[{"url":"http: //testrun.likingfit.com/img/advertisement02.jpg","adv_id":4}]}
      */
 
+    @SerializedName("data")
     private DataBean data;
 
     public DataBean getData() {
@@ -29,9 +31,13 @@ public class DefaultAdResult extends BaseSocketResult {
     }
 
     public static class DataBean implements Serializable{
+        @SerializedName("home")
         private List<DefaultAdBean> home;
+        @SerializedName("login")
         private List<DefaultAdBean> login;
+        @SerializedName("quick_start")
         private List<DefaultAdBean> quick_start;
+        @SerializedName("set_mode")
         private List<DefaultAdBean> set_mode;
 
         public List<DefaultAdBean> getHome() {
@@ -71,10 +77,13 @@ public class DefaultAdResult extends BaseSocketResult {
              * url : http: //testrun.likingfit.com/img/advertisement02.jpg
              * adv_id : 1
              */
-
+            @SerializedName("url")
             private String url;
+            @SerializedName("staytime")
             private int staytime;//停留时间
+            @SerializedName("interval")
             private int interval;//显示间隔
+            @SerializedName("exhibition_id")
             private int exhibition_id;
 
             public String getUrl() {

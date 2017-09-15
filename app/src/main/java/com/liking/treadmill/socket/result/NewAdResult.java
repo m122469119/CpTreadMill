@@ -1,5 +1,7 @@
 package com.liking.treadmill.socket.result;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import java.util.List;
  */
 public class NewAdResult extends BaseSocketResult{
 
+    @SerializedName("data")
     private DataBean data;
 
     public DataBean getData() {
@@ -23,9 +26,13 @@ public class NewAdResult extends BaseSocketResult{
 
     public static class DataBean implements Serializable {
 
+        @SerializedName("home")
         List<NewAdBean> home;
+        @SerializedName("login")
         List<NewAdBean> login;
+        @SerializedName("quick_start")
         List<NewAdBean> quick_start;
+        @SerializedName("set_mode")
         List<NewAdBean> set_mode;
 
         public List<NewAdBean> getHome() {
@@ -68,12 +75,17 @@ public class NewAdResult extends BaseSocketResult{
              * staytime : 10
              * adv_id : 1
              */
-
+            @SerializedName("url")
             private String url;
+            @SerializedName("endtime")
             private String endtime;
+            @SerializedName("staytime")
             private int staytime;
+            @SerializedName("interval")
             private int interval;//显示间隔
+            @SerializedName("adv_id")
             private int adv_id;
+            @SerializedName("exhibition_id")
             private int exhibition_id;
 
 
