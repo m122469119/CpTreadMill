@@ -12,7 +12,9 @@
         android:layout_height="260dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        fresco:failureImage="@drawable/run_adv_run"
+        fresco:failureImageScaleType="centerCrop"/>
 
     <com.liking.treadmill.widget.RunwayView
         android:id="@+id/run_way_view"

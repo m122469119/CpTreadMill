@@ -7,6 +7,4 @@
     android:layout_height="199dp"
     android:scaleType="centerCrop"
     fresco:failureImage="@drawable/run_adv"
-    fresco:failureImageScaleType="centerCrop"
-    fresco:placeholderImage="@drawable/run_adv"
-    fresco:placeholderImageScaleType="centerCrop"/>
+    fresco:failureImageScaleType="centerCrop"/>
