@@ -97,6 +97,8 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     compile project(':framework')
+    compile project(path: ':socket')
+
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     debugCompile 'com.idescout.sql:sqlscout-server:2.0'
@@ -110,6 +112,7 @@ dependencies {
     // Coroutine listeners for Anko Layouts
     compile "org.jetbrains.anko:anko-sdk25-coroutines:${ANKO_VERSION}"
     compile "org.jetbrains.anko:anko-appcompat-v7-coroutines:${ANKO_VERSION}"
+
 }
 repositories {
     mavenCentral()

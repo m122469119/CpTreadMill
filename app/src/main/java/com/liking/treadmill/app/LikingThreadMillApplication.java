@@ -9,6 +9,12 @@ import com.aaron.android.framework.library.storage.DiskStorageManager;
 import com.aaron.android.framework.utils.DeviceUtils;
 import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.alibaba.sdk.android.oss.sample.LKLogQueue;
+import com.liking.socket.SocketIO;
+import com.liking.socket.model.HeaderAssemble;
+import com.liking.socket.model.HeaderResolver;
+import com.liking.socket.model.message.MessageData;
+import com.liking.socket.model.message.PingPongMsg;
+import com.liking.socket.resolver.PingPong;
 import com.liking.treadmill.BuildConfig;
 
 import java.io.File;
@@ -40,6 +46,8 @@ public class LikingThreadMillApplication extends BaseApplication {
                 .build();
         LogUtils.setEnable(BuildConfig.LOGGER);
         disableWifi();
+
+        initSocket();
     }
 
     private void disableWifi() {
@@ -73,4 +81,26 @@ public class LikingThreadMillApplication extends BaseApplication {
         return configData;
     }
 
+    private void initSocket() {
+        SocketIO.Builder builder = new SocketIO.Builder();
+        builder.connect(HOST, PORT);
+        builder.headerAssemble(new HeaderAssemble());
+        builder.headerResolver(new HeaderResolver());
+        builder.addDefaultParse(new PingPong());
+        builder.addPingPongMsg(new PingPongMsg());
+        builder.addDefaultSend(getDeviceInfo());
+        mSocketIO = builder.build();
+    }
+
+    private MessageData getDeviceInfo() {
+        return null; // TODO: 2017/9/28  
+    }
+
+    private String HOST = EnvironmentUtils.Config.isDebugMode() ? "120.24.177.134" : "120.24.177.134";
+    private int PORT = 17919;
+    private static SocketIO mSocketIO;
+
+    public static SocketIO getSocket(){
+        return mSocketIO;
+    }
 }
