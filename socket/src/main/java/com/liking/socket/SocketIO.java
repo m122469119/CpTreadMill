@@ -1,30 +1,29 @@
 package com.liking.socket;
 
-import android.text.TextUtils;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.SparseArray;
 
 import com.liking.socket.model.IHeaderAssemble;
 import com.liking.socket.model.IHeaderResolver;
 import com.liking.socket.model.message.MessageData;
-import com.liking.socket.model.message.PingPongMsg;
 import com.liking.socket.receiver.CmdResolver;
 import com.liking.socket.utils.AESUtils;
 import com.liking.socket.utils.BaseThread;
+import com.liking.socket.utils.LogUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by ttdevs
@@ -32,8 +31,6 @@ import java.util.concurrent.TimeUnit;
  * https://github.com/ttdevs
  */
 public class SocketIO {
-    private static boolean mDebug = false;
-
     /**
      * 发送队列
      */
@@ -41,7 +38,7 @@ public class SocketIO {
     /**
      * 缓存队列
      */
-    private BlockingQueue<MessageData> mCacheQueue = new ArrayBlockingQueue<>(Constant.SENDER_QUEUE_SIZE);
+    private HashMap<String, MessageData> mCacheQueue = new LinkedHashMap<>(Constant.SENDER_QUEUE_SIZE);
 
     private String mDomain;
     private int mPort;
@@ -49,92 +46,130 @@ public class SocketIO {
     private IHeaderAssemble mHeaderAssemble;
     private IHeaderResolver mHeaderResolver;
 
-    private Map<Byte, CmdResolver> mResolver;
-    private List<MessageData> mDefaultMsg;
+    private SparseArray<CmdResolver> mResolver;
+    private List<MessageData> mAutoSendMsg;
     private MessageData mPingPong;
 
     private Socket mSocket;
     private ReceiverWorker mReceiverWorker;
     private SenderWorker mSenderWorker;
 
-    private static final ScheduledExecutorService mExecutor = Executors.newScheduledThreadPool(2);
-    private static final Timer mTimer = new Timer();
+    private boolean isAutoSendMsg;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     private void reconnect() {
-        mTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (null == mSocket || mSocket.isClosed()) {
-                    close(false);
-                    new InitSocket().start();
-                }
-            }
-        }, Constant.DEFAULT_RECONNECT);
+        mHandler.removeCallbacks(mConnectRunnable);
+        mHandler.postDelayed(mConnectRunnable, Constant.DEFAULT_RECONNECT);
     }
+
+    private void resetPingPong() {
+        mHandler.removeCallbacks(mPingPongRunnable);
+        mHandler.postDelayed(mPingPongRunnable, Constant.DEFAULT_PING_PONG);
+    }
+
+    private Runnable mConnectRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (null == mSocket || mSocket.isClosed()) {
+                LogUtils.print("reconnect");
+
+                close(false);
+                new InitSocket().start();
+            }
+        }
+    };
+
+    private Runnable mRetryRunnable = new Runnable() {
+        @Override
+        public void run() {
+            LogUtils.print("retry send msg:" + mCacheQueue.size());
+
+            Iterator<Entry<String, MessageData>> iterator = mCacheQueue.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Entry<String, MessageData> entry = iterator.next();
+                MessageData msg = entry.getValue();
+                if (msg.canRetry()) {
+                    mSendQueue.add(msg);
+                    msg.retry();
+                } else {
+                    msg.callBack(false, "No response error: " + msg.cmd());
+                }
+                iterator.remove();
+            }
+
+            mHandler.postDelayed(mRetryRunnable, Constant.DEFAULT_RETRY_INTERVAL);
+        }
+    };
+
+    private Runnable mPingPongRunnable = new Runnable() {
+        @Override
+        public void run() {
+            send(mPingPong);
+            LogUtils.print("send PingPong");
+
+            resetPingPong();
+        }
+    };
 
     private SocketIO(String domain, int port,
                      IHeaderResolver headerResolver,
                      IHeaderAssemble headerAssemble,
-                     Map<Byte, CmdResolver> resolver,
-                     List<MessageData> msg,
+                     SparseArray<CmdResolver> resolver,
+                     List<MessageData> autoSendMsg,
                      MessageData pingPong) {
         mDomain = domain;
         mPort = port;
         mHeaderResolver = headerResolver;
         mHeaderAssemble = headerAssemble;
         mResolver = resolver;
-        mDefaultMsg = msg;
+        mAutoSendMsg = autoSendMsg;
         mPingPong = pingPong;
 
+        // 发送连上需要先发的消息
+        mSendQueue.addAll(mAutoSendMsg);
         new InitSocket().start();
     }
 
-    private void sendDefaultMsg() {
-        for (MessageData msg : mDefaultMsg) {
-            send(msg);
-        }
-    }
-
-    class InitSocket extends Thread {
+    private class InitSocket extends Thread {
         @Override
         public void run() {
-            System.out.println(">>>>start " + System.currentTimeMillis());
+            LogUtils.print("connect start：" + System.currentTimeMillis());
             try {
                 mSocket = new Socket(mDomain, mPort);
 
-                // 接收
+                // 接收线程
                 mReceiverWorker = new ReceiverWorker(mHeaderResolver, mSocket, mSocket.getInputStream());
                 mReceiverWorker.start();
 
-                // 发送
+                // 发送线程
                 mSenderWorker = new SenderWorker(mSendQueue, mHeaderAssemble, mSocket, mSocket.getOutputStream());
                 mSenderWorker.start();
 
-                // 重试
-                mExecutor.scheduleAtFixedRate(new RetryTask(), 0, Constant.DEFAULT_RETRY, TimeUnit.MILLISECONDS);
+                // 失败重试
+                mHandler.postDelayed(mRetryRunnable, Constant.DEFAULT_RETRY_INTERVAL);
 
-                // 心跳 // TODO: 2017/9/27
-                if(null != mPingPong){
-                    mExecutor.scheduleAtFixedRate(new PingPongTask(), 0, Constant.DEFAULT_PING_PONG, TimeUnit.MILLISECONDS);
+                // 发送链接建立后需要先发的消息
+                if (isAutoSendMsg) {
+                    mSendQueue.addAll(mAutoSendMsg);
                 }
+                isAutoSendMsg = true;
 
-                sendDefaultMsg();
+                // 心跳
+                if (null != mPingPong) {
+                    mHandler.postDelayed(mPingPongRunnable, Constant.DEFAULT_PING_PONG);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
 
                 reconnect();
             }
-            System.out.println(">>>>end  " + System.currentTimeMillis());
+            LogUtils.print("connect   end：" + System.currentTimeMillis());
         }
     }
 
-    public void setDebug(boolean isDebug) {
-        mDebug = isDebug;
-    }
-
     public void close(boolean exit) {
-//        mExecutor.shutdown(); // TODO: 2017/9/27
-//        mTimer.cancel(); // TODO: 2017/9/27
+        mHandler.removeCallbacksAndMessages(null);
 
         if (null != mSenderWorker) {
             mSenderWorker.quit();
@@ -164,14 +199,18 @@ public class SocketIO {
             }
 
             if (mCacheQueue.size() > 0) {
-                for (MessageData msg : mCacheQueue) {
-                    msg.callBack(false, "");
+                for (Entry<String, MessageData> entry : mCacheQueue.entrySet()) {
+                    entry.getValue().callBack(false, "Exit reconnect");
                 }
-                mCacheQueue.clear();
             }
         }
     }
 
+    /**
+     * 发送数据
+     *
+     * @param data 消息
+     */
     public void send(MessageData data) {
         if (null == data) {
             return;
@@ -183,30 +222,7 @@ public class SocketIO {
         }
     }
 
-    class RetryTask extends TimerTask {
-
-        @Override
-        public void run() {
-            try {
-                while (mCacheQueue.size() > 0) {
-                    MessageData msg = mCacheQueue.take();
-                    mSendQueue.add(msg);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    class PingPongTask extends TimerTask {
-
-        @Override
-        public void run() {
-            send(mPingPong);
-        }
-    }
-
-    class SenderWorker extends BaseThread {
+    private class SenderWorker extends BaseThread {
         private Socket mSocket;
         private OutputStream mOut;
 
@@ -215,7 +231,8 @@ public class SocketIO {
 
         public SenderWorker(BlockingQueue<MessageData> sendQueue,
                             IHeaderAssemble assemble,
-                            Socket socket, OutputStream out) {
+                            Socket socket,
+                            OutputStream out) {
             mSendQueue = sendQueue;
             mHeaderAssemble = assemble;
             mSocket = socket;
@@ -224,30 +241,34 @@ public class SocketIO {
 
         @Override
         public void run() {
-            MessageData data = null;
+            MessageData msg;
             while (true) {
                 try {
-                    data = mSendQueue.take();
+                    msg = mSendQueue.take();
+
+                    LogUtils.print("Send msg:" + msg.cmd() + " " + new String(msg.getData()));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+
+                    LogUtils.print("Interrupted when end msg");
                     return; // 被中断就返回
                 }
 
                 try {
-                    byte[] result = mHeaderAssemble.setData(data);
+                    byte[] data = mHeaderAssemble.assemble(msg);
 
-                    mOut.write(result);
+                    mOut.write(data);
                     mOut.flush();
 
-                    if (data.needFeedback()) {
-                        mCacheQueue.add(data);
+                    if (msg.needFeedback()) {
+                        mCacheQueue.put(msg.getKey(), msg);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
 
-                    if (null != data) {
-                        mSendQueue.add(data);
-                    }
+                    LogUtils.print("OutputStream closed reconnect");
+
+                    mSendQueue.add(msg);
 
                     try {
                         mSocket.close();
@@ -262,7 +283,7 @@ public class SocketIO {
         }
     }
 
-    class ReceiverWorker extends BaseThread {
+    private class ReceiverWorker extends BaseThread {
         private static final int BUFFER_SIZE = 1024 * 64; // TODO: 2017/9/9 最大的包
 
         private IHeaderResolver mHeader;
@@ -298,8 +319,12 @@ public class SocketIO {
                     if (size == -1 || size < bodyLength) {
                         throw new IOException("Body read error!");
                     }
+
+                    LogUtils.print("Read msg package:" + mHeader.getCmd());
                 } catch (IOException e) {
                     e.printStackTrace();
+
+                    LogUtils.print("InputStream closed error:" + e.getMessage());
 
                     try {
                         mSocket.close();
@@ -312,24 +337,27 @@ public class SocketIO {
                     return;
                 }
 
-                CmdResolver resolver = mResolver.get(mHeader.getCmd());
-                if (null != resolver) {
-                    byte[] data = new byte[bodyLength];
-                    System.arraycopy(mBuffer, 0, data, 0, bodyLength);
-                    byte[] originData = AESUtils.decode(data);
-                    resolver.callBack(originData, SocketIO.this);
+                resetPingPong();
 
-                    String msgID = resolver.finish();
-                    if (!TextUtils.isEmpty(msgID)) {
-                        for (MessageData msg : mCacheQueue) {
-                            if (msgID.equals(msg.getKey())) {
-                                mCacheQueue.remove(msg);
-                            }
-                        }
-                    }
+                byte[] data = new byte[bodyLength];
+                System.arraycopy(mBuffer, 0, data, 0, bodyLength);
+                byte[] originData = AESUtils.decode(data);
+                String bodyString = new String(originData, Constant.DEFAULT_CHARSET);
+
+                LogUtils.print("Receive: " + mHeader.getCmd() + " : " + bodyString);
+
+                // 需要回调的消息
+                String msgKey = mHeader.getMsgKey();
+                MessageData msg = mCacheQueue.remove(msgKey);
+                if (null != msg) {
+                    msg.callBack(true, bodyString);
+                }
+
+                CmdResolver resolver = mResolver.get(mHeader.getCmd());
+                if (null != resolver) { // 默认处理的协议
+                    resolver.callBack(bodyString, SocketIO.this);
                 } else {
                     // TODO: 2017/9/20 send broadcast
-
                 }
 
                 if (isQuit()) {
@@ -340,7 +368,7 @@ public class SocketIO {
     }
 
     public static final class Builder {
-        private Map<Byte, CmdResolver> mResolver = new HashMap<>(); // 同构命令字
+        private SparseArray<CmdResolver> mResolver = new SparseArray<>();// 同构命令字
         private List<MessageData> mDefaultMsg = new LinkedList<>(); // 重连后默认发送
         private MessageData mPingPong;
 
@@ -370,7 +398,7 @@ public class SocketIO {
             return this;
         }
 
-        public Builder addPingPongMsg(MessageData pingPong){
+        public Builder addPingPongMsg(MessageData pingPong) {
             mPingPong = pingPong;
             return this;
         }

@@ -16,9 +16,5 @@ public abstract class CmdResolver<T> {
      */
     public abstract byte cmd();
 
-    public abstract T callBack(byte[] data, SocketIO client);
-
-    public String finish() {
-        return "";
-    }
+    public abstract T callBack(String data, SocketIO client);
 }

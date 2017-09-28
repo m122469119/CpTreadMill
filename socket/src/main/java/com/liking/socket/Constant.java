@@ -18,10 +18,11 @@ public class Constant {
     public static final short APP_ID = 10001;
 
     public static final int DEFAULT_RECONNECT = 3 * 1000; // 错误重连间隔
-    public static final int DEFAULT_RETRY = 3 * 1000; // 错误重试间隔
+    public static final int DEFAULT_RETRY_INTERVAL = 3 * 1000; // 错误重试间隔
     public static final int DEFAULT_PING_PONG = 60 * 1000; // 心跳间隔 60s
+    public static final int DEFAULT_MSG_RETRY_TIME = 3; // 错误重试次数
 
-    public static final int SENDER_QUEUE_SIZE = 20;
+    public static final int SENDER_QUEUE_SIZE = 50; // 发送队列大小
     public static final int HEADER_SIZE = 4;
 
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;

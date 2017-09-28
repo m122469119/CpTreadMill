@@ -18,11 +18,10 @@ public class PingPong extends CmdResolver<String> {
     }
 
     @Override
-    public String callBack(byte[] data,  SocketIO client) {
-        String result = new String(data, Constant.DEFAULT_CHARSET);
-        System.out.println("*******************" + result);
+    public String callBack(String data,  SocketIO client) {
+        System.out.println("*******************" + data);
         // sendResponse(sender); // TODO: 2017/9/26
-        return result;
+        return data;
     }
 
     /**

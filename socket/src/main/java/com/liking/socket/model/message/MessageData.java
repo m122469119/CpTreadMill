@@ -21,7 +21,7 @@ public abstract class MessageData {
     /**
      * 重试次数
      */
-    private int mRetryTime;
+    private int mRetryTime = Constant.DEFAULT_MSG_RETRY_TIME;
 
     public boolean canRetry() {
         return mRetryTime > 0;

@@ -17,9 +17,8 @@ public class QRCode extends CmdResolver<String> {
     }
 
     @Override
-    public String callBack(byte[] data, SocketIO sender) {
-        String result = new String(data, Constant.DEFAULT_CHARSET);
-        System.out.println(">>>>>>>>>>>>" + result);
-        return result;
+    public String callBack(String data, SocketIO sender) {
+        System.out.println(">>>>>>>>>>>>" + data);
+        return data;
     }
 }

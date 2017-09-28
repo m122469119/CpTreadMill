@@ -8,5 +8,11 @@ import com.liking.socket.model.message.MessageData;
  * https://github.com/ttdevs
  */
 public interface IHeaderAssemble {
-    byte[] setData(MessageData data);
+    /**
+     * 根据MessageData，构造Header
+     *
+     * @param data
+     * @return
+     */
+    byte[] assemble(MessageData data);
 }

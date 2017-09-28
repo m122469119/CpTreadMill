@@ -7,7 +7,7 @@ import com.liking.socket.utils.ResolverUtils;
  * 2017-09-18 (Socket)
  * https://github.com/ttdevs
  */
-public class HeaderResolver extends IHeaderResolver {
+public class HeaderResolver implements IHeaderResolver {
     private int mPkgSize;
     private String mProtocolVer;
     private short mAppID;
@@ -17,13 +17,28 @@ public class HeaderResolver extends IHeaderResolver {
     private byte mCmd;
 
     @Override
+    public byte getCmd() {
+        return mCmd;
+    }
+
+    @Override
     public int headerLength() {
         return ResolverUtils.getHeaderLength();
     }
 
     @Override
+    public int bodyLength() {
+        return mPkgSize - ResolverUtils.INDEX_DATA + ResolverUtils.INDEX_PROTOCOL_VERSION;
+    }
+
+    @Override
+    public String getMsgKey() {
+        return String.valueOf(mMsgID);
+    }
+
+    @Override
     public void resolver(byte[] buffer) {
-        mPkgSize = ResolverUtils.parsePkgSize(buffer) ;
+        mPkgSize = ResolverUtils.parsePkgSize(buffer);
         mProtocolVer = ResolverUtils.parseProtocolVersion(buffer);
         mAppID = ResolverUtils.parseAppID(buffer);
         mAppVersion = ResolverUtils.parseAppVersion(buffer);
@@ -32,10 +47,6 @@ public class HeaderResolver extends IHeaderResolver {
         mCmd = ResolverUtils.parseCmd(buffer);
     }
 
-    @Override
-    public int bodyLength() {
-        return mPkgSize - ResolverUtils.INDEX_DATA + ResolverUtils.INDEX_PROTOCOL_VERSION;
-    }
 
     public int getPkgSize() {
         return mPkgSize;
@@ -50,7 +61,6 @@ public class HeaderResolver extends IHeaderResolver {
     }
 
     public String getAppVersion() {
-        // TODO: 2017/9/19
         return mAppVersion;
     }
 
@@ -60,10 +70,5 @@ public class HeaderResolver extends IHeaderResolver {
 
     public byte[] getSign() {
         return mSign;
-    }
-
-    @Override
-    public byte getCmd() {
-        return mCmd;
     }
 }

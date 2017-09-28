@@ -12,7 +12,7 @@ public class LogUtils {
 
     public static void print(String msg) {
         if(isShowLog){
-            System.out.println(Process.myPid() + ">>>>>" + msg);
+            System.out.println(Thread.currentThread().getId() + ">>>>>>>>>>" + msg);
         }
     }
 }

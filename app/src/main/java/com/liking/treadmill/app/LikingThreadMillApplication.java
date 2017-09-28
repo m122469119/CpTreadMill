@@ -93,7 +93,7 @@ public class LikingThreadMillApplication extends BaseApplication {
     }
 
     private MessageData getDeviceInfo() {
-        return null; // TODO: 2017/9/28  
+        return null; // TODO: 2017/9/28
     }
 
     private String HOST = EnvironmentUtils.Config.isDebugMode() ? "120.24.177.134" : "120.24.177.134";

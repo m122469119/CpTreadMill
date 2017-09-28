@@ -17,7 +17,7 @@ public class HeaderAssemble implements IHeaderAssemble {
     private static SnowflakeIdWorker mIDWorker = new SnowflakeIdWorker(0, 0);
 
     @Override
-    public byte[] setData(MessageData msg) {
+    public byte[] assemble(MessageData msg) {
         byte cmd = msg.cmd();
         byte[] data = AESUtils.encode(msg.getData());
         if (null == data) {
@@ -45,15 +45,14 @@ public class HeaderAssemble implements IHeaderAssemble {
                 ResolverUtils.INDEX_APP_ID,
                 ResolverUtils.INDEX_APP_VERSION - ResolverUtils.INDEX_APP_ID);
 
-//        byte[] version = Constant.APP_VERSION.replace(".", "").getBytes();
-        byte[] version = new byte[]{0x01, 0x00, 0x00};
+        byte[] version = new byte[]{0x01, 0x00, 0x00}; // TODO: 2017/9/28
         System.arraycopy(version, 0, result,
                 ResolverUtils.INDEX_APP_VERSION,
                 ResolverUtils.INDEX_MESSAGE_ID - ResolverUtils.INDEX_APP_VERSION);
 
         long msgIDLong = mIDWorker.nextId();
         String msgIDStr = String.valueOf(msgIDLong);
-        msg.setKey(msgIDStr);
+        msg.setKey(msgIDStr); // 区分消息的KEY，用msgID
         byte[] msgID = ResolverUtils.long2ByteArray(msgIDLong);
         System.arraycopy(msgID, 0, result,
                 ResolverUtils.INDEX_MESSAGE_ID,
