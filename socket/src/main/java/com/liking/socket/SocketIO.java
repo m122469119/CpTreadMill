@@ -1,7 +1,11 @@
 package com.liking.socket;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.SparseArray;
 
 import com.liking.socket.model.IHeaderAssemble;
@@ -43,6 +47,8 @@ public class SocketIO {
     private String mDomain;
     private int mPort;
 
+    private Context mContext;
+
     private IHeaderAssemble mHeaderAssemble;
     private IHeaderResolver mHeaderResolver;
 
@@ -54,11 +60,46 @@ public class SocketIO {
     private ReceiverWorker mReceiverWorker;
     private SenderWorker mSenderWorker;
 
-    private boolean isAutoSendMsg;
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case Constant.HANDLER_MSG:
+                    handlerMsg(msg.getData());
+                    break;
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+                default:
+                    break;
+            }
+        }
+    };
+
+    private void handlerMsg(Bundle bundle){
+        byte cmd = bundle.getByte(Constant.ACTION_CMD);
+        String msgKey = bundle.getString(Constant.ACTION_KEY);
+        String body = bundle.getString(Constant.ACTION_DATA);
+
+        MessageData msgData = mCacheQueue.remove(msgKey);
+        if (null != msgData) {
+            msgData.callBack(true, body);
+        }
+
+        CmdResolver resolver = mResolver.get(cmd);
+        if (null != resolver) { // 默认处理的协议
+            resolver.callBack(body, SocketIO.this);
+        } else {
+            LogUtils.print("Send Broadcast: " + cmd + " " + body);
+
+            Intent intent = new Intent(Constant.ACTION_MSG);
+            intent.putExtra(Constant.ACTION_KEY, cmd);
+            intent.putExtra(Constant.ACTION_DATA, body);
+            mContext.sendBroadcast(intent);
+        }
+    }
 
     private void reconnect() {
+        resetPingPong();
+
         mHandler.removeCallbacks(mConnectRunnable);
         mHandler.postDelayed(mConnectRunnable, Constant.DEFAULT_RECONNECT);
     }
@@ -66,6 +107,11 @@ public class SocketIO {
     private void resetPingPong() {
         mHandler.removeCallbacks(mPingPongRunnable);
         mHandler.postDelayed(mPingPongRunnable, Constant.DEFAULT_PING_PONG);
+    }
+
+    private void resetRetry() {
+        mHandler.removeCallbacks(mRetryRunnable);
+        mHandler.postDelayed(mRetryRunnable, Constant.DEFAULT_RETRY_INTERVAL);
     }
 
     private Runnable mConnectRunnable = new Runnable() {
@@ -83,7 +129,9 @@ public class SocketIO {
     private Runnable mRetryRunnable = new Runnable() {
         @Override
         public void run() {
-            LogUtils.print("retry send msg:" + mCacheQueue.size());
+            if (mCacheQueue.size() > 0) {
+                LogUtils.print("retry send msg:" + mCacheQueue.size());
+            }
 
             Iterator<Entry<String, MessageData>> iterator = mCacheQueue.entrySet().iterator();
             while (iterator.hasNext()) {
@@ -106,13 +154,13 @@ public class SocketIO {
         @Override
         public void run() {
             send(mPingPong);
-            LogUtils.print("send PingPong");
 
             resetPingPong();
         }
     };
 
     private SocketIO(String domain, int port,
+                     Context context,
                      IHeaderResolver headerResolver,
                      IHeaderAssemble headerAssemble,
                      SparseArray<CmdResolver> resolver,
@@ -120,6 +168,7 @@ public class SocketIO {
                      MessageData pingPong) {
         mDomain = domain;
         mPort = port;
+        mContext = context;
         mHeaderResolver = headerResolver;
         mHeaderAssemble = headerAssemble;
         mResolver = resolver;
@@ -146,18 +195,16 @@ public class SocketIO {
                 mSenderWorker = new SenderWorker(mSendQueue, mHeaderAssemble, mSocket, mSocket.getOutputStream());
                 mSenderWorker.start();
 
-                // 失败重试
-                mHandler.postDelayed(mRetryRunnable, Constant.DEFAULT_RETRY_INTERVAL);
-
                 // 发送链接建立后需要先发的消息
-                if (isAutoSendMsg) {
-                    mSendQueue.addAll(mAutoSendMsg);
-                }
-                isAutoSendMsg = true;
+                mSendQueue.clear(); // TODO: 2017/9/29
+                mSendQueue.addAll(mAutoSendMsg);
+
+                // 失败重试
+                resetRetry();
 
                 // 心跳
                 if (null != mPingPong) {
-                    mHandler.postDelayed(mPingPongRunnable, Constant.DEFAULT_PING_PONG);
+                    resetPingPong();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -268,7 +315,9 @@ public class SocketIO {
 
                     LogUtils.print("OutputStream closed reconnect");
 
-                    mSendQueue.add(msg);
+                    if(Constant.CMD_PING_PONG != msg.cmd()){
+                        mCacheQueue.put(msg.getKey(), msg);
+                    }
 
                     try {
                         mSocket.close();
@@ -319,8 +368,6 @@ public class SocketIO {
                     if (size == -1 || size < bodyLength) {
                         throw new IOException("Body read error!");
                     }
-
-                    LogUtils.print("Read msg package:" + mHeader.getCmd());
                 } catch (IOException e) {
                     e.printStackTrace();
 
@@ -342,23 +389,17 @@ public class SocketIO {
                 byte[] data = new byte[bodyLength];
                 System.arraycopy(mBuffer, 0, data, 0, bodyLength);
                 byte[] originData = AESUtils.decode(data);
-                String bodyString = new String(originData, Constant.DEFAULT_CHARSET);
+                final String bodyString = new String(originData, Constant.DEFAULT_CHARSET);
 
-                LogUtils.print("Receive: " + mHeader.getCmd() + " : " + bodyString);
+                LogUtils.print("Receive: " + mHeader.getCmd() + " " + bodyString);
 
-                // 需要回调的消息
-                String msgKey = mHeader.getMsgKey();
-                MessageData msg = mCacheQueue.remove(msgKey);
-                if (null != msg) {
-                    msg.callBack(true, bodyString);
-                }
-
-                CmdResolver resolver = mResolver.get(mHeader.getCmd());
-                if (null != resolver) { // 默认处理的协议
-                    resolver.callBack(bodyString, SocketIO.this);
-                } else {
-                    // TODO: 2017/9/20 send broadcast
-                }
+                Message msg = mHandler.obtainMessage();
+                msg.what = Constant.HANDLER_MSG;
+                Bundle bundle = msg.getData();
+                bundle.putByte(Constant.ACTION_CMD, mHeader.getCmd());
+                bundle.putCharSequence(Constant.ACTION_KEY, mHeader.getMsgKey());
+                bundle.putCharSequence(Constant.ACTION_DATA, bodyString);
+                mHandler.sendMessage(msg);
 
                 if (isQuit()) {
                     return;
@@ -377,6 +418,8 @@ public class SocketIO {
 
         private IHeaderResolver mHeaderResolver;
         private IHeaderAssemble mHeaderAssemble;
+
+        private Context mContext;
 
         public Builder() {
 
@@ -417,6 +460,11 @@ public class SocketIO {
             return this;
         }
 
+        public Builder bind(Context context) {
+            mContext = context;
+            return this;
+        }
+
         public SocketIO build() {
             if (null == mDomain) {
                 throw new IllegalStateException("IP is required.");
@@ -424,6 +472,10 @@ public class SocketIO {
 
             if (mPort <= 0) {
                 throw new IllegalStateException("Port is required.");
+            }
+
+            if (null == mContext) {
+                throw new IllegalStateException("Context is required.");
             }
 
             if (null == mHeaderResolver) {
@@ -435,6 +487,7 @@ public class SocketIO {
             }
 
             return new SocketIO(mDomain, mPort,
+                    mContext,
                     mHeaderResolver, mHeaderAssemble,
                     mResolver,
                     mDefaultMsg,

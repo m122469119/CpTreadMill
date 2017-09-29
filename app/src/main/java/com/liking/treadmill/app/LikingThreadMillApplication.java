@@ -84,6 +84,7 @@ public class LikingThreadMillApplication extends BaseApplication {
     private void initSocket() {
         SocketIO.Builder builder = new SocketIO.Builder();
         builder.connect(HOST, PORT);
+        builder.bind(this);
         builder.headerAssemble(new HeaderAssemble());
         builder.headerResolver(new HeaderResolver());
         builder.addDefaultParse(new PingPong());

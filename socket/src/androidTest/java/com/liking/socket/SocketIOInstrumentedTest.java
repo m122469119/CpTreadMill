@@ -1,5 +1,7 @@
 package com.liking.socket;
 
+import android.content.Context;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.liking.socket.model.HeaderAssemble;
@@ -32,9 +34,12 @@ public class SocketIOInstrumentedTest {
 
     @Before
     public void setUp() {
+        Context context = InstrumentationRegistry.getTargetContext();
+
         SocketIO.Builder builder = new SocketIO.Builder();
 //        builder.connect("192.168.2.2", 17919);
         builder.connect("120.24.177.134", 17919);
+        builder.bind(context);
         builder.headerAssemble(new HeaderAssemble());
         builder.headerResolver(new HeaderResolver());
         builder.addDefaultParse(new PingPong());
@@ -43,35 +48,11 @@ public class SocketIOInstrumentedTest {
         mClient = builder.build();
     }
 
-//    @Test
-//    public void testNoFeedback() throws Exception {
-//        final CountDownLatch downLatch = new CountDownLatch(1);
-//        mClient.send(new MessageData() {
-//            @Override
-//            public byte cmd() {
-//                return CMD_LOGIN;
-//            }
-//
-//            @Override
-//            public byte[] getData() {
-//                JSONObject object = new JSONObject();
-//                try {
-//                    object.put("gym_id", "a0000001");
-//                    object.put("device_id", "ttdevs");
-//                    object.put("bracelet_id", "ttdevs");
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//                return object.toString().getBytes();
-//            }
-//        });
-//        downLatch.await();
-//    }
-
     @Test
     public void testNeedFeedback() throws Exception {
-        final CountDownLatch downLatch = new CountDownLatch(2);
-        mClient.send(new MessageData() {
+        int count = 10;
+        final CountDownLatch downLatch = new CountDownLatch(count + 1);
+        MessageData msg = new MessageData() {
             @Override
             public byte cmd() {
                 return CMD_LOGIN;
@@ -97,48 +78,15 @@ public class SocketIOInstrumentedTest {
 
             @Override
             public void callBack(boolean isSuccess, String message) {
-                System.out.println(">>>>>>>>>>" + message);
+                System.out.println(">>>>>>>>>>callback: " + message);
 
                 downLatch.countDown();
             }
-        });
-        downLatch.await();
-    }
-
-    @Test
-    public void testSocketClient() throws Exception {
-        final CountDownLatch downLatch = new CountDownLatch(2);
-        mClient.send(new MessageData() {
-            @Override
-            public byte cmd() {
-                return CMD_LOGIN;
-            }
-
-            @Override
-            public byte[] getData() {
-                JSONObject object = new JSONObject();
-                try {
-                    object.put("gym_id", "a0000001");
-                    object.put("device_id", "ttdevs");
-                    object.put("bracelet_id", "ttdevs");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return object.toString().getBytes();
-            }
-
-            @Override
-            public boolean needFeedback() {
-                return true;
-            }
-
-            @Override
-            public void callBack(boolean isSuccess, String message) {
-                System.out.println(">>>>>" + message);
-
-                downLatch.countDown();
-            }
-        });
+        };
+        Thread.sleep(3000);
+        for (int i = 0; i < count; i++) {
+            mClient.send(msg);
+        }
         downLatch.await();
     }
 
