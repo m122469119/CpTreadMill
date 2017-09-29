@@ -1,6 +1,7 @@
 package com.liking.socket.model.message;
 
 import com.liking.socket.Constant;
+import com.liking.socket.utils.SnowflakeIdWorker;
 
 /**
  * Created by ttdevs
@@ -8,6 +9,8 @@ import com.liking.socket.Constant;
  * https://github.com/ttdevs
  */
 public abstract class MessageData {
+
+    private static SnowflakeIdWorker mIDWorker = new SnowflakeIdWorker(0, 0);
 
     /**
      * 命令字
@@ -17,7 +20,25 @@ public abstract class MessageData {
     /**
      * 消息ID，facebook算法
      */
-    private int mMsgId;
+    private long mMsgId;
+
+    public long getMsgId() {
+        if (mMsgId == 0) {
+            mMsgId = mIDWorker.nextId();
+        }
+        return mMsgId;
+    }
+
+    private long mSrcMsgId;
+
+    public long getSrcMsgId() {
+        return mSrcMsgId;
+    }
+
+    public void setSrcMsgId(long srcMsgId) {
+        mSrcMsgId = srcMsgId;
+    }
+
     /**
      * 重试次数
      */
@@ -29,16 +50,6 @@ public abstract class MessageData {
 
     public void retry() {
         mRetryTime--;
-    }
-
-    private String mKey;
-
-    public void setKey(String key) {
-        mKey = key;
-    }
-
-    public String getKey() {
-        return mKey;
     }
 
     private byte[] mData;

@@ -9,27 +9,23 @@ import org.json.JSONObject;
 
 /**
  * Created by ttdevs
- * 2017-09-26 (Socket)
+ * 2017-09-29 (Socket)
  * https://github.com/ttdevs
  */
-public class FeedBack extends CmdResolver<String> {
-    private long mMsgID;
-
+public class Timestamp extends CmdResolver<String> {
     @Override
     public byte cmd() {
-        return Constant.CMD_FEEDBACK;
+        return Constant.CMD_TIMESTAMP;
     }
 
     @Override
     public String callBack(String data, SocketIO client) {
-        // {"msg_id":"2072072300","device_id":"2072072300"}
-        JSONObject feedback = null;
+        JSONObject timestamp = null;
         try {
-            feedback = new JSONObject(data);
-            mMsgID = feedback.optLong("msg_id");
+            timestamp = new JSONObject(data);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return String.valueOf(mMsgID);
+        return timestamp.toString();
     }
 }

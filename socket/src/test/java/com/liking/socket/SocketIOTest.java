@@ -2,7 +2,6 @@ package com.liking.socket;
 
 import com.liking.socket.model.HeaderAssemble;
 import com.liking.socket.model.HeaderResolver;
-import com.liking.socket.resolver.PingPong;
 
 import org.junit.After;
 import org.junit.Before;

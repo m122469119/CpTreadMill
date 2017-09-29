@@ -42,7 +42,7 @@ public class SocketIO {
     /**
      * 缓存队列
      */
-    private HashMap<String, MessageData> mCacheQueue = new LinkedHashMap<>(Constant.SENDER_QUEUE_SIZE);
+    private HashMap<Long, MessageData> mCacheQueue = new LinkedHashMap<>(Constant.SENDER_QUEUE_SIZE);
 
     private String mDomain;
     private int mPort;
@@ -63,7 +63,7 @@ public class SocketIO {
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case Constant.HANDLER_MSG:
                     handlerMsg(msg.getData());
                     break;
@@ -74,26 +74,29 @@ public class SocketIO {
         }
     };
 
-    private void handlerMsg(Bundle bundle){
-        byte cmd = bundle.getByte(Constant.ACTION_CMD);
-        String msgKey = bundle.getString(Constant.ACTION_KEY);
-        String body = bundle.getString(Constant.ACTION_DATA);
+    private void handlerMsg(Bundle bundle) {
+        byte cmd = bundle.getByte(Constant.KEY_MSG_CMD);
+        long msgID = bundle.getLong(Constant.KEY_MSG_ID);
+        long srcMsgID = bundle.getLong(Constant.KEY_MSG_ID_SRC);
+        String body = bundle.getString(Constant.KEY_MSG_DATA);
 
-        MessageData msgData = mCacheQueue.remove(msgKey);
+        MessageData msgData = mCacheQueue.remove(srcMsgID);
         if (null != msgData) {
             msgData.callBack(true, body);
-        }
-
-        CmdResolver resolver = mResolver.get(cmd);
-        if (null != resolver) { // 默认处理的协议
-            resolver.callBack(body, SocketIO.this);
         } else {
-            LogUtils.print("Send Broadcast: " + cmd + " " + body);
+            CmdResolver resolver = mResolver.get(cmd);
+            if (null != resolver) { // 默认处理的协议
+                resolver.callBack(body, SocketIO.this);
+            } else {
+                LogUtils.print("Send Broadcast: " + cmd + " " + body);
 
-            Intent intent = new Intent(Constant.ACTION_MSG);
-            intent.putExtra(Constant.ACTION_KEY, cmd);
-            intent.putExtra(Constant.ACTION_DATA, body);
-            mContext.sendBroadcast(intent);
+                Intent intent = new Intent(Constant.ACTION_MSG);
+                intent.putExtra(Constant.KEY_MSG_CMD, cmd);
+                intent.putExtra(Constant.KEY_MSG_ID, msgID);
+                intent.putExtra(Constant.KEY_MSG_ID_SRC, srcMsgID);
+                intent.putExtra(Constant.KEY_MSG_DATA, body);
+                mContext.sendBroadcast(intent);
+            }
         }
     }
 
@@ -121,6 +124,16 @@ public class SocketIO {
                 LogUtils.print("reconnect");
 
                 close(false);
+
+                while (mSendQueue.size() > 0) {
+                    try {
+                        MessageData msg = mSendQueue.take();
+                        mCacheQueue.put(msg.getMsgId(), msg);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 new InitSocket().start();
             }
         }
@@ -131,19 +144,19 @@ public class SocketIO {
         public void run() {
             if (mCacheQueue.size() > 0) {
                 LogUtils.print("retry send msg:" + mCacheQueue.size());
-            }
 
-            Iterator<Entry<String, MessageData>> iterator = mCacheQueue.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Entry<String, MessageData> entry = iterator.next();
-                MessageData msg = entry.getValue();
-                if (msg.canRetry()) {
-                    mSendQueue.add(msg);
-                    msg.retry();
-                } else {
-                    msg.callBack(false, "No response error: " + msg.cmd());
+                Iterator<Entry<Long, MessageData>> iterator = mCacheQueue.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Entry<Long, MessageData> entry = iterator.next();
+                    MessageData msg = entry.getValue();
+                    if (msg.canRetry()) {
+                        mSendQueue.add(msg);
+                        msg.retry();
+                    } else {
+                        msg.callBack(false, "No response error: " + msg.cmd());
+                    }
+                    iterator.remove();
                 }
-                iterator.remove();
             }
 
             mHandler.postDelayed(mRetryRunnable, Constant.DEFAULT_RETRY_INTERVAL);
@@ -175,9 +188,7 @@ public class SocketIO {
         mAutoSendMsg = autoSendMsg;
         mPingPong = pingPong;
 
-        // 发送连上需要先发的消息
-        mSendQueue.addAll(mAutoSendMsg);
-        new InitSocket().start();
+        mHandler.post(mConnectRunnable);
     }
 
     private class InitSocket extends Thread {
@@ -196,7 +207,6 @@ public class SocketIO {
                 mSenderWorker.start();
 
                 // 发送链接建立后需要先发的消息
-                mSendQueue.clear(); // TODO: 2017/9/29
                 mSendQueue.addAll(mAutoSendMsg);
 
                 // 失败重试
@@ -246,7 +256,7 @@ public class SocketIO {
             }
 
             if (mCacheQueue.size() > 0) {
-                for (Entry<String, MessageData> entry : mCacheQueue.entrySet()) {
+                for (Entry<Long, MessageData> entry : mCacheQueue.entrySet()) {
                     entry.getValue().callBack(false, "Exit reconnect");
                 }
             }
@@ -293,7 +303,7 @@ public class SocketIO {
                 try {
                     msg = mSendQueue.take();
 
-                    LogUtils.print("Send msg:" + msg.cmd() + " " + new String(msg.getData()));
+                    LogUtils.print("Send msg:" + msg.cmd() + " " + msg.getMsgId() + " " + new String(msg.getData()));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
 
@@ -308,15 +318,15 @@ public class SocketIO {
                     mOut.flush();
 
                     if (msg.needFeedback()) {
-                        mCacheQueue.put(msg.getKey(), msg);
+                        mCacheQueue.put(msg.getMsgId(), msg);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
 
                     LogUtils.print("OutputStream closed reconnect");
 
-                    if(Constant.CMD_PING_PONG != msg.cmd()){
-                        mCacheQueue.put(msg.getKey(), msg);
+                    if (Constant.CMD_PING_PONG != msg.cmd()) { // 心跳不重试
+                        mCacheQueue.put(msg.getMsgId(), msg);
                     }
 
                     try {
@@ -389,16 +399,17 @@ public class SocketIO {
                 byte[] data = new byte[bodyLength];
                 System.arraycopy(mBuffer, 0, data, 0, bodyLength);
                 byte[] originData = AESUtils.decode(data);
-                final String bodyString = new String(originData, Constant.DEFAULT_CHARSET);
+                String bodyString = new String(originData, Constant.DEFAULT_CHARSET);
 
-                LogUtils.print("Receive: " + mHeader.getCmd() + " " + bodyString);
+                LogUtils.print("Receive: " + mHeader.getCmd() + " " + mHeader.getMsgID() + " " + mHeader.getSrcMsgID()+ " " + bodyString);
 
                 Message msg = mHandler.obtainMessage();
                 msg.what = Constant.HANDLER_MSG;
                 Bundle bundle = msg.getData();
-                bundle.putByte(Constant.ACTION_CMD, mHeader.getCmd());
-                bundle.putCharSequence(Constant.ACTION_KEY, mHeader.getMsgKey());
-                bundle.putCharSequence(Constant.ACTION_DATA, bodyString);
+                bundle.putByte(Constant.KEY_MSG_CMD, mHeader.getCmd());
+                bundle.putLong(Constant.KEY_MSG_ID, mHeader.getMsgID());
+                bundle.putLong(Constant.KEY_MSG_ID_SRC, mHeader.getSrcMsgID());
+                bundle.putCharSequence(Constant.KEY_MSG_DATA, bodyString);
                 mHandler.sendMessage(msg);
 
                 if (isQuit()) {

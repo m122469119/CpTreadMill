@@ -12,15 +12,15 @@ import java.util.Arrays;
  * https://github.com/ttdevs
  */
 public class ResolverUtils {
-
     public static final int INDEX_PACKAGE_LENGTH = 0;
     public static final int INDEX_PROTOCOL_VERSION = 4;
     public static final int INDEX_APP_ID = 8;
     public static final int INDEX_APP_VERSION = 10;
     public static final int INDEX_MESSAGE_ID = 13;
-    public static final int INDEX_CMD = 21;
-    public static final int INDEX_SIGN = 22;
-    public static final int INDEX_DATA = 42;
+    public static final int INDEX_MESSAGE_ID_SRC = 21;
+    public static final int INDEX_CMD = 29;
+    public static final int INDEX_SIGN = 30;
+    public static final int INDEX_DATA = 50;
 
     private static final int LENGTH_HEADER = INDEX_DATA;
 
@@ -28,14 +28,12 @@ public class ResolverUtils {
         return new byte[]{(byte) (value >>> 8), (byte) value};
     }
 
-    public static final byte[] int2ByteArray(int value) {
-        int size = Integer.SIZE / 8;
-        return ByteBuffer.allocate(size).putInt(value).array();
+    public static final byte[] int2ByteArray(int value) { // TODO: 2017/9/29  
+        return ByteBuffer.allocate(4).putInt(value).array();
     }
 
-    public static final byte[] long2ByteArray(long value) {
-        int size = Long.SIZE / 8;
-        return ByteBuffer.allocate(size).putLong(value).array();
+    public static final byte[] long2ByteArray(long value) { // TODO: 2017/9/29
+        return ByteBuffer.allocate(8).putLong(value).array();
     }
 
     /**
@@ -63,22 +61,11 @@ public class ResolverUtils {
                 (data[from + 3] & 0xFF);
     }
 
-    /**
-     * 解析8个字节成long
-     *
-     * @param data 数据源
-     * @param from 从from向后8个字节
-     * @return
-     */
-    public static long parseLong(byte[] data, int from) {
-        return (data[from] & 0xFF) << 56 |
-                (data[from + 1] & 0xFF) << 48 |
-                (data[from + 2] & 0xFF) << 40 |
-                (data[from + 3] & 0xFF) << 32 |
-                (data[from + 4] & 0xFF) << 24 |
-                (data[from + 5] & 0xFF) << 16 |
-                (data[from + 6] & 0xFF) << 8 |
-                (data[from + 7] & 0xFF);
+    public static long parseLong(byte[] data, int from) { // TODO: 2017/9/29  
+        ByteBuffer LONG_BUFFER = ByteBuffer.allocate(8); 
+        LONG_BUFFER.put(data, from, 8);
+        LONG_BUFFER.flip(); //need flip
+        return LONG_BUFFER.getLong();
     }
 
     /**
@@ -139,6 +126,10 @@ public class ResolverUtils {
         return parseLong(data, INDEX_MESSAGE_ID);
     }
 
+    public static long parseSrcMessageId(byte[] data) {
+        return parseLong(data, INDEX_MESSAGE_ID_SRC);
+    }
+
     /**
      * 命令字，1字节
      *
@@ -157,11 +148,8 @@ public class ResolverUtils {
      * @return
      */
     public static byte[] parseSign(byte[] data) {
-        int size = INDEX_DATA - INDEX_SIGN;
+        int size = INDEX_DATA - INDEX_SIGN; // TODO: 2017/9/29 Why not System.arraycopy
         return Arrays.copyOfRange(data, INDEX_SIGN, INDEX_SIGN + size);
-//        byte[] buffer = new byte[size];
-//        System.arraycopy(data, INDEX_SIGN, buffer, 0, size);
-//        return buffer;
     }
 
     /**

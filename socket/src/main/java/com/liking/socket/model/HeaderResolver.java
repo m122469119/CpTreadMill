@@ -13,6 +13,7 @@ public class HeaderResolver implements IHeaderResolver {
     private short mAppID;
     private String mAppVersion;
     private long mMsgID;
+    private long mSrcMsgID;
     private byte[] mSign;
     private byte mCmd;
 
@@ -32,8 +33,13 @@ public class HeaderResolver implements IHeaderResolver {
     }
 
     @Override
-    public String getMsgKey() {
-        return String.valueOf(mMsgID);
+    public long getMsgID() {
+        return mMsgID;
+    }
+
+    @Override
+    public long getSrcMsgID() {
+        return mSrcMsgID;
     }
 
     @Override
@@ -43,6 +49,7 @@ public class HeaderResolver implements IHeaderResolver {
         mAppID = ResolverUtils.parseAppID(buffer);
         mAppVersion = ResolverUtils.parseAppVersion(buffer);
         mMsgID = ResolverUtils.parseMessageId(buffer);
+        mSrcMsgID = ResolverUtils.parseSrcMessageId(buffer);
         mSign = ResolverUtils.parseSign(buffer);
         mCmd = ResolverUtils.parseCmd(buffer);
     }
@@ -62,10 +69,6 @@ public class HeaderResolver implements IHeaderResolver {
 
     public String getAppVersion() {
         return mAppVersion;
-    }
-
-    public long getMsgID() {
-        return mMsgID;
     }
 
     public byte[] getSign() {

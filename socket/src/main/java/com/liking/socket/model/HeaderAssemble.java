@@ -4,7 +4,6 @@ import com.liking.socket.Constant;
 import com.liking.socket.model.message.MessageData;
 import com.liking.socket.utils.AESUtils;
 import com.liking.socket.utils.ResolverUtils;
-import com.liking.socket.utils.SnowflakeIdWorker;
 
 import java.security.MessageDigest;
 
@@ -14,7 +13,6 @@ import java.security.MessageDigest;
  * https://github.com/ttdevs
  */
 public class HeaderAssemble implements IHeaderAssemble {
-    private static SnowflakeIdWorker mIDWorker = new SnowflakeIdWorker(0, 0);
 
     @Override
     public byte[] assemble(MessageData msg) {
@@ -45,18 +43,20 @@ public class HeaderAssemble implements IHeaderAssemble {
                 ResolverUtils.INDEX_APP_ID,
                 ResolverUtils.INDEX_APP_VERSION - ResolverUtils.INDEX_APP_ID);
 
-        byte[] version = new byte[]{0x01, 0x00, 0x00}; // TODO: 2017/9/28
-        System.arraycopy(version, 0, result,
+        System.arraycopy(Constant.APP_VERSION, 0, result,
                 ResolverUtils.INDEX_APP_VERSION,
                 ResolverUtils.INDEX_MESSAGE_ID - ResolverUtils.INDEX_APP_VERSION);
 
-        long msgIDLong = mIDWorker.nextId();
-        String msgIDStr = String.valueOf(msgIDLong);
-        msg.setKey(msgIDStr); // 区分消息的KEY，用msgID
+        long msgIDLong = msg.getMsgId();
         byte[] msgID = ResolverUtils.long2ByteArray(msgIDLong);
         System.arraycopy(msgID, 0, result,
                 ResolverUtils.INDEX_MESSAGE_ID,
-                ResolverUtils.INDEX_CMD - ResolverUtils.INDEX_MESSAGE_ID);
+                ResolverUtils.INDEX_MESSAGE_ID_SRC - ResolverUtils.INDEX_MESSAGE_ID);
+
+        byte[] srcMsgID = ResolverUtils.long2ByteArray(msg.getSrcMsgId());
+        System.arraycopy(srcMsgID, 0, result,
+                ResolverUtils.INDEX_MESSAGE_ID_SRC,
+                ResolverUtils.INDEX_CMD - ResolverUtils.INDEX_MESSAGE_ID_SRC);
 
         result[ResolverUtils.INDEX_CMD] = cmd;
 

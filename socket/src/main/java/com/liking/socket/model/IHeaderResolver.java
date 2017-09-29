@@ -38,9 +38,16 @@ public interface IHeaderResolver {
     byte getCmd();
 
     /**
-     * 消息ID，用来区分消息（这里是msgID）
+     * 服务器返回：服务器消息ID
      *
      * @return
      */
-    String getMsgKey();
+    long getMsgID();
+
+    /**
+     * 服务器返回：客户端原始消息ID
+     *
+     * @return
+     */
+    long getSrcMsgID();
 }

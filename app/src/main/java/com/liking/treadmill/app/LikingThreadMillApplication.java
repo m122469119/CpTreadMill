@@ -14,7 +14,6 @@ import com.liking.socket.model.HeaderAssemble;
 import com.liking.socket.model.HeaderResolver;
 import com.liking.socket.model.message.MessageData;
 import com.liking.socket.model.message.PingPongMsg;
-import com.liking.socket.resolver.PingPong;
 import com.liking.treadmill.BuildConfig;
 
 import java.io.File;
@@ -87,7 +86,6 @@ public class LikingThreadMillApplication extends BaseApplication {
         builder.bind(this);
         builder.headerAssemble(new HeaderAssemble());
         builder.headerResolver(new HeaderResolver());
-        builder.addDefaultParse(new PingPong());
         builder.addPingPongMsg(new PingPongMsg());
         builder.addDefaultSend(getDeviceInfo());
         mSocketIO = builder.build();

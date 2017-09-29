@@ -8,7 +8,6 @@ import com.liking.socket.model.HeaderAssemble;
 import com.liking.socket.model.HeaderResolver;
 import com.liking.socket.model.message.MessageData;
 import com.liking.socket.model.message.PingPongMsg;
-import com.liking.socket.resolver.PingPong;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +27,7 @@ import java.util.concurrent.CountDownLatch;
 public class SocketIOInstrumentedTest {
     // 异构命令字在App内部定义
     private static final byte CMD_LOGIN = (byte) 0x97; // 登录
-    private static final byte CMD_LOGOUT = (byte) 0x98; // 登出
+    private static final byte CMD_TIMESTAMP = (byte) 0x66; // 时间戳
 
     private SocketIO mClient;
 
@@ -42,7 +41,6 @@ public class SocketIOInstrumentedTest {
         builder.bind(context);
         builder.headerAssemble(new HeaderAssemble());
         builder.headerResolver(new HeaderResolver());
-        builder.addDefaultParse(new PingPong());
         builder.addPingPongMsg(new PingPongMsg());
         builder.addDefaultSend(getDeviceInfo());
         mClient = builder.build();
@@ -50,24 +48,19 @@ public class SocketIOInstrumentedTest {
 
     @Test
     public void testNeedFeedback() throws Exception {
-        int count = 10;
+        int count = 1;
         final CountDownLatch downLatch = new CountDownLatch(count + 1);
+
         MessageData msg = new MessageData() {
             @Override
             public byte cmd() {
-                return CMD_LOGIN;
+                return CMD_TIMESTAMP;
             }
 
             @Override
             public byte[] getData() {
                 JSONObject object = new JSONObject();
-                try {
-                    object.put("gym_id", "a0000001");
-                    object.put("device_id", "ttdevs");
-                    object.put("bracelet_id", "ttdevs");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
                 return object.toString().getBytes();
             }
 
@@ -83,10 +76,8 @@ public class SocketIOInstrumentedTest {
                 downLatch.countDown();
             }
         };
-        Thread.sleep(3000);
-        for (int i = 0; i < count; i++) {
-            mClient.send(msg);
-        }
+        mClient.send(msg);
+
         downLatch.await();
     }
 
