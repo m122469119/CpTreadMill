@@ -79,4 +79,5 @@
     <string name="run_timeout_1">您目前位于跑步机，快快跑起来吧~</string>
     <string name="run_timeout_2">您必须马上跑起来，排队的小伙伴正在等待，1分钟后若您未进入跑步状态，本次使用将结束</string>
     <string name="run_timeout_3">本次使用结束，谢谢使用</string>
+    <string name="network_contact_fail">网络连接异常，请检查网络</string>
 </resources>
