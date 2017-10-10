@@ -57,7 +57,7 @@ public class LikingThreadMillApplication extends BaseApplication {
         LogUtils.setEnable(BuildConfig.LOGGER);
         disableWifi();
 
-//        initSocket();
+        initSocket();
     }
 
     private void disableWifi() {
@@ -103,8 +103,9 @@ public class LikingThreadMillApplication extends BaseApplication {
         builder.addDefaultSend(CmdRequestManager.INSTANCE.buildTreadmillRequest());
         mSocketIO = builder.build();
 
-//        CmdRequestManager.INSTANCE.buildTreadmillRequest().send(getSocket());
-//        CmdRequestManager.INSTANCE.buildUpdateRequest().send(getSocket());
+
+//        CmdRequestManager.INSTANCE.buildTreadmillRequest().send();
+//        CmdRequestManager.INSTANCE.buildUpdateRequest().send();
 
 //        new CmdRequest.Builder()
 //                .cmd(CmdConstant.INSTANCE.getCMD_REPORT_DATA())
@@ -113,14 +114,9 @@ public class LikingThreadMillApplication extends BaseApplication {
 //                        1, 0, 0, 1,
 //                        DateUtils.currentDataSeconds()
 //                ))
-//                .addCallBack(new CmdRequest.Call() {
-//                    @Override
-//                    public void callBack(boolean success, @Nullable String message) {
-//
-//                    }})
-//                .feedback(true)
 //                .socket(getSocket())
-//                .build().send();
+//                .build()
+//                .send();
     }
 
     public static SocketIO getSocket() {

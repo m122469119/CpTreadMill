@@ -2,6 +2,7 @@ package com.liking.treadmill.socket
 
 import android.app.AlarmManager
 import android.content.Context
+import android.os.HandlerThread
 import android.os.SystemClock
 import com.aaron.android.codelibrary.utils.LogUtils
 import com.aaron.android.framework.base.BaseApplication
@@ -42,6 +43,7 @@ object MessageHandlerHelper {
      * 消息返回
      */
     fun handlerReceive(cmd: Byte, result: String) {
+        LogUtils.e(TAG, "handlerReceive: cmd: ".plus(cmd).plus(";result:").plus(result))
         when (cmd) {
             //时间戳
             CmdConstant.CMD_TIMESTAMP -> {

@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.os.RemoteException;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
+import com.liking.socket.Constant;
 import com.liking.treadmill.R;
 import com.liking.treadmill.db.entity.AdvEntity;
 import com.liking.treadmill.db.entity.Member;
@@ -22,6 +24,7 @@ import com.liking.treadmill.message.*;
 import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
+import com.liking.treadmill.socket.LKMessageBackReceiver;
 import com.liking.treadmill.socket.LKSocketServiceKt;
 import com.liking.treadmill.socket.result.DefaultAdResult;
 import com.liking.treadmill.socket.result.NewAdResult;
@@ -74,9 +77,12 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     private AudioManager audioManager = null; // Audio管理器
 
+    private LKMessageBackReceiver mMessageBackReceiver = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initMessageReceiver();
         launchInit();
         initPlayWork();
         if (mUserLoginPresenter == null) {
@@ -84,6 +90,19 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
         }
         mLKAppSocketLogQueue.put(TAG, "onCreate(), 初始化主界面");
 
+    }
+
+    private void initMessageReceiver() {
+        mMessageBackReceiver = new LKMessageBackReceiver();
+        IntentFilter receiverFilter = new IntentFilter();
+        receiverFilter.addAction(Constant.ACTION_MSG);
+        registerReceiver(mMessageBackReceiver, receiverFilter);
+    }
+
+    private void unregisterMessReceiver() {
+        if(mMessageBackReceiver != null) {
+            unregisterReceiver(mMessageBackReceiver);
+        }
     }
 
     @Override
@@ -140,6 +159,7 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             unbindService(mServiceConnection);
         }
         mLKAppSocketLogQueue.put(TAG, "onDestroy(), 主界面回收，应用关闭");
+        unregisterMessReceiver();
         super.onDestroy();
     }
 

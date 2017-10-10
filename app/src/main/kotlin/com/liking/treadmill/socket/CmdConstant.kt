@@ -8,10 +8,13 @@ package com.liking.treadmill.socket
  */
 object CmdConstant {
 
-    val CMD_NORMAL: Byte = 0
+    val CMD_NORMAL: Byte = 0x00
 
     /*时间戳*/
     val CMD_TIMESTAMP: Byte = 0x66
+
+    /*获取二维码*/
+    val CMD_OBTAIN_QRCODE: Byte = 0x68
 
     /*更新*/
     val CMD_UPDATE: Byte = 0x6A

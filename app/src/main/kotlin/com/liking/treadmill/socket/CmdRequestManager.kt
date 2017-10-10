@@ -25,7 +25,18 @@ object CmdRequestManager {
     fun buildTimeStampRequest(): CmdRequest {
         return CmdRequest.Builder()
                 .cmd(CmdConstant.CMD_TIMESTAMP)
-                .feedback(true)
+                .socket(LikingThreadMillApplication.getSocket())
+                .build()
+    }
+
+    /**
+     * 获取二维码
+     */
+    fun buildObtainQrcode(): CmdRequest  {
+        return CmdRequest.Builder()
+                .cmd(CmdConstant.CMD_OBTAIN_QRCODE)
+                .socket(LikingThreadMillApplication.getSocket())
+//                .data()
                 .build()
     }
 
@@ -35,6 +46,7 @@ object CmdRequestManager {
     fun buildDeviceInfoRequest(): CmdRequest {
         return CmdRequest.Builder()
                 .cmd(Constant.CMD_DEVICE_INFO)
+                .socket(LikingThreadMillApplication.getSocket())
                 .data(DeviceInfoData(
                         DeviceUtils.getDeviceInfo(LikingThreadMillApplication.getInstance()),
                         Mac.getMacAddress(BaseApplication.getInstance()),
@@ -53,6 +65,7 @@ object CmdRequestManager {
         val msyntime = Preference.getMemberSynTimestamp()
        return CmdRequest.Builder()
                 .cmd(CmdConstant.CMD_TREADMILL)
+                .socket(LikingThreadMillApplication.getSocket())
                 .data(TreadmillInfoData(0, 0, 0,status, msyntime))
                 .build()
     }
@@ -63,7 +76,7 @@ object CmdRequestManager {
     fun buildUpdateRequest(): CmdRequest {
         return CmdRequest.Builder()
                 .cmd(CmdConstant.CMD_UPDATE)
-                .feedback(true)
+                .socket(LikingThreadMillApplication.getSocket())
                 .build()
     }
 
