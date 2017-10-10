@@ -54,14 +54,14 @@ public class LikingTreadKeyEvent {
     public final static byte KEY_HAND_SHANK_SPEED_REDUCE = 0x42;//手柄速度-
     public final static byte KEY_HAND_SHANK_GRADE_PLUS = 0x43;//手柄坡度+
     public final static byte KEY_HAND_SHANK_GRADE_REDUCE = 0x44;//手柄坡度-
-    public final static byte KEY_MODE_MODE = 0x55;
+    public final static byte KEY_MODE_MODE = 0x55;//音量页面
 
     /**
      * 以下是产品定义的组合键
      */
     public final static byte KEY_PGR_PGR_SPEED_REDUCE = 0x50; //PGR+ PGR+SPEED-
     public final static byte KEY_SPEED_PLUS_SPEED_REDUCE = 0x51; //PGR+ SPEED++ SPEED-
-    public final static String KEY_PGR_SPEED_COOLDOWN = "52"; //PGR+ SPEED++ COOLDWON
+    public final static byte KEY_PGR_SPEED_COOLDOWN = 0x52; //PGR+ SPEED++ COOLDWON //升降自检(坡度)
     public final static byte KEY_PGR_PAUSE_STOP = 0x53; //PGR+ PAUSE+ STOP
     public final static byte KEY_PGR_START = 0x54; //PGR+ START
 //    public final static String KEY_MODE_MODE = "55"; //MODE+ MODE

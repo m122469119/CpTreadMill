@@ -79,7 +79,7 @@ class CmdRequest private constructor(val socket: SocketIO?,
 
 
         fun socket(socket: SocketIO): Builder {
-            this.socketio = socketio
+            this.socketio = socket
             return this
         }
 

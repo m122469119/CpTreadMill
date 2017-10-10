@@ -141,7 +141,17 @@ public class AwaitActionFragment extends SerialPortFragment {
                 EventBus.getDefault().post(new GymUnBindSuccessMessage());
                 IToast.show("解绑中...");
             }
+        } else if(keyCode == LikingTreadKeyEvent.KEY_PGR_SPEED_COOLDOWN) { //坡度升降自检
+            IToast.show("坡度升降自检...");
+            SerialPortUtil.checkGradeLifting();
         }
+    }
+
+    @Override
+    public void handleTreadData(SerialPortUtil.TreadData treadData) {
+        super.handleTreadData(treadData);
+        LogUtils.e(TAG, "坡度自检：" + SerialPortUtil.getTreadInstance().getCheck()+";自检倒计时："+
+                SerialPortUtil.getTreadInstance().getCheckGradeCountDown());
     }
 
     @Override

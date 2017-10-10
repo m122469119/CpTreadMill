@@ -20,7 +20,7 @@ public class SerialPortUtil {
     private final static int INDEX_SAFE_LOCK = 4;
     private final static int INDEX_OIL_PUMP = 5;
     private final static int INDEX_POWER = 6;
-    private final static int INDEX_CHECK = 7;
+    private final static int INDEX_CHECK = 7; //自检状态
     private final static int INDEX_CURRENT_SPEED = 8;
     private final static int INDEX_CURRENT_GRADE = 9;
     private final static int INDEX_MAX_GRADE = 10;
@@ -414,8 +414,8 @@ public class SerialPortUtil {
     }
 
     public final static class Check {
-        public final static String NO_CHECK = "00";
-        public final static String CHECKING = "01";
+        public final static int NO_CHECK = 0x00;
+        public final static int CHECKING = 0x01;
     }
 
 
@@ -484,6 +484,15 @@ public class SerialPortUtil {
 
     private final static int BYTE_CARDNO_VALID = 0x01;
     private final static int BYTE_CARDNO_UNVALID = 0x00;
+
+    /**
+     * 启动坡度升降自检
+     */
+    public static void checkGradeLifting() {
+        byte[] bytes = getControlBuffer();
+        bytes[3] = SerialPortUtil.Check.CHECKING;
+        SerialPorManager.getInstance().sendMessage(bytes);
+    }
 
     /**
      * 设置速度,向串口发送数据

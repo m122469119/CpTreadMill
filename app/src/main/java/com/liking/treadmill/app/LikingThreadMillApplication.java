@@ -57,7 +57,7 @@ public class LikingThreadMillApplication extends BaseApplication {
         LogUtils.setEnable(BuildConfig.LOGGER);
         disableWifi();
 
-        initSocket();
+//        initSocket();
     }
 
     private void disableWifi() {
@@ -119,7 +119,8 @@ public class LikingThreadMillApplication extends BaseApplication {
 //
 //                    }})
 //                .feedback(true)
-//                .build().send(getSocket());
+//                .socket(getSocket())
+//                .build().send();
     }
 
     public static SocketIO getSocket() {
