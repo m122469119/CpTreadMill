@@ -13,7 +13,6 @@ public class HeaderResolver implements IHeaderResolver {
     private short mAppID;
     private String mAppVersion;
     private long mMsgID;
-    private long mSrcMsgID;
     private byte[] mSign;
     private byte mCmd;
 
@@ -38,18 +37,12 @@ public class HeaderResolver implements IHeaderResolver {
     }
 
     @Override
-    public long getSrcMsgID() {
-        return mSrcMsgID;
-    }
-
-    @Override
     public void resolver(byte[] buffer) {
         mPkgSize = ResolverUtils.parsePkgSize(buffer);
         mProtocolVer = ResolverUtils.parseProtocolVersion(buffer);
         mAppID = ResolverUtils.parseAppID(buffer);
         mAppVersion = ResolverUtils.parseAppVersion(buffer);
         mMsgID = ResolverUtils.parseMessageId(buffer);
-        mSrcMsgID = ResolverUtils.parseSrcMessageId(buffer);
         mSign = ResolverUtils.parseSign(buffer);
         mCmd = ResolverUtils.parseCmd(buffer);
     }

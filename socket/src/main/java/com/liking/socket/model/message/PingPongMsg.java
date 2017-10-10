@@ -33,15 +33,4 @@ public class PingPongMsg extends MessageData {
         }
         return json.toString().getBytes();
     }
-
-    @Override
-    public boolean needFeedback() {
-        return false;
-    }
-
-    @Override
-    public void callBack(boolean isSuccess, String message) {
-
-
-    }
 }

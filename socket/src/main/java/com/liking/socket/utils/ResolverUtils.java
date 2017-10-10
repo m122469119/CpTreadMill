@@ -17,10 +17,9 @@ public class ResolverUtils {
     public static final int INDEX_APP_ID = 8;
     public static final int INDEX_APP_VERSION = 10;
     public static final int INDEX_MESSAGE_ID = 13;
-    public static final int INDEX_MESSAGE_ID_SRC = 21;
-    public static final int INDEX_CMD = 29;
-    public static final int INDEX_SIGN = 30;
-    public static final int INDEX_DATA = 50;
+    public static final int INDEX_CMD = 21;
+    public static final int INDEX_SIGN = 22;
+    public static final int INDEX_DATA = 42;
 
     private static final int LENGTH_HEADER = INDEX_DATA;
 
@@ -124,10 +123,6 @@ public class ResolverUtils {
      */
     public static long parseMessageId(byte[] data) {
         return parseLong(data, INDEX_MESSAGE_ID);
-    }
-
-    public static long parseSrcMessageId(byte[] data) {
-        return parseLong(data, INDEX_MESSAGE_ID_SRC);
     }
 
     /**

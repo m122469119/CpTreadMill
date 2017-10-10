@@ -15,6 +15,10 @@ import com.liking.socket.receiver.CmdResolver;
 import com.liking.socket.utils.AESUtils;
 import com.liking.socket.utils.BaseThread;
 import com.liking.socket.utils.LogUtils;
+import com.liking.socket.utils.SystemUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,30 +80,26 @@ public class SocketIO {
 
     private void handlerMsg(Bundle bundle) {
         byte cmd = bundle.getByte(Constant.KEY_MSG_CMD);
-        long msgID = bundle.getLong(Constant.KEY_MSG_ID);
-        long srcMsgID = bundle.getLong(Constant.KEY_MSG_ID_SRC);
+        boolean isError = bundle.getBoolean(Constant.KEY_MSG_IS_ERROR);
         String body = bundle.getString(Constant.KEY_MSG_DATA);
 
-        MessageData msgData = mCacheQueue.remove(srcMsgID);
-        if (null != msgData) {
-            msgData.callBack(true, body);
+        CmdResolver resolver = mResolver.get(cmd);
+        if (null != resolver) { // 默认处理的协议
+            resolver.callBack(body, SocketIO.this);
         } else {
-            CmdResolver resolver = mResolver.get(cmd);
-            if (null != resolver) { // 默认处理的协议
-                resolver.callBack(body, SocketIO.this);
-            } else {
-                LogUtils.print("Send Broadcast: " + cmd + " " + body);
+            LogUtils.print("Send Broadcast: %02X %s", cmd, body);
 
-                Intent intent = new Intent(Constant.ACTION_MSG);
-                intent.putExtra(Constant.KEY_MSG_CMD, cmd);
-                intent.putExtra(Constant.KEY_MSG_ID, msgID);
-                intent.putExtra(Constant.KEY_MSG_ID_SRC, srcMsgID);
-                intent.putExtra(Constant.KEY_MSG_DATA, body);
-                mContext.sendBroadcast(intent);
-            }
+            Intent intent = new Intent(Constant.ACTION_MSG);
+            intent.putExtra(Constant.KEY_MSG_CMD, cmd);
+            intent.putExtra(Constant.KEY_MSG_IS_ERROR, isError);
+            intent.putExtra(Constant.KEY_MSG_DATA, body);
+            mContext.sendBroadcast(intent);
         }
     }
 
+    /**
+     * 重连
+     */
     private void reconnect() {
         resetPingPong();
 
@@ -107,13 +107,23 @@ public class SocketIO {
         mHandler.postDelayed(mConnectRunnable, Constant.DEFAULT_RECONNECT);
     }
 
+    /**
+     * 心跳
+     */
     private void resetPingPong() {
+        if (null == mPingPong) {
+            return;
+        }
         mHandler.removeCallbacks(mPingPongRunnable);
         mHandler.postDelayed(mPingPongRunnable, Constant.DEFAULT_PING_PONG);
     }
 
+    /**
+     * 失败重试
+     */
     private void resetRetry() {
         mHandler.removeCallbacks(mRetryRunnable);
+        mHandler.post(mRetryRunnable);
         mHandler.postDelayed(mRetryRunnable, Constant.DEFAULT_RETRY_INTERVAL);
     }
 
@@ -121,18 +131,9 @@ public class SocketIO {
         @Override
         public void run() {
             if (null == mSocket || mSocket.isClosed()) {
-                LogUtils.print("reconnect");
+                LogUtils.print("Connecting...");
 
                 close(false);
-
-                while (mSendQueue.size() > 0) {
-                    try {
-                        MessageData msg = mSendQueue.take();
-                        mCacheQueue.put(msg.getMsgId(), msg);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
 
                 new InitSocket().start();
             }
@@ -143,7 +144,7 @@ public class SocketIO {
         @Override
         public void run() {
             if (mCacheQueue.size() > 0) {
-                LogUtils.print("retry send msg:" + mCacheQueue.size());
+                LogUtils.print("Retry send message: %d", mCacheQueue.size());
 
                 Iterator<Entry<Long, MessageData>> iterator = mCacheQueue.entrySet().iterator();
                 while (iterator.hasNext()) {
@@ -153,7 +154,7 @@ public class SocketIO {
                         mSendQueue.add(msg);
                         msg.retry();
                     } else {
-                        msg.callBack(false, "No response error: " + msg.cmd());
+                        sendHandlerMessage(msg.cmd(), false, "Retry times out.");
                     }
                     iterator.remove();
                 }
@@ -194,8 +195,10 @@ public class SocketIO {
     private class InitSocket extends Thread {
         @Override
         public void run() {
-            LogUtils.print("connect start：" + System.currentTimeMillis());
+            LogUtils.print("Connect start：%d", System.currentTimeMillis());
+
             try {
+                // 创建Socket
                 mSocket = new Socket(mDomain, mPort);
 
                 // 接收线程
@@ -206,23 +209,39 @@ public class SocketIO {
                 mSenderWorker = new SenderWorker(mSendQueue, mHeaderAssemble, mSocket, mSocket.getOutputStream());
                 mSenderWorker.start();
 
-                // 发送链接建立后需要先发的消息
-                mSendQueue.addAll(mAutoSendMsg);
+                sendDefaultMessage();
 
-                // 失败重试
                 resetRetry();
 
-                // 心跳
-                if (null != mPingPong) {
-                    resetPingPong();
-                }
+                resetPingPong();
             } catch (IOException e) {
                 e.printStackTrace();
 
                 reconnect();
             }
-            LogUtils.print("connect   end：" + System.currentTimeMillis());
+
+            LogUtils.print("Connect   end：%d", System.currentTimeMillis());
         }
+    }
+
+    /**
+     * 发送默认消息
+     */
+    private void sendDefaultMessage() {
+        // 保证先发送default消息
+        while (mSendQueue.size() > 0) {
+            try {
+                MessageData msg = mSendQueue.take();
+                if (msg.cmd() != Constant.CMD_PING_PONG) {
+                    mCacheQueue.put(msg.getMsgId(), msg);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 发送链接建立后需要先发的消息
+        mSendQueue.addAll(mAutoSendMsg);
     }
 
     public void close(boolean exit) {
@@ -250,14 +269,14 @@ public class SocketIO {
         if (exit) {
             if (mSendQueue.size() > 0) {
                 for (MessageData msg : mSendQueue) {
-                    msg.callBack(false, "");
+                    // msg.callBack(false, ""); // TODO: 2017/10/10
                 }
                 mSendQueue.clear();
             }
 
             if (mCacheQueue.size() > 0) {
                 for (Entry<Long, MessageData> entry : mCacheQueue.entrySet()) {
-                    entry.getValue().callBack(false, "Exit reconnect");
+                    // entry.getValue().callBack(false, "Exit reconnect"); // TODO: 2017/10/10  
                 }
             }
         }
@@ -302,8 +321,6 @@ public class SocketIO {
             while (true) {
                 try {
                     msg = mSendQueue.take();
-
-                    LogUtils.print("Send msg:" + msg.cmd() + " " + msg.getMsgId() + " " + new String(msg.getData()));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
 
@@ -317,13 +334,15 @@ public class SocketIO {
                     mOut.write(data);
                     mOut.flush();
 
-                    if (msg.needFeedback()) {
+                    LogUtils.print("Send msg: %02X %d %s", msg.cmd(), msg.getMsgId(), new String(msg.getData()));
+
+                    if (msg.cmd() != Constant.CMD_PING_PONG) {
                         mCacheQueue.put(msg.getMsgId(), msg);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
 
-                    LogUtils.print("OutputStream closed reconnect");
+                    LogUtils.print("OutputStream closed, reconnect");
 
                     if (Constant.CMD_PING_PONG != msg.cmd()) { // 心跳不重试
                         mCacheQueue.put(msg.getMsgId(), msg);
@@ -331,8 +350,8 @@ public class SocketIO {
 
                     try {
                         mSocket.close();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
                     quit();
                     reconnect();
@@ -366,7 +385,10 @@ public class SocketIO {
             while (true) {
                 try {
                     size = mIn.read(mHeaderBuffer);
-                    if (size == -1 || size != mHeader.headerLength()) {
+                    if (size == -1) {
+                        throw new IOException("InputStream closed!");
+                    }
+                    if (size != mHeader.headerLength()) {
                         throw new IOException("Header Read error!");
                     }
 
@@ -381,7 +403,7 @@ public class SocketIO {
                 } catch (IOException e) {
                     e.printStackTrace();
 
-                    LogUtils.print("InputStream closed error:" + e.getMessage());
+                    LogUtils.print("InputStream closed error: %s" , e.getMessage());
 
                     try {
                         mSocket.close();
@@ -399,18 +421,33 @@ public class SocketIO {
                 byte[] data = new byte[bodyLength];
                 System.arraycopy(mBuffer, 0, data, 0, bodyLength);
                 byte[] originData = AESUtils.decode(data);
-                String bodyString = new String(originData, Constant.DEFAULT_CHARSET);
+                String body = new String(originData, Constant.DEFAULT_CHARSET);
 
-                LogUtils.print("Receive: " + mHeader.getCmd() + " " + mHeader.getMsgID() + " " + mHeader.getSrcMsgID()+ " " + bodyString);
+                switch (mHeader.getCmd()) {
+                    case Constant.CMD_PING_PONG:
+                        LogUtils.print("Receive ping pong: %d", mHeader.getMsgID());
+                        // TODO: 2017/10/10
+                        break;
+                    case Constant.CMD_FEEDBACK:
+                        try {
+                            JSONObject obj = new JSONObject(body);
+                            long msgID = obj.optLong("msg_id");
+                            mCacheQueue.remove(msgID);
 
-                Message msg = mHandler.obtainMessage();
-                msg.what = Constant.HANDLER_MSG;
-                Bundle bundle = msg.getData();
-                bundle.putByte(Constant.KEY_MSG_CMD, mHeader.getCmd());
-                bundle.putLong(Constant.KEY_MSG_ID, mHeader.getMsgID());
-                bundle.putLong(Constant.KEY_MSG_ID_SRC, mHeader.getSrcMsgID());
-                bundle.putCharSequence(Constant.KEY_MSG_DATA, bodyString);
-                mHandler.sendMessage(msg);
+                            LogUtils.print("Feedback message: %d", msgID);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    default:
+                        LogUtils.print("Receive message: %02X %d %s", mHeader.getCmd(), mHeader.getMsgID(), body);
+
+                        sendFeedBack(mHeader);
+
+                        sendHandlerMessage(mHeader.getCmd(), true, body);
+                        break;
+                }
 
                 if (isQuit()) {
                     return;
@@ -419,6 +456,41 @@ public class SocketIO {
         }
     }
 
+    private void sendHandlerMessage(byte cmd, boolean isError, String body) {
+        Message msg = mHandler.obtainMessage();
+        msg.what = Constant.HANDLER_MSG;
+        Bundle bundle = msg.getData();
+        bundle.putByte(Constant.KEY_MSG_CMD, cmd);
+        bundle.putBoolean(Constant.KEY_MSG_IS_ERROR, isError);
+        bundle.putCharSequence(Constant.KEY_MSG_DATA, body);
+        mHandler.sendMessage(msg);
+    }
+
+    private void sendFeedBack(final IHeaderResolver mHeader) {
+        MessageData msg = new MessageData() {
+            @Override
+            public byte cmd() {
+                return Constant.CMD_FEEDBACK;
+            }
+
+            @Override
+            public byte[] getData() {
+                JSONObject data = new JSONObject();
+                try {
+                    data.put("msg_id", mHeader.getMsgID());
+                    data.put("device_id", SystemUtils.getDeviceID());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return data.toString().getBytes();
+            }
+        };
+        send(msg);
+    }
+
+    /**
+     * 构建SocketIO
+     */
     public static final class Builder {
         private SparseArray<CmdResolver> mResolver = new SparseArray<>();// 同构命令字
         private List<MessageData> mDefaultMsg = new LinkedList<>(); // 重连后默认发送

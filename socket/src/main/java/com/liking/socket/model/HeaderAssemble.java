@@ -51,12 +51,7 @@ public class HeaderAssemble implements IHeaderAssemble {
         byte[] msgID = ResolverUtils.long2ByteArray(msgIDLong);
         System.arraycopy(msgID, 0, result,
                 ResolverUtils.INDEX_MESSAGE_ID,
-                ResolverUtils.INDEX_MESSAGE_ID_SRC - ResolverUtils.INDEX_MESSAGE_ID);
-
-        byte[] srcMsgID = ResolverUtils.long2ByteArray(msg.getSrcMsgId());
-        System.arraycopy(srcMsgID, 0, result,
-                ResolverUtils.INDEX_MESSAGE_ID_SRC,
-                ResolverUtils.INDEX_CMD - ResolverUtils.INDEX_MESSAGE_ID_SRC);
+                ResolverUtils.INDEX_CMD - ResolverUtils.INDEX_MESSAGE_ID);
 
         result[ResolverUtils.INDEX_CMD] = cmd;
 

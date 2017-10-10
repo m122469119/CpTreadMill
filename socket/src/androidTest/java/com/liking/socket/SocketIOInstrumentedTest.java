@@ -25,10 +25,6 @@ import java.util.concurrent.CountDownLatch;
  */
 @RunWith(AndroidJUnit4.class)
 public class SocketIOInstrumentedTest {
-    // 异构命令字在App内部定义
-    private static final byte CMD_LOGIN = (byte) 0x97; // 登录
-    private static final byte CMD_TIMESTAMP = (byte) 0x66; // 时间戳
-
     private SocketIO mClient;
 
     @Before
@@ -48,13 +44,12 @@ public class SocketIOInstrumentedTest {
 
     @Test
     public void testNeedFeedback() throws Exception {
-        int count = 1;
-        final CountDownLatch downLatch = new CountDownLatch(count + 1);
+        final CountDownLatch downLatch = new CountDownLatch(1);
 
         MessageData msg = new MessageData() {
             @Override
             public byte cmd() {
-                return CMD_TIMESTAMP;
+                return Constant.CMD_TIMESTAMP;
             }
 
             @Override
@@ -62,18 +57,6 @@ public class SocketIOInstrumentedTest {
                 JSONObject object = new JSONObject();
 
                 return object.toString().getBytes();
-            }
-
-            @Override
-            public boolean needFeedback() {
-                return true;
-            }
-
-            @Override
-            public void callBack(boolean isSuccess, String message) {
-                System.out.println(">>>>>>>>>>callback: " + message);
-
-                downLatch.countDown();
             }
         };
         mClient.send(msg);
@@ -109,16 +92,6 @@ public class SocketIOInstrumentedTest {
                     e.printStackTrace();
                 }
                 return object.toString().getBytes();
-            }
-
-            @Override
-            public boolean needFeedback() {
-                return false;
-            }
-
-            @Override
-            public void callBack(boolean isSuccess, String message) {
-                // TODO: 2017/9/28
             }
         };
         return msg;

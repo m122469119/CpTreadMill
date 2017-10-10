@@ -27,11 +27,6 @@ public class QRCodeRequestMsg extends MessageData {
     }
 
     @Override
-    public boolean needFeedback() {
-        return true;
-    }
-
-    @Override
     public byte[] getData() {
         JSONObject object = new JSONObject();
         try {

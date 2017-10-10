@@ -43,11 +43,4 @@ public interface IHeaderResolver {
      * @return
      */
     long getMsgID();
-
-    /**
-     * 服务器返回：客户端原始消息ID
-     *
-     * @return
-     */
-    long getSrcMsgID();
 }

@@ -8,8 +8,7 @@
 - 失败重发 √
 - 失败保存 
 - 心跳超时
-- 在主线程callBack √
-- 添加Log √
+- 添加Log 
 - 单元测试
 - 整理代码
 
@@ -20,9 +19,9 @@ Liking的Socket基础库
 
 ### 协议格式
 
-|    4B    |    4B    |     2B     |     3B     |     8B     |     8B     |     1B     |     20B     |     65535 - x    |
+|    4B    |    4B    |     2B     |     3B     |     8B     |     1B     |     20B     |     65535 - x    |
 |    :-:     |   :-:    |   :-:    |    :-:     |   :-:    |   :-:    |   :-:    |   :-:    |   :-:    |
-|    Length   |     ProtocolVer     |    AppID  |    AppVer  |    MsgID  |    SrcMsgID  |   Cmd  |    Sign  |    Data  |
+|    Length   |     ProtocolVer     |    AppID  |    AppVer  |    MsgID |   Cmd  |    Sign  |    Data  |
 
 - 所有命令字为整型，范围：151~255
 - 大端（BigEndian），Java默认为大端，无需处理

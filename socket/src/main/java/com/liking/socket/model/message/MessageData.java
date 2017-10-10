@@ -13,11 +13,6 @@ public abstract class MessageData {
     private static SnowflakeIdWorker mIDWorker = new SnowflakeIdWorker(0, 0);
 
     /**
-     * 命令字
-     */
-    private byte mCmd;
-
-    /**
      * 消息ID，facebook算法
      */
     private long mMsgId;
@@ -29,21 +24,16 @@ public abstract class MessageData {
         return mMsgId;
     }
 
-    private long mSrcMsgId;
-
-    public long getSrcMsgId() {
-        return mSrcMsgId;
-    }
-
-    public void setSrcMsgId(long srcMsgId) {
-        mSrcMsgId = srcMsgId;
-    }
-
     /**
      * 重试次数
      */
     private int mRetryTime = Constant.DEFAULT_MSG_RETRY_TIME;
 
+    /**
+     * 是否还可以重试
+     *
+     * @return
+     */
     public boolean canRetry() {
         return mRetryTime > 0;
     }
@@ -54,16 +44,12 @@ public abstract class MessageData {
 
     private byte[] mData;
 
-    public abstract byte cmd();
-
     /**
-     * 是否需要反馈
+     * 命令字
      *
-     * @return true 需要反馈
+     * @return
      */
-    public boolean needFeedback() {
-        return false;
-    }
+    public abstract byte cmd();
 
     public final void setData(String data) {
         if (null == data) {
@@ -84,17 +70,5 @@ public abstract class MessageData {
     public byte[] getData() {
         // TODO: 2017/9/19 构建Header
         return mData;
-    }
-
-    /**
-     * 不需要反馈，不回调 <br/>
-     * 需要反馈，回调
-     *
-     * @param isSuccess 是否发送成功
-     * @param message   成功：data
-     *                  失败：失败信息
-     */
-    public void callBack(boolean isSuccess, String message) {
-
     }
 }

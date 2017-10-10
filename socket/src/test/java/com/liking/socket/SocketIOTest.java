@@ -24,7 +24,7 @@ public class SocketIOTest {
 //        builder.connect("192.168.2.2", 17919);
 //        builder.connect("192.168.32.43", 17919);
         builder.connect("120.24.177.134", 17919);
-        builder.addDefaultParse(new PingPong());
+//        builder.addDefaultParse(new PingPong());
         builder.headerResolver(new HeaderResolver());
         builder.headerAssemble(new HeaderAssemble());
         mClient = builder.build();
