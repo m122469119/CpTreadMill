@@ -29,6 +29,7 @@ import com.liking.treadmill.message.QrCodeMessage;
 import com.liking.treadmill.message.SettingNextMessage;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
+import com.liking.treadmill.treadcontroller.SerialPortUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -182,6 +183,8 @@ public class BindGymFragment extends SerialPortFragment {
 //                Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
 //                startActivity(intent);
 //            }
+        } else if(keyCode == LikingTreadKeyEvent.KEY_PGR_SPEED_COOLDOWN) {
+            SerialPortUtil.checkGradeLifting();
         }
     }
 

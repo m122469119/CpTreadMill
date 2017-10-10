@@ -2,6 +2,7 @@ package com.liking.treadmill.app;
 
 import android.net.wifi.WifiManager;
 
+import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.BaseApplication;
@@ -12,11 +13,17 @@ import com.alibaba.sdk.android.oss.sample.LKLogQueue;
 import com.liking.socket.SocketIO;
 import com.liking.socket.model.HeaderAssemble;
 import com.liking.socket.model.HeaderResolver;
-import com.liking.socket.model.message.MessageData;
 import com.liking.socket.model.message.PingPongMsg;
 import com.liking.treadmill.BuildConfig;
+import com.liking.treadmill.socket.CmdConstant;
+import com.liking.treadmill.socket.CmdRequest;
+import com.liking.treadmill.socket.CmdRequestManager;
+import com.liking.treadmill.socket.data.request.ExerciseInfoData;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+
 
 
 /**
@@ -28,6 +35,10 @@ public class LikingThreadMillApplication extends BaseApplication {
 
     public static String ANDROID_ID = "LikingThreadMill";
     public static LKLogQueue mLKSocketLogQueue, mLKAppSocketLogQueue;
+
+    private String HOST = EnvironmentUtils.Config.isDebugMode() ? "120.24.177.134" : "120.24.177.134";
+    private int PORT = 17919;
+    private static SocketIO mSocketIO;
 
     @Override
     public void onCreate() {
@@ -46,7 +57,7 @@ public class LikingThreadMillApplication extends BaseApplication {
         LogUtils.setEnable(BuildConfig.LOGGER);
         disableWifi();
 
-        initSocket();
+//        initSocket();
     }
 
     private void disableWifi() {
@@ -87,19 +98,32 @@ public class LikingThreadMillApplication extends BaseApplication {
         builder.headerAssemble(new HeaderAssemble());
         builder.headerResolver(new HeaderResolver());
         builder.addPingPongMsg(new PingPongMsg());
-        builder.addDefaultSend(getDeviceInfo());
+        builder.addDefaultSend(CmdRequestManager.INSTANCE.buildDeviceInfoRequest());
+        builder.addDefaultSend(CmdRequestManager.INSTANCE.buildTimeStampRequest());
+        builder.addDefaultSend(CmdRequestManager.INSTANCE.buildTreadmillRequest());
         mSocketIO = builder.build();
+
+//        CmdRequestManager.INSTANCE.buildTreadmillRequest().send(getSocket());
+//        CmdRequestManager.INSTANCE.buildUpdateRequest().send(getSocket());
+
+//        new CmdRequest.Builder()
+//                .cmd(CmdConstant.INSTANCE.getCMD_REPORT_DATA())
+//                .data(new ExerciseInfoData(
+//                        3971587573L,1000,2000,1234,
+//                        1, 0, 0, 1,
+//                        DateUtils.currentDataSeconds()
+//                ))
+//                .addCallBack(new CmdRequest.Call() {
+//                    @Override
+//                    public void callBack(boolean success, @Nullable String message) {
+//
+//                    }})
+//                .feedback(true)
+//                .socket(getSocket())
+//                .build().send();
     }
 
-    private MessageData getDeviceInfo() {
-        return null; // TODO: 2017/9/28
-    }
-
-    private String HOST = EnvironmentUtils.Config.isDebugMode() ? "120.24.177.134" : "120.24.177.134";
-    private int PORT = 17919;
-    private static SocketIO mSocketIO;
-
-    public static SocketIO getSocket(){
+    public static SocketIO getSocket() {
         return mSocketIO;
     }
 }

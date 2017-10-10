@@ -8,4 +8,4 @@ import com.liking.treadmill.socket.data.BaseData
  * @author: chenlei
  * @version:1.0
  */
-class ResultData :BaseData()
+open class ResultData :BaseData()
