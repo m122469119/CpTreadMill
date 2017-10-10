@@ -11,6 +11,7 @@ import android.util.SparseArray;
 import com.liking.socket.model.IHeaderAssemble;
 import com.liking.socket.model.IHeaderResolver;
 import com.liking.socket.model.message.MessageData;
+import com.liking.socket.model.message.PingPongMsg;
 import com.liking.socket.receiver.CmdResolver;
 import com.liking.socket.utils.AESUtils;
 import com.liking.socket.utils.BaseThread;
@@ -58,7 +59,7 @@ public class SocketIO {
 
     private SparseArray<CmdResolver> mResolver;
     private List<MessageData> mAutoSendMsg;
-    private MessageData mPingPong;
+    private PingPongMsg mPingPong = new PingPongMsg();
 
     private Socket mSocket;
     private ReceiverWorker mReceiverWorker;
@@ -111,9 +112,6 @@ public class SocketIO {
      * 心跳
      */
     private void resetPingPong() {
-        if (null == mPingPong) {
-            return;
-        }
         mHandler.removeCallbacks(mPingPongRunnable);
         mHandler.postDelayed(mPingPongRunnable, Constant.DEFAULT_PING_PONG);
     }
@@ -167,9 +165,16 @@ public class SocketIO {
     private Runnable mPingPongRunnable = new Runnable() {
         @Override
         public void run() {
-            send(mPingPong);
+            // 此处可设置心跳开关
 
-            resetPingPong();
+            if (mPingPong.canRetry()) {
+                send(mPingPong);
+                mPingPong.retry();
+
+                resetPingPong();
+            } else {
+                reconnect();
+            }
         }
     };
 
@@ -178,8 +183,7 @@ public class SocketIO {
                      IHeaderResolver headerResolver,
                      IHeaderAssemble headerAssemble,
                      SparseArray<CmdResolver> resolver,
-                     List<MessageData> autoSendMsg,
-                     MessageData pingPong) {
+                     List<MessageData> autoSendMsg) {
         mDomain = domain;
         mPort = port;
         mContext = context;
@@ -187,7 +191,6 @@ public class SocketIO {
         mHeaderAssemble = headerAssemble;
         mResolver = resolver;
         mAutoSendMsg = autoSendMsg;
-        mPingPong = pingPong;
 
         mHandler.post(mConnectRunnable);
     }
@@ -336,7 +339,7 @@ public class SocketIO {
 
                     LogUtils.print("Send msg: %02X %d %s", msg.cmd(), msg.getMsgId(), new String(msg.getData()));
 
-                    if (msg.cmd() != Constant.CMD_PING_PONG) {
+                    if (msg.cmd() != Constant.CMD_PING_PONG && msg.cmd() != Constant.CMD_FEEDBACK) {
                         mCacheQueue.put(msg.getMsgId(), msg);
                     }
                 } catch (IOException e) {
@@ -403,7 +406,7 @@ public class SocketIO {
                 } catch (IOException e) {
                     e.printStackTrace();
 
-                    LogUtils.print("InputStream closed error: %s" , e.getMessage());
+                    LogUtils.print("InputStream closed error: %s", e.getMessage());
 
                     try {
                         mSocket.close();
@@ -426,7 +429,7 @@ public class SocketIO {
                 switch (mHeader.getCmd()) {
                     case Constant.CMD_PING_PONG:
                         LogUtils.print("Receive ping pong: %d", mHeader.getMsgID());
-                        // TODO: 2017/10/10
+                        mPingPong.reset(); // // TODO: 2017/10/10
                         break;
                     case Constant.CMD_FEEDBACK:
                         try {
@@ -466,6 +469,11 @@ public class SocketIO {
         mHandler.sendMessage(msg);
     }
 
+    /**
+     * 发送Feedback
+     *
+     * @param mHeader
+     */
     private void sendFeedBack(final IHeaderResolver mHeader) {
         MessageData msg = new MessageData() {
             @Override
@@ -494,7 +502,6 @@ public class SocketIO {
     public static final class Builder {
         private SparseArray<CmdResolver> mResolver = new SparseArray<>();// 同构命令字
         private List<MessageData> mDefaultMsg = new LinkedList<>(); // 重连后默认发送
-        private MessageData mPingPong;
 
         private String mDomain;
         private int mPort;
@@ -521,11 +528,6 @@ public class SocketIO {
 
         public Builder headerAssemble(IHeaderAssemble assemble) {
             mHeaderAssemble = assemble;
-            return this;
-        }
-
-        public Builder addPingPongMsg(MessageData pingPong) {
-            mPingPong = pingPong;
             return this;
         }
 
@@ -573,8 +575,7 @@ public class SocketIO {
                     mContext,
                     mHeaderResolver, mHeaderAssemble,
                     mResolver,
-                    mDefaultMsg,
-                    mPingPong);
+                    mDefaultMsg);
         }
     }
 }

@@ -14,8 +14,24 @@ import org.json.JSONObject;
 public class PingPongMsg extends MessageData {
     public static final String DEVICE_ID = "device_id";
 
+    private int mRetryTime = Constant.DEFAULT_MSG_RETRY_TIME;
+
     public PingPongMsg() {
 
+    }
+
+    @Override
+    public boolean canRetry() {
+        return mRetryTime > 0;
+    }
+
+    @Override
+    public void retry() {
+        mRetryTime--;
+    }
+
+    public void reset() {
+        mRetryTime = Constant.DEFAULT_MSG_RETRY_TIME;
     }
 
     @Override

@@ -97,7 +97,6 @@ public class LikingThreadMillApplication extends BaseApplication {
         builder.bind(this);
         builder.headerAssemble(new HeaderAssemble());
         builder.headerResolver(new HeaderResolver());
-        builder.addPingPongMsg(new PingPongMsg());
         builder.addDefaultSend(CmdRequestManager.INSTANCE.buildDeviceInfoRequest());
         builder.addDefaultSend(CmdRequestManager.INSTANCE.buildTimeStampRequest());
         builder.addDefaultSend(CmdRequestManager.INSTANCE.buildTreadmillRequest());

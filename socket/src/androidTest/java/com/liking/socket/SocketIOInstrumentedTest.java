@@ -8,6 +8,7 @@ import com.liking.socket.model.HeaderAssemble;
 import com.liking.socket.model.HeaderResolver;
 import com.liking.socket.model.message.MessageData;
 import com.liking.socket.model.message.PingPongMsg;
+import com.liking.socket.resolver.Timestamp;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,8 +38,8 @@ public class SocketIOInstrumentedTest {
         builder.bind(context);
         builder.headerAssemble(new HeaderAssemble());
         builder.headerResolver(new HeaderResolver());
-        builder.addPingPongMsg(new PingPongMsg());
         builder.addDefaultSend(getDeviceInfo());
+        builder.addDefaultParse(new Timestamp());
         mClient = builder.build();
     }
 
