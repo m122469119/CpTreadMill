@@ -13,14 +13,11 @@ import com.alibaba.sdk.android.oss.sample.LKLogQueue;
 import com.liking.socket.SocketIO;
 import com.liking.socket.model.HeaderAssemble;
 import com.liking.socket.model.HeaderResolver;
-import com.liking.socket.model.message.PingPongMsg;
 import com.liking.treadmill.BuildConfig;
 import com.liking.treadmill.socket.CmdConstant;
 import com.liking.treadmill.socket.CmdRequest;
 import com.liking.treadmill.socket.CmdRequestManager;
-import com.liking.treadmill.socket.data.request.ExerciseInfoData;
-
-import org.jetbrains.annotations.Nullable;
+import com.liking.treadmill.socket.data.request.ExerciseInfoRequestData;
 
 import java.io.File;
 
@@ -103,19 +100,17 @@ public class LikingThreadMillApplication extends BaseApplication {
         mSocketIO = builder.build();
 
 
-//        CmdRequestManager.INSTANCE.buildTreadmillRequest().send();
-//        CmdRequestManager.INSTANCE.buildUpdateRequest().send();
+//        CmdRequestManager.INSTANCE.buildUserLoginRequest(3971587573L).send();
 
-//        new CmdRequest.Builder()
-//                .cmd(CmdConstant.INSTANCE.getCMD_REPORT_DATA())
-//                .data(new ExerciseInfoData(
-//                        3971587573L,1000,2000,1234,
-//                        1, 0, 0, 1,
-//                        DateUtils.currentDataSeconds()
-//                ))
-//                .socket(getSocket())
-//                .build()
-//                .send();
+//        CmdRequestManager.INSTANCE.buildObtainQrcode(2).send();
+
+        CmdRequestManager.INSTANCE.buildUpdateRequest().send();
+
+//        CmdRequestManager.INSTANCE.buildUserExerciseRequest(
+//                3971587573L, 1000, 2000,1234,
+//                1, 0, 0, 1
+//        ).send();
+
     }
 
     public static SocketIO getSocket() {

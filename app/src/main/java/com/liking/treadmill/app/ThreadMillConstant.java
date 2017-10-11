@@ -2,9 +2,12 @@ package com.liking.treadmill.app;
 
 import android.support.v4.util.ArrayMap;
 
+import com.aaron.android.framework.BuildConfig;
 import com.aaron.android.framework.library.storage.DiskStorageManager;
 import com.liking.treadmill.R;
 import com.liking.treadmill.entity.CategoryEntity;
+
+import java.io.File;
 
 /**
  * 说明:
@@ -59,9 +62,9 @@ public class ThreadMillConstant {
     public static final int THREADMILL_MODE_SELECT_GOAL_SETTING = 2;//目标设置
 
     //跑步数据缓存目录
-    public static final String THREADMILL_PATH_STORAGE_DATA_CACHE = DiskStorageManager.getInstance().getFilePath() + "data/";
+    public static final String THREADMILL_PATH_STORAGE_DATA_CACHE = DiskStorageManager.getInstance().getFilePath() + BuildConfig.VERSION_NAME + File.separator + "data/";
     //用户登录状态缓存
-    public static final String THREADMILL_PATH_STORAGE_LOGINOUT_CACHE = DiskStorageManager.getInstance().getFilePath() + "loginout/";
+    public static final String THREADMILL_PATH_STORAGE_LOGINOUT_CACHE = DiskStorageManager.getInstance().getFilePath() + BuildConfig.VERSION_NAME + File.separator + "loginout/";
 
     public static final String GOALSETTING_RUNTIME = "goalsettingruntime";
     public static final String GOALSETTING_KILOMETRE = "goalsettingkilometre";
@@ -97,4 +100,16 @@ public class ThreadMillConstant {
 
     //默认待机时间 (120s)
     public static final int THREADMILL_DEFAULT_SYSTEM_STANBYTIME = 1 * 60;
+
+    //二维码类型 1绑定
+    public static final int TYPE_OBTAIN_QRCODE_BIND = 1;
+
+    //二维码类型 2解绑
+    public static final int TYPE_OBTAIN_QRCODE_UNBIND = 2;
+
+    //场馆 1绑定
+    public static final int TYPE_GYM_BIND = 1;
+
+    //场馆 2解绑
+    public static final int TYPE_GYM_UNBIND = 2;
 }

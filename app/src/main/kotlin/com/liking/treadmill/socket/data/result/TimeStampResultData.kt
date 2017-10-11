@@ -8,5 +8,5 @@ import com.google.gson.annotations.SerializedName
  * @author: chenlei
  * @version:1.0
  */
-class TimeStampData(@SerializedName("device_id") var deviceId: String,
-                    @SerializedName("timestamp") var timestamp: Long) : ResultData()
+class TimeStampResultData(@SerializedName("device_id") var deviceId: String,
+                          @SerializedName("timestamp") var timestamp: Long) : ResultData()
