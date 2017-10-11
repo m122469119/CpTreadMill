@@ -72,6 +72,9 @@ public class SocketIO {
                 case Constant.HANDLER_MSG:
                     handlerMsg(msg.getData());
                     break;
+                case Constant.HANDLER_CONNECT:
+                    handlerConnect(msg.getData());
+                    break;
 
                 default:
                     break;
@@ -96,6 +99,11 @@ public class SocketIO {
             intent.putExtra(Constant.KEY_MSG_DATA, body);
             mContext.sendBroadcast(intent);
         }
+    }
+
+    private void handlerConnect(Bundle bundle) {
+        Intent intent = new Intent(Constant.ACTION_CONNECT);
+        mContext.sendBroadcast(intent);
     }
 
     /**
@@ -217,6 +225,8 @@ public class SocketIO {
                 resetRetry();
 
                 resetPingPong();
+
+                sendConnectMessage();
             } catch (IOException e) {
                 e.printStackTrace();
 
@@ -466,6 +476,12 @@ public class SocketIO {
         bundle.putByte(Constant.KEY_MSG_CMD, cmd);
         bundle.putBoolean(Constant.KEY_MSG_IS_ERROR, isError);
         bundle.putCharSequence(Constant.KEY_MSG_DATA, body);
+        mHandler.sendMessage(msg);
+    }
+
+    private void sendConnectMessage() {
+        Message msg = mHandler.obtainMessage();
+        msg.what = Constant.HANDLER_CONNECT;
         mHandler.sendMessage(msg);
     }
 

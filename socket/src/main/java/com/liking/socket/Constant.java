@@ -11,7 +11,9 @@ import java.nio.charset.StandardCharsets;
 public class Constant {
 
     public static final int HANDLER_MSG = 0x01000001;
+    public static final int HANDLER_CONNECT = 0x01000002;
     public static final String ACTION_MSG = "com.liking.socket";
+    public static final String ACTION_CONNECT = "com.liking.socket.connect";
     public static final String KEY_MSG_CMD = "key_cmd";
     public static final String KEY_MSG_IS_ERROR = "key_msg_is_error";
     public static final String KEY_MSG_DATA = "key_msg.data";
