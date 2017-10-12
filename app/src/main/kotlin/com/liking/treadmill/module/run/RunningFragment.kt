@@ -5,6 +5,11 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.support.design.widget.TabLayout
+import android.support.v7.widget.RecyclerView
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,14 +18,19 @@ import android.view.animation.AnimationUtils
 import com.aaron.android.codelibrary.utils.DateUtils
 import com.aaron.android.codelibrary.utils.LogUtils
 import com.aaron.android.codelibrary.utils.StringUtils
+import com.aaron.android.framework.base.widget.refresh.StateView
 import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton
+import com.aaron.android.framework.utils.DisplayUtils
 import com.aaron.android.framework.utils.ResourceUtils
 import com.liking.treadmill.R
 import com.liking.treadmill.activity.HomeActivity
+import com.liking.treadmill.adapter.IqiyiVideoEpisodesAdapter
+import com.liking.treadmill.adapter.IqiyiVideoListAdapter
 import com.liking.treadmill.app.ThreadMillConstant
 import com.liking.treadmill.db.entity.AdvEntity
 import com.liking.treadmill.db.service.AdvService
 import com.liking.treadmill.fragment.AwaitActionFragment
+import com.liking.treadmill.fragment.GoalSettingFragment
 import com.liking.treadmill.fragment.SettingFragment
 import com.liking.treadmill.fragment.StartFragment
 import com.liking.treadmill.fragment.base.SerialPortFragment
@@ -36,8 +46,10 @@ import com.liking.treadmill.utils.TypefaceHelper
 import com.liking.treadmill.utils.countdownutils.CountDownListener
 import com.liking.treadmill.utils.countdownutils.LikingCountDownHelper
 import com.liking.treadmill.widget.IToast
+import com.liking.treadmill.widget.ScrollSpeedLinearLayoutManger
 import de.greenrobot.event.EventBus
 import kotlinx.android.synthetic.main.fragment_running.*
+import kotlinx.android.synthetic.main.layout_category_tablayout.view.*
 import kotlinx.android.synthetic.main.layout_pause.*
 import kotlinx.android.synthetic.main.layout_prepare.*
 import kotlinx.android.synthetic.main.layout_run_bottom.*
@@ -46,8 +58,17 @@ import kotlinx.android.synthetic.main.layout_run_content.*
 import kotlinx.android.synthetic.main.layout_run_content.view.*
 import kotlinx.android.synthetic.main.layout_run_finish.view.*
 import kotlinx.android.synthetic.main.layout_run_head.view.*
+import kotlinx.android.synthetic.main.layout_run_video_category.*
+import kotlinx.android.synthetic.main.layout_run_video_list.*
 import kotlinx.android.synthetic.main.layout_run_way.view.*
 import kotlinx.android.synthetic.main.run_info_cell.view.*
+import liking.com.iqiyimedia.IqiyiContract
+import liking.com.iqiyimedia.http.result.AlbumListResult
+import liking.com.iqiyimedia.http.result.CategoryListResult
+import liking.com.iqiyimedia.http.result.TopListResult
+import liking.com.iqiyimedia.http.result.VideoInfoResult
+import org.jetbrains.anko.imageResource
+import org.jetbrains.anko.layoutInflater
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -61,7 +82,9 @@ import java.util.*
  * @version:1.0
  */
 
-class RunningFragment : SerialPortFragment() {
+class RunningFragment : SerialPortFragment(), IqiyiContract.IqiyiView {
+
+    val RUNING_START_MODE_KEY: String = "MEDIA_STAR" //影音方式启动
 
     private val RUN_COUNTDOWN_TIME_INTERVAL: Long = 1000 //倒计时间隔
     private val RUN_COUNTDOWN_TIME_PREPARE = 5 * 1000 //跑步倒计时
@@ -75,7 +98,15 @@ class RunningFragment : SerialPortFragment() {
     private lateinit var prepareAnimation: Animation
     private lateinit var mCountDownHelper: LikingCountDownHelper
 
+    private var categoryTabIndex: Int = 0
     private var animatorDuration: Long = 800
+
+    private lateinit var mIqiyiPresenter: IqiyiContract.Presenter
+    private var videoListAdapter: IqiyiVideoListAdapter? = null
+    private var videoEpisodeAdapter: IqiyiVideoEpisodesAdapter? = null
+    private var videoTotal: Int = 1
+    private var videoSelectedPosition: Int = 0
+    private var videoEpisodeSelectedPosition: Int = 0
 
     private var mKcal = 0f //瞬时热量
     private var mHeartRate = 0 //瞬时心跳
@@ -157,6 +188,7 @@ class RunningFragment : SerialPortFragment() {
 
     private val RUNNING_CALCULATE_INTERVAL_SECOND = 1000
 
+    private var isMediaStart: Boolean = false
     private var isRunning: Boolean = false
     private val dateFormat = SimpleDateFormat("yyyy.MM.dd hh:mm")
     private val mAdvEntities = mutableListOf<AdvEntity>() //广告资源
@@ -171,6 +203,8 @@ class RunningFragment : SerialPortFragment() {
     }
 
     private fun setPresenter() {
+        mIqiyiPresenter = IqiyiContract.Presenter(context, this)
+        mIqiyiPresenter.attachView(this)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -244,6 +278,7 @@ class RunningFragment : SerialPortFragment() {
 
     fun initView() {
         initRunInfoView()
+        initIqiyiMediaView()
 
         //会员以及场馆信息显示
         try {
@@ -289,7 +324,35 @@ class RunningFragment : SerialPortFragment() {
         TypefaceHelper.setImpactFont(context, v.info_content_textView)
     }
 
+    /**
+     * 初始化视频相关view
+     */
+    fun initIqiyiMediaView() {
+        initCategoryTabView()
+        //视频列表
+        video_list_recyclerView.setHasFixedSize(true)
+        video_list_recyclerView.layoutManager = ScrollSpeedLinearLayoutManger(context)
+        video_list_recyclerView_episode.setHasFixedSize(true)
+        video_list_recyclerView_episode.layoutManager = ScrollSpeedLinearLayoutManger(context)
+        //频道切换提示
+        val builderCategory = SpannableStringBuilder(ResourceUtils.getString(R.string.category_hint_txt))
+        builderCategory.setSpan(
+                ForegroundColorSpan(ResourceUtils.getColor(R.color.c27C454)), 1, 9,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        category_change_hint.text = builderCategory
+        //视频切换提示
+        val builderVideolist = SpannableStringBuilder(ResourceUtils.getString(R.string.videolist_hint_txt))
+        builderVideolist.setSpan(
+                ForegroundColorSpan(ResourceUtils.getColor(R.color.c27C454)), 1, 9,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        video_list_change_hint.text = builderVideolist
+    }
+
     fun initData() {
+
+        if (arguments != null) {
+            isMediaStart = arguments.getBoolean(RUNING_START_MODE_KEY, false)
+        }
         //预备动画
         prepareAnimation = AnimationUtils.loadAnimation(context, R.anim.count_down_exit)
 
@@ -336,18 +399,294 @@ class RunningFragment : SerialPortFragment() {
 
     override fun onResume() {
         super.onResume()
-        startRunPrepareUI()
+        if (isMediaStart) {
+            layout_run_content.layout_run_way.visibility = View.INVISIBLE
+            layout_run_bottom.layout_run_bottom_content_layout.visibility = View.INVISIBLE
+            layout_run_content.layout_run_way.translationY =
+                    layout_run_content.layout_run_way.height +
+                            DisplayUtils.dp2px(ResourceUtils.getDimen(R.dimen.run_bottom_height)).toFloat()
+            showVideoCategoryUI()
+            mediaStartActiveMonitor()
+        } else {
+            startRunPrepareUI()
+        }
+        //添加延迟验证
+        verificationIsRun()
+    }
+
+    /**
+     * 媒体按键打开跑步页面  20s计时，无操作退出（选择视频过程）
+     */
+    fun mediaStartActiveMonitor() {
+        LogUtils.e(TAG, "-----mediaStartActiveMonitor---")
+        if(isRunning) return
+        startActiveMonitor(22)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         stopTreadMill()
         handler.removeCallbacksAndMessages(null)
+        mIqiyiPresenter.detachView(this)
         cancleCountDown()
         if (isEventTarget) {
             EventBus.getDefault().unregister(this)
         }
         layout_run_content.layout_run_way.run_way_view.stopRun()
+    }
+
+    /**
+     * 加载视频分类
+     */
+    fun initCategoryTabView() {
+//        if (mIqiyiPresenter != null) {
+//            mIqiyiPresenter.getCategoryList(this)
+//            layout_run_content.layout_run_video_category_stateview.setState(StateView.State.LOADING)
+//        }
+        ThreadMillConstant.CATEGORYRESOURCE.map {
+            category_tab_layout.addTab(
+                    category_tab_layout
+                            .newTab()
+                            .setTag(it.key)
+                            .setCustomView(getTabView(it.value.categoryRes, it.value.categoryName)))
+        }
+
+        category_tab_layout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+//                IToast.show("s:" + tab?.tag + ";count:" + category_tab_layout.tabCount
+//                        + ";index:" + categoryTabIndex + ";select:" + category_tab_layout.selectedTabPosition)
+            }
+        })
+    }
+
+    /**
+     * 选中视频Item进入播放或者选集
+     * @direction
+     */
+    fun selectIqiyiVideoItem(direction: Boolean) {
+        if (isInVideoListUI()) {
+            val lastPosition = videoSelectedPosition
+            if (direction) {
+                if (videoSelectedPosition < videoListAdapter!!.dataList.size) {
+                    ++videoSelectedPosition
+                } else {
+                    videoSelectedPosition = videoListAdapter!!.dataList.size - 1
+                }
+            } else {
+                if (videoSelectedPosition > 0) {
+                    --videoSelectedPosition
+                } else {
+                    videoSelectedPosition = 0
+                }
+            }
+            selectedVideo(video_list_recyclerView, lastPosition, videoSelectedPosition)
+        } else if (isInVideoEpisodeListUI()) {
+            val lastPosition = videoEpisodeSelectedPosition
+
+            if (direction) {
+                if (videoEpisodeSelectedPosition < videoEpisodeAdapter!!.dataList.size) {
+                    ++videoEpisodeSelectedPosition
+                } else {
+                    videoEpisodeSelectedPosition = videoEpisodeAdapter!!.dataList.size - 1
+                }
+            } else {
+                if (videoEpisodeSelectedPosition > 0) {
+                    --videoEpisodeSelectedPosition
+                } else {
+                    videoEpisodeSelectedPosition = 0
+                }
+            }
+            selectedVideo(video_list_recyclerView_episode, lastPosition, videoEpisodeSelectedPosition)
+        }
+    }
+
+    /**
+     * 选择video
+     */
+    fun selectedVideo(recyclerView: RecyclerView, lastPosition: Int, nextPosition: Int) {
+        recyclerView.smoothScrollToPosition(nextPosition)
+        recyclerView.postDelayed({
+            val nextItem = recyclerView.findViewHolderForAdapterPosition(nextPosition)
+            val lastItem = recyclerView.findViewHolderForAdapterPosition(lastPosition)
+            if (nextItem != null) {
+                if (lastItem != null) {
+                    lastItem.itemView.isSelected = false
+                }
+                nextItem.itemView.isSelected = true
+            }
+        }, 100)
+    }
+
+    /**
+     * 进入视频播放
+     */
+    fun getIntoIqiyiVideo(position: Int) {
+        if (isInVideoListUI()) {
+            if (position < videoListAdapter!!.dataList.size) {
+                videoListAdapter!!.dataList[position].let {
+                    var videoName = it.albumName
+//                    IToast.show(videoName)
+                    it.tvQipuIds.let {
+                        if (it.size == 1) {
+                            layout_run_content?.layout_run_video_list_stateview
+                                    ?.findViewById(R.id.layout_root)?.visibility = View.VISIBLE
+                            mIqiyiPresenter.getVideoInfo(this, it[0])
+                        } else if (it.size > 1) { //剧集视频,显示剧集
+                            videoEpisodeSelectedPosition = 0
+                            video_list_recyclerView?.visibility = View.INVISIBLE
+                            video_list_recyclerView_episode?.visibility = View.VISIBLE
+                            videoEpisodeAdapter = IqiyiVideoEpisodesAdapter(videoName, context)
+                            videoEpisodeAdapter!!.addData(it)
+                            video_list_recyclerView_episode?.adapter = videoEpisodeAdapter
+                            //默认选中第一项
+                            selectedVideo(video_list_recyclerView_episode, 0, 0)
+                        } else {
+                            IToast.show("视频播放失败!")
+                        }
+                    }
+                }
+            }
+        } else if (isInVideoEpisodeListUI()) {
+            if (position < videoEpisodeAdapter!!.dataList.size) {
+                videoEpisodeAdapter!!.dataList[position].let {
+                    layout_run_content?.layout_run_video_list_stateview
+                            ?.findViewById(R.id.layout_root)
+                            ?.visibility = View.VISIBLE
+                    mIqiyiPresenter.getVideoInfo(this, it.toString())
+                }
+            }
+        }
+    }
+
+    /**
+     * 切换频道
+     */
+    fun categoryNext() {
+        //切换频道
+        if (categoryTabIndex < category_tab_layout.tabCount - 1) {
+            ++categoryTabIndex
+        } else {
+            categoryTabIndex = category_tab_layout.tabCount - 1
+        }
+        category_tab_layout.getTabAt(categoryTabIndex)?.select()
+    }
+
+    fun categoryLast() {
+        //切换频道
+        if (categoryTabIndex > 0) {
+            --categoryTabIndex
+        } else {
+            categoryTabIndex = 0
+        }
+        category_tab_layout.getTabAt(categoryTabIndex)?.select()
+    }
+
+    /**
+     * 选中分类加载排行榜视频列表
+     */
+    fun loadVideoList() {
+        showVideolistUI()
+        layout_run_content.layout_run_video_list_stateview.setState(StateView.State.LOADING)
+        loadIqiyiVideoTopList(category_tab_layout.getTabAt(category_tab_layout.selectedTabPosition)?.tag.toString())
+    }
+
+    /**
+     * 加载爱奇艺排行榜视频
+     */
+    fun loadIqiyiVideoTopList(categoryId: String) {
+        video_list_recyclerView?.scrollToPosition(0) //每次加载视频列表时回到顶部
+        videoSelectedPosition = 0
+        mIqiyiPresenter.getTopList(this, categoryId)
+    }
+
+    /**
+     * 视频频道分类返回
+     */
+    override fun setCategoryListView(categoryResult: CategoryListResult?) {
+//        layout_run_content.layout_run_video_category_stateview.setState(StateView.State.SUCCESS)
+//        categoryResult.let {
+//            it?.data?.map {
+//                it.categoryId
+//                category_tab_layout.addTab(
+//                        category_tab_layout.newTab().setCustomView(getTabView(it.categoryName)))
+//            }
+//        }
+    }
+
+    /**
+     * 分类tab
+     */
+    fun getTabView(img: Int, name: String): View {
+        val inflate = context.layoutInflater.inflate(R.layout.layout_category_tablayout, null)
+        inflate.tab_category_img.imageResource = img
+        inflate.tab_category_txt.text = name
+        return inflate
+    }
+
+    /**
+     * 视频资源列表
+     */
+    override fun setAlbumListView(result: AlbumListResult?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    /**
+     * 排行榜列表
+     */
+    override fun setTopListView(result: TopListResult?) {
+        layout_run_content?.layout_run_video_list_stateview?.setState(StateView.State.SUCCESS)
+        result.let {
+            if (it != null) {
+                videoTotal = it.total
+                it.data.let {
+                    //免费视频
+                    videoListAdapter = IqiyiVideoListAdapter(context)
+                    video_list_recyclerView.adapter = videoListAdapter
+                    videoListAdapter!!.addData(result?.data?.filter { 0 == it.isPurchase })
+//                    videoListAdapter.notifyDataSetChanged()
+                    //默认选中第一项
+                    if (it.size > 0) {
+                        selectedVideo(video_list_recyclerView, 0, 0)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 视频详细信息
+     */
+    override fun setVideoInfoView(result: VideoInfoResult?) {
+        layout_run_content?.layout_run_video_list_stateview?.setState(StateView.State.SUCCESS)
+        result.let {
+            it?.data.let {
+                if (it != null && !StringUtils.isEmpty(it.html5PlayUrl)) {
+                    openVideoPlayBrowserUI(it.categoryId.toString(), it.html5PlayUrl)
+                } else {
+                    IToast.show("视频播放失败!")
+                }
+            }
+        }
+    }
+
+    /**
+     * 加载失败
+     */
+    override fun showFailView(message: String?, failType: Int) {
+        when (failType) {
+            IqiyiContract.IQIYI_RESPONSE_FAIL_TOPLIST -> {
+                layout_run_content?.layout_run_video_list_stateview?.setState(StateView.State.FAILED)
+            }
+            IqiyiContract.IQIYI_RESPONSE_FAIL_VIDEOINFO -> {
+                layout_run_content?.layout_run_video_list_stateview
+                        ?.findViewById(R.id.layout_root)?.visibility = View.GONE
+                IToast.show("视频加载失败!")
+            }
+
+
+        }
     }
 
     /**
@@ -362,6 +701,139 @@ class RunningFragment : SerialPortFragment() {
      */
     fun hiddenRunWayUI() {
         hiddenTranslationYUI(layout_run_content.layout_run_way, 0.0f, animatorDuration)
+    }
+
+    /**
+     * 显示频道分类
+     */
+    fun showVideoCategoryUI() {
+        showScaleUI(layout_run_content.layout_run_video_category_stateview)
+    }
+
+    /**
+     * 隐藏频道分类
+     */
+    fun hiddenVideoCategoryUI() {
+        hiddenScaleUI(layout_run_content.layout_run_video_category_stateview)
+    }
+
+    /**
+     * 显示视频列表
+     */
+    fun showVideolistUI() {
+        showScaleUI(layout_run_content.layout_run_video_list_stateview)
+    }
+
+    /**
+     * 隐藏视频列表
+     */
+    fun hiddenVideoListUI() {
+        hiddenScaleUI(layout_run_content.layout_run_video_list_stateview)
+    }
+
+    /**
+     * 打开播放页面
+     */
+    fun openVideoPlayBrowserUI(category: String, h5url: String) {
+        stopActiveMonitor() //关闭计时
+        //hidden列表向下移
+        setAllParentsClip(layout_run_content.layout_run_video_list_stateview, false)
+        hiddenTranslationYUI(layout_run_content.layout_run_video_list_stateview,
+                DisplayUtils.dp2px(ResourceUtils.getDimen(R.dimen.run_bottom_height)).toFloat(),
+                animatorDuration)
+
+        //hidden head left
+        ObjectAnimator.ofFloat(
+                layout_run_head.layout_run_head_left,
+                "translationX",
+                layout_run_head.layout_run_head_left.translationX,
+                -layout_run_head.layout_run_head_left.width.toFloat())
+                .setDuration(animatorDuration)
+                .start()
+
+        //hidden head right
+        var obj = ObjectAnimator.ofFloat(
+                layout_run_head.layout_run_head_right,
+                "translationX",
+                layout_run_head.layout_run_head_right.translationX,
+                layout_run_head.layout_run_head_right.width.toFloat())
+                .setDuration(animatorDuration)
+        obj.addListener(object : Animator.AnimatorListener {
+            override fun onAnimationRepeat(animation: Animator?) {}
+            override fun onAnimationEnd(animation: Animator?) {
+                setAllParentsClip(layout_run_content.layout_run_video_list_stateview, true)
+
+                var videoPlayUI = childFragmentManager
+                        .findFragmentById(R.id.layout_run_video_play)
+                if (videoPlayUI == null) {
+                    videoPlayUI = VideoPlayBrowserFragment.newInstance(category, h5url)
+                    childFragmentManager
+                            .beginTransaction()
+                            .replace(R.id.layout_run_video_play, videoPlayUI)
+                            .commitAllowingStateLoss()
+                }
+                if (!isInVideoPlayUI()) {
+                    showTranslationYUI(run_bottom_layout_bg, animatorDuration)
+                    layout_run_video_play.visibility = View.VISIBLE
+
+                    var obj = ObjectAnimator.ofFloat(layout_run_video_play, "scaleX", 0f, 1f)
+                            .setDuration(animatorDuration)
+                    obj.addListener(object : Animator.AnimatorListener {
+                        override fun onAnimationStart(animation: Animator) {}
+                        override fun onAnimationEnd(animation: Animator) {
+                            (videoPlayUI as VideoPlayBrowserFragment).loadUrl(h5url)
+                        }
+
+                        override fun onAnimationCancel(animation: Animator) {}
+                        override fun onAnimationRepeat(animation: Animator) {}
+                    })
+                    obj.start()
+                    ObjectAnimator.ofFloat(layout_run_video_play, "scaleY", 0f, 1f)
+                            .setDuration(animatorDuration)
+                            .start()
+                } else {
+                    (videoPlayUI as VideoPlayBrowserFragment).loadUrl(h5url)
+                }
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {}
+            override fun onAnimationStart(animation: Animator?) {}
+        })
+        obj.start()
+    }
+
+    fun setAllParentsClip(v: View, enabled: Boolean) {
+        var v = v
+        while (v.parent != null && v.parent is ViewGroup) {
+            val viewGroup = v.parent as ViewGroup
+            viewGroup.clipChildren = enabled
+            viewGroup.clipToPadding = enabled
+            v = viewGroup
+        }
+    }
+
+    /**
+     * 关闭播放页面
+     */
+    fun closeVideoPlayBrowserUI() {
+        layout_run_video_play.visibility = View.GONE
+        hiddenBottomLayoutBg()//TranslationYUI(run_bottom_layout_bg, animatorDuration)
+        //show 播放列表向上移
+        showTranslationYUI(layout_run_content.layout_run_video_list_stateview, animatorDuration)
+        //show head left
+        ObjectAnimator.ofFloat(
+                layout_run_head.layout_run_head_left,
+                "translationX",
+                layout_run_head.layout_run_head_left.translationX,
+                0.0f)
+                .setDuration(animatorDuration)
+                .start()
+        //show head right
+        ObjectAnimator.ofFloat(
+                layout_run_head.layout_run_head_right,
+                "translationX",
+                layout_run_head.layout_run_head_right.translationX, 0.0f)
+                .setDuration(animatorDuration)
     }
 
     /**
@@ -431,9 +903,38 @@ class RunningFragment : SerialPortFragment() {
     }
 
     /**
+     *隐藏底部背景
+     */
+    fun hiddenBottomLayoutBg() {
+        hiddenTranslationYUI(run_bottom_layout_bg, 0.0f, animatorDuration)
+    }
+
+    /**
      * 是否在跑道页
      */
     fun isInRunWayUI(): Boolean = isInUI(layout_run_content.layout_run_way.visibility)
+
+    /**
+     * 是否在视频分类页
+     */
+    fun isInVideoCategoryUI(): Boolean = isInUI(layout_run_content.layout_run_video_category_stateview.visibility)
+
+    /**
+     * 是否在视频展示页
+     */
+    fun isInVideosUI(): Boolean = isInUI(layout_run_content.layout_run_video_list_stateview.visibility)
+
+    /**
+     * 是否在视频列表页
+     */
+    fun isInVideoListUI(): Boolean = isInUI(video_list_recyclerView.visibility)
+
+    /**
+     * 是否在视频剧集列表页
+     */
+    fun isInVideoEpisodeListUI(): Boolean = isInUI(video_list_recyclerView_episode.visibility)
+
+    fun isInVideoPlayUI(): Boolean = isInUI(layout_run_video_play.visibility)
 
     /**
      * 是否在准备页
@@ -520,6 +1021,16 @@ class RunningFragment : SerialPortFragment() {
         (activity as HomeActivity).launchFragment(AwaitActionFragment())
     }
 
+    /**
+     * 跳转目标设置
+     */
+    fun setUpGoalSetting() {
+        //目标设置
+        if (!isRunning) {
+            (activity as HomeActivity).launchFragment(GoalSettingFragment())
+        }
+    }
+
     fun volumeControl(keyCode: Int) {
         if (keyCode == LikingTreadKeyEvent.KEY_VOL_PLUS.toInt()) {// +
             (activity as HomeActivity).volumeAdd()
@@ -560,6 +1071,168 @@ class RunningFragment : SerialPortFragment() {
             }
         } else if (isInRunWayUI()) { //正在跑步界面
             setUpRun(keyCode, true)
+        } else if (isInVideoCategoryUI()) { //视频分类页
+
+            if (keyCode == LikingTreadKeyEvent.KEY_LAST.toInt()) {
+                if (isMediaStart) { //刷新计时
+                    mediaStartActiveMonitor()
+                }
+                categoryLast()
+            } else if (keyCode == LikingTreadKeyEvent.KEY_NEXT.toInt()) {
+                if (isMediaStart) { //刷新计时
+                    mediaStartActiveMonitor()
+                }
+                categoryNext()
+            } else if (keyCode == LikingTreadKeyEvent.KEY_PLAY_PAUSE_MEDIA.toInt()) {
+                if (isMediaStart) { //刷新计时
+                    mediaStartActiveMonitor()
+                }
+                hiddenVideoCategoryUI()
+                loadVideoList()
+            } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN.toInt()) {
+
+                if (isRunning) {
+                    hiddenVideoCategoryUI()
+                    showRunWayUI()
+                } else {
+                    exitRunUI()
+                }
+
+            } else if (keyCode == LikingTreadKeyEvent.KEY_START.toInt()) {
+
+                if (!isRunning) {
+                    hiddenVideoCategoryUI()
+                    showRunWayUI()
+                    layout_run_bottom.layout_run_bottom_content_layout.visibility = View.VISIBLE
+                    startRunPrepareUI()
+                }
+
+            } else if (keyCode == LikingTreadKeyEvent.KEY_SET.toInt()) {
+                setUpGoalSetting()
+            } else {
+                setUpRun(keyCode, false)
+            }
+
+        } else if (isInVideosUI()) { //视频页（视频列表、视频剧集列表）
+
+            if (keyCode == LikingTreadKeyEvent.KEY_START.toInt()) {
+                if (!isRunning) {
+                    hiddenVideoListUI()
+                    showRunWayUI()
+                    layout_run_bottom.layout_run_bottom_content_layout.visibility = View.VISIBLE
+                    startRunPrepareUI()
+                }
+                return
+            } else if (keyCode == LikingTreadKeyEvent.KEY_SET.toInt()) {
+                setUpGoalSetting()
+                return
+            }
+
+            if (isInVideoListUI()) {
+                //如果加载中 return
+                if (layout_run_content.layout_run_video_list_stateview.currState == StateView.State.LOADING) return
+
+                if (keyCode == LikingTreadKeyEvent.KEY_LAST.toInt()) {
+                    if (isMediaStart) { //刷新计时
+                        mediaStartActiveMonitor()
+                    }
+                    selectIqiyiVideoItem(false)
+                } else if (keyCode == LikingTreadKeyEvent.KEY_NEXT.toInt()) {
+                    if (isMediaStart) { //刷新计时
+                        mediaStartActiveMonitor()
+                    }
+                    selectIqiyiVideoItem(true)
+                } else if (keyCode == LikingTreadKeyEvent.KEY_PLAY_PAUSE_MEDIA.toInt()) {
+                    if (isMediaStart) { //刷新计时
+                        mediaStartActiveMonitor()
+                    }
+                    getIntoIqiyiVideo(videoSelectedPosition)
+                } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN.toInt()) {
+                    if (isMediaStart) { //刷新计时
+                        mediaStartActiveMonitor()
+                    }
+                    hiddenVideoListUI()
+                    showVideoCategoryUI()
+                } else {
+                    setUpRun(keyCode, false)
+                }
+            } else if (isInVideoEpisodeListUI()) {
+                if (keyCode == LikingTreadKeyEvent.KEY_LAST.toInt()) {
+                    if (isMediaStart) { //刷新计时
+                        mediaStartActiveMonitor()
+                    }
+                    selectIqiyiVideoItem(false)
+                } else if (keyCode == LikingTreadKeyEvent.KEY_NEXT.toInt()) {
+                    if (isMediaStart) { //刷新计时
+                        mediaStartActiveMonitor()
+                    }
+                    selectIqiyiVideoItem(true)
+                } else if (keyCode == LikingTreadKeyEvent.KEY_PLAY_PAUSE_MEDIA.toInt()) {
+                    if (isMediaStart) { //刷新计时
+                        mediaStartActiveMonitor()
+                    }
+                    getIntoIqiyiVideo(videoEpisodeSelectedPosition)
+                } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN.toInt()) {
+                    if (isMediaStart) { //刷新计时
+                        mediaStartActiveMonitor()
+                    }
+                    video_list_recyclerView_episode.visibility = View.GONE
+                    video_list_recyclerView.visibility = View.VISIBLE
+                } else {
+                    setUpRun(keyCode, false)
+                }
+            }
+
+        } else if (isInVideoPlayUI()) { //视频播放
+
+            if (keyCode == LikingTreadKeyEvent.KEY_START.toInt()) {
+                if (!isRunning) {
+                    layout_run_bottom.layout_run_bottom_content_layout.visibility = View.VISIBLE
+                    startRunPrepareUI()
+                }
+                return
+            }
+
+            if (keyCode == LikingTreadKeyEvent.KEY_LAST.toInt()) {
+                videoPlayBrowserUIAction {
+                    selectIqiyiVideoItem(false)
+                    if (isInVideoListUI()) {
+                        getIntoIqiyiVideo(videoSelectedPosition)
+                    } else if (isInVideoEpisodeListUI()) {
+                        getIntoIqiyiVideo(videoEpisodeSelectedPosition)
+                    }
+                }
+            } else if (keyCode == LikingTreadKeyEvent.KEY_NEXT.toInt()) {
+                videoPlayBrowserUIAction {
+                    selectIqiyiVideoItem(true)
+                    if (isInVideoListUI()) {
+                        getIntoIqiyiVideo(videoSelectedPosition)
+                    } else if (isInVideoEpisodeListUI()) {
+                        getIntoIqiyiVideo(videoEpisodeSelectedPosition)
+                    }
+                }
+            } else if (keyCode == LikingTreadKeyEvent.KEY_RETURN.toInt()) {
+                videoPlayBrowserUIAction {
+                    childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()
+                }
+                closeVideoPlayBrowserUI()
+                mediaStartActiveMonitor()
+            } else if (keyCode == LikingTreadKeyEvent.KEY_STOP_MEDIA.toInt()) {
+                videoPlayBrowserUIAction {
+                    it.pausePlayVideo()
+                }
+            } else if (keyCode == LikingTreadKeyEvent.KEY_PLAY_PAUSE_MEDIA.toInt()) {
+                videoPlayBrowserUIAction {
+                    it.playVideo()
+                }
+            } else if (keyCode == LikingTreadKeyEvent.KEY_SET.toInt()) {
+                //目标设置
+                setUpGoalSetting()
+            } else {
+                setUpRun(keyCode, false)
+            }
+        } else {
+            showRunWayUI()
         }
     }
 
@@ -608,9 +1281,23 @@ class RunningFragment : SerialPortFragment() {
             setGrade(getTreadInstance().currentGrade + 1)
         } else if (keyCode == LikingTreadKeyEvent.KEY_HAND_SHANK_GRADE_REDUCE.toInt()) {
             setGrade(getTreadInstance().currentGrade - 1)
+        } else if (keyCode == LikingTreadKeyEvent.KEY_MULTIMEDIA.toInt() && isInRunWayUI) {
+            hiddenRunWayUI()
+            showVideoCategoryUI()
         }
     }
 
+    /**
+     * 视频播放页
+     */
+    fun videoPlayBrowserUIAction(f: (ui: VideoPlayBrowserFragment) -> Unit) {
+        childFragmentManager.findFragmentById(R.id.layout_run_video_play)
+                .let {
+                    if (it != null) {
+                        f.invoke(it as VideoPlayBrowserFragment)
+                    }
+                }
+    }
 
     /**
      * 设置跑步机速度
@@ -737,8 +1424,13 @@ class RunningFragment : SerialPortFragment() {
         isRunning = false
         isFinish = true
         handler.removeCallbacksAndMessages(null)
+        videoPlayBrowserUIAction {
+            childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss()
+        }
+        hiddenBottomLayoutBg()
         layout_run_content.visibility = View.GONE
         layout_run_pause.visibility = View.GONE
+        layout_run_video_play.visibility = View.GONE
         layout_run_finish.visibility = View.VISIBLE
         statisticsRunData()
         //清空数据
@@ -901,6 +1593,34 @@ class RunningFragment : SerialPortFragment() {
 
     fun getTime(): String {
         return dateFormat.format(Date())
+    }
+
+    /**
+     * 超时验证（避免跑步机沦为电视机）
+     * 如果用户在刷手环后10分钟内（超时机制仍然存在）未进行跑步操作
+     * 8分钟时弹框提示：您目前位于跑步机，快快跑起来吧~（5s自动消失）
+     * 9分钟时弹框提示：您必须马上跑起来，排队的小伙伴正在等待，1分钟后若您未进入跑步状态，本次使用将结束（5s自动消失）
+     * 10分钟时弹框提示：本次使用结束，谢谢使用（5s自动消失）后跳转至待机页面
+     */
+    fun verificationIsRun() {
+        handler.postDelayed({
+            verificationTost(ResourceUtils.getString(R.string.run_timeout_1), false)
+        }, 8 * 60 * 1000)
+        handler.postDelayed({
+            verificationTost(ResourceUtils.getString(R.string.run_timeout_2), false)
+        }, 9 * 60 * 1000)
+        handler.postDelayed({
+            verificationTost(ResourceUtils.getString(R.string.run_timeout_3), true)
+        }, 10 * 60 * 1000)
+    }
+
+    fun verificationTost(hint: String, isExit: Boolean) {
+        if (!isRunning && !isPause && !isFinish) { //没有跑步过程并且不在暂停状态,不在结束页面
+            IToast.showLong(hint)
+            if (isExit) {
+                exitRunUI()
+            }
+        }
     }
 
     /**

@@ -113,7 +113,7 @@ dependencies {
     compile "org.jetbrains.anko:anko-sdk25-coroutines:${ANKO_VERSION}"
     compile "org.jetbrains.anko:anko-appcompat-v7-coroutines:${ANKO_VERSION}"
     compile 'com.google.zxing:core:3.3.0'
-
+    compile project(':iqiyimedia')
 }
 repositories {
     mavenCentral()

@@ -27,6 +27,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="80dp"/>
 
+            <FrameLayout
+                android:id="@+id/layout_run_video_play"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+
             <include
                 android:id="@+id/layout_run_finish"
                 layout="@layout/layout_run_finish"

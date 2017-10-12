@@ -1,8 +1,6 @@
-/*
 package com.liking.treadmill.adapter
 
 import android.content.Context
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
@@ -28,4 +26,3 @@ class IqiyiVideoListAdapter(context: Context) :BaseRecycleViewAdapter<VideoListV
         }
     }
 }
-*/

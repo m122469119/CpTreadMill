@@ -170,11 +170,11 @@ public class StartFragment extends SerialPortFragment {
             }
             ((HomeActivity) getActivity()).launchFragment(new GoalSettingFragment());
         } else if(keyCode == LikingTreadKeyEvent.KEY_MULTIMEDIA) {
-//            RunningFragment runningFragment = new RunningFragment();
-//            Bundle bundle = new Bundle();
-//            bundle.putBoolean(runningFragment.getRUNING_START_MODE_KEY(), true);
-//            runningFragment.setArguments(bundle);
-//            ((HomeActivity) getActivity()).launchFragment(runningFragment);
+            RunningFragment runningFragment = new RunningFragment();
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(runningFragment.getRUNING_START_MODE_KEY(), true);
+            runningFragment.setArguments(bundle);
+            ((HomeActivity) getActivity()).launchFragment(runningFragment);
         }
     }
 
