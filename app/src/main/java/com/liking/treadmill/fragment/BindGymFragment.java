@@ -1,5 +1,6 @@
 package com.liking.treadmill.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
@@ -11,14 +12,15 @@ import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.codelibrary.utils.StringUtils;
-import com.aaron.android.framework.library.imageloader.HImageLoaderSingleton;
-import com.aaron.android.framework.library.imageloader.HImageView;
+import com.aaron.android.framework.library.thread.TaskScheduler;
+import com.aaron.android.framework.utils.DisplayUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.activity.HomeActivity;
@@ -27,9 +29,11 @@ import com.liking.treadmill.message.GymBindSuccessMessage;
 import com.liking.treadmill.message.GymUnBindSuccessMessage;
 import com.liking.treadmill.message.QrCodeMessage;
 import com.liking.treadmill.message.SettingNextMessage;
+import com.liking.treadmill.socket.ThreadMillServiceApi;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
+import com.liking.treadmill.utils.QRCodeEncoder;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,7 +54,7 @@ public class BindGymFragment extends SerialPortFragment {
     @BindView(R.id.bind_gym_step_txt)
     LinearLayout mLayoutBindGymStep;
     @BindView(R.id.qrcode_imageView)
-    HImageView mQrcodeImageView;
+    ImageView mQrcodeImageView;
     @BindView(R.id.bind_gym_hint_step3)
     TextView bindGymHintStep;
     @BindView(R.id.bind_gym_hint_bind)
@@ -68,9 +72,8 @@ public class BindGymFragment extends SerialPortFragment {
     @BindView(R.id.qrcode_hint3)
     TextView mQrcodeHint3;
 
-    private HomeActivity homeActivity;
     private boolean isBindGym; //是否绑定场馆
-    private boolean isSetting ; //系统设置进入
+    private boolean isSetting; //系统设置进入
 
     @Nullable
     @Override
@@ -96,50 +99,41 @@ public class BindGymFragment extends SerialPortFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser) {
+        if (isVisibleToUser) {
             loadBindGymQrCode();
         }
     }
 
     private void initData() {
-        homeActivity = (HomeActivity)getActivity();
         Bundle bundle = getArguments();
-        if(bundle !=null ) {
+        if (bundle != null) {
             isSetting = bundle.getBoolean(THREADMILL_SYSTEMSETTING, false);
         }
 
         isBindGym = !StringUtils.isEmpty(Preference.getBindUserGymId());
 
-        if(isSetting) {
+        if (isSetting) {
             loadBindGymQrCode();
         }
     }
 
     public void loadBindGymQrCode() {
-        if(isBindGym) { //已绑定
-            try {
+        try {
+            if (isBindGym) { //已绑定
                 LogUtils.d(TAG, "------onUnBind()");
-                if(homeActivity.iBackService != null) {
-                    homeActivity.iBackService.unBind();
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        } else { //未绑定
-            try {
+                ThreadMillServiceApi.Companion.INSTANCE().unBind();
+            } else { //未绑定
                 LogUtils.d(TAG, "------onBind()");
-                if(homeActivity.iBackService != null) {
-                    homeActivity.iBackService.bind();
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
+                ThreadMillServiceApi.Companion.INSTANCE().bind();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     private void initView() {
         String state = "";
-        if(isBindGym) { //已绑定
+        if (isBindGym) { //已绑定
             state = "解绑";
             mBindGymHint1.setText("当前绑定健身房：" + Preference.getBindUserGymName());
             mBindGymHint2.setText("通过手机扫码，解除当前绑定健身房");
@@ -151,8 +145,8 @@ public class BindGymFragment extends SerialPortFragment {
         Spanned h = Html.fromHtml("打开<font color=#85878e>手机微信</font><br>扫一扫" + state);
         mQrcodeHint3.setText(h);
 
-        if(isSetting) {
-            ((HomeActivity)getActivity()).setTitle(state + "场馆");
+        if (isSetting) {
+            ((HomeActivity) getActivity()).setTitle(state + "场馆");
             mLayoutBindGymStep.setVisibility(View.INVISIBLE);
             netWorkSettingHint.setVisibility(View.VISIBLE);
             SpannableStringBuilder ssbh = new SpannableStringBuilder(ResourceUtils.getString(R.string.threadmill_bind_gym_operate_txt));
@@ -170,20 +164,20 @@ public class BindGymFragment extends SerialPortFragment {
     public void onTreadKeyDown(int keyCode, LikingTreadKeyEvent event) {
         super.onTreadKeyDown(keyCode, event);
         if (keyCode == LikingTreadKeyEvent.KEY_RETURN) {
-            if(isSetting) {
+            if (isSetting) {
                 ((HomeActivity) getActivity()).setTitle("");
                 ((HomeActivity) getActivity()).launchFullFragment(new SettingFragment());
             }
-        } else if(keyCode == LikingTreadKeyEvent.KEY_LAST) {
-            if(isSetting) return;
+        } else if (keyCode == LikingTreadKeyEvent.KEY_LAST) {
+            if (isSetting) return;
             postEvent(new SettingNextMessage(0));
-        } else if(keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) {
+        } else if (keyCode == LikingTreadKeyEvent.KEY_MODE_MODE) {
             ((HomeActivity) getActivity()).launchFullFragment(new VolumeTestFragment());
 //            if(!isSetting) {
 //                Intent intent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
 //                startActivity(intent);
 //            }
-        } else if(keyCode == LikingTreadKeyEvent.KEY_PGR_SPEED_COOLDOWN) {
+        } else if (keyCode == LikingTreadKeyEvent.KEY_PGR_SPEED_COOLDOWN) {
             SerialPortUtil.checkGradeLifting();
         }
     }
@@ -201,14 +195,32 @@ public class BindGymFragment extends SerialPortFragment {
 
     /**
      * 二维码显示
+     *
      * @param message
      */
     public void onEvent(QrCodeMessage message) {
-        String url = Preference.getQCodeUrl();
+        final String url = Preference.getQCodeUrl();
         LogUtils.d(TAG, url);
-        if(!StringUtils.isEmpty(url)) {
-            HImageLoaderSingleton.getInstance().loadImage(mQrcodeImageView, url);
+        if (!StringUtils.isEmpty(url)) {
+            TaskScheduler.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        final Bitmap bitmap = QRCodeEncoder.syncEncodeQRCode(url, DisplayUtils.dp2px(180));
+                        BindGymFragment.this.getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mQrcodeImageView.setImageBitmap(bitmap);
+                            }
+                        });
+                    }catch (Exception e){}
+                }
+            });
         }
+
+//        if(!StringUtils.isEmpty(url)) {
+//            HImageLoaderSingleton.getInstance().loadImage(mQrcodeImageView, url);
+//        }
     }
 
     public void showFinishView() {
@@ -218,7 +230,7 @@ public class BindGymFragment extends SerialPortFragment {
         bindGymHintSkip.setVisibility(View.VISIBLE);
         mBindGymHint1.setVisibility(View.INVISIBLE);
         mBindGymHint2.setVisibility(View.INVISIBLE);
-        ((HomeActivity)getActivity()).setTitle("");
+        ((HomeActivity) getActivity()).setTitle("");
         Preference.setQcodeUrl("");
     }
 
@@ -230,11 +242,14 @@ public class BindGymFragment extends SerialPortFragment {
     public void onEvent(GymBindSuccessMessage message) {
         try {
             LogUtils.e(TAG, "GymBindSuccessMessage --- ");
-            ((HomeActivity)getActivity()).iBackService.reportDevices();
-            if(isEventTarget()) {
+            ThreadMillServiceApi.Companion.INSTANCE().reportDevices();
+            //检查更新
+            ThreadMillServiceApi.Companion.INSTANCE().checkUpdates();
+            if (isEventTarget()) {
                 EventBus.getDefault().unregister(this);
             }
-        }catch (Exception e) {}
+        } catch (Exception e) {
+        }
         showFinishView();
     }
 
@@ -244,7 +259,7 @@ public class BindGymFragment extends SerialPortFragment {
      * @param message
      */
     public void onEvent(GymUnBindSuccessMessage message) {
-        if(isEventTarget()) {
+        if (isEventTarget()) {
             EventBus.getDefault().unregister(this);
         }
         showFinishView();

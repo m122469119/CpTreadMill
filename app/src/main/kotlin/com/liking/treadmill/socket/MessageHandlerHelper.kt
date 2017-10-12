@@ -89,7 +89,7 @@ object MessageHandlerHelper {
                 }
             }
 
-        //更新通知 TODO
+        //更新通知
             CmdConstant.CMD_UPDATE -> {
                 fromJson(result, ApkUpdateInfoResultData::class.java).let {
                     if (it != null) {
@@ -111,10 +111,11 @@ object MessageHandlerHelper {
                 fromJson(result, UserInfoResultData::class.java).let {
                     if (it != null) {
                         val message = UserLoginInfoMessage()
-                        val user = it.user
+                        val userResult = it
+                        val user = userResult.user
 
                         user?.let {
-                            message.mUser = user
+                            message.mUserResult = userResult
                             //缓存一条登录状态
                             val deviceId = DeviceUtils.getDeviceInfo(BaseApplication.getInstance())
                             val time = DateUtils.currentDataSeconds()
@@ -153,11 +154,11 @@ object MessageHandlerHelper {
                 }
             }
 
-        //场馆绑定、解绑返回 TODO
+        //场馆绑定、解绑返回
             CmdConstant.CMD_GYM_BIND -> {
                 fromJson(result, BindGymInfoResultData::class.java).let {
                     if (it != null) {
-                        if(it.type == ThreadMillConstant.TYPE_GYM_BIND) {
+                        if (it.type == ThreadMillConstant.TYPE_GYM_BIND) {
                             val gymId = Preference.getBindUserGymId()
                             if (StringUtils.isEmpty(gymId) || "0" == gymId) {
                                 Preference.setIsStartingUp(false)
@@ -165,7 +166,7 @@ object MessageHandlerHelper {
                                 Preference.setBindUserGymName(it.gymName)
                                 LKProtocolsHelperKt.postEvent(GymBindSuccessMessage())
                             }
-                        } else if(it.type == ThreadMillConstant.TYPE_GYM_UNBIND) {
+                        } else if (it.type == ThreadMillConstant.TYPE_GYM_UNBIND) {
                             Preference.setUnBindRest()
                             postEvent(GymUnBindSuccessMessage())
                         }

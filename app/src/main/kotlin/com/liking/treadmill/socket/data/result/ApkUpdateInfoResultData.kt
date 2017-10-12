@@ -13,8 +13,7 @@ import com.google.gson.annotations.SerializedName
  * @version:1.0
  */
 class ApkUpdateInfoResultData(
-        @SerializedName("host_id") var hostId: String, //中心主机ID string
-        @SerializedName("version") var version: String,
+        @SerializedName("app_version") var version: String,
         @SerializedName("url") var url: String,
-        @SerializedName("md5") var md5: String,
-        @SerializedName("size") var size: String) : ResultData()
+        @SerializedName("app_md_5") var md5: String,
+        @SerializedName("app_size") var size: String) : ResultData()

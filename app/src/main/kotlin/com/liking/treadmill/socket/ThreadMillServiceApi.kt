@@ -10,21 +10,16 @@ import com.liking.treadmill.socket.internal.ThreadMillServiceApiImpl
  */
 interface ThreadMillServiceApi {
 
-    fun rebind()
-    fun init()
     fun bind()
     fun unBind()
-    fun confirm()
+    fun checkUpdates()
     fun reportDevices()
     fun userLogin(cardNo: String)
     fun userLogOut(cardNo: String)
-    fun reportExerciseCacheData(data: String)
     fun reportExerciseData(type: Int, aimType: Int, aim: Float, achieve: Int)
-    fun requestMembersCommand()
-    fun membersStateReplyCommand()
 
     companion object {
-        fun getInstance() : ThreadMillServiceApiImpl {
+        fun INSTANCE() : ThreadMillServiceApiImpl {
             return ThreadMillServiceApiImpl()
         }
     }

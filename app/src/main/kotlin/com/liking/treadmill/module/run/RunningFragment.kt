@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.os.RemoteException
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +26,7 @@ import com.liking.treadmill.fragment.StartFragment
 import com.liking.treadmill.fragment.base.SerialPortFragment
 import com.liking.treadmill.message.AdvRefreshMessage
 import com.liking.treadmill.message.ToolBarTimeMessage
+import com.liking.treadmill.socket.ThreadMillServiceApi
 import com.liking.treadmill.storge.Preference
 import com.liking.treadmill.treadcontroller.LikingTreadKeyEvent
 import com.liking.treadmill.treadcontroller.SerialPortUtil
@@ -797,10 +797,9 @@ class RunningFragment : SerialPortFragment() {
         if (userInfo != null && !userInfo.isVisitor) {//非访客模式
             try {
                 //上传锻炼数据
-                (activity as HomeActivity)
-                        .iBackService
-                        .reportExerciseData(THREADMILL_MODE_SELECT, GOAL_TYPE, GOAL_VALUE, ACHIEVE_TYPE)
-            } catch (e: RemoteException) {
+                ThreadMillServiceApi.INSTANCE().reportExerciseData(THREADMILL_MODE_SELECT,
+                        GOAL_TYPE, GOAL_VALUE, ACHIEVE_TYPE)
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -937,6 +936,7 @@ class RunningFragment : SerialPortFragment() {
         mTotalAdvAscend = mAdvAscend
         LogUtils.e(TAG, "广告每段时间间隔：$mAdvAscend;下一次广告显示时间：$mTotalAdvAscend")
     }
+
     /**
      * 显示广告
      * QUICKSTART模式下以时间维度触发

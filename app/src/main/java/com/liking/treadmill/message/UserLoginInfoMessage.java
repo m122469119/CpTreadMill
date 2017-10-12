@@ -13,5 +13,5 @@ import com.liking.treadmill.socket.data.result.UserInfoResultData;
 
 public class UserLoginInfoMessage extends BaseMessage {
 
-    public UserInfoResultData.UserInfoBean mUser;
+    public UserInfoResultData mUserResult;
 }

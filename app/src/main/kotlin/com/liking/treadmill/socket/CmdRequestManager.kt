@@ -12,7 +12,6 @@ import com.liking.treadmill.app.LikingThreadMillApplication
 import com.liking.treadmill.app.ThreadMillConstant
 import com.liking.treadmill.socket.data.BaseData
 import com.liking.treadmill.socket.data.request.*
-import com.liking.treadmill.socket.result.UserLogOutResult
 import com.liking.treadmill.storge.Preference
 import com.liking.treadmill.treadcontroller.SerialPortUtil
 import com.liking.treadmill.utils.Mac
@@ -118,7 +117,7 @@ object CmdRequestManager {
         if (gymId.isNullOrEmpty()) {
             gymId = "0"
         }
-        var logOut = UserLogInOutRequestData(
+        val logOut = UserLogInOutRequestData(
                 gymId.toInt(),
                 DateUtils.currentDataSeconds(),
                 DeviceUtils.getDeviceInfo(LikingThreadMillApplication.getInstance()),
@@ -131,11 +130,7 @@ object CmdRequestManager {
             FileUtils.store(MessageHandlerHelper.toJson(logOut),
                     ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE + braceletId)
         }
-        return CmdRequest.Builder()
-                .cmd(CmdConstant.CMD_TTREADMILL_LOGOUT)
-                .data(logOut)
-                .socket(LikingThreadMillApplication.getSocket())
-                .build()
+        return buildLogOutRequest(logOut)
     }
 
     /**
@@ -157,11 +152,7 @@ object CmdRequestManager {
 
         FileUtils.store(request, ThreadMillConstant.THREADMILL_PATH_STORAGE_DATA_CACHE + dataId)
 
-        return CmdRequest.Builder()
-                .socket(LikingThreadMillApplication.getSocket())
-                .cmd(CmdConstant.CMD_REPORT_DATA)
-                .data(exerciseData)
-                .build()
+        return buildUserExerciseRequest(exerciseData)
     }
 
     /**
@@ -199,7 +190,7 @@ object CmdRequestManager {
         File(ThreadMillConstant.THREADMILL_PATH_STORAGE_LOGINOUT_CACHE)
                 .listFiles()?.forEach {
             try {
-                var data = FileUtils.load(it.absolutePath)
+                val data = FileUtils.load(it.absolutePath)
                 if (!StringUtils.isEmpty(data)) {
                     //如果在登录状态return
                     val logOut = MessageHandlerHelper.fromJson(data, UserLogInOutRequestData::class.java)
@@ -209,9 +200,10 @@ object CmdRequestManager {
                             logOut.braceletId.toString()) {
                         return
                     }
-
                     LogUtils.e(LKProtocolsHelperKt.TAG, "跑步机用户登录状态:" + data)
-                    buildLogOutRequest(logOut!!).send()
+                    if(logOut != null) {
+                        buildLogOutRequest(logOut).send()
+                    }
                 } else {
                     LogUtils.e(LKProtocolsHelperKt.TAG, "跑步机用户登录状态:null")
                     it.delete()

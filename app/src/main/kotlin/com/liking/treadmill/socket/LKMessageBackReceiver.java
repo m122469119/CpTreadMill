@@ -13,13 +13,17 @@ import com.liking.socket.Constant;
 
 /**
  * Created on 2017/08/14
- * desc:
+ * desc: 接收 消息
  *
  * @author: chenlei
  * @version:1.0
  */
 
 public class LKMessageBackReceiver extends BroadcastReceiver {
+
+    private final int HANDLE_WHAT_ACTION_MSG = 10;
+
+    private final int HANDLE_WHAT_ACTION_CONNECT = 11;
 
     private HandlerThread messageHandlerThread = null;
     private Handler messageHandler = null;
@@ -34,15 +38,27 @@ public class LKMessageBackReceiver extends BroadcastReceiver {
             @Override
             public void handleMessage(Message msg) {
                 if (msg != null) {
-                    try {
-                        Bundle bundle = (Bundle) msg.obj;
-                        if (bundle != null) {
-                            byte cmd = bundle.getByte(Constant.KEY_MSG_CMD);
-                            String body = bundle.getString(Constant.KEY_MSG_DATA);
-                            MessageHandlerHelper.INSTANCE.handlerReceive(cmd, body);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    switch (msg.what) {
+                        case HANDLE_WHAT_ACTION_MSG:
+                            try {
+                                Bundle bundle = (Bundle) msg.obj;
+                                if (bundle != null) {
+                                    byte cmd = bundle.getByte(Constant.KEY_MSG_CMD);
+                                    String body = bundle.getString(Constant.KEY_MSG_DATA);
+                                    MessageHandlerHelper.INSTANCE.handlerReceive(cmd, body);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case HANDLE_WHAT_ACTION_CONNECT:
+                            try {
+                                CmdRequestManager.INSTANCE.reportedAllUserExerciseRequest();
+                                CmdRequestManager.INSTANCE.reportedLogOutRequest();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
                     }
                 }
             }
@@ -52,17 +68,22 @@ public class LKMessageBackReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent != null) {
-            String action = intent.getAction();
-            Bundle bundle = intent.getExtras();
-            if (action.equals(Constant.ACTION_MSG)) {
-                byte cmd = bundle.getByte(Constant.KEY_MSG_CMD);
-                String body = bundle.getString(Constant.KEY_MSG_DATA);
-                LogUtils.e("LKMessageBackReceiver", String.format("%02X %s", cmd, body));
+            switch (intent.getAction()) {
+                case Constant.ACTION_MSG:
+                    Bundle bundle = intent.getExtras();
+                    byte cmd = bundle.getByte(Constant.KEY_MSG_CMD);
+                    String body = bundle.getString(Constant.KEY_MSG_DATA);
+                    LogUtils.e("LKMessageBackReceiver", String.format("%02X %s", cmd, body));
 
-                Bundle data = new Bundle();
-                data.putByte(Constant.KEY_MSG_CMD, cmd);
-                data.putString(Constant.KEY_MSG_DATA, body);
-                messageHandler.obtainMessage(1000, data).sendToTarget();
+                    Bundle data = new Bundle();
+                    data.putByte(Constant.KEY_MSG_CMD, cmd);
+                    data.putString(Constant.KEY_MSG_DATA, body);
+                    messageHandler.obtainMessage(HANDLE_WHAT_ACTION_MSG, data).sendToTarget();
+                    break;
+                case Constant.ACTION_CONNECT:
+                    LogUtils.e("LKMessageBackReceiver", "CONNECT SUCCESS!!!");
+                    messageHandler.obtainMessage(HANDLE_WHAT_ACTION_CONNECT).sendToTarget();
+                    break;
             }
         }
     }

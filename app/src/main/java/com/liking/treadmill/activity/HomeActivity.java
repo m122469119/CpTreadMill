@@ -2,17 +2,14 @@ package com.liking.treadmill.activity;
 
 import android.app.ProgressDialog;
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.RemoteException;
 
 import com.aaron.android.codelibrary.utils.LogUtils;
+import com.aaron.android.codelibrary.utils.StringUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.socket.Constant;
 import com.liking.treadmill.R;
@@ -25,11 +22,10 @@ import com.liking.treadmill.mvp.presenter.UserLoginPresenter;
 import com.liking.treadmill.mvp.view.UserLoginView;
 import com.liking.treadmill.service.ThreadMillService;
 import com.liking.treadmill.socket.LKMessageBackReceiver;
-import com.liking.treadmill.socket.LKSocketServiceKt;
+import com.liking.treadmill.socket.ThreadMillServiceApi;
 import com.liking.treadmill.socket.result.DefaultAdResult;
 import com.liking.treadmill.socket.result.NewAdResult;
 import com.liking.treadmill.storge.Preference;
-import com.liking.treadmill.test.IBackService;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.MemberHelper;
 import com.liking.treadmill.utils.UsbUpdateUtils;
@@ -44,11 +40,6 @@ import static com.liking.treadmill.app.LikingThreadMillApplication.mLKAppSocketL
 
 public class HomeActivity extends LikingTreadmillBaseActivity implements UserLoginView {
 
-    //通过调用该接口中的方法来实现数据发送
-    public IBackService iBackService;
-    private Intent mServiceIntent;
-    private boolean mBound;
-
     public Handler mHandler = new Handler();
 
     public long delayedInterval = 3000;
@@ -56,22 +47,6 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     private boolean isUpdate = false;//是否更新
 
     public boolean isLogin = false;//是否登录
-
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            iBackService = IBackService.Stub.asInterface(iBinder);
-            mBound = true;
-            //LogUtils.d(SocketService.TAG, "service is connected");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            //  LogUtils.d(SocketService.TAG, "service is disconnected");
-            mBound = false;
-            iBackService = null;
-        }
-    };
 
     public UserLoginPresenter mUserLoginPresenter = null;
 
@@ -89,7 +64,6 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
             mUserLoginPresenter = new UserLoginPresenter(this, this);
         }
         mLKAppSocketLogQueue.put(TAG, "onCreate(), 初始化主界面");
-
     }
 
     private void initMessageReceiver() {
@@ -144,10 +118,6 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     @Override
     public void onStart() {
-        if (iBackService == null) {
-            initSocket();
-            bindService(mServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-        }
         Intent intent = new Intent(this, ThreadMillService.class);
         startService(intent);
         super.onStart();
@@ -155,16 +125,9 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
 
     @Override
     public void onDestroy() {
-        if (mBound) {
-            unbindService(mServiceConnection);
-        }
         mLKAppSocketLogQueue.put(TAG, "onDestroy(), 主界面回收，应用关闭");
         unregisterMessReceiver();
         super.onDestroy();
-    }
-
-    public void initSocket() {
-        mServiceIntent = new Intent(this, LKSocketServiceKt.class);
     }
 
     @Override
@@ -206,10 +169,10 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      *
      * @param loginUserInfoMessage
      */
-    public void onEvent(LoginUserInfoMessage loginUserInfoMessage) {
+    public void onEvent(UserLoginInfoMessage loginUserInfoMessage) {
         if (mUserLoginPresenter != null) {
-            if (loginUserInfoMessage.mUserData != null
-                    && loginUserInfoMessage.mUserData.getErrcode() == 0) {
+            if (loginUserInfoMessage.mUserResult != null &&
+                    StringUtils.isEmpty(loginUserInfoMessage.mUserResult.getErrMsg())) {
                 isLogin = true;
             }
             mUserLoginPresenter.userLoginResult(loginUserInfoMessage);
@@ -293,9 +256,9 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
     @Override
     public void userLogin(String cardno) {
         try {
-            iBackService.userLogin(cardno);
+            ThreadMillServiceApi.Companion.INSTANCE().userLogin(cardno);
             mLKAppSocketLogQueue.put(TAG, "会员登录");
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             if (mUserLoginPresenter != null) {
                 mUserLoginPresenter.userLoginFail();
@@ -331,13 +294,11 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param cardNo
      */
     public void userLogout(String cardNo) {
-        if (iBackService != null) {
-            try {
-                iBackService.userLogOut(cardNo);
-                mLKAppSocketLogQueue.put(TAG, "会员退出");
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+        try {
+            ThreadMillServiceApi.Companion.INSTANCE().userLogOut(cardNo);
+            mLKAppSocketLogQueue.put(TAG, "会员退出");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -347,13 +308,13 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param message
      */
     public void onEvent(RequestMembersMessage message) {
-        if (iBackService != null) {
-            try {
-                iBackService.requestMembersCommand();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (iBackService != null) {
+//            try {
+//                iBackService.requestMembersCommand();
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     /**
@@ -376,14 +337,14 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param message
      */
     public void onEvent(MemberNoneMessage message) {
-        MemberHelper.getInstance().updateMembersFromLocal();
-        if (iBackService != null) {
-            try {
-                iBackService.membersStateReplyCommand();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
+//        MemberHelper.getInstance().updateMembersFromLocal();
+//        if (iBackService != null) {
+//            try {
+//                iBackService.membersStateReplyCommand();
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     /**
@@ -392,13 +353,13 @@ public class HomeActivity extends LikingTreadmillBaseActivity implements UserLog
      * @param message
      */
     public void onEvent(MembersDeleteMessage message) {
-        if (iBackService != null) {
-            try {
-                iBackService.membersStateReplyCommand();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (iBackService != null) {
+//            try {
+//                iBackService.membersStateReplyCommand();
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     public void onEvent(AdvResultMessage message) {

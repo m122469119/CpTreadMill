@@ -1,6 +1,9 @@
 package com.liking.treadmill.socket.internal
 
+import com.liking.treadmill.app.ThreadMillConstant
+import com.liking.treadmill.socket.CmdRequestManager
 import com.liking.treadmill.socket.ThreadMillServiceApi
+import com.liking.treadmill.treadcontroller.SerialPortUtil
 
 /**
  * Created on 2017/09/28
@@ -10,52 +13,57 @@ import com.liking.treadmill.socket.ThreadMillServiceApi
  */
 class ThreadMillServiceApiImpl : ThreadMillServiceApi {
 
-    override fun rebind() {
-
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    /**
+     * 更新
+     */
+    override fun checkUpdates() {
+        CmdRequestManager.buildUpdateRequest().send()
     }
 
-    override fun init() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
+    /**
+     * 绑定
+     */
     override fun bind() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        CmdRequestManager.buildObtainQrcode(ThreadMillConstant.TYPE_GYM_BIND).send()
     }
 
+    /**
+     * 解绑
+     */
     override fun unBind() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        CmdRequestManager.buildObtainQrcode(ThreadMillConstant.TYPE_GYM_UNBIND).send()
     }
 
-    override fun confirm() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
+    /**
+     * 上报设备信息
+     */
     override fun reportDevices() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        CmdRequestManager.buildTreadmillRequest().send()
     }
 
+    /**
+     * 登录
+     */
     override fun userLogin(cardNo: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        CmdRequestManager.buildUserLoginRequest(cardNo.toLong())
     }
 
+    /**
+     * 退出
+     */
     override fun userLogOut(cardNo: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        CmdRequestManager.buildUserLogOutRequest(cardNo.toLong())
     }
 
-    override fun reportExerciseCacheData(data: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
+    /**
+     * 上报训练数据
+     */
     override fun reportExerciseData(type: Int, aimType: Int, aim: Float, achieve: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun requestMembersCommand() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun membersStateReplyCommand() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var braceletId = SerialPortUtil.getTreadInstance().cardNo
+        var period = SerialPortUtil.getTreadInstance().runTime
+        var distance = SerialPortUtil.getTreadInstance().distance
+        var cal = SerialPortUtil.getTreadInstance().kcal
+        CmdRequestManager.buildUserExerciseRequest(braceletId.toLong(), period, distance, cal,
+                type, aimType, aim, achieve)
     }
 }

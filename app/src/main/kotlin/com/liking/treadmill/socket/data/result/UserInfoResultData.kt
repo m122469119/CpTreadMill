@@ -41,6 +41,6 @@ class UserInfoResultData : ResultData() {
         @SerializedName("Gender")
         var gender: Int = 0
         @SerializedName("BraceletId")
-        var braceletId: Int = 0
+        var braceletId: Long = 0
     }
 }

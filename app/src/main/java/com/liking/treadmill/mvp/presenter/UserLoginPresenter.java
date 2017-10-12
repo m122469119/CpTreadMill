@@ -9,9 +9,9 @@ import com.aaron.android.framework.utils.EnvironmentUtils;
 import com.aaron.android.framework.utils.ResourceUtils;
 import com.liking.treadmill.R;
 import com.liking.treadmill.db.entity.Member;
-import com.liking.treadmill.message.LoginUserInfoMessage;
+import com.liking.treadmill.message.UserLoginInfoMessage;
 import com.liking.treadmill.mvp.view.UserLoginView;
-import com.liking.treadmill.socket.result.UserInfoResult;
+import com.liking.treadmill.socket.data.result.UserInfoResultData;
 import com.liking.treadmill.storge.Preference;
 import com.liking.treadmill.treadcontroller.SerialPortUtil;
 import com.liking.treadmill.utils.MemberHelper;
@@ -92,13 +92,13 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
      * @param braceletId
      * @return
      */
-    private UserInfoResult.UserData.UserInfoData getDefaultUserInfo(int role, String braceletId) {
-        UserInfoResult.UserData.UserInfoData userDefaultInfo = new UserInfoResult.UserData.UserInfoData();
+    private UserInfoResultData.UserInfoBean getDefaultUserInfo(int role, String braceletId) {
+        UserInfoResultData.UserInfoBean userDefaultInfo = new UserInfoResultData.UserInfoBean();
         userDefaultInfo.setRole(role); //1管理员 2普通会员
-        userDefaultInfo.setUserName("LikingFans");
+        userDefaultInfo.setUsername("LikingFans");
         userDefaultInfo.setAvatar("");
         userDefaultInfo.setGender(1);
-        userDefaultInfo.setBraceletId(braceletId);
+        userDefaultInfo.setBraceletId(Long.parseLong(braceletId));
         return userDefaultInfo;
     }
 
@@ -122,13 +122,13 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
      * 刷卡成功后处理
      * @param message
      */
-    public void userLoginResult(LoginUserInfoMessage message) {
-        UserInfoResult.UserData mUserData = message.mUserData;
-        if(mUserData.getErrcode() == 0) {
-            UserInfoResult.UserData.UserInfoData userResult = message.mUserData.getUserInfoData();
-            launchRunFragment(userResult);
+    public void userLoginResult(UserLoginInfoMessage message) {
+
+        if(StringUtils.isEmpty(message.mUserResult.getErrMsg())) {
+            UserInfoResultData.UserInfoBean user = message.mUserResult.getUser();
+            launchRunFragment(user);
         } else {
-            IToast.show(mUserData.getErrmsg());
+            IToast.show(message.mUserResult.getErrMsg());
             userLoginFail();
         }
     }
@@ -140,13 +140,13 @@ public class UserLoginPresenter extends BasePresenter<UserLoginView> {
         }
     }
 
-    private void launchRunFragment(UserInfoResult.UserData.UserInfoData userResult) {
+    private void launchRunFragment(UserInfoResultData.UserInfoBean userResult) {
         SerialPortUtil.TreadData.UserInfo userInfo = new SerialPortUtil.TreadData.UserInfo();
         userInfo.mRole = userResult.getRole();
-        userInfo.mUserName = userResult.getUserName();
+        userInfo.mUserName = userResult.getUsername();
         userInfo.mAvatar = userResult.getAvatar();
         userInfo.mGender = userResult.getGender();
-        userInfo.mBraceletId = userResult.getBraceletId();
+        userInfo.mBraceletId = String.valueOf(userResult.getBraceletId());
         userInfo.isManager = userInfo.mRole == 1 ? true : false;//是否为管理员
 
         SerialPortUtil.getTreadInstance().setCardNo(userInfo.mBraceletId);
