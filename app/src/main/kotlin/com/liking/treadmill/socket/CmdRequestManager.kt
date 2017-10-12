@@ -10,6 +10,7 @@ import com.aaron.android.framework.utils.DeviceUtils
 import com.liking.socket.Constant
 import com.liking.treadmill.app.LikingThreadMillApplication
 import com.liking.treadmill.app.ThreadMillConstant
+import com.liking.treadmill.socket.data.BaseData
 import com.liking.treadmill.socket.data.request.*
 import com.liking.treadmill.socket.result.UserLogOutResult
 import com.liking.treadmill.storge.Preference
@@ -175,11 +176,7 @@ object CmdRequestManager {
                         LogUtils.e(LKProtocolsHelperKt.TAG, "用户跑步数据缓存:".plus(data).plus("-").plus(it.name))
                         val reqData = MessageHandlerHelper.fromJson(data, ExerciseInfoRequestData::class.java)
                         if (reqData != null) {
-                            CmdRequest.Builder()
-                                    .socket(LikingThreadMillApplication.getSocket())
-                                    .cmd(CmdConstant.CMD_REPORT_DATA)
-                                    .data(reqData)
-                                    .build().send()
+                            buildUserExerciseRequest(reqData).send()
                         }
                     } else {
                         LogUtils.e(TAG, "用户跑步数据缓存:null-".plus(it.name))
@@ -214,11 +211,7 @@ object CmdRequestManager {
                     }
 
                     LogUtils.e(LKProtocolsHelperKt.TAG, "跑步机用户登录状态:" + data)
-                    CmdRequest.Builder()
-                            .cmd(CmdConstant.CMD_TTREADMILL_LOGOUT)
-                            .data(logOut!!)
-                            .socket(LikingThreadMillApplication.getSocket())
-                            .build()
+                    buildLogOutRequest(logOut!!).send()
                 } else {
                     LogUtils.e(LKProtocolsHelperKt.TAG, "跑步机用户登录状态:null")
                     it.delete()
@@ -231,6 +224,22 @@ object CmdRequestManager {
                 }catch (e: Exception){}
             }
         }
+    }
+
+    private fun buildLogOutRequest(data : BaseData) : CmdRequest{
+        return CmdRequest.Builder()
+                .cmd(CmdConstant.CMD_TTREADMILL_LOGOUT)
+                .data(data)
+                .socket(LikingThreadMillApplication.getSocket())
+                .build()
+    }
+
+    private fun buildUserExerciseRequest(data: BaseData) : CmdRequest {
+        return CmdRequest.Builder()
+                .socket(LikingThreadMillApplication.getSocket())
+                .cmd(CmdConstant.CMD_REPORT_DATA)
+                .data(data)
+                .build()
     }
 
 }
