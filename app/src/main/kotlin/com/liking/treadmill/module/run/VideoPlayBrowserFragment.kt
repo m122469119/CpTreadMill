@@ -76,11 +76,14 @@ class VideoPlayBrowserFragment : BaseFragment() {
         LogUtils.e(TAG, "loadurl:"  + h5url)
         val url = h5url.replace("http://", "https://")
         mediaBrowserWebview?.loadUrl(url)
+        mediaBrowserWebview?.visibility = View.INVISIBLE
+        loading_waiting_txt.visibility = View.VISIBLE
     }
 
     fun initView() {
         mediaBrowserWebview = WebView(context.applicationContext)
         mediaBrowserWebview?.setBackgroundColor(android.R.color.transparent)
+        mediaBrowserWebview?.visibility = View.INVISIBLE
         media_browser_layout.backgroundResource = R.drawable.media_video_bg
         media_browser_layout.removeAllViews()
         media_browser_layout.addView(mediaBrowserWebview)
@@ -108,6 +111,8 @@ class VideoPlayBrowserFragment : BaseFragment() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
                 if (newProgress == 100) {
+                    loading_waiting_txt.visibility = View.INVISIBLE
+                    mediaBrowserWebview?.visibility = View.VISIBLE
                     autoPlayVideo()
                 }
             }
