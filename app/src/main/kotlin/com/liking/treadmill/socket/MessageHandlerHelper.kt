@@ -2,9 +2,7 @@ package com.liking.treadmill.socket
 
 import android.app.AlarmManager
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
+import android.os.*
 import com.aaron.android.codelibrary.utils.DateUtils
 import com.aaron.android.codelibrary.utils.FileUtils
 import com.aaron.android.codelibrary.utils.LogUtils
@@ -12,6 +10,7 @@ import com.aaron.android.codelibrary.utils.StringUtils
 import com.aaron.android.framework.base.BaseApplication
 import com.aaron.android.framework.utils.DeviceUtils
 import com.google.gson.GsonBuilder
+import com.liking.socket.Constant
 import com.liking.treadmill.app.LikingThreadMillApplication
 import com.liking.treadmill.app.ThreadMillConstant
 import com.liking.treadmill.message.*
@@ -36,6 +35,41 @@ object MessageHandlerHelper {
 
     var TAG: String = MessageHandlerHelper::class.java.simpleName
 
+    val HANDLE_WHAT_ACTION_MSG = 10
+
+    val HANDLE_WHAT_ACTION_CONNECT = 11
+
+    private var messageHandlerThread: HandlerThread = HandlerThread("MessageHandlerThread")
+    var messageHandler: Handler
+
+    init {
+        messageHandlerThread.start()
+        messageHandler = object : Handler(messageHandlerThread.looper) {
+            override fun handleMessage(msg: Message?) {
+                if (msg != null) {
+                    when (msg.what) {
+                        HANDLE_WHAT_ACTION_MSG -> try {
+                            val bundle = msg.obj as Bundle
+                            if (bundle != null) {
+                                val cmd = bundle.getByte(Constant.KEY_MSG_CMD)
+                                val body = bundle.getString(Constant.KEY_MSG_DATA)
+                                handlerReceive(cmd, body!!)
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                        HANDLE_WHAT_ACTION_CONNECT -> try {
+                            CmdRequestManager.reportedAllUserExerciseRequest()
+                            CmdRequestManager.reportedLogOutRequest()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     val mGson = GsonBuilder().disableHtmlEscaping().create()
 
     fun <T> fromJson(result: String, clazz: Class<T>): T? {
@@ -55,10 +89,10 @@ object MessageHandlerHelper {
         }
     }
 
-    val resultHandler = Handler(Looper.getMainLooper())
+    val mainHandler = Handler(Looper.getMainLooper())
 
     fun postEvent(event: Any) {
-        resultHandler.post {
+        mainHandler.post {
             EventBus.getDefault().post(event)
         }
     }
