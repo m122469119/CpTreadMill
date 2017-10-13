@@ -9,4 +9,5 @@ import com.liking.treadmill.socket.data.result.ResultData
  * @author: chenlei
  * @version:1.0
  */
-class QrcodeInfoResultData(@SerializedName("Url") var url: String) : ResultData()
+class QrcodeInfoResultData(@SerializedName("qrcode_url") var url: String,
+                           @SerializedName("qrcode_type") var type: Int) : ResultData()

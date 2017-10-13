@@ -59,8 +59,9 @@ object MessageHandlerHelper {
                             e.printStackTrace()
                         }
                         HANDLE_WHAT_ACTION_CONNECT -> try {
-                            CmdRequestManager.reportedAllUserExerciseRequest()
-                            CmdRequestManager.reportedLogOutRequest()
+                            ThreadMillServiceApi.INSTANCE().reportDevices()
+                            ThreadMillServiceApi.INSTANCE().reportedAllUserExerciseRequest()
+                            ThreadMillServiceApi.INSTANCE().reportedLogOutRequest()
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }

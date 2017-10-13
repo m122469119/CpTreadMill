@@ -1,8 +1,8 @@
 package com.liking.treadmill.app;
 
 import android.net.wifi.WifiManager;
+import android.os.Build;
 
-import com.aaron.android.codelibrary.utils.DateUtils;
 import com.aaron.android.codelibrary.utils.FileUtils;
 import com.aaron.android.codelibrary.utils.LogUtils;
 import com.aaron.android.framework.base.BaseApplication;
@@ -14,10 +14,9 @@ import com.liking.socket.SocketIO;
 import com.liking.socket.model.HeaderAssemble;
 import com.liking.socket.model.HeaderResolver;
 import com.liking.treadmill.BuildConfig;
-import com.liking.treadmill.socket.CmdConstant;
-import com.liking.treadmill.socket.CmdRequest;
 import com.liking.treadmill.socket.CmdRequestManager;
-import com.liking.treadmill.socket.data.request.ExerciseInfoRequestData;
+import com.liking.treadmill.socket.ThreadMillServiceApi;
+import com.liking.treadmill.utils.Mac;
 
 import java.io.File;
 
@@ -89,28 +88,21 @@ public class LikingThreadMillApplication extends BaseApplication {
     }
 
     private void initSocket() {
+        String deviceId = DeviceUtils.getDeviceInfo(this);
+        String gatewayId = Mac.INSTANCE.getMacAddress(this);
+        String buildInfo = Build.MODEL + "|" + Build.VERSION.RELEASE;
+
         SocketIO.Builder builder = new SocketIO.Builder();
         builder.connect(HOST, PORT);
         builder.bind(this);
         builder.headerAssemble(new HeaderAssemble());
         builder.headerResolver(new HeaderResolver());
-        builder.addDefaultSend(CmdRequestManager.INSTANCE.buildDeviceInfoRequest());
+        builder.addDefaultSend(CmdRequestManager.INSTANCE.buildDeviceInfoRequest(
+                deviceId, gatewayId, buildInfo));
         builder.addDefaultSend(CmdRequestManager.INSTANCE.buildTimeStampRequest());
-        builder.addDefaultSend(CmdRequestManager.INSTANCE.buildTreadmillRequest());
         mSocketIO = builder.build();
 
-
-//        CmdRequestManager.INSTANCE.buildUserLoginRequest(3971587573L).send();
-
-//        CmdRequestManager.INSTANCE.buildObtainQrcode(2).send();
-
-        CmdRequestManager.INSTANCE.buildUpdateRequest().send();
-
-//        CmdRequestManager.INSTANCE.buildUserExerciseRequest(
-//                3971587573L, 1000, 2000,1234,
-//                1, 0, 0, 1
-//        ).send();
-
+        ThreadMillServiceApi.Companion.INSTANCE().initialization();
     }
 
     public static SocketIO getSocket() {

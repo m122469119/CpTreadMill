@@ -10,6 +10,7 @@ import com.liking.treadmill.socket.internal.ThreadMillServiceApiImpl
  */
 interface ThreadMillServiceApi {
 
+    fun initialization()
     fun bind()
     fun unBind()
     fun checkUpdates()

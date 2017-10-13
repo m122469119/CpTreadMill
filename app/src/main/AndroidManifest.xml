@@ -37,6 +37,13 @@
             </intent-filter>
         </activity>
 
+        <receiver android:name=".socket.LKMessageBackReceiver">
+            <intent-filter>
+                <action android:name="com.liking.socket"/>
+                <action android:name="com.liking.socket.connect"/>
+            </intent-filter>
+        </receiver>
+
         <service android:name=".socket.LKSocketServiceKt"/>
         <service android:name=".service.ApkDownloadService" />
         <!--ThreadMill服务-->

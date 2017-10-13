@@ -15,7 +15,7 @@ class CmdRequest private constructor(val socket: SocketIO?,
                                      val cmd: Byte,
                                      val data: String) : MessageData() {
 
-    var TAG: String = CmdRequest::class.java.javaClass.simpleName
+    var TAG: String = CmdRequest::class.java.simpleName
 
     override fun cmd(): Byte = cmd
 
